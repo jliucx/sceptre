@@ -1,0 +1,109 @@
+---
+title: "create_grna_target_data_frame"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+directories <- "data/STINGseq-v1_GDO"
+features_dir<-paste0(directories,"/features.tsv.gz")
+features <- read_tsv(features_dir,col_names = FALSE)
+(grna <- features[36602:36811,])
+```
+
+```{r}
+features[36602:36811,]
+```
+
+```{r}
+grna_target_data_frame <- grna %>%
+  filter(str_detect(`X2`, "^SNP")) %>%
+  mutate(target = str_replace(`X2`, "SNP-(\\d+)_\\d+?", "GWAS_\\1")) %>%
+  select(grna = `X2`, target)
+grna_target_data_frame
+```
+
+```{r}
+gene_ids <- c("ENSG00000117335", "ENSG00000169442", "ENSG00000109971", 
+              "ENSG00000109255", "ENSG00000196262", "ENSG00000116251")
+
+# Replicating the gene IDs by 2
+replicated_gene_ids <- rep(gene_ids, each = 2)
+
+# Assuming the original df has a column named 'grna'
+# Extracting the grna values from rows 177 to 188
+grna_values <- grna[177:188,1]
+
+# Creating the new dataframe
+new_df <- data.frame(grna = grna_values, target = replicated_gene_ids)
+
+# Assuming grna_target_data_frame already exists
+# Ensure new_df has the same column names as grna_target_data_frame
+colnames(new_df) <- colnames(grna_target_data_frame)
+
+# Append new_df to grna_target_data_frame
+grna_target_data_frame <- rbind(grna_target_data_frame, new_df)
+
+
+```
+
+```{r}
+# Create a new dataframe with grna[189:200,1] and "non-targeting"
+non_targeting_df <- data.frame(
+  grna = grna[189:200, 1],
+  target = rep("non-targeting", length(grna[189:200, 1]))
+)
+
+# Ensure the column names match
+colnames(non_targeting_df) <- colnames(grna_target_data_frame)
+
+# Append the new dataframe to grna_target_data_frame
+grna_target_data_frame <- rbind(grna_target_data_frame, non_targeting_df)
+
+# Display the updated grna_target_data_frame
+print(grna_target_data_frame)
+
+```
+
+```{r}
+# Create a new dataframe with grna[201:210,1] and "ENSG00000196352"
+specific_target_df <- data.frame(
+  grna = grna[201:210, 1],
+  target = rep("ENSG00000196352", length(grna[201:210, 1]))
+)
+
+# Ensure the column names match
+colnames(specific_target_df) <- colnames(grna_target_data_frame)
+
+# Append the new dataframe to grna_target_data_frame
+grna_target_data_frame <- rbind(grna_target_data_frame[1:200,], specific_target_df)
+colnames(grna_target_data_frame) <- c("grna_id", "grna_target")
+
+# Display the updated grna_target_data_frame
+print(grna_target_data_frame)
+```
+
+```{r}
+row_index <- which(features$`X2` == "CD55")
+
+# Print the index
+features[row_index,]
+```
+
+```{r}
+output_directory <- "data/STINGseq-v1_GDO/"
+
+# Create the full file path
+output_file <- file.path(output_directory, "grna_target_data_frame.csv")
+
+# Write the dataframe to a CSV file
+write.csv(grna_target_data_frame, output_file, row.names = FALSE)
+
+# Confirm the file has been written
+cat("File saved to:", output_file)
+```

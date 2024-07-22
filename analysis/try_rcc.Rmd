@@ -1,0 +1,48 @@
+---
+title: "try_rcc"
+output: html_document
+---
+
+```{r}
+library(sceptre)
+library(sceptredata)
+# load the data, creating a sceptre_object
+directories <- paste0(
+  system.file("extdata", package = "sceptredata"),
+  "/highmoi_example/gem_group_", 1:2
+)
+data(grna_target_data_frame_highmoi)
+sceptre_object <- import_data_from_cellranger(
+  directories = directories,
+  moi = "high",
+  grna_target_data_frame = grna_target_data_frame_highmoi
+)
+
+# construct the grna-gene pairs to analyze
+positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
+discovery_pairs <- construct_cis_pairs(
+  sceptre_object, 
+  positive_control_pairs = positive_control_pairs
+)
+
+# apply the pipeline functions to the sceptre_object in order
+sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
+  set_analysis_parameters(discovery_pairs, positive_control_pairs) |>
+  run_calibration_check() |>
+  run_power_check() |>
+  run_discovery_analysis()
+
+# write the results to disk
+
+```
+
+```{r}
+write_outputs_to_directory(sceptre_object, "output/try_rcc/sceptre_outputs")
+```
+
+```{r}
+library(sceptre)
+library(sceptredata)
+data(grna_target_data_frame_highmoi)
+grna_target_data_frame_highmoi
+```
