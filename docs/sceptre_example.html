@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="jliucx" />
+
+<meta name="date" content="2024-07-12" />
+
+<title>sceptre_example</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">first sceptre trial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">sceptre_example</h1>
+<h4 class="author">jliucx</h4>
+<h4 class="date">2024-07-12</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-07-22
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Getting_started/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version
+1.6.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240712code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240712)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240712code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240712)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongb1d2648">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong> b1d2648
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongb1d2648"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version b1d2648.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/job-info.err
+    Ignored:    analysis/job-info.out
+    Ignored:    analysis/run_sceptre_example.sh
+
+Untracked files:
+    Untracked:  analysis/try_rcc.R
+    Untracked:  data/STINGseq-v1_GDO/
+    Untracked:  data/STINGseq-v1_HTO/
+    Untracked:  data/STINGseq-v1_cDNA/
+    Untracked:  output/sceptre_outputs/
+    Untracked:  output/try_rcc/
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/seurat_example.Rmd
+    Modified:   analysis/try_rcc.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/sceptre_example.Rmd</code>) and
+HTML (<code>docs/sceptre_example.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+b1d2648
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-07-22
+</td>
+<td>
+Publish analysis files
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+23ce783
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-07-22
+</td>
+<td>
+Publish analysis files
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>library(sceptre)
+library(sceptredata)
+library(readr)</code></pre>
+<pre class="r"><code># load the data, creating a sceptre_object
+directories &lt;- directories &lt;- &quot;data/STINGseq-v1_GDO&quot;
+grna_target_data_frame &lt;- data.frame(read_csv(paste0(directories,&quot;/grna_target_data_frame.csv&quot;)))</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  grna_id = col_character(),
+  grna_target = col_character()
+)</code></pre>
+<pre class="r"><code>grna_target_data_frame</code></pre>
+<pre><code>     grna_id     grna_target
+1    SNP-1_1          GWAS_1
+2    SNP-1_2          GWAS_1
+3    SNP-2_1          GWAS_2
+4    SNP-2_2          GWAS_2
+5    SNP-3_1          GWAS_3
+6    SNP-3_2          GWAS_3
+7    SNP-4_1          GWAS_4
+8    SNP-4_2          GWAS_4
+9    SNP-5_1          GWAS_5
+10   SNP-5_2          GWAS_5
+11   SNP-6_1          GWAS_6
+12   SNP-6_2          GWAS_6
+13   SNP-7_1          GWAS_7
+14   SNP-7_2          GWAS_7
+15   SNP-8_1          GWAS_8
+16   SNP-8_2          GWAS_8
+17   SNP-9_1          GWAS_9
+18   SNP-9_2          GWAS_9
+19  SNP-10_1         GWAS_10
+20  SNP-10_2         GWAS_10
+21  SNP-11_1         GWAS_11
+22  SNP-11_2         GWAS_11
+23  SNP-12_1         GWAS_12
+24  SNP-12_2         GWAS_12
+25  SNP-13_1         GWAS_13
+26  SNP-13_2         GWAS_13
+27  SNP-14_1         GWAS_14
+28  SNP-14_2         GWAS_14
+29  SNP-15_1         GWAS_15
+30  SNP-15_2         GWAS_15
+31  SNP-16_1         GWAS_16
+32  SNP-16_2         GWAS_16
+33  SNP-17_1         GWAS_17
+34  SNP-17_2         GWAS_17
+35  SNP-18_1         GWAS_18
+36  SNP-18_2         GWAS_18
+37  SNP-19_1         GWAS_19
+38  SNP-19_2         GWAS_19
+39  SNP-20_1         GWAS_20
+40  SNP-20_2         GWAS_20
+41  SNP-21_1         GWAS_21
+42  SNP-21_2         GWAS_21
+43  SNP-22_1         GWAS_22
+44  SNP-22_2         GWAS_22
+45  SNP-23_1         GWAS_23
+46  SNP-23_2         GWAS_23
+47  SNP-24_1         GWAS_24
+48  SNP-24_2         GWAS_24
+49  SNP-25_1         GWAS_25
+50  SNP-25_2         GWAS_25
+51  SNP-26_1         GWAS_26
+52  SNP-26_2         GWAS_26
+53  SNP-27_1         GWAS_27
+54  SNP-27_2         GWAS_27
+55  SNP-28_1         GWAS_28
+56  SNP-28_2         GWAS_28
+57  SNP-29_1         GWAS_29
+58  SNP-29_2         GWAS_29
+59  SNP-30_1         GWAS_30
+60  SNP-30_2         GWAS_30
+61  SNP-31_1         GWAS_31
+62  SNP-31_2         GWAS_31
+63  SNP-32_1         GWAS_32
+64  SNP-32_2         GWAS_32
+65  SNP-33_1         GWAS_33
+66  SNP-33_2         GWAS_33
+67  SNP-34_1         GWAS_34
+68  SNP-34_2         GWAS_34
+69  SNP-35_1         GWAS_35
+70  SNP-35_2         GWAS_35
+71  SNP-36_1         GWAS_36
+72  SNP-36_2         GWAS_36
+73  SNP-37_1         GWAS_37
+74  SNP-37_2         GWAS_37
+75  SNP-38_1         GWAS_38
+76  SNP-38_2         GWAS_38
+77  SNP-39_1         GWAS_39
+78  SNP-39_2         GWAS_39
+79  SNP-40_1         GWAS_40
+80  SNP-40_2         GWAS_40
+81  SNP-41_1         GWAS_41
+82  SNP-41_2         GWAS_41
+83  SNP-42_1         GWAS_42
+84  SNP-42_2         GWAS_42
+85  SNP-43_1         GWAS_43
+86  SNP-43_2         GWAS_43
+87  SNP-44_1         GWAS_44
+88  SNP-44_2         GWAS_44
+89  SNP-45_1         GWAS_45
+90  SNP-45_2         GWAS_45
+91  SNP-46_1         GWAS_46
+92  SNP-46_2         GWAS_46
+93  SNP-47_1         GWAS_47
+94  SNP-47_2         GWAS_47
+95  SNP-48_1         GWAS_48
+96  SNP-48_2         GWAS_48
+97  SNP-49_1         GWAS_49
+98  SNP-49_2         GWAS_49
+99  SNP-50_1         GWAS_50
+100 SNP-50_2         GWAS_50
+101 SNP-51_1         GWAS_51
+102 SNP-51_2         GWAS_51
+103 SNP-52_1         GWAS_52
+104 SNP-52_2         GWAS_52
+105 SNP-53_1         GWAS_53
+106 SNP-53_2         GWAS_53
+107 SNP-54_1         GWAS_54
+108 SNP-54_2         GWAS_54
+109 SNP-55_1         GWAS_55
+110 SNP-55_2         GWAS_55
+111 SNP-56_1         GWAS_56
+112 SNP-56_2         GWAS_56
+113 SNP-57_1         GWAS_57
+114 SNP-57_2         GWAS_57
+115 SNP-58_1         GWAS_58
+116 SNP-58_2         GWAS_58
+117 SNP-59_1         GWAS_59
+118 SNP-59_2         GWAS_59
+119 SNP-60_1         GWAS_60
+120 SNP-60_2         GWAS_60
+121 SNP-61_1         GWAS_61
+122 SNP-61_2         GWAS_61
+123 SNP-62_1         GWAS_62
+124 SNP-62_2         GWAS_62
+125 SNP-63_1         GWAS_63
+126 SNP-63_2         GWAS_63
+127 SNP-64_1         GWAS_64
+128 SNP-64_2         GWAS_64
+129 SNP-65_1         GWAS_65
+130 SNP-65_2         GWAS_65
+131 SNP-66_1         GWAS_66
+132 SNP-66_2         GWAS_66
+133 SNP-67_1         GWAS_67
+134 SNP-67_2         GWAS_67
+135 SNP-68_1         GWAS_68
+136 SNP-68_2         GWAS_68
+137 SNP-69_1         GWAS_69
+138 SNP-69_2         GWAS_69
+139 SNP-70_1         GWAS_70
+140 SNP-70_2         GWAS_70
+141 SNP-71_1         GWAS_71
+142 SNP-71_2         GWAS_71
+143 SNP-72_1         GWAS_72
+144 SNP-72_2         GWAS_72
+145 SNP-73_1         GWAS_73
+146 SNP-73_2         GWAS_73
+147 SNP-74_1         GWAS_74
+148 SNP-74_2         GWAS_74
+149 SNP-75_1         GWAS_75
+150 SNP-75_2         GWAS_75
+151 SNP-76_1         GWAS_76
+152 SNP-76_2         GWAS_76
+153 SNP-77_1         GWAS_77
+154 SNP-77_2         GWAS_77
+155 SNP-78_1         GWAS_78
+156 SNP-78_2         GWAS_78
+157 SNP-79_1         GWAS_79
+158 SNP-79_2         GWAS_79
+159 SNP-80_1         GWAS_80
+160 SNP-80_2         GWAS_80
+161 SNP-81_1         GWAS_81
+162 SNP-81_2         GWAS_81
+163 SNP-82_1         GWAS_82
+164 SNP-82_2         GWAS_82
+165 SNP-83_1         GWAS_83
+166 SNP-83_2         GWAS_83
+167 SNP-84_1         GWAS_84
+168 SNP-84_2         GWAS_84
+169 SNP-85_1         GWAS_85
+170 SNP-85_2         GWAS_85
+171 SNP-86_1         GWAS_86
+172 SNP-86_2         GWAS_86
+173 SNP-87_1         GWAS_87
+174 SNP-87_2         GWAS_87
+175 SNP-88_1         GWAS_88
+176 SNP-88_2         GWAS_88
+177   CD46-1 ENSG00000117335
+178   CD46-2 ENSG00000117335
+179   CD52-1 ENSG00000169442
+180   CD52-2 ENSG00000169442
+181  HSPA8-1 ENSG00000109971
+182  HSPA8-2 ENSG00000109971
+183    NMU-1 ENSG00000109255
+184    NMU-2 ENSG00000109255
+185   PPIA-1 ENSG00000196262
+186   PPIA-2 ENSG00000196262
+187  RPL22-1 ENSG00000116251
+188  RPL22-2 ENSG00000116251
+189    NTC-1   non-targeting
+190    NTC-2   non-targeting
+191    NTC-3   non-targeting
+192    NTC-4   non-targeting
+193    NTC-5   non-targeting
+194    NTC-6   non-targeting
+195    NTC-7   non-targeting
+196    NTC-8   non-targeting
+197    NTC-9   non-targeting
+198   NTC-10   non-targeting
+199   NTC-11   non-targeting
+200   NTC-12   non-targeting
+201   CD55-1 ENSG00000196352
+202   CD55-2 ENSG00000196352
+203   CD55-3 ENSG00000196352
+204   CD55-4 ENSG00000196352
+205   CD55-5 ENSG00000196352
+206   CD55-6 ENSG00000196352
+207   CD55-7 ENSG00000196352
+208   CD55-8 ENSG00000196352
+209   CD55-9 ENSG00000196352
+210  CD55-10 ENSG00000196352</code></pre>
+<pre class="r"><code>thresholds_file &lt;- paste0(directories,&quot;/GDO.umi_thresholds.csv.gz&quot;)
+
+# Read the thresholds file
+umi_thresholds &lt;- read_csv(thresholds_file)</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  Protospacer = col_character(),
+  `UMI threshold` = col_double()
+)</code></pre>
+<pre class="r"><code># View the thresholds
+print(umi_thresholds)</code></pre>
+<pre><code># A tibble: 210 × 2
+   Protospacer `UMI threshold`
+   &lt;chr&gt;                 &lt;dbl&gt;
+ 1 CD46-1                    4
+ 2 CD46-2                    5
+ 3 CD52-1                    3
+ 4 CD52-2                    7
+ 5 CD55-1                    3
+ 6 CD55-10                   2
+ 7 CD55-2                    4
+ 8 CD55-3                    8
+ 9 CD55-4                    6
+10 CD55-5                    2
+# ℹ 200 more rows</code></pre>
+<pre class="r"><code>sceptre_object &lt;- import_data_from_cellranger(
+  directories = directories,
+  moi = &quot;high&quot;,
+  grna_target_data_frame = grna_target_data_frame
+)</code></pre>
+<pre><code>Processing directory 1. ✓
+Combining matrices across directories. ✓
+Creating the sceptre object. ✓</code></pre>
+<pre class="r"><code>sceptre_object</code></pre>
+<pre><code>An object of class sceptre_object.
+
+Attributes of the data:
+    • 15215 cells
+    • 36601 responses
+    • High multiplicity-of-infection 
+    • 198 targeting gRNAs (distributed across 95 targets) 
+    • 12 non-targeting gRNAs 
+    • 5 covariates (grna_n_nonzero, grna_n_umis, response_n_nonzero, response_n_umis, response_p_mito)</code></pre>
+<pre class="r"><code># construct the grna-gene pairs to analyze
+positive_control_pairs &lt;- construct_positive_control_pairs(sceptre_object)
+positive_control_pairs</code></pre>
+<pre><code>      grna_target     response_id
+1 ENSG00000117335 ENSG00000117335
+2 ENSG00000169442 ENSG00000169442
+3 ENSG00000109971 ENSG00000109971
+4 ENSG00000109255 ENSG00000109255
+5 ENSG00000196262 ENSG00000196262
+6 ENSG00000116251 ENSG00000116251
+7 ENSG00000196352 ENSG00000196352</code></pre>
+<pre class="r"><code>discovery_pairs &lt;- construct_trans_pairs(
+  sceptre_object = sceptre_object,
+  positive_control_pairs = positive_control_pairs,
+  pairs_to_exclude = &quot;pairs_containing_pc_targets&quot;
+)
+head(discovery_pairs)</code></pre>
+<pre><code>   grna_target     response_id
+1:      GWAS_1 ENSG00000243485
+2:      GWAS_2 ENSG00000243485
+3:      GWAS_3 ENSG00000243485
+4:      GWAS_4 ENSG00000243485
+5:      GWAS_5 ENSG00000243485
+6:      GWAS_6 ENSG00000243485</code></pre>
+<pre class="r"><code># apply the pipeline functions to the sceptre_object in order
+sceptre_object &lt;- sceptre_object |&gt; # |&gt; is R&#39;s base pipe, similar to %&gt;%
+  set_analysis_parameters(discovery_pairs=discovery_pairs, positive_control_pairs=positive_control_pairs, side=&quot;left&quot;) |&gt;
+  run_calibration_check(parallel = T) |&gt;
+  run_power_check(parallel = T) |&gt;
+  run_discovery_analysis(parallel = T)</code></pre>
+<pre><code>Note: Automatically running `assign_grnas()` and `run_qc()` with default arguments.
+
+Running gRNA assignments in parallel. Change directories to /scratch/local/jobs/21991965/RtmpQJOAKg/sceptre_logs/ and view the files assign_grnas_*.out for progress updates.
+Constructing negative control pairs. ✓
+Note: Unable to generate the number of negative control pairs (1226615) requested. Generating as many negative control pairs (976820) as possible.
+Running calibration_check in parallel. Change directories to /scratch/local/jobs/21991965/RtmpQJOAKg/sceptre_logs/ and view the files calibration_check_*.out for progress updates.  ✓
+Running power_check in parallel. Change directories to /scratch/local/jobs/21991965/RtmpQJOAKg/sceptre_logs/ and view the files power_check_*.out for progress updates.  ✓
+Running discovery_analysis in parallel. Change directories to /scratch/local/jobs/21991965/RtmpQJOAKg/sceptre_logs/ and view the files discovery_analysis_*.out for progress updates.  ✓</code></pre>
+<pre class="r"><code># write the results to disk
+write_outputs_to_directory(sceptre_object, &quot;output/sceptre_outputs&quot;)</code></pre>
+<pre><code>NULL</code></pre>
+<pre class="r"><code>data(grna_target_data_frame_highmoi)
+grna_target_data_frame_highmoi</code></pre>
+<pre><code>        grna_id      grna_target   chr     start       end
+1  grna_CCGGGCG  ENSG00000069482 chr11  68451943  68451958
+2  grna_TGGCGGC  ENSG00000069482 chr11  68451958  68451974
+3  grna_AAGGCCG  ENSG00000100316 chr22  39715775  39715790
+4  grna_GACGCCG  ENSG00000100316 chr22  39715790  39715806
+5  grna_CACACCC  ENSG00000104131 chr15  44829255  44829270
+6  grna_GCTCACA  ENSG00000104131 chr15  44829270  44829286
+7  grna_CTCTGAG  ENSG00000122026 chr13  27825446  27825461
+8  grna_GCGCCCG  ENSG00000122026 chr13  27825461  27825477
+9  grna_GAGCGTG  ENSG00000135821  chr1 182360926 182360941
+10 grna_GCTCTGC  ENSG00000135821  chr1 182360941 182360957
+11 grna_AGGGGAA  ENSG00000147669  chr8 101162812 101162827
+12 grna_CGGGTTG  ENSG00000147669  chr8 101162827 101162843
+13 grna_GTACTGG  ENSG00000155380  chr1 113498684 113498699
+14 grna_TGGTGAG  ENSG00000155380  chr1 113498699 113498715
+15 grna_GACCCCG  ENSG00000176890 chr18    657604    657619
+16 grna_TCAGGAA  ENSG00000176890 chr18    657619    657635
+17 grna_AGGGCAG  ENSG00000187840  chr8  37887859  37887874
+18 grna_CACAGGA  ENSG00000187840  chr8  37887874  37887890
+19 grna_ACGGCCG  ENSG00000196683  chr7  22862470  22862485
+20 grna_CGCCACA  ENSG00000196683  chr7  22862485  22862501
+21 grna_TCTTGAC  candidate_enh_1  chr1 205720419 205720623
+22 grna_TGATCGC  candidate_enh_1  chr1 205720623 205720828
+23 grna_ATAGGAG candidate_enh_10 chr19  19475680  19475878
+24 grna_GCAGGCA candidate_enh_10 chr19  19475878  19476077
+25 grna_GCACTCT candidate_enh_11 chr19  51251689  51251842
+26 grna_CAGTGCG candidate_enh_11 chr19  51251842  51251996
+27 grna_GCAAGTT candidate_enh_12  chr2  43155701  43156137
+28 grna_AGTACTT candidate_enh_12  chr2  43156137  43156573
+29 grna_GGATTGT candidate_enh_13  chr2  10423116  10423518
+30 grna_CAGGGTT candidate_enh_13  chr2  10423518  10423920
+31 grna_AATCTTG candidate_enh_14  chr2 113442942 113443021
+32 grna_AATGTGG candidate_enh_14  chr2 113443021 113443101
+33 grna_ACTCCAT candidate_enh_15  chr2 114129945 114130164
+34 grna_GTGCTCT candidate_enh_15  chr2 114130164 114130383
+35 grna_TCACAGC candidate_enh_16 chr20  52355053  52355219
+36 grna_TTACGCT candidate_enh_16 chr20  52355219  52355386
+37 grna_GGCTTTG candidate_enh_17  chr4  79551179  79551320
+38 grna_AGACTGA candidate_enh_17  chr4  79551320  79551462
+39 grna_TGGTATG candidate_enh_18  chr4  81064453  81064663
+40 grna_GTACTGT candidate_enh_18  chr4  81064663  81064873
+41 grna_ACACCCT candidate_enh_19  chr8  23366136  23366564
+42 grna_TTAAGAG candidate_enh_19  chr8  23366564  23366992
+43 grna_GCAGGGA  candidate_enh_2  chr1 212325491 212325771
+44 grna_CTCTAAT  candidate_enh_2  chr1 212325771 212326051
+45 grna_TTAAGTA candidate_enh_20  chr9 100723075 100723327
+46 grna_AGTAGCC candidate_enh_20  chr9 100723327 100723580
+47 grna_CCTTGAG candidate_enh_21  chr9 101834310 101834418
+48 grna_GAGTGAC candidate_enh_21  chr9 101834418 101834526
+49 grna_GAACATT candidate_enh_22  chr9 130624341 130624862
+50 grna_GTGCACG candidate_enh_22  chr9 130624862 130625383
+51 grna_GCTTCTA candidate_enh_23  chr9 135879214 135879689
+52 grna_GAGGCCA candidate_enh_23  chr9 135879689 135880165
+53 grna_TCCATAG candidate_enh_24  chr9 138313088 138313345
+54 grna_ACGAGCA candidate_enh_24  chr9 138313345 138313603
+55 grna_CCCATTA candidate_enh_25  chr9  75758860  75759012
+56 grna_CCTCCCT candidate_enh_25  chr9  75759012  75759164
+57 grna_AGATTCC  candidate_enh_3  chr1  28195807  28195932
+58 grna_TGAGGAA  candidate_enh_3  chr1  28195932  28196057
+59 grna_TAGCTGT  candidate_enh_4  chr1  92044304  92044484
+60 grna_CATCTTG  candidate_enh_4  chr1  92044484  92044665
+61 grna_TCCCAGA  candidate_enh_5  chr1 173640035 173640326
+62 grna_ATGAAAC  candidate_enh_5  chr1 173640326 173640618
+63 grna_TGTCCCC  candidate_enh_6 chr11  65260068  65260313
+64 grna_ATCACAG  candidate_enh_6 chr11  65260313  65260559
+65 grna_AGAGAGG  candidate_enh_7 chr16  57333355  57334120
+66 grna_GAACTAT  candidate_enh_7 chr16  57334120  57334885
+67 grna_GCACAAT  candidate_enh_8 chr17  42209638  42209856
+68 grna_GCTCATT  candidate_enh_8 chr17  42209856  42210075
+69 grna_CGAGACA  candidate_enh_9 chr19   1245923   1246026
+70 grna_GCACAGC  candidate_enh_9 chr19   1246026   1246129
+71 grna_GGGCAAC    non-targeting  &lt;NA&gt;        NA        NA
+72 grna_AGAGGTA    non-targeting  &lt;NA&gt;        NA        NA
+73 grna_ATAGGCC    non-targeting  &lt;NA&gt;        NA        NA
+74 grna_ATAGATT    non-targeting  &lt;NA&gt;        NA        NA
+75 grna_GCTCTAA    non-targeting  &lt;NA&gt;        NA        NA
+76 grna_GCCTTGT    non-targeting  &lt;NA&gt;        NA        NA
+77 grna_GCTGGGG    non-targeting  &lt;NA&gt;        NA        NA
+78 grna_CGGTGGG    non-targeting  &lt;NA&gt;        NA        NA
+79 grna_ACTGCCT    non-targeting  &lt;NA&gt;        NA        NA
+80 grna_TATTCGT    non-targeting  &lt;NA&gt;        NA        NA
+81 grna_GACCTCC    non-targeting  &lt;NA&gt;        NA        NA
+82 grna_TTTCTCT    non-targeting  &lt;NA&gt;        NA        NA
+83 grna_AATGAGG    non-targeting  &lt;NA&gt;        NA        NA
+84 grna_TCTGCTA    non-targeting  &lt;NA&gt;        NA        NA
+85 grna_CCTGACA    non-targeting  &lt;NA&gt;        NA        NA
+86 grna_CTATAGG    non-targeting  &lt;NA&gt;        NA        NA
+87 grna_TACAACT    non-targeting  &lt;NA&gt;        NA        NA
+88 grna_AGAGTGT    non-targeting  &lt;NA&gt;        NA        NA
+89 grna_CTAAAGC    non-targeting  &lt;NA&gt;        NA        NA
+90 grna_TAGCTTG    non-targeting  &lt;NA&gt;        NA        NA
+91 grna_ATTAGCA    non-targeting  &lt;NA&gt;        NA        NA
+92 grna_AGATACC    non-targeting  &lt;NA&gt;        NA        NA
+93 grna_ATATGTA    non-targeting  &lt;NA&gt;        NA        NA
+94 grna_GTAGCCT    non-targeting  &lt;NA&gt;        NA        NA
+95 grna_TTAGCTT    non-targeting  &lt;NA&gt;        NA        NA</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.3.13-el8-x86_64/lib/libopenblas_skylakexp-r0.3.13.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] readr_1.4.0        sceptredata_0.99.0 sceptre_0.10.0    
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.12       lattice_0.22-5    rprojroot_2.0.4   digest_0.6.33    
+ [5] utf8_1.2.1        R6_2.5.1          evaluate_0.23     ggplot2_3.5.1    
+ [9] pillar_1.9.0      rlang_1.1.2       data.table_1.14.8 whisker_0.4.1    
+[13] jquerylib_0.1.4   R.utils_2.10.1    R.oo_1.24.0       Matrix_1.6-3     
+[17] rmarkdown_2.27    textshaping_0.4.0 labeling_0.4.3    stringr_1.5.1    
+[21] munsell_0.5.0     compiler_4.1.0    httpuv_1.6.1      xfun_0.45        
+[25] pkgconfig_2.0.3   systemfonts_1.1.0 htmltools_0.5.8.1 tidyselect_1.2.0 
+[29] tibble_3.2.1      workflowr_1.6.2   fansi_1.0.5       crayon_1.5.2     
+[33] dplyr_1.1.4       withr_2.5.2       later_1.2.0       R.methodsS3_1.8.2
+[37] BH_1.81.0-1       grid_4.1.0        jsonlite_1.8.7    gtable_0.3.0     
+[41] lifecycle_1.0.4   git2r_0.32.0      magrittr_2.0.3    scales_1.3.0     
+[45] cli_3.6.1         stringi_1.6.2     cachem_1.0.8      farver_2.1.1     
+[49] fs_1.6.3          promises_1.2.0.1  bslib_0.7.0       ellipsis_0.3.2   
+[53] ragg_1.3.2        generics_0.1.3    vctrs_0.6.4       cowplot_1.1.1    
+[57] tools_4.1.0       glue_1.6.2        purrr_1.0.2       hms_1.1.0        
+[61] parallel_4.1.0    fastmap_1.1.1     yaml_2.2.1        colorspace_2.1-0 
+[65] knitr_1.48        sass_0.4.9       </code></pre>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
