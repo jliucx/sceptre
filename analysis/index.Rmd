@@ -10,5 +10,5 @@ editor_options:
 
 Welcome to my research website.
 
-[Sceptre on dataset from Morris](/project/xuanyao/jiaming/Getting_started/docs/sceptre_example.html)
+[Sceptre on dataset from Morris](/project/xuanyao/jiaming/Getting_started/docs/create_grna_target_data_frame.html)
 

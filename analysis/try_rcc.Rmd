@@ -28,9 +28,9 @@ discovery_pairs <- construct_cis_pairs(
 # apply the pipeline functions to the sceptre_object in order
 sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
   set_analysis_parameters(discovery_pairs, positive_control_pairs) |>
-  run_calibration_check() |>
-  run_power_check() |>
-  run_discovery_analysis()
+  run_calibration_check(parallel = T) |>
+  run_power_check(parallel = T) |>
+  run_discovery_analysis(parallel = T)
 
 # write the results to disk
 

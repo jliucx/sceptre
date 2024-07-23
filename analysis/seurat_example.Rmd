@@ -4,22 +4,14 @@ output: html_document
 ---
 
 ```{r}
+library(readr)
 library(sceptre)
 library(sceptredata)
-directories <- "data/STINGseq-v1_GDO"
-features_dir<-paste0(directories,"/GSM5225859_STINGseq-v1_GDO.umi_thresholds.csv.gz")
-```
-
-```{r}
-features_data <- read_csv(features_dir)
-
-# Print the first few rows of the data
-features_data
 ```
 
 ```{r}
 directories <- "data/STINGseq-v1_GDO"
-features_dir<-paste0(directories,"/GSM5225859_STINGseq-v1_GDO.features.tsv.gz")
+features_dir<-paste0(directories,"/features.tsv.gz")
 matrix_data <- read_tsv(features_dir)
 matrix_data[36601:36810,]
 grna=matrix_data[36601:36810,]
@@ -28,11 +20,6 @@ grna=matrix_data[36601:36810,]
 
 ```{r}
 matrix_data[36601:36810,]
-
-```
-
-```{r}
-
 
 ```
 
@@ -50,7 +37,7 @@ barcode_data <- read_tsv(dir, col_names = F)  # Assuming the file has a header
 ```
 
 ```{r}
-dir="data/STINGseq-v1_GDO/GSM5225859_STINGseq-v1_GDO.features.tsv.gz"
+dir="data/STINGseq-v1_GDO/features.tsv.gz"
 barcode_data <- read_tsv(dir, col_names = F)  # Assuming the file has a header
 barcode_data[36601:36811,]
 
@@ -63,23 +50,13 @@ barcode_data <- read_tsv(dir, col_names = F)  # Assuming the file has a header
 ```
 
 ```{r}
-min_length <- min(length(x), length(y), length(z))
-x <- x[1:min_length,1]
-y <- y[1:min_length,1]
-z <- z[1:min_length,1]
-diff_xy <- sum(x != y)
-diff_xz <- sum(x != z)
-diff_yz <- sum(y != z)
+data_files <- list.files("data/STINGSqr-v1_GDO", full.names = TRUE)
+output_files <- list.files("output/sceptre_outputs", full.names = TRUE)
+analysis_files <- list.files("analysis", pattern = "*.Rmd", full.names = TRUE)
 
-cat("Number of different elements between GDO and cDNA:", diff_xy, "\n")
-cat("Number of different elements between GDO and HTO:", diff_xz, "\n")
-cat("Number of different elements between cDNA and HTO:", diff_yz, "\n")
-diff_all <- sum(x != y | x != z | y != z)
-cat("Number of different elements across GDO, cDNA, and HTO:", diff_all, "\n")
+# Combine all file lists
+all_files <- c(data_files, output_files, analysis_files)
 
-
-```
-
-```{r}
-
+# Publish all files
+wflow_publish(all_files, message = "publish data")
 ```
