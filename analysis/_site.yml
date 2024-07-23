@@ -1,7 +1,7 @@
-name: "first sceptre trial"
+name: first sceptre trial
 output_dir: ../docs
 navbar:
-  title: "first sceptre trial"
+  title: first sceptre trial
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/jliucx/sceptre
 output:
   workflowr::wflow_html:
     toc: yes
