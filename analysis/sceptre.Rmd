@@ -1,0 +1,61 @@
+---
+title: "sceptre_example"
+author: "jliucx"
+date: "2024-07-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+library(sceptre)
+library(sceptredata)
+library(readr)
+```
+
+```{r}
+# load the data, creating a sceptre_object
+directories <- directories <- "data/STINGseq-v1_GDO"
+grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
+grna_target_data_frame
+```
+
+```{r}
+sceptre_object <- import_data_from_cellranger(
+  directories = directories,
+  moi = "high",
+  grna_target_data_frame = grna_target_data_frame
+)
+```
+
+```{r}
+sceptre_object
+```
+
+```{r}
+# construct the grna-gene pairs to analyze
+positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
+positive_control_pairs
+```
+
+```{r}
+discovery_pairs <- construct_cis_pairs(
+  sceptre_object = sceptre_object,
+  positive_control_pairs = positive_control_pairs,
+  response_position_data_frame=gene_position_data_frame_grch37,
+  distance_threshold = 5e6
+)
+discovery_pairs
+```
+
+```{r}
+# apply the pipeline functions to the sceptre_object in order
+sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
+  set_analysis_parameters(discovery_pairs=discovery_pairs, positive_control_pairs=positive_control_pairs, side="left") |>
+  run_calibration_check(parallel = T) |>
+  run_power_check(parallel = T) |>
+  run_discovery_analysis(parallel = T)
+
+# write the results to disk
+write_outputs_to_directory(sceptre_object, "output/sceptre_outputs_cis")
+```
