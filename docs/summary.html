@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="jliucx" />
+
+<meta name="date" content="2024-07-12" />
+
+<title>summary</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">first sceptre trial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jliucx/sceptre">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">summary</h1>
+<h4 class="author">jliucx</h4>
+<h4 class="date">2024-07-12</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-07-26
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Getting_started/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240712code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20240712)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240712code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240712)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree3b868a1446f4ea01f21af4cac42541e271bccfd8targetblank3b868a1a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/3b868a1446f4ea01f21af4cac42541e271bccfd8" target="_blank">3b868a1</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree3b868a1446f4ea01f21af4cac42541e271bccfd8targetblank3b868a1a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/3b868a1446f4ea01f21af4cac42541e271bccfd8" target="_blank">3b868a1</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
+    Ignored:    analysis/job-info.err
+    Ignored:    analysis/job-info.out
+    Ignored:    analysis/run_sceptre_example.sh
+
+Untracked files:
+    Untracked:  analysis/images/
+    Untracked:  analysis/try_Knit.Rmd
+    Untracked:  data/GDO_threshold/
+    Untracked:  data/STINGseq-v1_GDO/
+    Untracked:  data/STINGseq-v1_HTO/
+    Untracked:  data/STINGseq-v1_cDNA/
+    Untracked:  output/sceptre_outputs_cis/
+    Untracked:  output/sceptre_outputs_cis_threshold/
+    Untracked:  output/try_rcc/
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/create_grna_target_data_frame.Rmd
+    Modified:   analysis/sceptre.Rmd
+    Modified:   analysis/sceptre_example.Rmd
+    Deleted:    analysis/seurat_example.Rmd
+    Deleted:    analysis/try_rcc.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/summary.Rmd</code>) and HTML (<code>docs/summary.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/3b868a1446f4ea01f21af4cac42541e271bccfd8/analysis/summary.Rmd" target="_blank">3b868a1</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-07-26
+</td>
+<td>
+Summary
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>library(sceptre)
+library(sceptredata)
+library(readr)</code></pre>
+<pre class="r"><code>directories &lt;- directories &lt;- &quot;data/STINGseq-v1_GDO&quot;
+grna_target_data_frame &lt;- data.frame(read_csv(paste0(directories,&quot;/grna_target_data_frame.csv&quot;)))</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  grna_id = col_character(),
+  grna_target = col_character(),
+  chr = col_character(),
+  start = col_double(),
+  end = col_double()
+)</code></pre>
+<pre class="r"><code>sceptre_object &lt;- import_data_from_cellranger(
+  directories = directories,
+  moi = &quot;high&quot;,
+  grna_target_data_frame = grna_target_data_frame
+)</code></pre>
+<pre><code>Processing directory 1. ✓
+Combining matrices across directories. ✓
+Creating the sceptre object. ✓</code></pre>
+<pre class="r"><code>sceptre_object</code></pre>
+<pre><code>An object of class sceptre_object.
+
+Attributes of the data:
+    • 15215 cells
+    • 36601 responses
+    • High multiplicity-of-infection 
+    • 198 targeting gRNAs (distributed across 95 targets) 
+    • 12 non-targeting gRNAs 
+    • 5 covariates (grna_n_nonzero, grna_n_umis, response_n_nonzero, response_n_umis, response_p_mito)</code></pre>
+<div id="part1-sceptre-workflow" class="section level2">
+<h2>Part1: Sceptre Workflow</h2>
+<p>The overall pipeline can be summarized as follows:</p>
+<p><img src="../analysis/images/1.png" /></p>
+<div id="import-data" class="section level3">
+<h3>1. Import data</h3>
+<p>The first step is to import the data. <strong>Data can be imported into <code>sceptre</code> from 10x Cell Ranger or Parse outputs, as well as from R matrices.</strong> The simplest way to import the data is to read the output of one or more calls to <code>cellranger_count</code> into <code>sceptre</code> via the function <a href="https://rdrr.io/pkg/sceptre/man/import_data_from_cellranger.html"><code>import_data_from_cellranger()</code></a>.</p>
+<p>The mapping document <code>grna_target_data_frame</code> should also be passed to the import function. <code>grna_target_data_frame</code> is a data frame mapping each individual gRNA to the genomic element that the gRNA targets.</p>
+<pre class="r"><code>grna_target_data_frame[c(1:4,176:180,189:195),]</code></pre>
+<pre><code>     grna_id       grna_target   chr     start       end
+1    SNP-1_1        rs76708468 chr17  62206299  62206299
+2    SNP-1_2        rs76708468 chr17  62206299  62206299
+3    SNP-2_1 13:113875407_GC_G chr13 113875407 113875407
+4    SNP-2_2 13:113875407_GC_G chr13 113875407 113875407
+176 SNP-88_2         rs9943081  chr1 226538054 226538054
+177   CD46-1   ENSG00000117335  chr1 207925383 207968861
+178   CD46-2   ENSG00000117335  chr1 207925383 207968861
+179   CD52-1   ENSG00000169442  chr1  26644449  26647014
+180   CD52-2   ENSG00000169442  chr1  26644449  26647014
+189    NTC-1     non-targeting  &lt;NA&gt;        NA        NA
+190    NTC-2     non-targeting  &lt;NA&gt;        NA        NA
+191    NTC-3     non-targeting  &lt;NA&gt;        NA        NA
+192    NTC-4     non-targeting  &lt;NA&gt;        NA        NA
+193    NTC-5     non-targeting  &lt;NA&gt;        NA        NA
+194    NTC-6     non-targeting  &lt;NA&gt;        NA        NA
+195    NTC-7     non-targeting  &lt;NA&gt;        NA        NA</code></pre>
+</div>
+<div id="set-analysis-parameters" class="section level3">
+<h3>2. Set analysis parameters</h3>
+<div id="positive-control-pairs" class="section level4">
+<h4>Positive control pairs</h4>
+<p>A <strong><em>positive control</em></strong> <strong><em>target-response pair</em></strong> is a target-response pair for which we know that there <em>is</em> a relationship between the target and the response. Positive control target-response pairs often are formed by coupling a transcription start site to the gene known to be regulated by that transcription start site.</p>
+<pre class="r"><code>positive_control_pairs &lt;- construct_positive_control_pairs(sceptre_object)
+positive_control_pairs</code></pre>
+<pre><code>      grna_target     response_id
+1 ENSG00000117335 ENSG00000117335
+2 ENSG00000169442 ENSG00000169442
+3 ENSG00000109971 ENSG00000109971
+4 ENSG00000109255 ENSG00000109255
+5 ENSG00000196262 ENSG00000196262
+6 ENSG00000116251 ENSG00000116251
+7 ENSG00000196352 ENSG00000196352</code></pre>
+</div>
+<div id="negative-control-pairs" class="section level4">
+<h4>Negative control pairs</h4>
+<p>A <strong><em>negative control</em></strong> <strong><em>target-response pair</em></strong> is a target-response pair for which we know that there <em>is</em> not a relationship between the target and the response.</p>
+</div>
+<div id="discovery-pairs" class="section level4">
+<h4>Discovery pairs</h4>
+<p>The functions <a href="https://rdrr.io/pkg/sceptre/man/construct_cis_pairs.html"><code>construct_cis_pairs()</code></a> and <a href="https://rdrr.io/pkg/sceptre/man/construct_trans_pairs.html"><code>construct_trans_pairs()</code></a> facilitate the construction of <em>cis</em> and <em>trans</em> discovery sets, respectively. <a href="https://rdrr.io/pkg/sceptre/man/construct_cis_pairs.html"><code>construct_cis_pairs()</code></a> takes as arguments a <code>sceptre_object</code> and an integer <code>distance_threshold</code> and returns the set of response-target pairs located on the same chromosome within <code>distance_threshold</code> bases of one another.</p>
+<pre class="r"><code>discovery_pairs &lt;- construct_cis_pairs(
+  sceptre_object = sceptre_object,
+  positive_control_pairs = positive_control_pairs,
+  response_position_data_frame=gene_position_data_frame_grch37,
+  distance_threshold = 5e6
+)
+head(discovery_pairs)</code></pre>
+<pre><code>  grna_target     response_id
+1  rs76708468 ENSG00000182628
+2  rs76708468 ENSG00000068489
+3  rs76708468 ENSG00000265415
+4  rs76708468 ENSG00000167447
+5  rs76708468 ENSG00000153982
+6  rs76708468 ENSG00000175155</code></pre>
+</div>
+</div>
+<div id="assign-grna-to-cells" class="section level3">
+<h3>3. Assign gRNA to cells</h3>
+<div id="mixture-method" class="section level4">
+<h4>Mixture method</h4>
+<p>The mixture method is the default method for high-MOI screens and is an optional method for low-MOI screens. The method works as follows. First, we fit a latent variable Poisson GLM to the data, regressing the gRNA UMI count vector onto the (latent) gRNA indicator vector and cell-specific covariate matrix. (A given entry of the gRNA indicator vector is defined to be “1” if the gRNA is present in the corresponding cell and “0” otherwise.) We fit the latent variable Poisson GLM using a novel variant of the EM algorithm. The fitted model yields the probability that each cell contains the gRNA; we threshold these probabilities to assign the gRNA to cells.</p>
+<p>The mixture method assigns gRNAs to cells using a latent variable generalized linear model (GLM). Consider a given gRNA <span class="math inline">\(i\)</span>. Let <span class="math inline">\(G_j\)</span> be the UMI count of gRNA <span class="math inline">\(i\)</span> in cell <span class="math inline">\(j\)</span>, and let <span class="math inline">\(X_j\)</span> be the (unobserved) variable indicating whether gRNA <span class="math inline">\(i\)</span> is present (<span class="math inline">\(X_j = 1\)</span>) or absent (<span class="math inline">\(X_j = 0\)</span>) in cell <span class="math inline">\(j\)</span>. (We suppress the <span class="math inline">\(i\)</span> subscript for notational compactness.) We model the gRNA UMI counts using a latent variable Poisson GLM:</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+G_j \mid \mu_j &amp;\sim \text{Pois}(\mu_j) \\\log(\mu_j \mid X_j, Z_j) &amp;= \gamma X_j + \beta^T Z_j \\X_j &amp;\sim \text{Bernoulli}(\pi)
+\end{aligned}
+\end{equation}\]</span></p>
+<p><strong>EM algorithm:</strong> We derive an EM algorithm to estimate the model. Let <span class="math inline">\(\theta = (\gamma, \pi)\)</span> denote the unknown model parameters. We begin by writing down the complete-data likelihood <span class="math inline">\(l\)</span> of this model, which is the likelihood that would result if <span class="math inline">\(X_1, \ldots, X_n\)</span> had been observed. <span class="math display">\[\begin{equation}
+\begin{aligned}
+l(\theta) = \prod_{j=1}^{n} \mathbb{P}(G_j = g_j, X_j = x_j) &amp;= \prod_{j=1}^{n} \mathbb{P}(G_j = g_j \mid X_j = x_j) \mathbb{P}(X_j = x_j)\\
+&amp;=\prod_{j=1}^{n} f(g_j; \exp(\gamma x_j + o_j)) \left[ \pi^{x_j} (1 - \pi)^{1 - x_j} \right]
+\end{aligned}
+\end{equation}
+\]</span></p>
+<p>We obtain the complete-data log-likelihood <span class="math inline">\(L\)</span> by taking the log of <span class="math inline">\(l\)</span>): <span class="math display">\[\begin{equation}
+L(\theta) = \log(l(\theta)) = \sum_{j=1}^{n} \log \left[ f(g_j; \exp(\gamma x_j + o_j)) \right] + \sum_{j=1}^{n} \left[ x_j \log(\pi) + (1 - x_j) \log(1 - \pi) \right]
+\end{equation}\]</span></p>
+<p><strong>E-step</strong>: The E step entails computing the membership probability of each cell (i.e., the probability that each cell contains the gRNA given the current parameter estimates and the observed gRNA counts). Let <span class="math inline">\(\theta^{(t)} = (\gamma^{(t)}, \pi^{(t)})\)</span> be the parameter estimate for <span class="math inline">\(\theta\)</span> at the t th iteration of the algorithm. The j th membership probability at the t th iteration of the algorithm <span class="math inline">\(T_j^{(t)}\)</span> is defined as</p>
+<p><span class="math display">\[T_j^{(t)} = \mathbb{P}(X_j = 1 \mid G_j = g_j, \theta^{(t)})=\frac{\mathbb{P}(G_j = g_j \mid X_j = 1, \theta^{(t)}) \mathbb{P}(X_j = 1 \mid \theta^{(t)})}
+{\sum_{k=0}^{1} \mathbb{P}(G_j = g_j \mid X_j = k, \theta^{(t)}) \mathbb{P}(X_j = k \mid \theta^{(t)})}\]</span></p>
+<p><strong>M-step:</strong> The M-step involves maximizing the so-called “Q function,” which is the function that results from taking the expectation of the complete-data log-likelihood with respect to the <span class="math inline">\(X_j\)</span>’s while conditioning on the <span class="math inline">\(G_j\)</span>’s and the current parameter estimates <span class="math inline">\(\theta^{(t)}\)</span>. Formally, the Q function <span class="math inline">\(Q(\theta \mid \theta^{(t)})\)</span> is defined as</p>
+<p><span class="math display">\[Q(\theta \mid \theta^{(t)}) = \mathbb{E}_{X_1, \ldots, X_n} [L(\theta) \mid G_1 = g_1, \ldots, G_n = g_n, \theta^{(t)}]\]</span> We can express the Q function as</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+Q(\theta \mid \theta^{(t)}) &amp;= \sum_{j=1}^{n} T_j^{(t)} \log(\pi) + \sum_{j=1}^{n} (1 - T_j^{(t)}) \log(1 - \pi)\\
+&amp;+ \sum_{j=1}^{n} T_j^{(t)} \log [f(g_j; \exp(\gamma + o_j))] + \sum_{j=1}^{n} (1 - T_j^{(t)}) \log [f(g_j; \exp(o_j))]
+\end{aligned}
+\end{equation}
+\]</span></p>
+</div>
+<div id="threshold-method" class="section level4">
+<h4>Threshold method</h4>
+<p>The second method for assigning gRNAs to cells is the <code>"thresholding"</code> method; this method is available in both low- and high-MOI settings. The thresholding method assigns a gRNA to a cell if the UMI count of the gRNA in the cell is greater than or equal to some integer threshold (by default 5).</p>
+</div>
+</div>
+<div id="run-quality-control-optional" class="section level3">
+<h3>4. Run quality control (optional)</h3>
+<p>The fourth step is to run quality control (QC). This step likewise can be skipped, in which case QC is applied automatically using default options. <strong><code>sceptre</code> implements two kinds of QC: cellwise QC and pairwise QC. The former aims to remove low-quality cells, while the latter aims to remove low-quality target-response pairs.</strong></p>
+<p>The cellwise QC that <code>sceptre</code> implements is standard in single-cell analysis. Cells for which <code>response_n_nonzero</code> (i.e., the number of expressed responses) or <code>response_n_umis</code> (i.e., the number of response UMIs) are extremely high or extremely low are removed. Likewise, cells for which <code>response_p_mito</code> (i.e., the fraction of UMIs mapping to mitochondrial genes) is excessively high are removed. Additionally, in low-MOI, cells that contain zero or multiple gRNAs (as determined during the RNA-to-cell assignment step) are removed. Finally, users optionally can provide a list of additional cells to remove.</p>
+<p><code>sceptre</code> also implements QC at the level of the target-response pair. For a given pair we define the “treatment cells” as those that contain a gRNA targeting the given target. Next, we define the “control cells” as the cells against which the treatment cells are compared to carry out the differential expression test. We define the “number of nonzero treatment cells” (<code>n_nonzero_trt</code>) as the number of <em>treatment</em> cells with nonzero expression of the response; similarly, we define the “number of nonzero control cells” (<code>n_nonzero_cntrl</code>) as the number of <em>control</em> cells with nonzero expression of the response. <code>sceptre</code> filters out pairs for which <code>n_nonzero_trt</code> or <code>n_nonzero_cntrl</code> falls below some threshold (by default 7).</p>
+<p><br />
+</p>
+<pre class="r"><code>sceptre_object &lt;- sceptre_object |&gt; # |&gt; is R&#39;s base pipe, similar to %&gt;%
+  set_analysis_parameters(discovery_pairs=discovery_pairs, positive_control_pairs=positive_control_pairs, side=&quot;left&quot;) |&gt;
+  assign_grnas()</code></pre>
+<pre class="r"><code>sceptre_object &lt;- run_qc(sceptre_object, p_mito_threshold = 0.075)
+plot(sceptre_object)</code></pre>
+<p><img src="figure/summary.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="calibration-check" class="section level3">
+<h3>5. Calibration check</h3>
+<p><strong>The calibration check is an analysis that verifies that <code>sceptre</code> controls the rate of false discoveries on the dataset under analysis.</strong> The calibration check proceeds as follows. First, negative control target-response pairs are constructed (automatically) by coupling subsets of NT gRNAs to randomly selected responses. Importantly, the negative control pairs are constructed in such a way that they are similar to the discovery pairs, the difference being that the negative control pairs are devoid of biological signal.</p>
+<pre class="r"><code>sceptre_object &lt;- run_calibration_check(sceptre_object, parallel = F)</code></pre>
+<pre class="r"><code>plot(sceptre_object)</code></pre>
+<p><img src="figure/summary.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="power-check" class="section level3">
+<h3>6. Power check</h3>
+<p>The power check involves applying <code>sceptre</code> to analyze the positive control pairs. Given that the positive control pairs are known to contain signal, <code>sceptre</code> should produce significant (i.e., small) p-values on the positive control pairs. <strong>The power check enables us to assess <code>sceptre</code>’s power (i.e., its ability to detect true associations) on the dataset under analysis.</strong> We run the power check by calling the function <a href="https://rdrr.io/pkg/sceptre/man/run_power_check.html"><code>run_power_check()</code></a> on the <code>sceptre_object</code>.</p>
+</div>
+<div id="discovery-analysis" class="section level3">
+<h3>7. Discovery analysis</h3>
+<p>There are three pieces of information relevant to testing for association between a given gRNA and response: (1) the vector of UMI counts of the response; (2) the “gRNA indicator vector,” where a given entry of the vector is set to “1” if the corresponding cell is part of the treatment group (i.e., it contains the gRNA) and “0” if it is part of the control group; and (3) the matrix of cell-specific covariates. First, <code>sceptre</code> computes the z-score <span class="math inline">\(z_{\text{obs}}\)</span>corresponding to a test of the null hypothesis that the coefficient corresponding to the gRNA indicator vector in the fitted GLM is zero. Next, <code>sceptre</code> resamples the gRNA indicator vector B times, where B is some large integer (e.g., B = 5000). (We discuss exactly how the gRNA indicator vector is resampled below.) Finally, for each of the resampled gRNA indicator vectors, <code>sceptre</code> recomputes the z-score, producing B “null” z-scores <span class="math inline">\(\tilde{z}_1, \ldots, \tilde{z}_B\)</span>. The observed z-score <span class="math inline">\(z_{\text{obs}}\)</span> is compared to the null z-scores <span class="math inline">\(\tilde{z}_1, \ldots, \tilde{z}_B\)</span> to compute a p-value.</p>
+<p><img src="images/2.png" /></p>
+<p><img src="images/3.png" /></p>
+</div>
+</div>
+<div id="part-2-comparison-of-outcomes" class="section level2">
+<h2>Part 2: Comparison of outcomes</h2>
+<p>We performed 3 analysis using different parameters. The first analysis uses the construct_trans_pairs() function of sceptre. This gives us the all the possible combination of gRNA targets and genes. Both the second and the third analysis use the construct_cis_pairs() of sceptre. They only considered the gRNA target and gene pairs that are at the same chromosome and with close proximity. The difference of these two test lies in the way we assign gRNA to cells. The former one uses mixture model, whereas the latter one uses the threshold directly.</p>
+<div id="calibration-check-1" class="section level3">
+<h3>Calibration check</h3>
+<ul>
+<li><strong>Analysis 1</strong></li>
+</ul>
+<p><img src="images/plot_run_calibration_check-01.png" /></p>
+<ul>
+<li><strong>Analysis 2</strong></li>
+</ul>
+<p><img src="images/plot_run_calibration_check-02.png" /></p>
+<ul>
+<li><strong>Analysis 3</strong></li>
+</ul>
+<p><img src="images/plot_run_calibration_check-03.png" /></p>
+</div>
+<div id="power-check-1" class="section level3">
+<h3>Power check</h3>
+<ul>
+<li><strong>Analysis 1</strong></li>
+</ul>
+<p><img src="images/plot_run_power_check.png" /></p>
+<ul>
+<li><strong>Analysis 2</strong></li>
+</ul>
+<p><img src="images/plot_run_power_check-01.png" /></p>
+<ul>
+<li><strong>Analysis 3</strong></li>
+</ul>
+<p><img src="images/plot_run_power_check-02.png" /></p>
+</div>
+<div id="summary" class="section level3">
+<h3>Summary</h3>
+<ul>
+<li><a href="../output/sceptre_outputs/analysis_summary.txt">Analysis 1</a></li>
+<li><a href="../output/sceptre_outputs_cis/analysis_summary.txt">Analysis 2</a></li>
+<li><a href="../output/sceptre_outputs_cis_threshold/analysis_summary.txt">Analysis 3</a></li>
+</ul>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el8-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
+ [4] LC_COLLATE=C         LC_MONETARY=C        LC_MESSAGES=C       
+ [7] LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C        
+[10] LC_TELEPHONE=C       LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] readr_1.4.0        sceptredata_0.99.0 sceptre_0.10.0     workflowr_1.6.2   
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.0  xfun_0.45         bslib_0.7.0       purrr_1.0.2      
+ [5] lattice_0.22-5    colorspace_2.1-0  vctrs_0.6.4       generics_0.1.3   
+ [9] htmltools_0.5.8.1 yaml_2.2.1        utf8_1.2.1        rlang_1.1.2      
+[13] R.oo_1.24.0       jquerylib_0.1.4   later_1.2.0       pillar_1.9.0     
+[17] glue_1.6.2        withr_2.5.2       R.utils_2.10.1    lifecycle_1.0.4  
+[21] stringr_1.5.1     munsell_0.5.0     gtable_0.3.0      R.methodsS3_1.8.2
+[25] evaluate_0.23     labeling_0.4.3    knitr_1.48        fastmap_1.1.1    
+[29] httpuv_1.6.1      fansi_1.0.5       highr_0.11        Rcpp_1.0.12      
+[33] scales_1.3.0      promises_1.2.0.1  cachem_1.0.8      jsonlite_1.8.7   
+[37] farver_2.1.1      fs_1.6.3          ggplot2_3.5.1     hms_1.1.0        
+[41] digest_0.6.33     stringi_1.6.2     dplyr_1.1.4       cowplot_1.1.1    
+[45] rprojroot_2.0.4   grid_4.1.0        BH_1.84.0-0       cli_3.6.1        
+[49] tools_4.1.0       magrittr_2.0.3    sass_0.4.9        tibble_3.2.1     
+[53] crayon_1.5.2      whisker_0.4.1     pkgconfig_2.0.3   ellipsis_0.3.2   
+[57] Matrix_1.6-3      data.table_1.14.8 rmarkdown_2.27    rstudioapi_0.15.0
+[61] R6_2.5.1          git2r_0.32.0      compiler_4.1.0   </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
