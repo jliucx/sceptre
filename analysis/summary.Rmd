@@ -1,0 +1,203 @@
+---
+title: "summary"
+author: "jliucx"
+date: "2024-07-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+library(sceptre)
+library(sceptredata)
+library(readr)
+```
+
+```{r}
+directories <- directories <- "data/STINGseq-v1_GDO"
+grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
+sceptre_object <- import_data_from_cellranger(
+  directories = directories,
+  moi = "high",
+  grna_target_data_frame = grna_target_data_frame
+)
+```
+
+```{r}
+sceptre_object
+```
+
+## Part1: Sceptre Workflow
+
+The overall pipeline can be summarized as follows:
+
+![](../analysis/images/1.png)
+
+### 1. Import data
+
+The first step is to import the data. **Data can be imported into `sceptre` from 10x Cell Ranger or Parse outputs, as well as from R matrices.** The simplest way to import the data is to read the output of one or more calls to `cellranger_count` into `sceptre` via the function [`import_data_from_cellranger()`](https://rdrr.io/pkg/sceptre/man/import_data_from_cellranger.html).
+
+The mapping document `grna_target_data_frame` should also be passed to the import function. `grna_target_data_frame` is a data frame mapping each individual gRNA to the genomic element that the gRNA targets.
+
+```{r}
+grna_target_data_frame[c(1:4,176:180,189:195),]
+```
+
+### 2. Set analysis parameters
+
+#### Positive control pairs
+
+A ***positive control*** ***target-response pair*** is a target-response pair for which we know that there *is* a relationship between the target and the response. Positive control target-response pairs often are formed by coupling a transcription start site to the gene known to be regulated by that transcription start site.
+
+```{r}
+positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
+positive_control_pairs
+```
+
+#### Negative control pairs
+
+A ***negative control*** ***target-response pair*** is a target-response pair for which we know that there *is* not a relationship between the target and the response.
+
+#### Discovery pairs
+
+The functions [`construct_cis_pairs()`](https://rdrr.io/pkg/sceptre/man/construct_cis_pairs.html) and [`construct_trans_pairs()`](https://rdrr.io/pkg/sceptre/man/construct_trans_pairs.html) facilitate the construction of *cis* and *trans* discovery sets, respectively. [`construct_cis_pairs()`](https://rdrr.io/pkg/sceptre/man/construct_cis_pairs.html) takes as arguments a `sceptre_object` and an integer `distance_threshold` and returns the set of response-target pairs located on the same chromosome within `distance_threshold` bases of one another.
+
+```{r}
+discovery_pairs <- construct_cis_pairs(
+  sceptre_object = sceptre_object,
+  positive_control_pairs = positive_control_pairs,
+  response_position_data_frame=gene_position_data_frame_grch37,
+  distance_threshold = 5e6
+)
+head(discovery_pairs)
+```
+
+### 3. Assign gRNA to cells
+
+#### Mixture method
+
+The mixture method is the default method for high-MOI screens and is an optional method for low-MOI screens. The method works as follows. First, we fit a latent variable Poisson GLM to the data, regressing the gRNA UMI count vector onto the (latent) gRNA indicator vector and cell-specific covariate matrix. (A given entry of the gRNA indicator vector is defined to be "1" if the gRNA is present in the corresponding cell and "0" otherwise.) We fit the latent variable Poisson GLM using a novel variant of the EM algorithm. The fitted model yields the probability that each cell contains the gRNA; we threshold these probabilities to assign the gRNA to cells.
+
+The mixture method assigns gRNAs to cells using a latent variable generalized linear model (GLM). Consider a given gRNA $i$. Let $G_j$ be the UMI count of gRNA $i$ in cell $j$, and let $X_j$ be the (unobserved) variable indicating whether gRNA $i$ is present ($X_j = 1$) or absent ($X_j = 0$) in cell $j$. (We suppress the $i$ subscript for notational compactness.) We model the gRNA UMI counts using a latent variable Poisson GLM:
+
+$$\begin{equation}
+\begin{aligned}
+G_j \mid \mu_j &\sim \text{Pois}(\mu_j) \\\log(\mu_j \mid X_j, Z_j) &= \gamma X_j + \beta^T Z_j \\X_j &\sim \text{Bernoulli}(\pi)
+\end{aligned}
+\end{equation}$$
+
+**EM algorithm:** We derive an EM algorithm to estimate the model. Let $\theta = (\gamma, \pi)$ denote the unknown model parameters. We begin by writing down the complete-data likelihood $l$ of this model, which is the likelihood that would result if $X_1, \ldots, X_n$ had been observed. $$\begin{equation}
+\begin{aligned}
+l(\theta) = \prod_{j=1}^{n} \mathbb{P}(G_j = g_j, X_j = x_j) &= \prod_{j=1}^{n} \mathbb{P}(G_j = g_j \mid X_j = x_j) \mathbb{P}(X_j = x_j)\\
+&=\prod_{j=1}^{n} f(g_j; \exp(\gamma x_j + o_j)) \left[ \pi^{x_j} (1 - \pi)^{1 - x_j} \right]
+\end{aligned}
+\end{equation}
+$$
+
+We obtain the complete-data log-likelihood $L$ by taking the log of $l$): $$\begin{equation}
+L(\theta) = \log(l(\theta)) = \sum_{j=1}^{n} \log \left[ f(g_j; \exp(\gamma x_j + o_j)) \right] + \sum_{j=1}^{n} \left[ x_j \log(\pi) + (1 - x_j) \log(1 - \pi) \right]
+\end{equation}$$
+
+**E-step**: The E step entails computing the membership probability of each cell (i.e., the probability that each cell contains the gRNA given the current parameter estimates and the observed gRNA counts). Let $\theta^{(t)} = (\gamma^{(t)}, \pi^{(t)})$ be the parameter estimate for $\theta$ at the t th iteration of the algorithm. The j th membership probability at the t th iteration of the algorithm $T_j^{(t)}$ is defined as
+
+$$T_j^{(t)} = \mathbb{P}(X_j = 1 \mid G_j = g_j, \theta^{(t)})=\frac{\mathbb{P}(G_j = g_j \mid X_j = 1, \theta^{(t)}) \mathbb{P}(X_j = 1 \mid \theta^{(t)})}
+{\sum_{k=0}^{1} \mathbb{P}(G_j = g_j \mid X_j = k, \theta^{(t)}) \mathbb{P}(X_j = k \mid \theta^{(t)})}$$
+
+**M-step:** The M-step involves maximizing the so-called "Q function," which is the function that results from taking the expectation of the complete-data log-likelihood with respect to the $X_j$'s while conditioning on the $G_j$'s and the current parameter estimates $\theta^{(t)}$. Formally, the Q function $Q(\theta \mid \theta^{(t)})$ is defined as
+
+$$Q(\theta \mid \theta^{(t)}) = \mathbb{E}_{X_1, \ldots, X_n} [L(\theta) \mid G_1 = g_1, \ldots, G_n = g_n, \theta^{(t)}]$$ We can express the Q function as
+
+$$\begin{equation}
+\begin{aligned}
+Q(\theta \mid \theta^{(t)}) &= \sum_{j=1}^{n} T_j^{(t)} \log(\pi) + \sum_{j=1}^{n} (1 - T_j^{(t)}) \log(1 - \pi)\\
+&+ \sum_{j=1}^{n} T_j^{(t)} \log [f(g_j; \exp(\gamma + o_j))] + \sum_{j=1}^{n} (1 - T_j^{(t)}) \log [f(g_j; \exp(o_j))]
+\end{aligned}
+\end{equation}
+$$
+
+#### Threshold method
+
+The second method for assigning gRNAs to cells is the `"thresholding"` method; this method is available in both low- and high-MOI settings. The thresholding method assigns a gRNA to a cell if the UMI count of the gRNA in the cell is greater than or equal to some integer threshold (by default 5).
+
+### 4. Run quality control (optional)
+
+The fourth step is to run quality control (QC). This step likewise can be skipped, in which case QC is applied automatically using default options. **`sceptre` implements two kinds of QC: cellwise QC and pairwise QC. The former aims to remove low-quality cells, while the latter aims to remove low-quality target-response pairs.**
+
+The cellwise QC that `sceptre` implements is standard in single-cell analysis. Cells for which `response_n_nonzero` (i.e., the number of expressed responses) or `response_n_umis` (i.e., the number of response UMIs) are extremely high or extremely low are removed. Likewise, cells for which `response_p_mito` (i.e., the fraction of UMIs mapping to mitochondrial genes) is excessively high are removed. Additionally, in low-MOI, cells that contain zero or multiple gRNAs (as determined during the RNA-to-cell assignment step) are removed. Finally, users optionally can provide a list of additional cells to remove.
+
+`sceptre` also implements QC at the level of the target-response pair. For a given pair we define the "treatment cells" as those that contain a gRNA targeting the given target. Next, we define the "control cells" as the cells against which the treatment cells are compared to carry out the differential expression test. We define the "number of nonzero treatment cells" (`n_nonzero_trt`) as the number of *treatment* cells with nonzero expression of the response; similarly, we define the "number of nonzero control cells" (`n_nonzero_cntrl`) as the number of *control* cells with nonzero expression of the response. `sceptre` filters out pairs for which `n_nonzero_trt` or `n_nonzero_cntrl` falls below some threshold (by default 7).
+
+\
+
+```{r results='hide'}
+sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
+  set_analysis_parameters(discovery_pairs=discovery_pairs, positive_control_pairs=positive_control_pairs, side="left") |>
+  assign_grnas()
+```
+
+```{r}
+sceptre_object <- run_qc(sceptre_object, p_mito_threshold = 0.075)
+plot(sceptre_object)
+```
+
+### 5. Calibration check
+
+**The calibration check is an analysis that verifies that `sceptre` controls the rate of false discoveries on the dataset under analysis.** The calibration check proceeds as follows. First, negative control target-response pairs are constructed (automatically) by coupling subsets of NT gRNAs to randomly selected responses. Importantly, the negative control pairs are constructed in such a way that they are similar to the discovery pairs, the difference being that the negative control pairs are devoid of biological signal.
+
+```{r results='hide'}
+sceptre_object <- run_calibration_check(sceptre_object, parallel = F)
+```
+
+```{r}
+plot(sceptre_object)
+```
+
+### 6. Power check
+
+The power check involves applying `sceptre` to analyze the positive control pairs. Given that the positive control pairs are known to contain signal, `sceptre` should produce significant (i.e., small) p-values on the positive control pairs. **The power check enables us to assess `sceptre`'s power (i.e., its ability to detect true associations) on the dataset under analysis.** We run the power check by calling the function [`run_power_check()`](https://rdrr.io/pkg/sceptre/man/run_power_check.html) on the `sceptre_object`.
+
+### 7. Discovery analysis
+
+There are three pieces of information relevant to testing for association between a given gRNA and response: (1) the vector of UMI counts of the response; (2) the "gRNA indicator vector," where a given entry of the vector is set to "1" if the corresponding cell is part of the treatment group (i.e., it contains the gRNA) and "0" if it is part of the control group; and (3) the matrix of cell-specific covariates. First, `sceptre` computes the z-score $z_{\text{obs}}$corresponding to a test of the null hypothesis that the coefficient corresponding to the gRNA indicator vector in the fitted GLM is zero. Next, `sceptre` resamples the gRNA indicator vector B times, where B is some large integer (e.g., B = 5000). (We discuss exactly how the gRNA indicator vector is resampled below.) Finally, for each of the resampled gRNA indicator vectors, `sceptre` recomputes the z-score, producing B "null" z-scores $\tilde{z}_1, \ldots, \tilde{z}_B$. The observed z-score $z_{\text{obs}}$ is compared to the null z-scores $\tilde{z}_1, \ldots, \tilde{z}_B$ to compute a p-value.
+
+![](images/2.png)
+
+![](images/3.png)
+
+## Part 2: Comparison of outcomes
+
+We performed 3 analysis using different parameters. The first analysis uses the construct_trans_pairs() function of sceptre. This gives us the all the possible combination of gRNA targets and genes. Both the second and the third analysis use the construct_cis_pairs() of sceptre. They only considered the gRNA target and gene pairs that are at the same chromosome and with close proximity. The difference of these two test lies in the way we assign gRNA to cells. The former one uses mixture model, whereas the latter one uses the threshold directly.
+
+### Calibration check
+
+-   **Analysis 1**
+
+![](images/plot_run_calibration_check-01.png)
+
+-   **Analysis 2**
+
+![](images/plot_run_calibration_check-02.png)
+
+-   **Analysis 3**
+
+![](images/plot_run_calibration_check-03.png)
+
+### Power check
+
+-   **Analysis 1**
+
+![](images/plot_run_power_check.png)
+
+-   **Analysis 2**
+
+![](images/plot_run_power_check-01.png)
+
+-   **Analysis 3**
+
+![](images/plot_run_power_check-02.png)
+
+### Summary
+
+-   [Analysis 1](../output/sceptre_outputs/analysis_summary.txt)
+-   [Analysis 2](../output/sceptre_outputs_cis/analysis_summary.txt)
+-   [Analysis 3](../output/sceptre_outputs_cis_threshold/analysis_summary.txt)
