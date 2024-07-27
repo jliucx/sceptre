@@ -200,7 +200,7 @@ We performed 3 analysis using different parameters. The first analysis uses the 
 -   **Analysis 1**
 
     ```{r echo=F}
-    knitr::include_graphics("images/plot_run_power_check-01.png", error = FALSE)
+    knitr::include_graphics("images/plot_run_power_check.png", error = FALSE)
     ```
 
 <!-- -->
@@ -208,7 +208,7 @@ We performed 3 analysis using different parameters. The first analysis uses the 
 -   **Analysis 2**
 
     ```{r echo=F}
-    knitr::include_graphics("images/plot_run_power_check-02.png", error = FALSE)
+    knitr::include_graphics("images/plot_run_power_check-01.png", error = FALSE)
     ```
 
 <!-- -->
@@ -216,11 +216,11 @@ We performed 3 analysis using different parameters. The first analysis uses the 
 -   **Analysis 3**
 
     ```{r echo=F}
-    knitr::include_graphics("images/plot_run_power_check-03.png", error = FALSE)
+    knitr::include_graphics("images/plot_run_power_check-02.png", error = FALSE)
 
     ```
 
-### Summary
+### Summary results
 
 -   [Analysis 1](images/analysis_summary.txt)
 -   [Analysis 2](images/analysis_summary_2.txt)
