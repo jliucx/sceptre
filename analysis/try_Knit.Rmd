@@ -13,8 +13,6 @@ knitr::opts_knit$set(root.dir = normalizePath("."))
 
 test
 
-![](figure/summary.Rmd/unnamed-chunk-8-1.png)
-
 ```{r echo=F}
-knitr::include_graphics(c("image/unnamed-chunk-8-1.png"), error = FALSE)
+knitr::include_graphics(c("images/unnamed-chunk-10-1.png"), error = FALSE)
 ```
