@@ -147,11 +147,11 @@ plot(sceptre_object)
 **The calibration check is an analysis that verifies that `sceptre` controls the rate of false discoveries on the dataset under analysis.** The calibration check proceeds as follows. First, negative control target-response pairs are constructed (automatically) by coupling subsets of NT gRNAs to randomly selected responses. Importantly, the negative control pairs are constructed in such a way that they are similar to the discovery pairs, the difference being that the negative control pairs are devoid of biological signal.
 
 ```{r results='hide'}
-#sceptre_object <- run_calibration_check(sceptre_object, parallel = F)
+sceptre_object <- run_calibration_check(sceptre_object, parallel = T)
 ```
 
 ```{r}
-#plot(sceptre_object)
+plot(sceptre_object)
 ```
 
 ### 6. Power check
