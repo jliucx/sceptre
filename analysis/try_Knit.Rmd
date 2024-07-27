@@ -1,0 +1,20 @@
+---
+title: "summary"
+author: "jliucx"
+date: "2024-07-12"
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+knitr::opts_knit$set(root.dir = normalizePath("."))
+```
+
+test
+
+![](figure/summary.Rmd/unnamed-chunk-8-1.png)
+
+```{r echo=F}
+knitr::include_graphics(c("image/unnamed-chunk-8-1.png"), error = FALSE)
+```
