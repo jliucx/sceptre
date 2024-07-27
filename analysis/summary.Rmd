@@ -138,8 +138,8 @@ sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
 ```
 
 ```{r}
-sceptre_object <- run_qc(sceptre_object, p_mito_threshold = 0.075)
-plot(sceptre_object)
+#sceptre_object <- run_qc(sceptre_object, p_mito_threshold = 0.075)
+#plot(sceptre_object)
 ```
 
 ### 5. Calibration check

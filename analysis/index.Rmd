@@ -14,5 +14,4 @@ Welcome to my research website. Haha.
 
 [Summary](summary.html)
 
-[try knit](try_Knit.html)
  
