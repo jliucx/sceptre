@@ -14,7 +14,7 @@ library(readr)
 ```
 
 ```{r}
-directories <- directories <- "data/STINGseq-v1_GDO"
+directories <- "data/STINGseq-v1_GDO"
 grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
 sceptre_object <- import_data_from_cellranger(
   directories = directories,
@@ -31,7 +31,9 @@ sceptre_object
 
 The overall pipeline can be summarized as follows:
 
-![](../analysis/images/1.png)
+```{r echo=F}
+knitr::include_graphics("images/1.png", error = FALSE)
+```
 
 ### 1. Import data
 
@@ -145,11 +147,11 @@ plot(sceptre_object)
 **The calibration check is an analysis that verifies that `sceptre` controls the rate of false discoveries on the dataset under analysis.** The calibration check proceeds as follows. First, negative control target-response pairs are constructed (automatically) by coupling subsets of NT gRNAs to randomly selected responses. Importantly, the negative control pairs are constructed in such a way that they are similar to the discovery pairs, the difference being that the negative control pairs are devoid of biological signal.
 
 ```{r results='hide'}
-sceptre_object <- run_calibration_check(sceptre_object, parallel = F)
+#sceptre_object <- run_calibration_check(sceptre_object, parallel = F)
 ```
 
 ```{r}
-plot(sceptre_object)
+#plot(sceptre_object)
 ```
 
 ### 6. Power check
@@ -160,9 +162,10 @@ The power check involves applying `sceptre` to analyze the positive control pair
 
 There are three pieces of information relevant to testing for association between a given gRNA and response: (1) the vector of UMI counts of the response; (2) the "gRNA indicator vector," where a given entry of the vector is set to "1" if the corresponding cell is part of the treatment group (i.e., it contains the gRNA) and "0" if it is part of the control group; and (3) the matrix of cell-specific covariates. First, `sceptre` computes the z-score $z_{\text{obs}}$corresponding to a test of the null hypothesis that the coefficient corresponding to the gRNA indicator vector in the fitted GLM is zero. Next, `sceptre` resamples the gRNA indicator vector B times, where B is some large integer (e.g., B = 5000). (We discuss exactly how the gRNA indicator vector is resampled below.) Finally, for each of the resampled gRNA indicator vectors, `sceptre` recomputes the z-score, producing B "null" z-scores $\tilde{z}_1, \ldots, \tilde{z}_B$. The observed z-score $z_{\text{obs}}$ is compared to the null z-scores $\tilde{z}_1, \ldots, \tilde{z}_B$ to compute a p-value.
 
-![](images/2.png)
-
-![](images/3.png)
+```{r echo=F}
+knitr::include_graphics("images/2.png", error = FALSE)
+knitr::include_graphics("images/3.png", error = FALSE)
+```
 
 ## Part 2: Comparison of outcomes
 
@@ -172,32 +175,53 @@ We performed 3 analysis using different parameters. The first analysis uses the 
 
 -   **Analysis 1**
 
-![](images/plot_run_calibration_check-01.png)
+    ```{r echo=F}
+    knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALSE)
+    ```
+
+<!-- -->
 
 -   **Analysis 2**
 
-![](images/plot_run_calibration_check-02.png)
+    ```{r echo=F}
+    knitr::include_graphics("images/plot_run_calibration_check-02.png", error = FALSE)
+    ```
+
+<!-- -->
 
 -   **Analysis 3**
 
-![](images/plot_run_calibration_check-03.png)
+    ```{r echo=F}
+    knitr::include_graphics("images/plot_run_calibration_check-03.png", error = FALSE)
+    ```
 
 ### Power check
 
 -   **Analysis 1**
 
-![](images/plot_run_power_check.png)
+    ```{r echo=F}
+    knitr::include_graphics("images/plot_run_power_check-01.png", error = FALSE)
+    ```
+
+<!-- -->
 
 -   **Analysis 2**
 
-![](images/plot_run_power_check-01.png)
+    ```{r echo=F}
+    knitr::include_graphics("images/plot_run_power_check-02.png", error = FALSE)
+    ```
+
+<!-- -->
 
 -   **Analysis 3**
 
-![](images/plot_run_power_check-02.png)
+    ```{r echo=F}
+    knitr::include_graphics("images/plot_run_power_check-03.png", error = FALSE)
+
+    ```
 
 ### Summary
 
--   [Analysis 1](../output/sceptre_outputs/analysis_summary.txt)
--   [Analysis 2](../output/sceptre_outputs_cis/analysis_summary.txt)
--   [Analysis 3](../output/sceptre_outputs_cis_threshold/analysis_summary.txt)
+-   [Analysis 1](images/analysis_summary.txt)
+-   [Analysis 2](images/analysis_summary_2.txt)
+-   [Analysis 3](images/analysis_summary_3.txt)
