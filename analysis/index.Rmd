@@ -8,7 +8,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-Welcome to my research website.
+Welcome to my research website. Haha.
 
 [Sceptre on dataset from Morris](sceptre_example.html)
 
