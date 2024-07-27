@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="jliucx" />
 
+<meta name="date" content="2024-07-12" />
 
-<title>Home</title>
+<title>summary</title>
 
 <script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,6 +31,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -231,6 +236,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -238,6 +306,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -281,7 +359,9 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">summary</h1>
+<h4 class="author">jliucx</h4>
+<h4 class="date">2024-07-12</h4>
 
 </div>
 
@@ -309,7 +389,7 @@ $(document).ready(function () {
 <strong>Last updated:</strong> 2024-07-27
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>Getting_started/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -331,6 +411,66 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
 <p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240712code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20240712)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240712code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240712)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
@@ -389,7 +529,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/try_Knit.Rmd</code>) and HTML (<code>docs/try_Knit.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -418,7 +558,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/801d19e3aa07af8f986778aa6fce91d7957d5d07/analysis/index.Rmd" target="_blank">801d19e</a>
+<a href="https://github.com/jliucx/sceptre/blob/801d19e3aa07af8f986778aa6fce91d7957d5d07/analysis/try_Knit.Rmd" target="_blank">801d19e</a>
 </td>
 <td>
 jliucx
@@ -430,346 +570,6 @@ jliucx
 examine_plot
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/2bef5793e55d44e77f57d6f2206426db3486ad2f/docs/index.html" target="_blank">2bef579</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/9d703251aa42dfdd6f7e2a355384013228349d2d/analysis/index.Rmd" target="_blank">9d70325</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-none
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/47c640b5815be037f6873fdf96f70e230cc10009/docs/index.html" target="_blank">47c640b</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d4587c8eda927eb93a0061ec34c4793a3be68fac/analysis/index.Rmd" target="_blank">d4587c8</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-none
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/30d64e9709e90aff2c3e6f1d14be22055eb97666/docs/index.html" target="_blank">30d64e9</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/728537ebd6235b2dc347ca7e8134f6971a4d13fb/analysis/index.Rmd" target="_blank">728537e</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-none
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/42468afc6db80e7f4943b1e7c03633d1c620ce09/docs/index.html" target="_blank">42468af</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/4a5f352f5d9589cce6e582a2db0098030de9417c/docs/index.html" target="_blank">4a5f352</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-27
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/d13a3934cc79abdc0fa4017cf3efeb50f4912047/docs/index.html" target="_blank">d13a393</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-26
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/0399a8ce2e5a486435a3257b2e740c4fe6a4d79c/analysis/index.Rmd" target="_blank">0399a8c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-26
-</td>
-<td>
-add index
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/0fdb13f08847c4e8875e08660d412482e071e042/docs/index.html" target="_blank">0fdb13f</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-26
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/3b868a1446f4ea01f21af4cac42541e271bccfd8/analysis/index.Rmd" target="_blank">3b868a1</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-26
-</td>
-<td>
-Summary
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/de1364097cabc4f309df15f3299d9b702a104ec5/docs/index.html" target="_blank">de13640</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-23
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/91257f19557f7f8e74714aee2cd07484fdb56bd6/analysis/index.Rmd" target="_blank">91257f1</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-23
-</td>
-<td>
-fix index problem
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/bb70bfdc6e3af72c736976bf97813d584ccfa5c1/analysis/index.Rmd" target="_blank">bb70bfd</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-23
-</td>
-<td>
-publish data
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/cd4da6b1aaea269cc47d68f60f81c707e1d50f64/docs/index.html" target="_blank">cd4da6b</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-23
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/976be3e9edb056910be2063223dd6ce2a72ded28/analysis/index.Rmd" target="_blank">976be3e</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-23
-</td>
-<td>
-update index
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/8f1ffbd11caba5ace671b87e5ad1d7367ced49e8/docs/index.html" target="_blank">8f1ffbd</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-23
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/23ce783d2272386134d22fd83404ffee6e621596/analysis/index.Rmd" target="_blank">23ce783</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-22
-</td>
-<td>
-Publish analysis files
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/130269da6d84c0bb916feae4983d36ef363aa536/analysis/index.Rmd" target="_blank">130269d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-07-12
-</td>
-<td>
-Start workflowr project.
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -777,10 +577,50 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Welcome to my research website. Haha.</p>
-<p><a href="sceptre_example.html">Sceptre on dataset from Morris</a></p>
-<p><a href="summary.html">Summary</a></p>
-<p><a href="try_Knit.html">test</a></p>
+<pre class="r"><code>knitr::opts_knit$set(root.dir = normalizePath(&quot;.&quot;))</code></pre>
+<p>test</p>
+<p><img src="figure/summary.Rmd/unnamed-chunk-8-1.png" /></p>
+<p><img src="image/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el8-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
+ [4] LC_COLLATE=C         LC_MONETARY=C        LC_MESSAGES=C       
+ [7] LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C        
+[10] LC_TELEPHONE=C       LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.12       highr_0.11        compiler_4.1.0    pillar_1.9.0     
+ [5] bslib_0.7.0       later_1.2.0       git2r_0.32.0      jquerylib_0.1.4  
+ [9] tools_4.1.0       getPass_0.2-2     digest_0.6.33     jsonlite_1.8.7   
+[13] evaluate_0.23     lifecycle_1.0.4   tibble_3.2.1      pkgconfig_2.0.3  
+[17] rlang_1.1.2       cli_3.6.1         rstudioapi_0.15.0 yaml_2.2.1       
+[21] xfun_0.45         fastmap_1.1.1     httr_1.4.2        stringr_1.5.1    
+[25] knitr_1.48        fs_1.6.3          vctrs_0.6.4       sass_0.4.9       
+[29] rprojroot_2.0.4   glue_1.6.2        R6_2.5.1          processx_3.8.4   
+[33] fansi_1.0.5       rmarkdown_2.27    callr_3.7.6       magrittr_2.0.3   
+[37] whisker_0.4.1     ps_1.7.5          promises_1.2.0.1  htmltools_0.5.8.1
+[41] httpuv_1.6.1      utf8_1.2.1        stringi_1.6.2     cachem_1.0.8     </code></pre>
+</div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
@@ -798,6 +638,8 @@ footer is added to webpages before the MathJax javascript. -->
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -830,6 +672,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
