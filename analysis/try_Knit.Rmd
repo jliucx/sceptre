@@ -14,5 +14,5 @@ knitr::opts_knit$set(root.dir = normalizePath("."))
 test
 
 ```{r echo=F}
-knitr::include_graphics(c("images/unnamed-chunk-10-1.png"), error = FALSE)
+knitr::include_graphics(c("../docs/images/unnamed-chunk-10-1.png"), error = FALSE)
 ```
