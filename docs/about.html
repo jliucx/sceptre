@@ -32,8 +32,10 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
-<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
 <style type="text/css">
 div.section {
@@ -263,7 +265,13 @@ $(document).ready(function () {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/jliucx/sceptre">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -298,7 +306,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-07-23
+<strong>Last updated:</strong> 2024-07-27
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -307,8 +315,8 @@ $(document).ready(function () {
 <strong>Knit directory:</strong> <code>Getting_started/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
-This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -329,38 +337,46 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongc3308c1"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> c3308c1 </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree82c8c5686c4f43755cfc243c5b0cf026b44d35betargetblank82c8c56a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/82c8c5686c4f43755cfc243c5b0cf026b44d35be" target="_blank">82c8c56</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongc3308c1" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree82c8c5686c4f43755cfc243c5b0cf026b44d35betargetblank82c8c56a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version c3308c1. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/82c8c5686c4f43755cfc243c5b0cf026b44d35be" target="_blank">82c8c56</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/job-info.err
     Ignored:    analysis/job-info.out
     Ignored:    analysis/run_sceptre_example.sh
 
 Untracked files:
-    Untracked:  analysis/try_rcc.R
+    Untracked:  analysis/sceptre_threshold.Rmd
+    Untracked:  data/GDO_threshold/
     Untracked:  data/STINGseq-v1_GDO/
     Untracked:  data/STINGseq-v1_HTO/
     Untracked:  data/STINGseq-v1_cDNA/
+    Untracked:  output/sceptre_outputs_cis/
+    Untracked:  output/sceptre_outputs_cis_threshold/
     Untracked:  output/try_rcc/
 
 Unstaged changes:
     Modified:   .gitignore
-    Modified:   analysis/seurat_example.Rmd
-    Modified:   analysis/try_rcc.Rmd
+    Modified:   analysis/create_grna_target_data_frame.Rmd
+    Modified:   analysis/sceptre.Rmd
+    Modified:   analysis/sceptre_example.Rmd
+    Deleted:    analysis/seurat_example.Rmd
+    Modified:   analysis/summary.Rmd
+    Deleted:    analysis/try_rcc.Rmd
 
 </code></pre>
 <p>
@@ -401,10 +417,27 @@ Message
 <tbody>
 <tr>
 <td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/8f1ffbd11caba5ace671b87e5ad1d7367ced49e8/docs/about.html" target="_blank">8f1ffbd</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-07-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
 Rmd
 </td>
 <td>
-130269d
+<a href="https://github.com/jliucx/sceptre/blob/130269da6d84c0bb916feae4983d36ef363aa536/analysis/about.Rmd" target="_blank">130269d</a>
 </td>
 <td>
 jliucx
@@ -428,7 +461,7 @@ Start workflowr project.
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
-http://docs.mathjax.org/en/latest/configuration.html.  This will make
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
 the presentation more consistent at the cost of the webpage sometimes
 taking slightly longer to load. Note that this only works because the
 footer is added to webpages before the MathJax javascript. -->
