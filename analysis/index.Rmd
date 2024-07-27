@@ -12,4 +12,3 @@ Welcome to my research website. Haha.
 
 [Sceptre on dataset from Morris](sceptre_example.html)
 
-[Summary](summary.html)
