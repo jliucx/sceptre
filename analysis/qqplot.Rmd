@@ -1,0 +1,203 @@
+---
+title: "sceptre_example"
+author: "jliucx"
+date: "2024-07-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+## Manually examine the negative control p-values
+
+We extract the results of negative control p- values of **"/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_cis"** (cis analysis with grna assigned by mixture model). We want to confirm that the qq plot we manually create is the same as the plot that "sceptre" package creates:
+
+```{r}
+library(qqman)
+library(ggplot2)
+results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_cis/results_run_calibration_check.rds")
+```
+
+```{r}
+p_val=results_run_calibration_check$p_value
+```
+
+```{r}
+p_val <- sort(p_val)
+n <- length(p_val)
+expected <- ppoints(n)  
+
+# Calculate observed p-values
+observed <- p_val  # Reversing the scale
+
+# Create a data frame for plotting
+data <- data.frame(Expected = expected, Observed = observed)
+
+# Create the QQ plot with reversed axes
+ggplot(data, aes(x = Expected, y = Observed)) +
+  geom_point(size=0.9, color="red") +  # Plot the points
+  geom_abline(slope = 1, intercept = 0, color = "black") +  # Add reference line
+  scale_x_reverse(limits = c(1, 0)) +  # Reverse x-axis
+  scale_y_reverse(limits = c(1, 0)) +  # Reverse y-axis
+  coord_fixed() +
+  labs(title = "QQ plot (bulk)",
+       x = "Expected null p-value",
+       y = "Observed p-value") +
+  theme_minimal()
+```
+
+```{r}
+gg_qqplot <- function(ps, ci = 0.95) {
+  n  <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
+                alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color="red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po)
+}
+```
+
+```{r}
+gg_qqplot(p_val)
+```
+
+Below is the qq plot of negative control p-values, which is identical to the qq plots that we manually create.
+
+```{r echo=F}
+knitr::include_graphics("images/cis_plot_run_calibration_check.png", error = FALSE)
+```
+
+## The p-values are raw on the output file, and subject to BH correction to test significance
+
+To examine whether the p-values on the summary table are subject to multiple testing correction (if so, what type of correction?), we notice that the p_value and the significant results does not match (although the significance level $\alpha=0.1$, most p_values with magnitude e-05 or beyond are labeled "not significant").
+
+**The output file we used here is "/project/xuanyao/jiaming/Getting_started/output/sceptre_trans_singleton"**
+
+According to the package description, The parameter `multiple_testing_method` controls the multiple testing method that is used to adjust the p-values. The default option is Benjamini-Hochberg (`"BH"`). The parameter `multiple_testing_alpha` (default value `0.1`) controls the level of the multiple testing procedure. If `multiple_testing_method` is set to a method that controls that false discovery rate (e.g., `"BH"` or `"BY"`), then `multiple_testing_alpha` is the nominal false discovery rate. If, on the other hand, `multiple_testing_method` is set to a method that controls the family-wise error rate (e.g., `"bonferroni"` or `"holm"`), then `multiple_testing_alpha` is the nominal family-wise error rate.
+
+We create a new column "adj_p\_value" which applies BH correction to the p-values. Not surprisingly, the adjusted p values matches perfectly with significant results. This indicate that the output p_values of sceptre are raw, and the significant results are based on adjusted p-values.
+
+```{r}
+library(dplyr)
+results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds")
+results_run_calibration_check <- results_run_calibration_check %>%
+  mutate(adj_p_value = p.adjust(p_value, method = "BH"))
+
+results_run_calibration_check[c(1:10,70:80),c(1,2,7,9,10)]
+
+```
+
+## \*\*Individual analysis of the non-targeting gRNAs
+
+We noticed that the calibration check result when we perform "trans analysis"(it also contains cis analysis) is inflated. To see whether there might be problem with NT gRNA design, we find that NTC-3 and NTC-12 contribute to over 50% percent of false positive discoveries.
+
+```{r}
+filtered_data <- results_run_calibration_check %>% filter(significant == TRUE)
+grna_count <- filtered_data %>%
+  group_by(grna_id) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+# Calculate the percentage
+grna_count <- grna_count %>%
+  mutate(percentage = count / sum(count) * 100)
+
+# Create the pie chart
+ggplot(grna_count, aes(x = "", y = count, fill = grna_id)) +
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y") +
+  theme_void() +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            position = position_stack(vjust = 0.5)) +
+  labs(title = "Distribution of significant grna_id", fill = "grna_id")
+```
+
+Therefore, we perform the analysis again omitting the NTC-3 and NTC-12, and below is the outcome.
+
+### Trans analysis with gRNA method using mixture model
+
+```{r echo=FALSE}
+knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALSE)
+```
+
+### Trans analysis with gRNA method using mixture model (omitting NTC-3&12)
+
+```{r echo=FALSE}
+knitr::include_graphics("images/trans_calibration_check_mixture_omitNTC3.png", error = FALSE)
+```
+
+### Trans analysis with gRNA method using threshold method (omitting NTC-3&12)
+
+```{r echo=FALSE}
+knitr::include_graphics("images/calibration_trans_threshold_omit.png", error = FALSE)
+```
+
+## How p-values are affected by gRNA integration strategy: union, singleton and Bonforonni
+
+In many cases, there are multiple gRNAs targeting at the same target. How to combine the information of them to perform analysis becomes important in those scenarios.
+
+### Union
+
+The default option for `grna_integration_strategy` is `"union"`. This strategy constructs a "grouped gRNA" by combining all gRNAs that target a given genomic element via a union operation; this "grouped gRNA" is then tested for association against the responses to which the element is paired. We illustrate this grouping strategy using an example. Suppose that "gRNA 1" and "gRNA 2" target the same genomic element. Suppose that "gRNA 1" is present in the cells indexed 3, 6, 9 and that "gRNA 2" is present in the cells indexed 1, 4, 6, 10. The "grouped gRNA" formed combining "gRNA 1" and "gRNA 2" via the union operation is defined to be present in the cells indexed 1, 3, 4, 6, 9, 10. (See schematic below.) This "grouped gRNA" is then tested against responses as if it were a single gRNA.
+
+```{r echo=FALSE}
+knitr::include_graphics("images/4.png", error = FALSE)
+```
+
+### Bonforonni
+
+Consider a given target-response pair. Suppose that k gRNAs $\text{gRNA}_1 \ldots\text{gRNA}_k$ target this target. Moreover, suppose that, upon testing for association between each of these gRNAs and the response, we obtain gRNA-wise p-values $p_1, \ldots, p_k$. The Bonferroni p-value is defined as follows:
+
+$$
+p = k \cdot \min \{ p_1, \ldots, p_k \}.
+$$
+
+The Bonferroni p-value is valid in the following sense: if $p_1, \ldots, p_k$ are valid (i.e., uniformly distributed) p-values, then $p$ too is a valid (i.e., uniformly distributed) p-value. (The gRNA-wise p-values $p_1, \ldots, p_k$ can be arbitrarily dependent.) Below, we state this result in a slightly more precise way and prove its correctness. "Superuniformity'' is more general than uniformity and is sufficient for p-value validity. This proof is standard; see, e.g., the Bonferroni correction \\href{<https://en.wikipedia.org/wiki/Bonferroni_correction%7D%7BWikipedia> page}.
+
+### Singleton
+
+This method treat each gRNA as a unit instead of treating each gRNA target as a unit. Hence, suppose each target is targeted by 2 gRNAs, and if you test 100 target-gene pairs, you will get 200 p-values as a outcome, which will subject to multiple testing correction later for significance analysis.
+
+## How p-values are affected by gRNA assignment strategy: mixture model, threshold
+
+In order to find out how the assignment of gRNA to cell affect the p-value, we perform different assignment strategy and compare different calibration results.
+
+### Cis analysis with gRNA method using mixture model
+
+```{r echo=FALSE}
+knitr::include_graphics("images/cis_plot_run_calibration_check.png", error = FALSE)
+```
+
+### Cis analysis with gRNA method using threshold from the author
+
+```{r echo=FALSE}
+knitr::include_graphics("images/plot_run_calibration_check_author_threshold.png", error = FALSE)
+```
+
+### Cis analysis with gRNA method using default threshold=5
+
+```{r echo=FALSE}
+knitr::include_graphics("images/calibration_cis_threshold5.png", error = FALSE)
+```
+
+## Conditional resampling algorithm
+
+```{r echo=FALSE}
+knitr::include_graphics("images/sceptre_illustration.png", error = FALSE)
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("images/methodology.png", error = FALSE)
+```
+
+My point is that the rationale for this resampling algorithm is to break the latent relationship of gRNA presence and gene expression and see whether the test statistics changes significantly. Suppose there are no direct relationship between gRNA presence and gene expression, then doing so won't change the test statistics a lot.
+
+However, I think this method resample only based on the cell covariates, neglecting the fact that the measured gRNA presence is also determined by the real presence of gRNA. Hence resample based on regression on cell covariate may also break down the correlation between measured gRNA and true gRNA presence. This kind of test works definitely when we assume that measured gRNA presence are only determined by cell covariate. I am not sure whether doing conditional randomization test, conditioning only on the cell covariate is adequate in this sense. I think including the ture gRNA presence as a latent variable when doing conditional randomization test might be better, statistically.
