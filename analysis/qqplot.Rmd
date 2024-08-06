@@ -120,26 +120,28 @@ ggplot(grna_count, aes(x = "", y = count, fill = grna_id)) +
   labs(title = "Distribution of significant grna_id", fill = "grna_id")
 ```
 
-Therefore, we perform the analysis again omitting the NTC-3 and NTC-12, and below is the outcome.
+Therefore, we perform the analysis again omitting the NTC-3 and NTC-12, and below are the outcomes.
 
 ### Trans analysis with gRNA method using mixture model
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALSE)
 ```
+[text summary](images/trans_mixture.txt)
 
 ### Trans analysis with gRNA method using mixture model (omitting NTC-3&12)
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/trans_calibration_check_mixture_omitNTC3.png", error = FALSE)
 ```
+[text summary](images/trans_mixture_omit.txt)
 
 ### Trans analysis with gRNA method using threshold method (omitting NTC-3&12)
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/calibration_trans_threshold_omit.png", error = FALSE)
 ```
-
+[text summary](images/trans_threshold_omit.txt)
 ## How p-values are affected by gRNA integration strategy: union, singleton and Bonforonni
 
 In many cases, there are multiple gRNAs targeting at the same target. How to combine the information of them to perform analysis becomes important in those scenarios.
@@ -175,19 +177,19 @@ In order to find out how the assignment of gRNA to cell affect the p-value, we p
 ```{r echo=FALSE}
 knitr::include_graphics("images/cis_plot_run_calibration_check.png", error = FALSE)
 ```
-
+[text summary](images/cis_mixture.txt)
 ### Cis analysis with gRNA method using threshold from the author
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/plot_run_calibration_check_author_threshold.png", error = FALSE)
 ```
-
+[text summary](images/cis_threshold.txt)
 ### Cis analysis with gRNA method using default threshold=5
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/calibration_cis_threshold5.png", error = FALSE)
 ```
-
+[text summary](images/cis_threshold5.txt)
 ## Conditional resampling algorithm
 
 ```{r echo=FALSE}
