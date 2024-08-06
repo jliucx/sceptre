@@ -525,16 +525,16 @@ output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed1c2b02d812c13b2b8933bc50803d319b80a3988targetblankd1c2b02a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/d1c2b02d812c13b2b8933bc50803d319b80a3988" target="_blank">d1c2b02</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea748c2179a076a1dc559b9f11a6d6478c98b5d5ctargetblanka748c21a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/a748c2179a076a1dc559b9f11a6d6478c98b5d5c" target="_blank">a748c21</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed1c2b02d812c13b2b8933bc50803d319b80a3988targetblankd1c2b02a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea748c2179a076a1dc559b9f11a6d6478c98b5d5ctargetblanka748c21a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/d1c2b02d812c13b2b8933bc50803d319b80a3988" target="_blank">d1c2b02</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/a748c2179a076a1dc559b9f11a6d6478c98b5d5c" target="_blank">a748c21</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -614,6 +614,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/a748c2179a076a1dc559b9f11a6d6478c98b5d5c/analysis/qqplot.Rmd" target="_blank">a748c21</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-06
+</td>
+<td>
+update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/3ec664cf94a011ce1a8c3cb3a50488364def0a2e/docs/qqplot.html" target="_blank">3ec664c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1067,9 +1101,12 @@ jliucx
 </table>
 </div>
 </div>
-<p><a href="images/trans_threshold_omit.txt">text summary</a> ## How p-values are affected by gRNA integration strategy: union, singleton and Bonforonni</p>
-<p>In many cases, there are multiple gRNAs targeting at the same target. How to combine the information of them to perform analysis becomes important in those scenarios.</p>
+<p><a href="images/trans_threshold_omit.txt">text summary</a></p>
 </div>
+</div>
+<div id="how-p-values-are-affected-by-grna-integration-strategy-union-singleton-and-bonforonni" class="section level2">
+<h2>How p-values are affected by gRNA integration strategy: union, singleton and Bonforonni</h2>
+<p>In many cases, there are multiple gRNAs targeting at the same target. How to combine the information of them to perform analysis becomes important in those scenarios.</p>
 <div id="union" class="section level3">
 <h3>Union</h3>
 <p>The default option for <code>grna_integration_strategy</code> is <code>"union"</code>. This strategy constructs a “grouped gRNA” by combining all gRNAs that target a given genomic element via a union operation; this “grouped gRNA” is then tested for association against the responses to which the element is paired. We illustrate this grouping strategy using an example. Suppose that “gRNA 1” and “gRNA 2” target the same genomic element. Suppose that “gRNA 1” is present in the cells indexed 3, 6, 9 and that “gRNA 2” is present in the cells indexed 1, 4, 6, 10. The “grouped gRNA” formed combining “gRNA 1” and “gRNA 2” via the union operation is defined to be present in the cells indexed 1, 3, 4, 6, 9, 10. (See schematic below.) This “grouped gRNA” is then tested against responses as if it were a single gRNA.</p>
@@ -1168,7 +1205,10 @@ jliucx
 </table>
 </div>
 </div>
-<p><a href="images/cis_mixture.txt">text summary</a> ### Cis analysis with gRNA method using threshold from the author</p>
+<p><a href="images/cis_mixture.txt">text summary</a></p>
+</div>
+<div id="cis-analysis-with-grna-method-using-threshold-from-the-author" class="section level3">
+<h3>Cis analysis with gRNA method using threshold from the author</h3>
 <p><img src="images/plot_run_calibration_check_author_threshold.png" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-plot_run_calibration_check_author_threshold">
@@ -1207,7 +1247,10 @@ jliucx
 </table>
 </div>
 </div>
-<p><a href="images/cis_threshold.txt">text summary</a> ### Cis analysis with gRNA method using default threshold=5</p>
+<p><a href="images/cis_threshold.txt">text summary</a></p>
+</div>
+<div id="cis-analysis-with-grna-method-using-default-threshold5" class="section level3">
+<h3>Cis analysis with gRNA method using default threshold=5</h3>
 <p><img src="images/calibration_cis_threshold5.png" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-calibration_cis_threshold5">
@@ -1246,7 +1289,11 @@ jliucx
 </table>
 </div>
 </div>
-<p><a href="images/cis_threshold5.txt">text summary</a> ## Conditional resampling algorithm</p>
+<p><a href="images/cis_threshold5.txt">text summary</a></p>
+</div>
+</div>
+<div id="conditional-resampling-algorithm" class="section level2">
+<h2>Conditional resampling algorithm</h2>
 <p><img src="images/sceptre_illustration.png" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-sceptre_illustration">
@@ -1367,7 +1414,6 @@ loaded via a namespace (and not attached):
 [45] magrittr_2.0.3    sass_0.4.9        tibble_3.2.1      whisker_0.4.1    
 [49] pkgconfig_2.0.3   MASS_7.3-60       rmarkdown_2.27    httr_1.4.2       
 [53] rstudioapi_0.15.0 R6_2.5.1          git2r_0.32.0      compiler_4.1.0   </code></pre>
-</div>
 </div>
 </div>
 
