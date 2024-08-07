@@ -132,9 +132,9 @@ knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALS
 ### Trans analysis with gRNA method using mixture model (omitting NTC-3&12)
 
 ```{r echo=FALSE}
-knitr::include_graphics("images/trans_calibration_check_mixture_omitNTC3.png", error = FALSE)
+knitr::include_graphics("images/trans_mixture_omit.png", error = FALSE)
 ```
-[text summary](images/trans_mixture_omit.txt)
+[text summary](images/trans_mixture_omit2.txt)
 
 ### Trans analysis with gRNA method using threshold method (omitting NTC-3&12)
 
