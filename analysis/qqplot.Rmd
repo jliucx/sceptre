@@ -122,11 +122,28 @@ ggplot(grna_count, aes(x = "", y = count, fill = grna_id)) +
 
 Therefore, we perform the analysis again omitting the NTC-3 and NTC-12, and below are the outcomes.
 
+### Trans analysis with gRNA method using mixture model (singleton)
+
+```{r echo=FALSE}
+knitr::include_graphics("images/trans_singleton.png", error = FALSE)
+```
+
+[text summary](images/trans_singleton.txt)
+
+### Trans analysis with gRNA method using mixture model (singleton)(omitting NTC-3&12)
+
+```{r echo=FALSE}
+knitr::include_graphics("images/trans_calibration_check_mixture_omitNTC3.png", error = FALSE)
+```
+
+[text summary](images/trans_mixture_omit.txt)
+
 ### Trans analysis with gRNA method using mixture model
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALSE)
 ```
+
 [text summary](images/trans_mixture.txt)
 
 ### Trans analysis with gRNA method using mixture model (omitting NTC-3&12)
@@ -134,14 +151,45 @@ knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALS
 ```{r echo=FALSE}
 knitr::include_graphics("images/trans_mixture_omit.png", error = FALSE)
 ```
+
 [text summary](images/trans_mixture_omit2.txt)
+
+### Trans analysis with gRNA method using threshold method
+
+```{r echo=FALSE}
+knitr::include_graphics("images/tr_threshold.png", error = FALSE)
+```
+
+[text summary](images/trans_threshold_omit.txt)
 
 ### Trans analysis with gRNA method using threshold method (omitting NTC-3&12)
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/calibration_trans_threshold_omit.png", error = FALSE)
 ```
-[text summary](images/trans_threshold_omit.txt)
+
+[text summary](images/tr_threshold.txt)
+
+```{r, warning=FALSE}
+library(knitr)
+library(kableExtra)
+
+# Create the data matrix
+data_matrix <- matrix(c("67/155595", "292/976820", "51/1027281", "15/126552", "158/652822", "0/684410"), nrow = 2, byrow = TRUE)
+
+# Set row and column names
+rownames(data_matrix) <- c("original", "removing NTC3&12")
+colnames(data_matrix) <- c("singleton", "mixture", "threshold")
+
+# Convert to data frame for kable
+contingency_table <- as.data.frame(data_matrix)
+
+# Use kable to create a beautiful table
+kable(contingency_table, format = "html", table.attr = "class='table table-striped'",
+      col.names = c("Singleton", "Mixture", "Threshold"), row.names = TRUE,
+      caption = "Contingency Table") %>%
+  kable_styling(full_width = FALSE)
+```
 
 ## How p-values are affected by gRNA integration strategy: union, singleton and Bonforonni
 
@@ -178,6 +226,7 @@ In order to find out how the assignment of gRNA to cell affect the p-value, we p
 ```{r echo=FALSE}
 knitr::include_graphics("images/cis_plot_run_calibration_check.png", error = FALSE)
 ```
+
 [text summary](images/cis_mixture.txt)
 
 ### Cis analysis with gRNA method using threshold from the author
@@ -185,6 +234,7 @@ knitr::include_graphics("images/cis_plot_run_calibration_check.png", error = FAL
 ```{r echo=FALSE}
 knitr::include_graphics("images/plot_run_calibration_check_author_threshold.png", error = FALSE)
 ```
+
 [text summary](images/cis_threshold.txt)
 
 ### Cis analysis with gRNA method using default threshold=5
@@ -192,6 +242,7 @@ knitr::include_graphics("images/plot_run_calibration_check_author_threshold.png"
 ```{r echo=FALSE}
 knitr::include_graphics("images/calibration_cis_threshold5.png", error = FALSE)
 ```
+
 [text summary](images/cis_threshold5.txt)
 
 ## Conditional resampling algorithm
