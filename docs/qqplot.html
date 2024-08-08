@@ -37,6 +37,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -386,7 +388,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-08-06
+<strong>Last updated:</strong> 2024-08-08
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -525,16 +527,16 @@ output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree84b992457b9fe702373e101a8e504649db7d75e0targetblank84b9924a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/84b992457b9fe702373e101a8e504649db7d75e0" target="_blank">84b9924</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree9377797e45162b23342ca45d3fcae2a6f72ab8a9targetblank9377797a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/9377797e45162b23342ca45d3fcae2a6f72ab8a9" target="_blank">9377797</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree84b992457b9fe702373e101a8e504649db7d75e0targetblank84b9924a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree9377797e45162b23342ca45d3fcae2a6f72ab8a9targetblank9377797a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/84b992457b9fe702373e101a8e504649db7d75e0" target="_blank">84b9924</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/9377797e45162b23342ca45d3fcae2a6f72ab8a9" target="_blank">9377797</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -564,6 +566,7 @@ Untracked files:
     Untracked:  output/sceptre_outputs_trans_omit_NTC3_12/
     Untracked:  output/sceptre_outputs_trans_singleton/
     Untracked:  output/sceptre_outputs_trans_singleton_omit_NTC3_12/
+    Untracked:  output/sceptre_outputs_trans_threshold/
     Untracked:  output/sceptre_outputs_trans_threshold_omit_NTC3_12/
     Untracked:  output/try_rcc/
 
@@ -615,6 +618,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/9377797e45162b23342ca45d3fcae2a6f72ab8a9/analysis/qqplot.Rmd" target="_blank">9377797</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-08
+</td>
+<td>
+update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/57f4a97db8ac330b865f286d403c7a5ede6a7bce/docs/qqplot.html" target="_blank">57f4a97</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-07
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1012,6 +1049,90 @@ jliucx
 </div>
 </div>
 <p>Therefore, we perform the analysis again omitting the NTC-3 and NTC-12, and below are the outcomes.</p>
+<div id="trans-analysis-with-grna-method-using-mixture-model-singleton" class="section level3">
+<h3>Trans analysis with gRNA method using mixture model (singleton)</h3>
+<p><img src="images/trans_singleton.png" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-trans_singleton">
+Past versions of trans_singleton.png
+</button>
+</p>
+<div id="fig-trans_singleton" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/9377797e45162b23342ca45d3fcae2a6f72ab8a9/docs/images/trans_singleton.png" target="_blank">9377797</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><a href="images/trans_singleton.txt">text summary</a></p>
+</div>
+<div id="trans-analysis-with-grna-method-using-mixture-model-singletonomitting-ntc-312" class="section level3">
+<h3>Trans analysis with gRNA method using mixture model (singleton)(omitting NTC-3&amp;12)</h3>
+<p><img src="images/trans_calibration_check_mixture_omitNTC3.png" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-trans_calibration_check_mixture_omitNTC3">
+Past versions of trans_calibration_check_mixture_omitNTC3.png
+</button>
+</p>
+<div id="fig-trans_calibration_check_mixture_omitNTC3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/a9b748bd06164d98f038e1f7f4024f4f894f3183/docs/images/trans_calibration_check_mixture_omitNTC3.png" target="_blank">a9b748b</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><a href="images/trans_mixture_omit.txt">text summary</a></p>
+</div>
 <div id="trans-analysis-with-grna-method-using-mixture-model" class="section level3">
 <h3>Trans analysis with gRNA method using mixture model</h3>
 <p><img src="images/plot_run_calibration_check-01.png" style="display: block; margin: auto;" /></p>
@@ -1096,6 +1217,48 @@ jliucx
 </div>
 <p><a href="images/trans_mixture_omit2.txt">text summary</a></p>
 </div>
+<div id="trans-analysis-with-grna-method-using-threshold-method" class="section level3">
+<h3>Trans analysis with gRNA method using threshold method</h3>
+<p><img src="images/tr_threshold.png" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-tr_threshold">
+Past versions of tr_threshold.png
+</button>
+</p>
+<div id="fig-tr_threshold" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/9377797e45162b23342ca45d3fcae2a6f72ab8a9/docs/images/tr_threshold.png" target="_blank">9377797</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><a href="images/trans_threshold_omit.txt">text summary</a></p>
+</div>
 <div id="trans-analysis-with-grna-method-using-threshold-method-omitting-ntc-312" class="section level3">
 <h3>Trans analysis with gRNA method using threshold method (omitting NTC-3&amp;12)</h3>
 <p><img src="images/calibration_trans_threshold_omit.png" style="display: block; margin: auto;" /></p>
@@ -1136,7 +1299,79 @@ jliucx
 </table>
 </div>
 </div>
-<p><a href="images/trans_threshold_omit.txt">text summary</a></p>
+<p><a href="images/tr_threshold.txt">text summary</a></p>
+<pre class="r"><code>library(knitr)
+library(kableExtra)</code></pre>
+<pre><code>
+Attaching package: &#39;kableExtra&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    group_rows</code></pre>
+<pre class="r"><code># Create the data matrix
+data_matrix &lt;- matrix(c(&quot;67/155595&quot;, &quot;292/976820&quot;, &quot;51/1027281&quot;, &quot;15/126552&quot;, &quot;158/652822&quot;, &quot;0/684410&quot;), nrow = 2, byrow = TRUE)
+
+# Set row and column names
+rownames(data_matrix) &lt;- c(&quot;original&quot;, &quot;removing NTC3&amp;12&quot;)
+colnames(data_matrix) &lt;- c(&quot;singleton&quot;, &quot;mixture&quot;, &quot;threshold&quot;)
+
+# Convert to data frame for kable
+contingency_table &lt;- as.data.frame(data_matrix)
+
+# Use kable to create a beautiful table
+kable(contingency_table, format = &quot;html&quot;, table.attr = &quot;class=&#39;table table-striped&#39;&quot;,
+      col.names = c(&quot;Singleton&quot;, &quot;Mixture&quot;, &quot;Threshold&quot;), row.names = TRUE,
+      caption = &quot;Contingency Table&quot;) %&gt;%
+  kable_styling(full_width = FALSE)</code></pre>
+<table class="table table-striped table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Contingency Table
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Singleton
+</th>
+<th style="text-align:left;">
+Mixture
+</th>
+<th style="text-align:left;">
+Threshold
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+original
+</td>
+<td style="text-align:left;">
+67/155595
+</td>
+<td style="text-align:left;">
+292/976820
+</td>
+<td style="text-align:left;">
+51/1027281
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+removing NTC3&amp;12
+</td>
+<td style="text-align:left;">
+15/126552
+</td>
+<td style="text-align:left;">
+158/652822
+</td>
+<td style="text-align:left;">
+0/684410
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="how-p-values-are-affected-by-grna-integration-strategy-union-singleton-and-bonforonni" class="section level2">
@@ -1432,23 +1667,25 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] dplyr_1.1.4     ggplot2_3.5.1   qqman_0.1.9     workflowr_1.7.1
+[1] kableExtra_1.4.0 knitr_1.48       dplyr_1.1.4      ggplot2_3.5.1   
+[5] qqman_0.1.9      workflowr_1.7.1 
 
 loaded via a namespace (and not attached):
  [1] tidyselect_1.2.0  xfun_0.45         bslib_0.7.0       colorspace_2.1-0 
- [5] vctrs_0.6.4       generics_0.1.3    htmltools_0.5.8.1 yaml_2.2.1       
- [9] utf8_1.2.1        rlang_1.1.2       jquerylib_0.1.4   later_1.2.0      
-[13] pillar_1.9.0      glue_1.6.2        withr_2.5.2       calibrate_1.7.7  
-[17] lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0     gtable_0.3.0     
-[21] evaluate_0.23     labeling_0.4.3    knitr_1.48        callr_3.7.6      
+ [5] vctrs_0.6.4       generics_0.1.3    viridisLite_0.4.2 htmltools_0.5.8.1
+ [9] yaml_2.2.1        utf8_1.2.1        rlang_1.1.2       jquerylib_0.1.4  
+[13] later_1.2.0       pillar_1.9.0      glue_1.6.2        withr_2.5.2      
+[17] calibrate_1.7.7   lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0    
+[21] gtable_0.3.0      evaluate_0.23     labeling_0.4.3    callr_3.7.6      
 [25] fastmap_1.1.1     httpuv_1.6.1      ps_1.7.5          fansi_1.0.5      
 [29] highr_0.11        Rcpp_1.0.12       promises_1.2.0.1  scales_1.3.0     
-[33] cachem_1.0.8      jsonlite_1.8.7    farver_2.1.1      fs_1.6.3         
-[37] digest_0.6.33     stringi_1.6.2     processx_3.8.4    getPass_0.2-2    
-[41] rprojroot_2.0.4   grid_4.1.0        cli_3.6.1         tools_4.1.0      
-[45] magrittr_2.0.3    sass_0.4.9        tibble_3.2.1      whisker_0.4.1    
-[49] pkgconfig_2.0.3   MASS_7.3-60       rmarkdown_2.27    httr_1.4.2       
-[53] rstudioapi_0.15.0 R6_2.5.1          git2r_0.32.0      compiler_4.1.0   </code></pre>
+[33] cachem_1.0.8      jsonlite_1.8.7    systemfonts_1.1.0 farver_2.1.1     
+[37] fs_1.6.3          digest_0.6.33     stringi_1.6.2     processx_3.8.4   
+[41] getPass_0.2-2     rprojroot_2.0.4   grid_4.1.0        cli_3.6.1        
+[45] tools_4.1.0       magrittr_2.0.3    sass_0.4.9        tibble_3.2.1     
+[49] whisker_0.4.1     pkgconfig_2.0.3   MASS_7.3-60       xml2_1.3.2       
+[53] svglite_2.0.0     rmarkdown_2.27    httr_1.4.2        rstudioapi_0.15.0
+[57] R6_2.5.1          git2r_0.32.0      compiler_4.1.0   </code></pre>
 </div>
 </div>
 
