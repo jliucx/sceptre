@@ -160,7 +160,7 @@ knitr::include_graphics("images/trans_mixture_omit.png", error = FALSE)
 knitr::include_graphics("images/tr_threshold.png", error = FALSE)
 ```
 
-[text summary](images/trans_threshold_omit.txt)
+[text summary](images/tr_threshold.txt)
 
 ### Trans analysis with gRNA method using threshold method (omitting NTC-3&12)
 
@@ -168,9 +168,9 @@ knitr::include_graphics("images/tr_threshold.png", error = FALSE)
 knitr::include_graphics("images/calibration_trans_threshold_omit.png", error = FALSE)
 ```
 
-[text summary](images/tr_threshold.txt)
+[text summary](images/trans_threshold_omit.txt)
 
-```{r, warning=FALSE}
+```{r warning=FALSE, echo=FALSE}
 library(knitr)
 library(kableExtra)
 
