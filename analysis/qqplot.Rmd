@@ -186,7 +186,7 @@ contingency_table <- as.data.frame(data_matrix)
 
 # Use kable to create a beautiful table
 kable(contingency_table, format = "html", table.attr = "class='table table-striped'",
-      col.names = c("Mixture(Singleton)", "Mixture(Unicon)", "Threshold"), row.names = TRUE,
+      col.names = c("Mixture(Singleton)", "Mixture(Union)", "Threshold"), row.names = TRUE,
       caption = "Contingency Table") %>%
   kable_styling(full_width = FALSE)
 ```
