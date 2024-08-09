@@ -179,7 +179,7 @@ data_matrix <- matrix(c("67/155595", "292/976820", "51/1027281", "15/126552", "1
 
 # Set row and column names
 rownames(data_matrix) <- c("original", "removing NTC3&12")
-colnames(data_matrix) <- c("singleton", "mixture", "threshold")
+colnames(data_matrix) <- c("mixture(singleton)", "mixture(union)", "threshold")
 
 # Convert to data frame for kable
 contingency_table <- as.data.frame(data_matrix)
