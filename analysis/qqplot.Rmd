@@ -14,7 +14,7 @@ We extract the results of negative control p- values of **"/project/xuanyao/jiam
 ```{r}
 library(qqman)
 library(ggplot2)
-results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_cis/results_run_calibration_check.rds")
+results_run_calibration_check <- readRDS("output/sceptre_outputs_cis/results_run_calibration_check.rds")
 ```
 
 ```{r}
@@ -87,7 +87,7 @@ We create a new column "adj_p\_value" which applies BH correction to the p-value
 
 ```{r}
 library(dplyr)
-results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds")
+results_run_calibration_check <- readRDS("output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds")
 results_run_calibration_check <- results_run_calibration_check %>%
   mutate(adj_p_value = p.adjust(p_value, method = "BH"))
 
