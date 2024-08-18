@@ -97,7 +97,9 @@ results_run_calibration_check[c(1:10,70:80),c(1,2,7,9,10)]
 
 ## \*\*Individual analysis of the non-targeting gRNAs
 
-We noticed that the calibration check result when we perform "trans analysis"(it also contains cis analysis) is inflated. To see whether there might be problem with NT gRNA design, we find that NTC-3 and NTC-12 contribute to over 50% percent of false positive discoveries.
+Although the p-values from "cis analysis" look good, we noticed that the calibration check result when we perform "trans analysis"(it also contains cis analysis) is inflated. The difference between p-values from "cis" analysis and "trans" analysis is that the former is a random subset of non-targeting gRNA and gene pairs, while the latter is a complete combination of all pairs of non-targeting gRNA and all genes. That is to say, the p-values from "cis" analysis is a random subset (1790 pairs) of those from "trans" analysis(155595 pairs).
+
+To see whether there might be problem with NT gRNA design, we find that NTC-3 and NTC-12 contribute to over 50% percent of false positive discoveries.
 
 ```{r}
 filtered_data <- results_run_calibration_check %>% filter(significant == TRUE)
@@ -133,10 +135,10 @@ knitr::include_graphics("images/trans_singleton.png", error = FALSE)
 ### Trans analysis with gRNA method using mixture model (singleton)(omitting NTC-3&12)
 
 ```{r echo=FALSE}
-knitr::include_graphics("images/trans_calibration_check_mixture_omitNTC3.png", error = FALSE)
+knitr::include_graphics("output/sceptre_outputs_trans_singleton_omit_NTC3_12/plot_run_calibration_check.png", error = FALSE)
 ```
 
-[text summary](images/trans_mixture_omit.txt)
+[text summary](output/sceptre_outputs_trans_singleton_omit_NTC3_12/analysis_summary.txt)
 
 ### Trans analysis with gRNA method using mixture model
 
@@ -244,17 +246,3 @@ knitr::include_graphics("images/calibration_cis_threshold5.png", error = FALSE)
 ```
 
 [text summary](images/cis_threshold5.txt)
-
-## Conditional resampling algorithm
-
-```{r echo=FALSE}
-knitr::include_graphics("images/sceptre_illustration.png", error = FALSE)
-```
-
-```{r echo=FALSE}
-knitr::include_graphics("images/methodology.png", error = FALSE)
-```
-
-My point is that the rationale for this resampling algorithm is to break the latent relationship of gRNA presence and gene expression and see whether the test statistics changes significantly. Suppose there are no direct relationship between gRNA presence and gene expression, then doing so won't change the test statistics a lot.
-
-However, I think this method resample only based on the cell covariates, neglecting the fact that the measured gRNA presence is also determined by the real presence of gRNA. Hence resample based on regression on cell covariate may also break down the correlation between measured gRNA and true gRNA presence. This kind of test works definitely when we assume that measured gRNA presence are only determined by cell covariate. I am not sure whether doing conditional randomization test, conditioning only on the cell covariate is adequate in this sense. I think including the ture gRNA presence as a latent variable when doing conditional randomization test might be better, statistically.
