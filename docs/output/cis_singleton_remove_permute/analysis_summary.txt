@@ -18,7 +18,7 @@ Analysis status:
 	✓ run_discovery_analysis()
 
 Analysis parameters: 
-	• Discovery pairs: data frame with 1924 pairs (1787 after pairwise QC)
+	• Discovery pairs: data frame with 1924 pairs (1859 after pairwise QC)
 	• Positive control pairs: data frame with 7 pairs (22 after pairwise QC)
 	• Sidedness of test: left
 	• Resampling mechanism: permutations
@@ -30,13 +30,12 @@ Analysis parameters:
 	• Formula object: log(response_n_nonzero) + log(response_n_umis) + log(grna_n_nonzero + 1) + log(grna_n_umis + 1)
 
 gRNA-to-cell assignment information:
-	• Assignment method: mixture
-	• Mean N cells per gRNA: 490.51
-	• Mean N gRNAs per cell (MOI): 6.71 
-	• gRNA assignment formula object: log(response_n_nonzero) + log(response_n_umis) + log(grna_n_nonzero + 1) + log(grna_n_umis + 1)
+	• Assignment method: thresholding
+	• Mean N cells per gRNA: 659.77
+	• Mean N gRNAs per cell (MOI): 9.02
 
 Summary of results:
-	• N negative control pairs called as significant: 0/1787
-	• Mean log-2 FC for negative control pairs: 0.02
-	• Median positive control p-value: 4.4e-29
-	• N discovery pairs called as significant: 82/1787
+	• N negative control pairs called as significant: 1/1859
+	• Mean log-2 FC for negative control pairs: 0.024
+	• Median positive control p-value: 4.5e-36
+	• N discovery pairs called as significant: 83/1859

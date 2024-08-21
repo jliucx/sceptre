@@ -13,7 +13,7 @@
 
 <meta name="date" content="2024-07-12" />
 
-<title>article summary</title>
+<title>A new Bayesian factor analysis method improves detection of genes and biological processes affected by perturbations in single-cell CRISPR screening</title>
 
 <script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -359,7 +359,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">article summary</h1>
+<h1 class="title toc-ignore">A new Bayesian factor analysis method improves detection of genes and biological processes affected by perturbations in single-cell CRISPR screening</h1>
 <h4 class="author">jliucx</h4>
 <h4 class="date">2024-07-12</h4>
 
@@ -477,16 +477,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree8c3f5449ae60e94baaf0bb1964efb0eaa74a3974targetblank8c3f544a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/8c3f5449ae60e94baaf0bb1964efb0eaa74a3974" target="_blank">8c3f544</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreee354a286ada9042ad7c0a1d7e14cd772d3d588fdtargetblanke354a28a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/e354a286ada9042ad7c0a1d7e14cd772d3d588fd" target="_blank">e354a28</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree8c3f5449ae60e94baaf0bb1964efb0eaa74a3974targetblank8c3f544a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreee354a286ada9042ad7c0a1d7e14cd772d3d588fdtargetblanke354a28a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/8c3f5449ae60e94baaf0bb1964efb0eaa74a3974" target="_blank">8c3f544</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/e354a286ada9042ad7c0a1d7e14cd772d3d588fd" target="_blank">e354a28</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -545,15 +545,58 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with <code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/GSFA.Rmd</code>) and HTML (<code>docs/GSFA.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/8ff1b41637cc95868400439db6b17869bff7922a/docs/GSFA.html" target="_blank">8ff1b41</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-21
+</td>
+<td>
+repair
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
 </div>
 <div id="core-idea" class="section level2">
-<h2>Core idea</h2>
+<h2><a href="https://www.nature.com/articles/s41592-023-02017-4">Core idea</a></h2>
 <p><strong>Assumption</strong>:</p>
 <p>Genetic perturbations typically affect expression, not one gene at a time, but many related genes simultaneously. GSFA assumes the effects of genetic perturbations are mediated through a set of gene modules, mathematically represented as latent factors. GSFA assumes that the perturbation of a target gene affects certain latent factors, which in turn changes the expression of individual genes.</p>
 <p>Guided Sparse Factor Analysis (GSFA) infers latent factors that represent coregulated genes or gene modules; by borrowing information from these factors, it infers the effects of genetic perturbations on individual genes. In other words, it find the effect of perturbations on each latent factor, which stand for gene modules.</p>
@@ -565,7 +608,61 @@ There are no past versions. Publish this analysis with <code>wflow_publish()</co
 <div id="overview" class="section level2">
 <h2><strong>Overview</strong></h2>
 <p><img src="images/GSFAdemo.png" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GSFAdemo">
+Past versions of GSFAdemo.png
+</button>
+</p>
+<div id="fig-GSFAdemo" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/8ff1b41637cc95868400439db6b17869bff7922a/docs/images/GSFAdemo.png" target="_blank">8ff1b41</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The main unknowns of the model are the factor matrix (<em>Z</em>), the gene loading on factors (<em>W</em>) and the effects of perturbations on the factors (<em>β</em>). We assume a standard normal prior distribution of <em>Z</em> and a ‘spike-and-slab’ prior of <em>β</em>, assuming that the effects come from either a normal distribution or a point mass at 0. This sparse prior of <em>β</em> encodes the intuition that a genetic perturbation probably affects only a small number of factors. For the gene loading matrix <em>W</em>, we also used a sparse prior to limit the number of genes contributing to a factor.</p>
+<p>GSFA produces three main outputs: the association between genetic perturbations and factors; the weights of genes on factors measured by PIPs; and a list of DEGs of each perturbation at a given LFSR cutoff.</p>
+</div>
+<div id="model" class="section level2">
+<h2>Model</h2>
+<p><img src="images/model.png" style="display: block; margin: auto;" /></p>
+<p><img src="images/model2.png" style="display: block; margin: auto;" /></p>
+<p>To limit the number of genes contributing to a factor and facilitate the biological interpretation of factors, we also imposed a sparse prior on the gene weights. We found in our simulations and real data analysis that, when analyzing count data, the standard spike-and-slab prior is sometimes insufficient to impose sparsity. We think this is due to a well-known problem in count-based RNA-seq data analysis: because the total read count in a sample is fixed, activation of some genes indirectly reduces the read counts in all other genes, resulting in weakly correlated expression across many genes. Thus, even when a factor affects only a small set of genes, it may appear to be correlated with many other genes, making it hard to infer sparse factors. So we chose a ‘normal mixture’ prior. This prior assumes that the gene weights in a factor come from a mixture of two normal distributions with mean 0 but different variances. The difference with the spike-and-slab prior is that the ‘background’ component is not necessarily <em>δ</em><sub>0</sub>, but rather a distribution with small effects. The prior weight of gene <em>j</em> in the factor <em>k</em> follows:</p>
+<p><img src="images/model3.png" style="display: block; margin: auto;" /></p>
+<p>We inferred the parameters in GSFA using Gibbs sampling, a Markov chain Monte Carlo (MCMC) algorithm that obtains a sequence of approximate samples from their posterior distribution given the observed data. Gibbs sampling is an attractive choice because the conditional distributions of the main parameters (<em>β</em> and <em>W</em>) and latent variables (<em>Z</em>) have analytical forms. To see this, we first considered the conditional distribution of <em>W</em>, given data and all other parameters and variables, <em>P</em>(<em>W</em>|<em>Y</em>, <em>G</em>, <em>Z</em>, <em>β</em>). (For simplicity, we dropped the hyperparameters and parameters related to the error terms.)</p>
+<p><img src="images/model5.png" style="display: block; margin: auto;" /></p>
+<p><img src="images/model6.png" style="display: block; margin: auto;" /></p>
+<p><img src="images/model7.png" style="display: block; margin: auto;" /></p>
+<p><img src="images/model8.png" style="display: block; margin: auto;" /></p>
+</div>
+<div id="further" class="section level2">
+<h2>Further</h2>
+<p>GSFA is most powerful when the perturbations have large effect sizes, affecting the expression of many genes. In some experiments, researchers targeted noncoding elements, whose effects may be small and limited to the expression of nearby genes. GSFA may not be beneficial in such cases. Another key consideration is the multiplicity of infection (MOI) in experiments. We have applied GSFA to the low MOI setting, where a cell usually contains at most one gRNA. The high MOI setting may pose unique challenges. For example, multiple perturbations in a cell may interact nonadditively, and technical confounders may lead to false discoveries. Additional work needs to be done to evaluate GSFA in the high MOI setting.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

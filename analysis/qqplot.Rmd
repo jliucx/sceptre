@@ -180,7 +180,7 @@ library(kableExtra)
 data_matrix <- matrix(c("20/155595", "292/976820", "51/1027281", "1/126552", "2/652822", "0/684410"), nrow = 2, byrow = TRUE)
 
 # Set row and column names
-rownames(data_matrix) <- c("original", "NTC3&12")
+rownames(data_matrix) <- c("original", "remove NTC3&12")
 colnames(data_matrix) <- c("mixture(singleton)", "mixture(union)", "threshold(union)")
 
 # Convert to data frame for kable
@@ -250,3 +250,13 @@ knitr::include_graphics("images/calibration_cis_threshold5.png", error = FALSE)
 ## How p-values are affected if calculated from permutation instead of conditional resampling
 
 To test whether calculating p-values using permutation is still valid in high-MOI data, we tried it on both "trans" (all possible pairs) and cis (a random subset of possible pairs), after removing NTC-3 and NTC-12.
+
+Trans
+```{r echo=FALSE}
+knitr::include_graphics("output/trans_singleton_remove_permute/plot_run_calibration_check.png", error = FALSE)
+```
+
+Cis
+```{r echo=FALSE}
+knitr::include_graphics("output/cis_singleton_remove_permute/plot_run_calibration_check.png", error = FALSE)
+```

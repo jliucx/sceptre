@@ -16,4 +16,6 @@ Welcome to my research website. Haha.
 
 [Further analysis](qqplot.html)
 
- 
+Paper reading:
+
+[GSFA Summary](GSFA.html)
