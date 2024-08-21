@@ -87,7 +87,7 @@ We create a new column "adj_p\_value" which applies BH correction to the p-value
 
 ```{r}
 library(dplyr)
-results_run_calibration_check <- readRDS("output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds")
+results_run_calibration_check <- readRDS("docs/output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds")
 results_run_calibration_check <- results_run_calibration_check %>%
   mutate(adj_p_value = p.adjust(p_value, method = "BH"))
 
@@ -127,12 +127,12 @@ Therefore, we perform the analysis again omitting the NTC-3 and NTC-12, and belo
 ### Trans analysis with gRNA method using mixture model (singleton)
 
 ```{r echo=FALSE}
-knitr::include_graphics("images/trans_singleton.png", error = FALSE)
+knitr::include_graphics("output/sceptre_outputs_trans_singleton/plot_run_calibration_check.png", error = FALSE)
 ```
 
-[text summary](images/trans_singleton.txt)
+[text summary](output/sceptre_outputs_trans_singleton/analysis_summary.txt)
 
-### Trans analysis with gRNA method using mixture model (singleton)(omitting NTC-3&12)
+### Trans analysis with gRNA assignment method using mixture model (singleton)(omitting NTC-3&12)
 
 ```{r echo=FALSE}
 knitr::include_graphics("output/sceptre_outputs_trans_singleton_omit_NTC3_12/plot_run_calibration_check.png", error = FALSE)
@@ -140,7 +140,7 @@ knitr::include_graphics("output/sceptre_outputs_trans_singleton_omit_NTC3_12/plo
 
 [text summary](output/sceptre_outputs_trans_singleton_omit_NTC3_12/analysis_summary.txt)
 
-### Trans analysis with gRNA method using mixture model
+### Trans analysis with gRNA assignment method using mixture model (union)
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALSE)
@@ -148,13 +148,13 @@ knitr::include_graphics("images/plot_run_calibration_check-01.png", error = FALS
 
 [text summary](images/trans_mixture.txt)
 
-### Trans analysis with gRNA method using mixture model (omitting NTC-3&12)
+### Trans analysis with gRNA method using mixture model (union)(omitting NTC-3&12)
 
 ```{r echo=FALSE}
-knitr::include_graphics("images/trans_mixture_omit.png", error = FALSE)
+knitr::include_graphics("output/trans_union_omit_NTC3_12/plot_run_calibration_check.png", error = FALSE)
 ```
 
-[text summary](images/trans_mixture_omit2.txt)
+[text summary](output/trans_union_omit_NTC3_12/analysis_summary.txt)
 
 ### Trans analysis with gRNA method using threshold method
 
