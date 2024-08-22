@@ -12,9 +12,9 @@ Welcome to my research website. Haha.
 
 [Sceptre on dataset from Morris](sceptre_example.html)
 
-[Summary](summary.html)
+[Summary of sceptre](summary.html)
 
-[Further analysis](qqplot.html)
+[Further analysis on Morris data](qqplot.html)
 
 Paper reading:
 
