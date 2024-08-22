@@ -13,7 +13,7 @@
 
 <meta name="date" content="2024-07-12" />
 
-<title>A new Bayesian factor analysis method improves detection of genes and biological processes affected by perturbations in single-cell CRISPR screening</title>
+<title>TATES: Efficient Multivariate Genotype-Phenotype Analysis for Genome-Wide Association Studies</title>
 
 <script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -359,7 +359,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">A new Bayesian factor analysis method improves detection of genes and biological processes affected by perturbations in single-cell CRISPR screening</h1>
+<h1 class="title toc-ignore">TATES: Efficient Multivariate Genotype-Phenotype Analysis for Genome-Wide Association Studies</h1>
 <h4 class="author">jliucx</h4>
 <h4 class="date">2024-07-12</h4>
 
@@ -546,7 +546,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/GSFA.Rmd</code>) and HTML (<code>docs/GSFA.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/TATES.Rmd</code>) and HTML (<code>docs/TATES.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -575,7 +575,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/307dbfa18bf3e0404246ad43a187e921976b9c65/analysis/GSFA.Rmd" target="_blank">307dbfa</a>
+<a href="https://github.com/jliucx/sceptre/blob/307dbfa18bf3e0404246ad43a187e921976b9c65/analysis/TATES.Rmd" target="_blank">307dbfa</a>
 </td>
 <td>
 jliucx
@@ -587,40 +587,6 @@ jliucx
 add TATES analysis
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/d53918c4c61155f84424099856a275f21900e743/docs/GSFA.html" target="_blank">d53918c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-<td>
-update
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jliucx/sceptre/8ff1b41637cc95868400439db6b17869bff7922a/docs/GSFA.html" target="_blank">8ff1b41</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-<td>
-repair
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -628,26 +594,61 @@ repair
 </div>
 </div>
 </div>
-<p><a href="https://www.nature.com/articles/s41592-023-02017-4">Link to the paper</a></p>
+<p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3554627/">Link to the paper</a></p>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>As GWAS analyses are generally univariate in nature, multivariate phenotypic information is usually reduced to a single composite score. This means that researchers, prior to analyses, often reduce available, originally multivariate, phenotypic information (e.g., information on multiple questions from a diagnostic interview or questionnaire, or multiple items in a test) to a single phenotypic composite score, such as a continuous sum score or binary case-control status. This practice often results in loss of statistical power to detect causal variants.</p>
+<p>On the other hand, GV effect could be either on the latent factor, or specific to one of the phenotype. And the coreration between factor and phenotype, factor and factor, phenotype and phenotype, is unknown. Univariate conceptualisations like sum scores and case-control status result in substantial loss of power to detect underlying GVs in all the scenarios except scenario A.</p>
+<p><img src="images/tates.png" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-tates">
+Past versions of tates.png
+</button>
+</p>
+<div id="fig-tates" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/307dbfa18bf3e0404246ad43a187e921976b9c65/docs/images/tates.png" target="_blank">307dbfa</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-08-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <div id="core-idea" class="section level2">
-<h2><strong>Core idea</strong></h2>
-<p><strong>Assumption</strong>:</p>
-<p>Genetic perturbations typically affect expression, not one gene at a time, but many related genes simultaneously. GSFA assumes the effects of genetic perturbations are mediated through a set of gene modules, mathematically represented as latent factors. GSFA assumes that the perturbation of a target gene affects certain latent factors, which in turn changes the expression of individual genes.</p>
-<p>Guided Sparse Factor Analysis (GSFA) infers latent factors that represent coregulated genes or gene modules; by borrowing information from these factors, it infers the effects of genetic perturbations on individual genes. In other words, it find the effect of perturbations on each latent factor, which stand for gene modules.</p>
-<p><strong>Q: Why called guided?</strong></p>
-<p>Notice that there are multiple ways to divide an expression matrix into latent factors and loading matrix. GSFA uses the information of <strong>perturbation matrix</strong> and <strong>sparse prior</strong> to construct factors and loadings.</p>
-<p><strong>Q: Why not clustering cells based on their transcriptome similarity and then assessing whether cells with a specific perturbation are enriched or depleted in any cluster?</strong></p>
-<p>Thus, this clustering-based approach does not explicitly link the perturbations with the affected genes. Cell clustering patterns may be driven by multiple biological processes. Even if a perturbation is associated with a cluster, it does not necessarily mean that the perturbation affects all the genes or biological processes associated with that cluster.</p>
-</div>
-<div id="overview" class="section level2">
-<h2><strong>Overview</strong></h2>
-<p><img src="images/GSFAdemo.png" style="display: block; margin: auto;" /></p>
+<h2>Core Idea</h2>
+<p>For each component of a multivariate trait, TATES combines p-values obtained in standard univariate GWAS to acquire one trait-based p-value, while correcting for correlations between components.</p>
+<p>For individual phenotypes characterizing a trait (e.g., items or symptoms), TATES combines the p-values obtained in standard univariate GWAS to arrive at a global trait-based p-value P<sub>T</sub>, while correcting for the observed correlational structure between the phenotypes. Here we show that TATES has correct false positive (type-I error) rate, and that TATES picks up both phenotype-specific genetic effects as well as genetic effects that are common to multiple correlated phenotypes. Through extensive simulations, probing a wide variety of genotype-phenotype models, we demonstrate under which circumstances TATES outperforms analyses based on sum scores and MANOVA/MultiPhen with respect to the statistical power to detect causal GVs.</p>
+<p><img src="images/tates2.png" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GSFAdemo">
-Past versions of GSFAdemo.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-tates2">
+Past versions of tates2.png
 </button>
 </p>
-<div id="fig-GSFAdemo" class="collapse">
+<div id="fig-tates2" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -666,31 +667,26 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/8ff1b41637cc95868400439db6b17869bff7922a/docs/images/GSFAdemo.png" target="_blank">8ff1b41</a>
+<a href="https://github.com/jliucx/sceptre/blob/307dbfa18bf3e0404246ad43a187e921976b9c65/docs/images/tates2.png" target="_blank">307dbfa</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-08-21
+2024-08-22
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>The main unknowns of the model are the factor matrix (<em>Z</em>), the gene loading on factors (<em>W</em>) and the effects of perturbations on the factors (<em>β</em>). We assume a standard normal prior distribution of <em>Z</em> and a ‘spike-and-slab’ prior of <em>β</em>, assuming that the effects come from either a normal distribution or a point mass at 0. This sparse prior of <em>β</em> encodes the intuition that a genetic perturbation probably affects only a small number of factors. For the gene loading matrix <em>W</em>, we also used a sparse prior to limit the number of genes contributing to a factor.</p>
-<p>GSFA produces three main outputs: the association between genetic perturbations and factors; the weights of genes on factors measured by PIPs; and a list of DEGs of each perturbation at a given LFSR cutoff.</p>
-</div>
-<div id="model" class="section level2">
-<h2>Model</h2>
-<p><img src="images/model.png" style="display: block; margin: auto;" /></p>
+<p><img src="images/tates3.png" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model">
-Past versions of model.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-tates3">
+Past versions of tates3.png
 </button>
 </p>
-<div id="fig-model" class="collapse">
+<div id="fig-tates3" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -709,253 +705,25 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/d53918c4c61155f84424099856a275f21900e743/docs/images/model.png" target="_blank">d53918c</a>
+<a href="https://github.com/jliucx/sceptre/blob/307dbfa18bf3e0404246ad43a187e921976b9c65/docs/images/tates3.png" target="_blank">307dbfa</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-08-21
+2024-08-22
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p><img src="images/model2.png" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model2">
-Past versions of model2.png
-</button>
-</p>
-<div id="fig-model2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d53918c4c61155f84424099856a275f21900e743/docs/images/model2.png" target="_blank">d53918c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-</tr>
-</tbody>
-</table>
+<p><strong>Approximation p-value correlation matrix</strong></p>
+<p>The <em>m</em>×<em>m</em> correlation matrix <em>ρ</em> between the p-values is not observed in practice. We used simulation to show that matrix <em>ρ</em> can be accurately approximated through the <em>m</em>×<em>m</em> correlation matrix <em>r</em> between the phenotypes. We simulated 55 continuous standard normally distributed phenotypes whose intercorrelations ranged between −.90 and .90, and a GV (MAF = .5) that was simulated to be unrelated to the 55 phenotypes. The association between the GV and all phenotypes was tested, yielding 55 p-values, and this simulation was run 10,000 times. We then calculated, across the 10,000 simulations, the mean pair-wise correlations between the 55 phenotypes (i.e., (55*55−55)/2 = 1485 correlations), and the mean pair-wise correlations between the p-values. Regressing the vector of correlations between the p-values on the vector of correlations between the phenotypes, we obtain the 6<sup>th</sup> order polynomial <em>ρ</em> = −0.0008−0.0023<em>r</em>+0.6226<em>r</em> <sup>2</sup>+0.0149<em>r</em> <sup>3</sup>+0.1095<em>r</em> <sup>4</sup>−0.0219<em>r</em> <sup>5</sup>+0.2179<em>r</em> <sup>6</sup> (coefficient of determination R<sup>2</sup> = .992), allowing accurate approximation of the correlations between the p-values from the observed correlations between the phenotypes. The thus obtained matrix <em>ρ</em> is subjected to the eigenvalue decomposition.</p>
 </div>
-</div>
-<p>To limit the number of genes contributing to a factor and facilitate the biological interpretation of factors, we also imposed a sparse prior on the gene weights. We found in our simulations and real data analysis that, when analyzing count data, the standard spike-and-slab prior is sometimes insufficient to impose sparsity. We think this is due to a well-known problem in count-based RNA-seq data analysis: because the total read count in a sample is fixed, activation of some genes indirectly reduces the read counts in all other genes, resulting in weakly correlated expression across many genes. Thus, even when a factor affects only a small set of genes, it may appear to be correlated with many other genes, making it hard to infer sparse factors. So we chose a ‘normal mixture’ prior. This prior assumes that the gene weights in a factor come from a mixture of two normal distributions with mean 0 but different variances. The difference with the spike-and-slab prior is that the ‘background’ component is not necessarily <em>δ</em><sub>0</sub>, but rather a distribution with small effects. The prior weight of gene <em>j</em> in the factor <em>k</em> follows:</p>
-<p><img src="images/model3.png" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model3">
-Past versions of model3.png
-</button>
-</p>
-<div id="fig-model3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d53918c4c61155f84424099856a275f21900e743/docs/images/model3.png" target="_blank">d53918c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>We inferred the parameters in GSFA using Gibbs sampling, a Markov chain Monte Carlo (MCMC) algorithm that obtains a sequence of approximate samples from their posterior distribution given the observed data. Gibbs sampling is an attractive choice because the conditional distributions of the main parameters (<em>β</em> and <em>W</em>) and latent variables (<em>Z</em>) have analytical forms. To see this, we first considered the conditional distribution of <em>W</em>, given data and all other parameters and variables, <em>P</em>(<em>W</em>|<em>Y</em>, <em>G</em>, <em>Z</em>, <em>β</em>). (For simplicity, we dropped the hyperparameters and parameters related to the error terms.)</p>
-<p><img src="images/model5.png" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model5">
-Past versions of model5.png
-</button>
-</p>
-<div id="fig-model5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d53918c4c61155f84424099856a275f21900e743/docs/images/model5.png" target="_blank">d53918c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="images/model6.png" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model6">
-Past versions of model6.png
-</button>
-</p>
-<div id="fig-model6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d53918c4c61155f84424099856a275f21900e743/docs/images/model6.png" target="_blank">d53918c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="images/model7.png" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model7">
-Past versions of model7.png
-</button>
-</p>
-<div id="fig-model7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d53918c4c61155f84424099856a275f21900e743/docs/images/model7.png" target="_blank">d53918c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="images/model8.png" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-model8">
-Past versions of model8.png
-</button>
-</p>
-<div id="fig-model8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d53918c4c61155f84424099856a275f21900e743/docs/images/model8.png" target="_blank">d53918c</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-08-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="further" class="section level2">
-<h2>Further</h2>
-<p>GSFA is most powerful when the perturbations have large effect sizes, affecting the expression of many genes. In some experiments, researchers targeted noncoding elements, whose effects may be small and limited to the expression of nearby genes. GSFA may not be beneficial in such cases. Another key consideration is the multiplicity of infection (MOI) in experiments. We have applied GSFA to the low MOI setting, where a cell usually contains at most one gRNA. The high MOI setting may pose unique challenges. For example, multiple perturbations in a cell may interact nonadditively, and technical confounders may lead to false discoveries. Additional work needs to be done to evaluate GSFA in the high MOI setting.</p>
+<div id="other-methods" class="section level2">
+<h2>Other methods</h2>
+<p>MultiPhen uses ordinal regression to regress 0/1/2-coded GVs on a collection of phenotypes of any measurement nature (i.e., continuous, dichotomous, ordinal), and applies one omnibus test to test whether all regression weights in the model are together significantly different from zero. MultiPhen has been shown to outperform MANOVA when minor allele frequency (MAF) is low and the phenotypes are case-control status or non-normally distributed continuous variables. Under most circumstances, however, MultiPhen and MANOVA yield very similar results in terms of power to detect causal GVs. A drawback of these multivariate methods is that their power depends on the specific configuration of phenotypic correlations and on the location of the GV effect (e.g., on the latent dimension, or specific to one of many correlated phenotypes). For instance, when the ideal model holds, MANOVA is decidedly less powerful than univariate analyses based on sum scores. MANOVA, however, easily outperforms the sum score approach when the GV affects only one of multiple strongly correlated variables.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
