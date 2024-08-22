@@ -16,7 +16,7 @@ Welcome to my research website. Haha.
 
 [Further analysis on Morris data](qqplot.html)
 
-Paper reading:
+Paper on power increasing:
 
 [GSFA Summary](GSFA.html)
 
