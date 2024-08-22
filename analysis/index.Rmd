@@ -19,3 +19,5 @@ Welcome to my research website. Haha.
 Paper reading:
 
 [GSFA Summary](GSFA.html)
+
+[TATES Summary](GSFA.html)

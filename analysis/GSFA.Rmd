@@ -1,0 +1,74 @@
+---
+title: "A new Bayesian factor analysis method improves detection of genes and biological processes affected by perturbations in single-cell CRISPR screening"
+author: "jliucx"
+date: "2024-07-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+[Link to the paper](https://www.nature.com/articles/s41592-023-02017-4)
+
+## **Core idea**
+
+**Assumption**:
+
+Genetic perturbations typically affect expression, not one gene at a time, but many related genes simultaneously. GSFA assumes the effects of genetic perturbations are mediated through a set of gene modules, mathematically represented as latent factors. GSFA assumes that the perturbation of a target gene affects certain latent factors, which in turn changes the expression of individual genes.
+
+Guided Sparse Factor Analysis (GSFA) infers latent factors that represent coregulated genes or gene modules; by borrowing information from these factors, it infers the effects of genetic perturbations on individual genes. In other words, it find the effect of perturbations on each latent factor, which stand for gene modules.
+
+**Q: Why called guided?**
+
+Notice that there are multiple ways to divide an expression matrix into latent factors and loading matrix. GSFA uses the information of **perturbation matrix** and **sparse prior** to construct factors and loadings.
+
+**Q: Why not clustering cells based on their transcriptome similarity and then assessing whether cells with a specific perturbation are enriched or depleted in any cluster?**
+
+Thus, this clustering-based approach does not explicitly link the perturbations with the affected genes. Cell clustering patterns may be driven by multiple biological processes. Even if a perturbation is associated with a cluster, it does not necessarily mean that the perturbation affects all the genes or biological processes associated with that cluster.
+
+## **Overview**
+
+```{r echo=FALSE}
+knitr::include_graphics("images/GSFAdemo.png", error = FALSE)
+```
+
+The main unknowns of the model are the factor matrix (*Z*), the gene loading on factors (*W*) and the effects of perturbations on the factors (*β*). We assume a standard normal prior distribution of *Z* and a 'spike-and-slab' prior of *β*, assuming that the effects come from either a normal distribution or a point mass at 0. This sparse prior of *β* encodes the intuition that a genetic perturbation probably affects only a small number of factors. For the gene loading matrix *W*, we also used a sparse prior to limit the number of genes contributing to a factor.
+
+GSFA produces three main outputs: the association between genetic perturbations and factors; the weights of genes on factors measured by PIPs; and a list of DEGs of each perturbation at a given LFSR cutoff.
+
+## Model
+
+```{r echo=FALSE}
+knitr::include_graphics("images/model.png", error = FALSE)
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("images/model2.png", error = FALSE)
+```
+
+To limit the number of genes contributing to a factor and facilitate the biological interpretation of factors, we also imposed a sparse prior on the gene weights. We found in our simulations and real data analysis that, when analyzing count data, the standard spike-and-slab prior is sometimes insufficient to impose sparsity. We think this is due to a well-known problem in count-based RNA-seq data analysis: because the total read count in a sample is fixed, activation of some genes indirectly reduces the read counts in all other genes, resulting in weakly correlated expression across many genes. Thus, even when a factor affects only a small set of genes, it may appear to be correlated with many other genes, making it hard to infer sparse factors. So we chose a 'normal mixture' prior. This prior assumes that the gene weights in a factor come from a mixture of two normal distributions with mean 0 but different variances. The difference with the spike-and-slab prior is that the 'background' component is not necessarily *δ*~0~, but rather a distribution with small effects. The prior weight of gene *j* in the factor *k* follows:
+
+```{r echo=FALSE}
+knitr::include_graphics("images/model3.png", error = FALSE)
+```
+
+We inferred the parameters in GSFA using Gibbs sampling, a Markov chain Monte Carlo (MCMC) algorithm that obtains a sequence of approximate samples from their posterior distribution given the observed data. Gibbs sampling is an attractive choice because the conditional distributions of the main parameters (*β* and *W*) and latent variables (*Z*) have analytical forms. To see this, we first considered the conditional distribution of *W*, given data and all other parameters and variables, *P*(*W*\|*Y*, *G*, *Z*, *β*). (For simplicity, we dropped the hyperparameters and parameters related to the error terms.)
+
+```{r echo=FALSE}
+knitr::include_graphics("images/model5.png", error = FALSE)
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("images/model6.png", error = FALSE)
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("images/model7.png", error = FALSE)
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("images/model8.png", error = FALSE)
+```
+
+## Further
+
+GSFA is most powerful when the perturbations have large effect sizes, affecting the expression of many genes. In some experiments, researchers targeted noncoding elements, whose effects may be small and limited to the expression of nearby genes. GSFA may not be beneficial in such cases. Another key consideration is the multiplicity of infection (MOI) in experiments. We have applied GSFA to the low MOI setting, where a cell usually contains at most one gRNA. The high MOI setting may pose unique challenges. For example, multiple perturbations in a cell may interact nonadditively, and technical confounders may lead to false discoveries. Additional work needs to be done to evaluate GSFA in the high MOI setting.
