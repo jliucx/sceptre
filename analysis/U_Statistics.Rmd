@@ -1,0 +1,36 @@
+---
+title: "ASYMPTOTICALLY INDEPENDENT U-STATISTICS IN HIGH-DIMENSIONAL TESTING"
+author: "jliucx"
+date: "2024-07-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+## Motivation
+
+In this paper, we focus on a family of global testing problems in the high-dimensional setting, including testing of mean vectors, covariance matrices and regression coefficients in generalized linear models. These problems can be formulated as $H_0 : \mathcal{E} = \mathbf{0}$, where $\mathbf{0}$ is an all zero vector, $\mathcal{E} = \{ e_l : l \in \mathcal{L} \}$ is a parameter vector with $\mathcal{L}$ being the index set, and $e_l$'s being the corresponding parameters of interest, for example, elements in mean vectors, covariance matrices or coefficients in generalized linear models. For the global testing problem $H_0 : \mathcal{E} = \mathbf{0}$ versus $H_A : \mathcal{E} \neq \mathbf{0}$, two different types of methods are often used in the literature. One is sum-of-squares-type statistics. They are usually powerful against "dense'' alternatives, where $\mathcal{E}$ has a high proportion of nonzero elements with a large $\| \mathcal{E} \|_2 = \sum_{l \in \mathcal{L}} e_l^2$ or its weighted variants.
+
+The other is maximum-type statistics. They are usually powerful against "sparse'' alternatives, where $\mathcal{E}$ has few nonzero elements with a large $\| \mathcal{E} \|_{\infty}$. More recently, some also proposed to combine these two kinds of test statistics. However, for denser or only moderately dense alternatives, neither of these two types of statistics may be powerful, as will be further illustrated in this paper both theoretically and numerically. Importantly, in real applications, the underlying truth is usually unknown, which could be either sparse, dense or in-between. As global testing could be highly underpowered if an inappropriate testing method is used, it is desired in practice to have a testing procedure with high statistical power against a variety of alternatives.
+
+## Asymptotically independent U-statistics
+
+To illustrate our idea, suppose $\mathbf{z}_1, \ldots, \mathbf{z}_n$ are $n$ independent and identically distributed (i.i.d.) copies of a random vector $\mathbf{z}$. We consider the setting where each parameter $e_l$ has an unbiased kernel function estimator $K_l(\mathbf{z}_{i_1}, \ldots, \mathbf{z}_{i_{\gamma_l}})$, and $\gamma_l$ is the smallest integer such that for any $1 \leq i_1 \neq \cdots \neq i_{\gamma_l} \leq n$, $\mathbb{E}[K_l(\mathbf{z}_{i_1}, \ldots, \mathbf{z}_{i_{\gamma_l}})] = e_l$. This includes many testing problems on moments of low orders, such as entries in mean vectors, covariance matrices and score vectors of generalized linear models, which shall be discussed in detail. The family of U-statistics can be constructed generally as follows. For integers $a \geq 1$ and $1 \leq i_1 \neq \cdots \neq i_{a \times \gamma_l} \leq n$, since the $\mathbf{z}$'s are i.i.d., we have $$
+\mathbb{E}\left[K_l(\mathbf{z}_{i_1}, \ldots, \mathbf{z}_{i_{\gamma_l}}) \cdots K_l(\mathbf{z}_{i_{(a-1) \times \gamma_l + 1}}, \ldots, \mathbf{z}_{i_{a \times \gamma_l}})\right] = e_l^a.
+$$ Therefore, we can construct an unbiased estimator of the parameters of augmented powers $e_l^a$ with different $a$. Then $\|\mathcal{E}\|_a^a$ has an unbiased estimator $$
+\mathcal{U}(a) = \sum_{l \in \mathcal{L}} \left(P_{a \times \gamma_l}^n\right)^{-1} \sum_{1 \leq i_1 \neq \cdots \neq i_{a \times \gamma_l} \leq n} \prod_{k=1}^a K_l\left(\mathbf{z}_{i_{(k-1) \times \gamma_l + 1}}, \ldots, \mathbf{z}_{i_{k \times \gamma_l}}\right), \tag{1.1}
+$$
+
+```{r echo=FALSE}
+knitr::include_graphics("images/U1.png", error = FALSE)
+knitr::include_graphics("images/U2.png", error = FALSE)
+knitr::include_graphics("images/U3.png", error = FALSE)
+knitr::include_graphics("images/U4.png", error = FALSE)
+knitr::include_graphics("images/U5.png", error = FALSE)
+```
+
+In summary, when ∣*J~A~*∣ is large, that is, **Σ**~*A*~ is dense, a small *a* tends to obtain a smaller lower bound in terms of *ρ*. But when ∣*J~A~*∣ decreases, that is, **Σ**~*A*~ becomes sparse, a U-statistic of large finite order (or the maximum-type U-statistic as shown next) tends to obtain a smaller lower bound in *ρ*. This observation is consistent with the existing literature.
+
+## Adaptive testing
+
+In particular, we propose to combine the U-statistics through their *p*-values, which is widely used in literature. One popular method is the minimum combination, whose idea is to take the minimum *p*-value to approximate the maximum power. Specifically, let Γ be a candidate set of the orders of U-statistics, which contains both finite values and TO. We compute *p*-values *p~a~*'s of the U-statistics U(a)'s satisfying *a* ∈ Γ. The minimum combination takes the statistic *T*~adpUmin~ = min{*p~a~* : *a* ∈ Γ} and has the asymptotic *p*-value *p*~adpUmin~ = 1 -- (1 -- *T*~adpUmin~)^∣Γ∣^, where ∣Γ∣ denotes the size of the candidate set Γ. We reject *H*~0~ if *p*~adpUmin~ \< *α*. Under *H*~0~, *p~a~*'s are asymptotically independent and uniformly distributed by the theoretical results. The type I error is asymptotically controlled as P(padpUmin\<α)=P(mina∈Γpa\<p∗α)→α, where p∗α=1−(1−α)1∕∣Γ∣. Since P(mina∈Γpa\<p∗α)≥P(pa\<p∗α), the power of the adaptive test goes to 1 if there exists *a* ∈ Γ such that the power of U(a) goes to 1. We note that the power of the adaptive test is not necessarily higher than that of all the U-statistics. This is because the power of U(a) is *P*(*p~a~* \< *α*), and is different from P(pa\<p∗α) since p∗α\<α when ∣Γ∣ \> 1. Based on our extensive simulations, we find that the adaptive test is usually close to or even higher than the maximum power of the U-statistics.

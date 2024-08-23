@@ -21,3 +21,5 @@ Paper on power increasing:
 [GSFA Summary](GSFA.html)
 
 [TATES Summary](GSFA.html)
+
+[Asymptotic indepdent U Statistics](U_Statistics.html)
