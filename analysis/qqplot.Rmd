@@ -253,7 +253,7 @@ To test whether calculating p-values using permutation is still valid in high-MO
 **Conditional resampling**
 
 ```{r echo=FALSE}
-knitr::include_graphics("output/sceptre_outputs_trans_singleton/plot_run_calibration_check.png", error = FALSE)
+knitr::include_graphics("output/trans_singleton_threshold_author/plot_run_calibration_check.png", error = FALSE)
 ```
 
 **Permutation**
