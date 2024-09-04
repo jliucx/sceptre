@@ -12,7 +12,6 @@ editor_options:
 We extract the results of negative control p- values of **"/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_cis"** (cis analysis with grna assigned by mixture model). We want to confirm that the qq plot we manually create is the same as the plot that "sceptre" package creates:
 
 ```{r}
-library(qqman)
 library(ggplot2)
 results_run_calibration_check <- readRDS("output/sceptre_outputs_cis/results_run_calibration_check.rds")
 ```
@@ -249,14 +248,38 @@ knitr::include_graphics("images/calibration_cis_threshold5.png", error = FALSE)
 
 ## How p-values are affected if calculated from permutation instead of conditional resampling
 
-To test whether calculating p-values using permutation is still valid in high-MOI data, we tried it on both "trans" (all possible pairs) and cis (a random subset of possible pairs), after removing NTC-3 and NTC-12.
+To test whether calculating p-values using permutation is still valid in high-MOI data, we compare the calibration result of sceptre using conditional resampling and permutation.
 
-Trans
+**Conditional resampling**
+
 ```{r echo=FALSE}
-knitr::include_graphics("output/trans_singleton_remove_permute/plot_run_calibration_check.png", error = FALSE)
+knitr::include_graphics("output/sceptre_outputs_trans_singleton/plot_run_calibration_check.png", error = FALSE)
 ```
 
-Cis
-```{r echo=FALSE}
-knitr::include_graphics("output/cis_singleton_remove_permute/plot_run_calibration_check.png", error = FALSE)
+**Permutation**
+
+```{r}
+knitr::include_graphics("output/trans_singleton_permute/plot_run_calibration_check.png", error = FALSE)
+```
+
+```{r}
+results_run_calibration_check <- readRDS("docs/output/trans_singleton_permute/results_run_calibration_check.rds")
+filtered_data <- results_run_calibration_check %>% filter(significant == TRUE)
+grna_count <- filtered_data %>%
+  group_by(grna_id) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+# Calculate the percentage
+grna_count <- grna_count %>%
+  mutate(percentage = count / sum(count) * 100)
+
+# Create the pie chart
+ggplot(grna_count, aes(x = "", y = count, fill = grna_id)) +
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y") +
+  theme_void() +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            position = position_stack(vjust = 0.5)) +
+  labs(title = "Distribution of significant grna_id", fill = "grna_id")
 ```
