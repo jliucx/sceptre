@@ -1,0 +1,435 @@
+---
+title: "create_grna_target_data_frame"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+directories <- "data/STINGseq-v1_GDO"
+features_dir<-paste0(directories,"/features.tsv.gz")
+features <- read_tsv(features_dir,col_names = FALSE)
+(grna <- features[36602:36811,])
+```
+
+```{r}
+features[36602:36811,]
+```
+
+```{r}
+grna_target_data_frame <- grna %>%
+  filter(str_detect(`X2`, "^SNP")) %>%
+  mutate(target = str_replace(`X2`, "SNP-(\\d+)_\\d+?", "GWAS_\\1")) %>%
+  select(grna = `X2`, target)
+grna_target_data_frame
+```
+
+```{r}
+gene_ids <- c("ENSG00000117335", "ENSG00000169442", "ENSG00000109971", 
+              "ENSG00000109255", "ENSG00000196262", "ENSG00000116251")
+
+# Replicating the gene IDs by 2
+replicated_gene_ids <- rep(gene_ids, each = 2)
+
+# Assuming the original df has a column named 'grna'
+# Extracting the grna values from rows 177 to 188
+grna_values <- grna[177:188,1]
+
+# Creating the new dataframe
+new_df <- data.frame(grna = grna_values, target = replicated_gene_ids)
+
+# Assuming grna_target_data_frame already exists
+# Ensure new_df has the same column names as grna_target_data_frame
+colnames(new_df) <- colnames(grna_target_data_frame)
+
+# Append new_df to grna_target_data_frame
+grna_target_data_frame <- rbind(grna_target_data_frame, new_df)
+
+
+```
+
+```{r}
+# Create a new dataframe with grna[189:200,1] and "non-targeting"
+non_targeting_df <- data.frame(
+  grna = grna[189:200, 1],
+  target = rep("non-targeting", length(grna[189:200, 1]))
+)
+
+# Ensure the column names match
+colnames(non_targeting_df) <- colnames(grna_target_data_frame)
+
+# Append the new dataframe to grna_target_data_frame
+grna_target_data_frame <- rbind(grna_target_data_frame, non_targeting_df)
+
+# Display the updated grna_target_data_frame
+print(grna_target_data_frame)
+
+```
+
+```{r}
+# Create a new dataframe with grna[201:210,1] and "ENSG00000196352"
+specific_target_df <- data.frame(
+  grna = grna[201:210, 1],
+  target = rep("ENSG00000196352", length(grna[201:210, 1]))
+)
+
+# Ensure the column names match
+colnames(specific_target_df) <- colnames(grna_target_data_frame)
+
+# Append the new dataframe to grna_target_data_frame
+grna_target_data_frame <- rbind(grna_target_data_frame[1:200,], specific_target_df)
+colnames(grna_target_data_frame) <- c("grna_id", "grna_target")
+
+# Display the updated grna_target_data_frame
+print(grna_target_data_frame)
+```
+
+```{r}
+row_index <- which(features$`X2` == "CD55")
+
+# Print the index
+features[row_index,]
+```
+
+```{r}
+output_directory <- "data/STINGseq-v1_GDO/"
+
+# Create the full file path
+output_file <- file.path(output_directory, "grna_target_data_frame.csv")
+
+# Write the dataframe to a CSV file
+write.csv(grna_target_data_frame, output_file, row.names = FALSE)
+
+# Confirm the file has been written
+cat("File saved to:", output_file)
+```
+
+```{r}
+library(readxl)
+library(dplyr)
+
+file_path <- "data/STINGseq-v1_GDO/table.xlsx"
+
+# Read the "Table S3A" sheet into a dataframe
+table_s3a_df <- read_excel(file_path, sheet = "Table S3A")
+
+# Display the first few rows of the dataframe to verify
+table<-table_s3a_df[-2:-1,1:3]
+colnames(table)<-c("gRNA Library", "gRNA id", "Target")
+```
+
+```{r}
+table_v1=subset(table, `gRNA Library` == "v1")
+table_v1
+```
+
+```{r}
+output_directory <- "data/STINGseq-v1_GDO/"
+
+# Create the full file path
+output_file <- file.path(output_directory, "table_filtered.csv")
+
+# Write the dataframe to a CSV file
+write.csv(table_v1, output_file, row.names = T)
+```
+
+```{r}
+get_ensembl_coordinates <- function(rs_id) {
+  result <- getBM(
+    attributes = c("refsnp_id", "chr_name", "chrom_start", "chrom_end"),
+    filters = "snp_filter",
+    values = rs_id,
+    mart = snp_mart
+  )
+  
+  if (nrow(result) > 0) {
+    filtered_result <- result[grep("^\\d+$", result$chr_name), ]
+    if (nrow(filtered_result) > 0) {
+      return(data.frame(chr = filtered_result$chr_name, start = filtered_result$chrom_start, end = filtered_result$chrom_end))
+    } else {
+      return(data.frame(chr = NA, start = NA, end = NA))
+    }
+  } else {
+    return(data.frame(chr = NA, start = NA, end = NA))
+  }
+}
+
+for (i in 1:nrow(data)) {
+  Target <- data$Target[i]
+  print(paste("Processing target:", Target))  # Print current target
+  if (grepl("^rs", Target)) {
+    coords <- get_ensembl_coordinates(Target)
+    print(coords)  # Print coords for debugging
+    if (!is.na(coords$chr[1]) && !is.null(coords$chr[1])) {
+      data$chr[i] <- coords$chr
+      data$start[i] <- coords$start
+      data$end[i] <- coords$end
+    } else {
+      print(paste("No coordinates found for", Target))
+    }
+  } else {
+    data$chr[i] <- sub(":.*", "", Target)
+    data$start[i] <- as.numeric(sub(".*:(\\d+)_.*", "\\1", Target))
+    data$end[i] <- data$start[i]  # Assuming end is the same as start for the given data
+  }
+}
+```
+
+```{r}
+data=read.csv("data/STINGseq-v1_GDO/table_filtered.csv",header=T)
+data[177,4:6]=c("1","207925383","207968861")
+data[178,4:6]=c("1","207925383","207968861")
+data[179,4:6]=c("1","26644449","26647014")
+data[180,4:6]=c("1","26644449","26647014")
+data[181,4:6]=c("11","122928197","122932844")
+data[182,4:6]=c("11","122928197","122932844")
+data[183,4:6]=c("4","56461398","56502960")
+data[184,4:6]=c("4","56461398","56502960")
+data[185,4:6]=c("7","44836280","44842716")
+data[186,4:6]=c("7","44836280","44842716")
+data[187,4:6]=c("1","6245080","6259655")
+data[188,4:6]=c("1","6245080","6259655")
+data[201,4:6]=c("1","207495023","207534311")
+data[202,4:6]=c("1","207495023","207534311")
+data[203,4:6]=c("1","207495023","207534311")
+data[204,4:6]=c("1","207495023","207534311")
+data[205,4:6]=c("1","207495023","207534311")
+data[206,4:6]=c("1","207495023","207534311")
+data[207,4:6]=c("1","207495023","207534311")
+data[208,4:6]=c("1","207495023","207534311")
+data[209,4:6]=c("1","207495023","207534311")
+data[210,4:6]=c("1","207495023","207534311")
+
+```
+
+```{r}
+(grna_target_data_frame=data[,-1])
+```
+
+```{r}
+grna_target_data_frame[189:200,"Target"]=rep("non-targeting",12)
+grna_target_data_frame[189:200,"chr"]=rep(as.factor(NA),12)
+grna_target_data_frame[189:200,"start"]=rep("NA",12)
+grna_target_data_frame[189:200,"end"]=rep("NA",12)
+```
+
+```{r}
+colnames(grna_target_data_frame)=c("grna_id","grna_target","chr","start","end")
+```
+
+```{r}
+grna_target_data_frame
+
+```
+
+```{r}
+output_directory <- "data/STINGseq-v1_GDO/"
+
+# Create the full file path
+output_file <- file.path(output_directory, "grna_target_data_frame.csv")
+
+# Write the dataframe to a CSV file
+write.csv(grna_target_data_frame, output_file, row.names = F)
+
+# Confirm the file has been written
+cat("File saved to:", output_file)
+```
+
+```{r}
+library(readr)
+features=read_tsv("data/STINGseq-v1_GDO/features.tsv.gz",col_names = F)
+features[36602:36811,]
+```
+
+```{r}
+template=grna_target_data_frame
+replace_second_hyphen <- function(x) {
+  sub("^(.*?)-(.*?)-", "\\1-\\2_", x)
+}
+
+# Apply the function to the grna_id column
+template$grna_id <- sapply(template$grna_id, replace_second_hyphen)
+
+```
+
+```{r}
+template[177:188,"grna_id"]=c("CD46-1","CD46-2","CD52-1","CD52-2","HSPA8-1","HSPA8-2","NMU-1","NMU-2","PPIA-1","PPIA-2","RPL22-1","RPL22-2")
+```
+
+```{r}
+template[177:188,"grna_target"]=rep(c("ENSG00000117335","ENSG00000169442","ENSG00000109971","ENSG00000109255","ENSG00000196262","ENSG00000116251"),each=2)
+```
+
+```{r}
+template[201:210,"grna_target"]=rep("ENSG00000196352",10)
+```
+
+```{r}
+template$chr <- paste0("chr", template$chr)
+```
+
+```{r}
+template[189:200,"chr"]=rep(NA,12)
+template
+```
+
+```{r}
+output_directory <- "data/STINGseq-v1_GDO/"
+
+# Create the full file path
+output_file <- file.path(output_directory, "grna_target_data_frame.csv")
+
+# Write the dataframe to a CSV file
+write.csv(template[,-1], output_file, row.names = F)
+
+# Confirm the file has been written
+cat("File saved to:", output_file)
+```
+
+```{r}
+library(Matrix)
+
+# Define the file path
+file_path <- "data/GDO_threshold/matrix.mtx.gz"
+
+# Read the .mtx.gz file
+matrix_data <- readMM(file_path)
+
+# Display the matrix
+print(matrix_data)
+```
+
+```{r}
+threshold=read.csv("data/GDO_threshold/GDO.umi_thresholds.csv.gz")
+```
+
+```{r}
+threshold
+```
+
+```{r}
+(grna_features=read_tsv("data/GDO_threshold/features.tsv.gz",col_names = F)[36602:36811,1])
+```
+
+```{r}
+(ordered_threshold <- threshold[match(grna_features, threshold$Protospacer), ])
+```
+
+```{r}
+threshold$Protospacer <- as.character(threshold$Protospacer)
+grna_features <- as.character(grna_features)
+
+# Reorder the threshold dataframe based on the grna_features order
+ordered_threshold <- threshold[match(grna_features, threshold$Protospacer), ]
+
+# Check the reordered dataframe
+print(ordered_threshold)
+```
+
+```{r}
+write.csv(ordered_threshold,"data/GDO_threshold/ordered_threshold.csv")
+```
+
+```{r}
+rows_to_modify=matrix_data[36602:36811,]
+```
+
+```{r}
+rows_to_modify
+```
+
+```{r}
+(threshold_list=ordered_threshold[,2])
+```
+
+```{r}
+library(Matrix)
+
+# Function to apply threshold to a sparse matrix
+apply_threshold_sparse <- function(sparse_matrix, threshold_list) {
+  for (i in 1:nrow(sparse_matrix)) {
+    # Find indices in the row where the value is below the threshold
+    below_threshold_indices <- which(sparse_matrix[i, ] < threshold_list[i])
+    # Set those elements to zero
+    sparse_matrix[i, below_threshold_indices] <- 0
+  }
+  return(sparse_matrix)
+}
+
+# Apply the function to the sparse matrix
+thresholded_sparse_matrix <- apply_threshold_sparse(rows_to_modify, threshold_list)
+
+# Print the thresholded sparse matrix
+print(thresholded_sparse_matrix)
+
+```
+
+```{r}
+matrix_data[36602:36811,]
+```
+
+```{r}
+thresholded_sparse_matrix
+```
+
+```{r}
+print(dim(matrix_data[36602:36811,]))
+print(dim(thresholded_sparse_matrix))
+```
+
+```{r}
+library(Matrix)
+
+# Read the matrix data and ensure it is a dgTMatrix
+matrix_data <- readMM(file_path)
+
+# Perform the row substitution
+for (i in 1:nrow(thresholded_sparse_matrix)) {
+  row_index <- 36601 + i
+  matrix_data[row_index, ] <- thresholded_sparse_matrix[i, ]
+  print(paste0("writing col",i))
+}
+
+# Confirm the substitution
+print(matrix_data[36602:36811, ])
+
+```
+
+```{r}
+output_file <- gzfile("data/GDO_threshold/matrix_2.mtx.gz", "wt")
+
+# Write the matrix to the gzipped file
+writeMM(matrix_data, output_file)
+
+# Close the file connection
+close(output_file)
+```
+
+```{r}
+length(matrix_data[36602:36811,]@x)/15215
+```
+
+```{r}
+file_path <- "data/GDO_threshold/matrix.mtx.gz"
+
+# Read the .mtx.gz file
+(matrix_origin <- readMM(file_path))
+```
+
+```{r}
+matrix_data=matrix_origin
+matrix_data[36602:36811, ]=thresholded_sparse_matrix
+```
+
+```{r}
+matrix_data
+```
+
+```{r}
+identical(matrix_data[36602:36811, ], thresholded_sparse_matrix)
+
+```

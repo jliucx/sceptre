@@ -1,0 +1,522 @@
+---
+title: "gene_module"
+output: pdf_document
+---
+
+```{r,message=FALSE, warning=FALSE, results='hide' }
+library(presto)
+library(sceptre)
+library(sceptredata)
+library(readr)
+library(dplyr)
+library(Matrix)
+```
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+Morris_data <- T
+
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+if (Morris_data) {
+  directories <- "data/STINGseq-v1_GDO"
+  grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
+  sceptre_object <- import_data_from_cellranger(
+  directories = directories,
+  moi = "high",
+  grna_target_data_frame = grna_target_data_frame
+)
+} else {
+  directories <- paste0(system.file("extdata", package = "sceptredata"), "/highmoi_example/gem_group_", 1:2)
+  data(grna_target_data_frame_highmoi)
+  sceptre_object <- import_data_from_cellranger(
+  directories = directories,
+  moi = "high",
+  grna_target_data_frame = grna_target_data_frame_highmoi
+)
+}
+
+
+positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
+
+discovery_pairs_cis <- construct_cis_pairs(
+  sceptre_object = sceptre_object,
+  positive_control_pairs = positive_control_pairs,
+  response_position_data_frame=gene_position_data_frame_grch37,
+  distance_threshold = 5e5
+)
+
+discovery_pairs_trans <- construct_trans_pairs(
+  sceptre_object = sceptre_object,
+  positive_control_pairs = positive_control_pairs,
+  pairs_to_exclude = "pairs_containing_pc_targets"
+)
+sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
+  set_analysis_parameters(
+    discovery_pairs=discovery_pairs_trans, 
+    positive_control_pairs=positive_control_pairs, 
+    side="both") |>
+  assign_grnas()
+```
+
+## Modifying and overwrite the functions in Presto library to do wilcoxon test
+
+```{r}
+compute_ustat <- function(Xr, cols_list, n1n2_list, group_size_list) {
+  total_loops <- length(cols_list) # Total number of loops
+  loop_counter <- 1 # Initialize loop counter
+  
+  mapply(function(cols, n1n2, group_size) {
+    cat("Compute wilcox test statisitcs for gRNA #", loop_counter, "of", total_loops,".    ", round(loop_counter / total_loops * 100, 2)
+,"% of total progress" , "\n") 
+    loop_counter <<- loop_counter + 1 # Increment the counter
+    
+    grs <- sumGroups(Xr, cols)
+    
+    if (is(Xr, "dgCMatrix")) {
+      gnz <- (group_size - nnzeroGroups(Xr, cols))
+      zero_ranks <- (nrow(Xr) - diff(Xr@p) + 1) / 2
+      ustat <- t((t(gnz) * zero_ranks)) + grs - group_size * (group_size + 1) / 2
+    } else {
+      ustat <- grs - group_size * (group_size + 1) / 2
+    }
+    
+    return(ustat)
+  }, cols_list, n1n2_list, group_size_list, SIMPLIFY = FALSE)
+}
+
+
+
+compute_pval <- function(ustat_list, ties, N, n1n2_list) {
+  total_loops <- length(ustat_list) # Total number of loops
+  loop_counter <- 1 # Initialize loop counter
+  mapply(function(ustat, n1n2) {
+    cat("Compute wilcox p value for gRNA #", loop_counter, "of", total_loops,".    ", round(loop_counter / total_loops * 100, 2)
+,"% of total progress" , "\n") 
+    loop_counter <<- loop_counter + 1 # Increment the counter
+    z <- ustat - 0.5 * n1n2
+    z <- z - sign(z) * 0.5
+    .x1 <- N ^ 3 - N
+    .x2 <- 1 / (12 * (N^2 - N))
+    
+    rhs <- lapply(ties, function(tvals) {
+      (.x1 - sum(tvals ^ 3 - tvals)) * .x2
+    }) %>% unlist
+    
+    usigma <- sqrt(matrix(n1n2, ncol = 1) %*% matrix(rhs, nrow = 1))
+    z <- t(z / usigma)
+    
+    pvals <- matrix(2 * pnorm(-abs(as.numeric(z))), ncol = ncol(z))
+    return(pvals)
+  }, ustat_list, n1n2_list, SIMPLIFY = FALSE)
+}
+
+
+
+tidy_results_reduced <- function(wide_res, features, groups) {
+  res <- Reduce(cbind, lapply(wide_res, as.numeric)) %>% data.frame()
+  colnames(res) <- names(wide_res)
+  
+  # Create the 'feature' and 'group' columns
+  res$feature <- rep(features, times = length(groups))
+  res$group <- rep(groups, each = length(features))
+  
+  # Filter only the first group
+  first_group <- groups[1]
+  res <- res %>% dplyr::filter(group == first_group)
+  
+  # Select the relevant columns
+  res %>% dplyr::select(
+    feature,
+    statistic
+  )
+}
+
+
+wilcoxauc <- function(X, ...) {
+    UseMethod("wilcoxauc")
+}
+
+wilcoxauc.default <- function(X, y, groups_use = NULL, verbose = TRUE, ...) {
+    ## Check and possibly correct input values
+    if (is(X, "dgeMatrix")) X <- as.matrix(X)
+    if (is(X, "data.frame")) X <- as.matrix(X)
+    if (is(X, "dgTMatrix")) X <- as(X, "dgCMatrix")
+    if (is(X, "TsparseMatrix")) X <- as(X, "dgCMatrix")
+    if (ncol(X) != length(y[[1]])) stop("number of columns of X does not
+                                match length of y")
+    if (!is.null(groups_use)) {
+        idx_use <- which(y %in% intersect(groups_use, y))
+        y <- y[idx_use]
+        X <- X[, idx_use]
+    }
+
+    y  <- lapply(y, factor)
+  
+
+    group.size <- lapply(y, function(vec) as.numeric(table(vec)))
+  
+
+    if (is.null(row.names(X))) {
+        row.names(X) <- paste0("Feature", seq_len(nrow(X)))
+    }
+
+    ## Compute primary statistics
+    
+    n1n2 <- lapply(group.size, function(gs) gs * (ncol(X) - gs))
+    
+    if (is(X, "dgCMatrix")) {
+        rank_res <- rank_matrix(Matrix::t(X))
+    } else {
+        rank_res <- rank_matrix(X)
+    }
+
+    ustat <- compute_ustat(rank_res$X_ranked, y, n1n2, group.size)
+    #pvals <- compute_pval(ustat, rank_res$ties, ncol(X), n1n2)
+  
+
+    
+    results_list <- lapply(seq_along(ustat), function(i) {
+  # Create a res_list for each i-th vector in ustat and pvals
+    res_list <- list(
+    #pval = pvals[[i]],
+    statistic = t(ustat[[i]])
+  )
+  
+    tidy_results_reduced(res_list, row.names(X), levels(y[[i]]))
+})
+
+# results_list is now a list of the tidy_results_reduced outputs
+return(results_list)
+}
+```
+
+```{r}
+gene_names<-rownames(sceptre_object@response_matrix[[1]])
+gene_modules <- readRDS("gene_modules_id.rds")
+gene_in_modules <- vector("logical", length(gene_names))
+
+# Loop through each gene in gene_names
+for (i in seq_along(gene_names)) {
+  gene <- gene_names[i]
+  
+  # Check if the gene is in any module and return TRUE if it is found in any module
+  gene_in_modules[i] <- any(sapply(gene_modules, function(module) gene %in% module))
+}
+
+```
+
+## Estimate Propensity using logistic regression
+
+```{r}
+estimate_propensity <- function (grna_assignment_matrix, covariate) {
+  
+  estimated_prop <- matrix(NA, nrow = nrow(grna_assignment_matrix), ncol = ncol(grna_assignment_matrix))
+
+# Loop through each row of the grna_assignment_matrix
+for (i in 1:nrow(grna_assignment_matrix)) {
+  
+  # Extract the current row from the grna_assignment_matrix
+  grna_row <- as.numeric(grna_assignment_matrix[i, ])
+  
+  # Fit logistic regression model using covariates and the current row
+  glm_fit <- glm(grna_row ~ ., family = binomial(link = "logit"), data = covariate)
+  
+  # Predict the fitted means (estimated probabilities) for this row
+  estimated_prop[i, ] <- predict(glm_fit, type = "response")
+}
+  return(estimated_prop)
+}
+```
+
+## Permutation/Conditional resampling on gRNA assignment and combine the original matrix and permuted matrix as a big matrix
+
+```{r}
+resample_and_combine<- function(grna_assignment_matrix, n_permute) {
+  propensity_matrix <- estimate_propensity(grna_assignment_matrix , covariate)
+  
+  propensity <- do.call(rbind, replicate(n_permute, propensity_matrix, simplify = FALSE))
+  
+  
+    resampled_mat <- matrix(rbinom(n = length(propensity), 
+                                  size = 1, 
+                                  prob = as.vector(propensity)),
+                           nrow = nrow(propensity), 
+                           ncol = ncol(propensity))
+  
+    rownames(resampled_mat) <- rep(rownames(grna_assignment_matrix),n_permute)
+    # combined_mat <- rbind(grna_assignment_matrix, resampled_mat)
+    
+  return(resampled_mat)
+}
+
+permute_and_combine <- function(grna_assignment_matrix, n_permute) {
+  
+  permute_list <- list()
+  
+  for (i in 1:n_permute) {
+    # Generate a permutation of the column indices
+    permuted_indices <- sample(ncol(grna_assignment_matrix))
+    
+    # Apply the permutation to the columns
+    permute_list[[i]] <- grna_assignment_matrix[, permuted_indices]
+  
+  }
+  combined_mat <-do.call(rbind, permute_list)
+  return(combined_mat)
+}
+
+permutation_or_resampling <- function(grna_assignment_matrix, n_permute, use_resample=F){
+  if(use_resample){
+    return(resample_and_combine(grna_assignment_matrix, n_permute))
+  } else{
+    return(permute_and_combine(grna_assignment_matrix, n_permute))
+  }
+}
+```
+
+## Revised functions to calculate both original statistics and permuted statistics at a time
+
+```{r}
+slice_to_list <- function(large_matrix, n_permute) {
+  # Initialize an empty list to store the smaller matrices
+  sliced_matrices <- list()
+  
+  # Calculate the number of rows for each smaller matrix
+  slice_size <- n_rows
+
+ for (i in 1:(n_permute)) {
+    start_row <- (i - 1) * slice_size + 1
+    end_row <- i * slice_size
+    
+    sliced_matrices[[i]] <- large_matrix[start_row:end_row, ]
+  }
+  
+  return(sliced_matrices)
+}
+
+t_test <- function(response_matrix, grna_assignment_matrix, n_permute){
+  
+  grna_infected_cell_count <- grna_assignment_matrix%*%matrix(rep(1,n_cells),nrow=n_cells)
+  
+  mean_expression_trt <- grna_assignment_matrix%*%t(response_matrix)/as.vector(grna_infected_cell_count)
+  
+  mean_expression_squared_trt <- grna_assignment_matrix%*%t(response_matrix^2)/as.vector(grna_infected_cell_count)
+  
+  var_expression_trt <- mean_expression_squared_trt - mean_expression_trt^2
+  
+  grna_control_cell_count <- n_cells-grna_infected_cell_count
+  
+  mean_expression_control <- (1-grna_assignment_matrix)%*%t(response_matrix)/as.vector(grna_control_cell_count)
+  
+  mean_expression_squared_control <-(1-grna_assignment_matrix)%*%t(response_matrix^2)/as.vector(grna_control_cell_count)
+  
+  var_expression_control <- mean_expression_squared_control - mean_expression_control^2
+  
+  t_statistics <- (mean_expression_trt-mean_expression_control)/sqrt(var_expression_trt/as.vector(grna_infected_cell_count)+var_expression_control/as.vector(grna_control_cell_count))
+  
+  return(slice_to_list(t_statistics, n_permute))
+}
+
+wilcox_test <- function(response_matrix, grna_assignment_matrix, n_permute){
+  
+  response_dgC <- as(as.matrix(response_matrix),"dgCMatrix")
+
+  grna_assignment_list <- split(grna_assignment_matrix, row(grna_assignment_matrix))
+  
+  wilcox_result <- wilcoxauc(response_dgC,grna_assignment_list)
+  
+  names(wilcox_result) <- rownames(grna_assignment_matrix)
+  
+  combined_list <- list()
+  
+  for (i in 1:(n_permute)) {
+  # Extract n_rows elements for each group and assign it to the new list
+  grna_result <- wilcox_result[((i - 1) * n_rows + 1):(i * n_rows)]
+  stat_matrix <- do.call(rbind, lapply(grna_result, function(df) df$statistic))
+  rownames(stat_matrix) <- names(grna_result)
+  colnames(stat_matrix) <- rownames(response_matrix)
+  
+  combined_list[[i]] <- stat_matrix
+}
+  return(combined_list)
+}
+```
+
+## Combining test statistics within gene modules
+
+```{r}
+combine_test_statistics <- function(test_result, gene_module){
+  test_result_matrix <- do.call(rbind, test_result)
+
+    selected_columns<-colnames(test_result_matrix) %in% gene_module
+    test_results_within_module <- abs(test_result_matrix[,selected_columns])
+    power_sum_1 <- rowSums(test_results_within_module, na.rm = TRUE)
+    power_sum_2 <- rowSums(test_results_within_module^2, na.rm = TRUE)
+    power_sum_3 <- rowSums(test_results_within_module^3, na.rm = TRUE)
+    power_sum_4 <- rowSums(test_results_within_module^4, na.rm = TRUE)
+    power_sum_5 <- rowSums(test_results_within_module^5, na.rm = TRUE)
+    power_sum_6 <- rowSums(test_results_within_module^6, na.rm = TRUE)
+    min_p <- apply(test_results_within_module, 1, function(x) {
+      if (all(is.na(x))) {
+        return(0)  
+      } else {
+        return(max(x, na.rm = TRUE))
+      }
+    })
+    combined_matrix <- cbind(power_sum_1, power_sum_2, power_sum_3, power_sum_4, power_sum_5, power_sum_6, min_p)
+    return(combined_matrix)
+
+}
+
+```
+
+```{r}
+# Create a function to calculate the tail probability for rows with the same name
+compute_p_val <- function(group) {
+  # Create an empty matrix to store p-values
+  p_values <- matrix(NA, nrow = nrow(group), ncol = ncol(group))
+  colnames(p_values) <- colnames(group)
+  
+  # Loop over each row in the group (rows with the same name)
+  for (i in 1:nrow(group)) {
+    current_row <- group[i, ] 
+    other_rows <- group[-i, ]  
+    
+     current_row_copy <- do.call(rbind, replicate(nrow(other_rows), current_row,    simplify = FALSE))
+
+
+    comparison <- other_rows > current_row_copy
+
+ p_values[i, ] <- colSums(comparison) / nrow(other_rows)
+ 
+  }
+  rownames(p_values) <- rownames(group)
+  
+
+  return(p_values)
+}
+```
+
+```{r}
+compute_p_val_one_vs_group <- function(original,permuted,n_permute, bigger ){
+  
+  copy <- do.call(rbind, replicate(n_permute, original, simplify = FALSE))
+
+
+ unique_row_names <- unique(rownames(copy))
+
+# Initialize an empty list to store the comparison results
+comparison_results <- list()
+
+# Loop over each unique row name
+for (row_name in unique_row_names) {
+  # Extract the rows with the current row name from both matrices
+  copy_rows <- copy[rownames(copy) == row_name, ]
+  permuted_rows <- permuted[rownames(permuted) == row_name,  ]
+  if(bigger){
+    comparison <- permuted_rows > copy_rows
+  } else {
+    comparison <- permuted_rows < copy_rows
+  }
+  
+  
+   p_values <- colSums(comparison) / n_permute
+  # Store the result in the list
+  comparison_results[[row_name]] <- p_values
+}
+
+# Combine the results into a single matrix using cbind
+p_val <- do.call(rbind, comparison_results)
+}
+```
+
+```{r}
+min_p_val <- function(p_val_matrix, n_modules){
+  
+ min_values_by_group <- list()
+  group_size <- as.integer(ncol(p_val_matrix)/n_modules)
+# Loop over each group
+for (i in 1:n_modules) {
+  
+  # Extract the columns for the current group
+  start_col <- (i - 1) * group_size + 1
+  end_col <- i * group_size
+  current_group <-p_val_matrix[, start_col:end_col]
+  
+  # Compute the row-wise minimum for the current group
+  row_min <- apply(current_group, 1, min, na.rm = TRUE)
+  
+  # Store the result
+  min_values_by_group[[i]] <- row_min
+}
+
+# Combine the results into a matrix (each column corresponds to the row-wise minimum of a group)
+min_values_matrix <- do.call(cbind, min_values_by_group)
+return(min_values_matrix)
+}
+```
+
+```{r}
+response_matrix<-sceptre_object@response_matrix[[1]][gene_in_modules,]
+covariate <- sceptre_object@covariate_data_frame
+n_cells <- ncol(response_matrix)
+n_genes <- nrow(response_matrix)
+all_cells <- seq_len(n_cells)
+use_resample <- T
+n_permute <- 100
+grna_assignment_matrix <-get_grna_assignments(
+  sceptre_object = sceptre_object
+)[1:10,] # choose first 10 perturbation for demostration
+n_rows <- nrow(grna_assignment_matrix)
+```
+
+```{r}
+analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_modules,n_permute, use_resample){
+  #permuted grna assignment matrix
+  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+  # test statistics from permutation
+  t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined, n_permute)
+  # combined statistics from permutation
+  print ("calculation of test statistics from permutation complete")
+  combined_result_permuted <- do.call(cbind, lapply(gene_modules, function(module) {
+  combine_test_statistics(t_result_permuted, module)
+}))
+  print ("combine test statistics from permutation complete")
+  #original test statistics
+  original_test <- t_test(response_matrix,grna_assignment_matrix,1)
+  # original combined test statistics
+  original_combined <- do.call(cbind, lapply(gene_modules, function(module) {
+  combine_test_statistics(original_test, module)
+}))
+  # original p value
+  original_p_val <- compute_p_val_one_vs_group(original_combined,combined_result_permuted, n_permute, T)
+  # minimum  original p value
+  min_p_val_original <-min_p_val(original_p_val, length(gene_modules))
+  print("start to compute p value from permutation")
+  # permutation p values
+  permutation_p_val <- by(combined_result_permuted, rownames(combined_result_permuted), compute_p_val)
+
+  permutation_p_val_matrix <- do.call(rbind, permutation_p_val)
+  print("p value from permutation complete")
+  rownames(permutation_p_val_matrix) <- rep(rownames(grna_assignment_matrix),each = n_permute)
+  # minimum p value from permutation
+  min_p_val_permuted <- min_p_val(permutation_p_val_matrix, length(gene_modules))
+  
+  #final p value
+  final_p <- compute_p_val_one_vs_group(min_p_val_original, min_p_val_permuted, n_permute, F)
+  colnames(final_p) <- names(gene_modules)
+  return(final_p)
+}
+```
+
+```{r}
+result <- analysis_gene_module(grna_assignment_matrix,  response_matrix, gene_modules, n_permute, use_resample)
+```
+
+```{r}
+write.csv(result, "result.csv", row.names = TRUE)
+```
+
+```{r}
+
+```

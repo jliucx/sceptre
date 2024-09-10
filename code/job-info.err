@@ -1,0 +1,31 @@
+Loading required package: Rcpp
+Loading required package: data.table
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:data.table’:
+
+    between, first, last
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  grna_id = col_character(),
+  grna_target = col_character(),
+  chr = col_character(),
+  start = col_double(),
+  end = col_double()
+)
+
+Warning messages:
+1: glm.fit: fitted probabilities numerically 0 or 1 occurred 
+2: glm.fit: fitted probabilities numerically 0 or 1 occurred 
+slurmstepd: error: *** JOB 23325147 ON midway3-0316 CANCELLED AT 2024-09-05T23:43:04 ***
