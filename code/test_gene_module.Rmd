@@ -4,18 +4,26 @@ output: pdf_document
 ---
 
 ```{r,message=FALSE, warning=FALSE, results='hide' }
+setwd("/project/xuanyao/jiaming/Getting_started")
+
 library(presto)
 library(sceptre)
 library(sceptredata)
 library(readr)
 library(dplyr)
 library(Matrix)
+library(parallel)
+library(BH)
+library(Rcpp)
+library(peakRAM)
+
+sourceCpp("code/fit_skew_normal.cpp")
+
 ```
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 Morris_data <- T
 
-setwd("/project/xuanyao/jiaming/Getting_started")
 
 if (Morris_data) {
   directories <- "data/STINGseq-v1_GDO"
@@ -190,21 +198,6 @@ return(results_list)
 }
 ```
 
-```{r}
-gene_names<-rownames(sceptre_object@response_matrix[[1]])
-gene_modules <- readRDS("gene_modules_id.rds")
-gene_in_modules <- vector("logical", length(gene_names))
-
-# Loop through each gene in gene_names
-for (i in seq_along(gene_names)) {
-  gene <- gene_names[i]
-  
-  # Check if the gene is in any module and return TRUE if it is found in any module
-  gene_in_modules[i] <- any(sapply(gene_modules, function(module) gene %in% module))
-}
-
-```
-
 ## Estimate Propensity using logistic regression
 
 ```{r}
@@ -244,9 +237,9 @@ resample_and_combine<- function(grna_assignment_matrix, n_permute) {
                            ncol = ncol(propensity))
   
     rownames(resampled_mat) <- rep(rownames(grna_assignment_matrix),n_permute)
-    # combined_mat <- rbind(grna_assignment_matrix, resampled_mat)
+    combined_mat <- rbind(grna_assignment_matrix, resampled_mat)
     
-  return(resampled_mat)
+  return(combined_mat)
 }
 
 permute_and_combine <- function(grna_assignment_matrix, n_permute) {
@@ -262,7 +255,8 @@ permute_and_combine <- function(grna_assignment_matrix, n_permute) {
   
   }
   combined_mat <-do.call(rbind, permute_list)
-  return(combined_mat)
+  combined_matrix_with_original <- rbind(grna_assignment_matrix, combined_mat)
+  return(combined_matrix_with_original)
 }
 
 permutation_or_resampling <- function(grna_assignment_matrix, n_permute, use_resample=F){
@@ -296,6 +290,11 @@ slice_to_list <- function(large_matrix, n_permute) {
 
 t_test <- function(response_matrix, grna_assignment_matrix, n_permute){
   
+  n_cells <- ncol(response_matrix)
+  n_genes <- nrow(response_matrix)
+  all_cells <- seq_len(n_cells)
+  n_rows <- nrow(grna_assignment_matrix)
+  
   grna_infected_cell_count <- grna_assignment_matrix%*%matrix(rep(1,n_cells),nrow=n_cells)
   
   mean_expression_trt <- grna_assignment_matrix%*%t(response_matrix)/as.vector(grna_infected_cell_count)
@@ -318,6 +317,8 @@ t_test <- function(response_matrix, grna_assignment_matrix, n_permute){
 }
 
 wilcox_test <- function(response_matrix, grna_assignment_matrix, n_permute){
+  
+  n_rows <- nrow(grna_assignment_matrix)
   
   response_dgC <- as(as.matrix(response_matrix),"dgCMatrix")
 
@@ -345,139 +346,476 @@ wilcox_test <- function(response_matrix, grna_assignment_matrix, n_permute){
 ## Combining test statistics within gene modules
 
 ```{r}
-combine_test_statistics <- function(test_result, gene_module){
+convert_gene_list_to_matrix <-function(response_matrix, gene_module){
+  
+  genes_in_response <- rownames(response_matrix)
+  
+  # Initialize a matrix to store the result
+  result_matrix <- matrix(0, nrow = nrow(response_matrix), ncol = length(gene_module))
+  
+  # Loop over each gene module (i.e., each list of genes in gene_module)
+  for (i in seq_along(gene_module)) {
+    # Get the current gene module (a vector of genes)
+    current_module <- gene_module[[i]]
+    
+    # For each gene in the response_matrix, check if it's in the current gene module
+    result_matrix[, i] <- as.numeric(genes_in_response %in% current_module)
+  }
+  
+  colnames(result_matrix) <- names(gene_module)
+  
+  # Return the resulting matrix
+  return(result_matrix)
+}
+
+combine_columns_from_matrices <- function(matrices,gene_module_matrix) {
+  # Combine columns from the input matrices column by column
+  combined <- do.call(cbind, lapply(1:ncol(matrices[[1]]), function(i) {
+    # Extract the i-th column from each matrix and combine them
+    cbind(sapply(matrices, function(mat) mat[, i]))
+  }))
+  colnames(combined) <- rep(colnames(gene_module_matrix),each=length(matrices))
+  return(combined)
+}
+
+combine_test_statistics <- function(test_result, gene_module_matrix){
   test_result_matrix <- do.call(rbind, test_result)
 
-    selected_columns<-colnames(test_result_matrix) %in% gene_module
-    test_results_within_module <- abs(test_result_matrix[,selected_columns])
-    power_sum_1 <- rowSums(test_results_within_module, na.rm = TRUE)
-    power_sum_2 <- rowSums(test_results_within_module^2, na.rm = TRUE)
-    power_sum_3 <- rowSums(test_results_within_module^3, na.rm = TRUE)
-    power_sum_4 <- rowSums(test_results_within_module^4, na.rm = TRUE)
-    power_sum_5 <- rowSums(test_results_within_module^5, na.rm = TRUE)
-    power_sum_6 <- rowSums(test_results_within_module^6, na.rm = TRUE)
-    min_p <- apply(test_results_within_module, 1, function(x) {
-      if (all(is.na(x))) {
-        return(0)  
-      } else {
-        return(max(x, na.rm = TRUE))
-      }
-    })
-    combined_matrix <- cbind(power_sum_1, power_sum_2, power_sum_3, power_sum_4, power_sum_5, power_sum_6, min_p)
+    
+    power_sum_1 <- test_result_matrix%*%gene_module_matrix
+    power_sum_2 <- test_result_matrix^2%*%gene_module_matrix
+    power_sum_3 <- test_result_matrix^3%*%gene_module_matrix
+    power_sum_4 <- test_result_matrix^4%*%gene_module_matrix
+    power_sum_5 <- test_result_matrix^5%*%gene_module_matrix
+    power_sum_6 <- test_result_matrix^6%*%gene_module_matrix
+    
+    combined_matrix <- combine_columns_from_matrices(list(power_sum_1,power_sum_2,power_sum_3,power_sum_4,power_sum_5,power_sum_6), gene_module_matrix)
+  
     return(combined_matrix)
 
 }
 
-```
-
-```{r}
-# Create a function to calculate the tail probability for rows with the same name
-compute_p_val <- function(group) {
-  # Create an empty matrix to store p-values
-  p_values <- matrix(NA, nrow = nrow(group), ncol = ncol(group))
-  colnames(p_values) <- colnames(group)
+convert_matrix_to_tensor <- function(matrix, n_permute, grna_assignment_matrix) {
   
-  # Loop over each row in the group (rows with the same name)
-  for (i in 1:nrow(group)) {
-    current_row <- group[i, ] 
-    other_rows <- group[-i, ]  
+  # Get the number of rows in grna_assignment_matrix, this will be the number of slices (depth)
+  depth <- nrow(grna_assignment_matrix)
+  
+  # Initialize an empty tensor with dimensions (n_permute x ncol(matrix) x depth)
+  tensor <- array(0, dim = c((n_permute+1), ncol(matrix), depth))
+  
+  # Loop over the number of slices (depth)
+  for (i in 1:depth) {
+    # For each slice, extract the corresponding rows for each group (NTC-1, NTC-2, ..., NTC-n_permute)
+    row_indices <- seq(i, nrow(matrix), by = depth)
     
-     current_row_copy <- do.call(rbind, replicate(nrow(other_rows), current_row,    simplify = FALSE))
-
-
-    comparison <- other_rows > current_row_copy
-
- p_values[i, ] <- colSums(comparison) / nrow(other_rows)
- 
+    # Assign the extracted rows to the i-th slice of the tensor
+    tensor[,,i] <- matrix[row_indices, ]
   }
-  rownames(p_values) <- rownames(group)
   
+  dimnames(tensor) <- list(
+    
+    c("Original", paste0("Permutation", 1:n_permute)),    
+    # Second dimension: Column names from the input matrix
+    colnames(matrix),
+    
+    # Third dimension: Slice names based on grna_assignment_matrix (e.g., the row names or indices)
+    rownames(grna_assignment_matrix)
+  )
+  return(tensor)
+}
+```
 
-  return(p_values)
+## Compute p-values of combined test statistics
+
+```{r}
+rank_tensor <- function(tensor) {
+  # Get the dimensions of the input tensor
+  dim_tensor <- dim(tensor)
+  
+  # Initialize an empty tensor to store the ranked values with the same dimensions
+  ranked_tensor <- array(NA, dim = dim_tensor, dimnames = dimnames(tensor))
+  
+  # Use mclapply to parallelize the operation across the 3rd dimension (slices)
+  ranked_slices <- mclapply(1:dim_tensor[3], function(i) {
+    # Rank each slice (2D matrix) of the tensor
+    ranked_slice <- rank_matrix(t(tensor[,,i]))$X_ranked
+    print(paste("Complete ranking test statistics for grna", i))
+    return(ranked_slice)
+  }, mc.cores = parallel::detectCores() - 1)  # Using all available cores except one
+  
+  # Assign the ranked slices back to the ranked_tensor
+  for (i in 1:dim_tensor[3]) {
+    ranked_tensor[,,i] <- ranked_slices[[i]]
+  }
+  
+  return(ranked_tensor)
+}
+
+
+compute_p_value_from_tensor <- function(tensor,n_permute,side_code){
+  
+  rank<- rank_tensor(tensor)
+  if (side_code==1){ #right side
+    rank <- (n_permute+2-rank)
+  } 
+  return(rank/(n_permute+1))
+}
+
+compute_p_value_from_skew_normal_2 <- function(tensor, side_code) {
+  # Get dimensions and dimnames of the tensor
+  dim_tensor <- dim(tensor)
+  dimnames_tensor <- dimnames(tensor)
+  
+  # Initialize a tensor to store p-values with the same dimensions and dimnames
+  p_value_tensor <- array(NA, dim = c(dim_tensor[1], dim_tensor[2], dim_tensor[3]), dimnames = dimnames_tensor)
+  
+  # Apply over each slice (i.e., the 3rd dimension)
+  result <- apply(tensor, 3, function(slice) {
+    # Parallelize over the second dimension (columns) for each slice
+    mclapply(1:dim_tensor[2], function(i) {
+      # Apply the function to the column vector slice[,i]
+      fit_and_evaluate_skew_normal(slice[,i], side_code, F)
+    }, mc.cores = parallel::detectCores() - 1)  # Adjust the number of cores used
+  })
+  
+  # Rearrange the results back into the p_value_tensor
+  for (j in 1:dim_tensor[3]) {
+    for (i in 1:dim_tensor[2]) {
+      p_value_tensor[, i, j] <- result[[j]][[i]]
+    }
+  }
+  
+  return(p_value_tensor)
+}
+
+compute_p_value_from_skew_normal <- function(tensor, side_code) {
+  # Get dimensions and dimnames of the tensor
+  dim_tensor <- dim(tensor)
+  dimnames_tensor <- dimnames(tensor)
+  
+  # Initialize an empty tensor with the same dimensions and dimnames
+  p_value_tensor <- array(NA, dim = dim_tensor, dimnames = dimnames_tensor)
+  
+  # Use mclapply to apply the function in parallel across all slices
+  result <- mclapply(1:dim_tensor[3], function(j) {
+    # Apply the function across the first dimension (i.e., columns of tensor[,i,j])
+    apply(tensor[,,j], 2, function(column_vector) {
+      tryCatch({
+        # Apply the fit_and_evaluate_skew_normal function to each column vector
+        fit_and_evaluate_skew_normal(column_vector, side_code, F)
+      }, error = function(e) {
+        # Catch and handle any errors, print message, return NA
+        message("Error in slice ", j, " for column vector: ", e)
+        return(rep(NA, length(column_vector)))  # Return NA for the column if an error occurs
+      })
+    })
+  }, mc.cores = parallel::detectCores() - 1)  # Adjust the number of cores used
+  
+  # Combine the results back into the tensor
+  for (j in 1:dim_tensor[3]) {
+    p_value_tensor[,,j] <- result[[j]]
+  }
+  
+  return(p_value_tensor)
 }
 ```
 
 ```{r}
-compute_p_val_one_vs_group <- function(original,permuted,n_permute, bigger ){
+# # Create a function to calculate the tail probability for rows with the same name
+# compute_p_val <- function(group) {
+#   # Create an empty matrix to store p-values
+#   p_values <- matrix(NA, nrow = nrow(group), ncol = ncol(group))
+#   colnames(p_values) <- colnames(group)
+#   
+#   # Loop over each row in the group (rows with the same name)
+#   for (i in 1:nrow(group)) {
+#     current_row <- group[i, ] 
+#     other_rows <- group[-i, ]  
+#     
+#      current_row_copy <- do.call(rbind, replicate(nrow(other_rows), current_row,    simplify = FALSE))
+# 
+# 
+#     comparison <- other_rows > current_row_copy
+# 
+#  p_values[i, ] <- colSums(comparison) / nrow(other_rows)
+#  
+#   }
+#   rownames(p_values) <- rownames(group)
+#   
+#   return(p_values)
+# }
+```
+
+```{r}
+# compute_p_val_one_vs_group <- function(original,permuted,n_permute, bigger ){
+#   
+#   copy <- do.call(rbind, replicate(n_permute, original, simplify = FALSE))
+# 
+# 
+#  unique_row_names <- unique(rownames(copy))
+# 
+# # Initialize an empty list to store the comparison results
+# comparison_results <- list()
+# 
+# # Loop over each unique row name
+# for (row_name in unique_row_names) {
+#   # Extract the rows with the current row name from both matrices
+#   copy_rows <- copy[rownames(copy) == row_name, ]
+#   permuted_rows <- permuted[rownames(permuted) == row_name,  ]
+#   if(bigger){
+#     comparison <- permuted_rows > copy_rows
+#   } else {
+#     comparison <- permuted_rows < copy_rows
+#   }
+#   
+#   
+#    p_values <- colSums(comparison) / n_permute
+#   # Store the result in the list
+#   comparison_results[[row_name]] <- p_values
+# }
+# 
+# # Combine the results into a single matrix using cbind
+# p_val <- do.call(rbind, comparison_results)
+# }
+```
+
+```{r}
+# min_p_val_2 <- function(p_val_tensor, gene_module_index_matrix) {
+#   # Get the dimensions of the input tensor
+#   dim_tensor <- dim(p_val_tensor)
+# 
+#   # Get the number of groups from the gene_modules matrix (n_groups)
+#   n_groups <- ncol(gene_module_index_matrix)
+# 
+#   # Initialize an empty tensor to store the results with the new dimensions
+#   min_p_tensor <- array(NA, dim = c(dim_tensor[1], n_groups, dim_tensor[3]), dimnames = list(dimnames(p_val_tensor)[[1]], colnames(gene_module_index_matrix), dimnames(p_val_tensor)[[3]]))
+# 
+#   # Loop over each slice of the tensor (each slice corresponds to a 2D matrix)
+#   for (i in 1:dim_tensor[3]) {
+#     # Extract the current slice (2D matrix)
+#     current_slice <- p_val_tensor[,,i]
+# 
+#     # Extract the column names of current_slice
+#     slice_colnames <- colnames(current_slice)
+# 
+#     # Loop over each group/module in gene_modules
+#     for (j in 1:n_groups) {
+#       # Extract the column names for the current group from gene_modules
+#       group_colnames <- colnames(gene_module_index_matrix)[j]
+# 
+#       # Find the indices in current_slice that correspond to the group_colnames
+#       group_indices <- slice_colnames %in% group_colnames
+# 
+# 
+#       # Extract the corresponding columns for the current group
+#       current_group <- current_slice[, group_indices, drop = FALSE]
+# 
+#       # Calculate the row-wise minimum for this group
+#       min_p_tensor[, j, i] <- apply(current_group, 1, min, na.rm = TRUE)
+#     }
+#   }
+# 
+#   return(min_p_tensor)
+# }
+
+```
+
+```{r}
+min_p_val <- function(p_val_tensor, gene_module_index_matrix) {
+  # Get the dimensions of the input tensor
+  dim_tensor <- dim(p_val_tensor)
   
-  copy <- do.call(rbind, replicate(n_permute, original, simplify = FALSE))
+  n_groups <- ncol(gene_module_index_matrix)
+  
+  # Calculate the number of columns per group
+  cols_per_group <- dim_tensor[2] / n_groups
+  
+  # Initialize an empty tensor to store the results with the new dimensions
+  min_p_tensor <- array(NA, dim = c(dim_tensor[1], n_groups, dim_tensor[3]),
+                        dimnames = list(dimnames(p_val_tensor)[[1]], 
+                                        colnames(gene_module_index_matrix), 
+                                        dimnames(p_val_tensor)[[3]]))
+  
+  # Use mclapply to parallelize the processing over the 3rd dimension (slices)
+  results <- mclapply(1:dim_tensor[3], function(i) {
+    current_slice <- p_val_tensor[,,i]
+    result_slice <- matrix(NA, nrow = dim_tensor[1], ncol = n_groups)
+    
+    # Loop over each group
+    for (j in 1:n_groups) {
+      # Define start and end columns for the current group
+      start_col <- (j - 1) * cols_per_group + 1
+      end_col <- j * cols_per_group
+      
+      # Ensure start_col and end_col are integers
+      start_col <- as.integer(start_col)
+      end_col <- as.integer(end_col)
+      
+      # Slice the appropriate columns for the current group
+      current_group <- current_slice[, start_col:end_col, drop = FALSE]
+      
+      # Calculate the row-wise minimum for this group
+      result_slice[, j] <- apply(current_group, 1, min, na.rm = TRUE)
+    }
+    
+    return(result_slice)
+  }, mc.cores = parallel::detectCores() - 1)  # Adjust the number of cores used
+  
+  # Combine the results from mclapply into the min_p_tensor
+  for (i in 1:dim_tensor[3]) {
+    min_p_tensor[,,i] <- results[[i]]
+  }
+  
+  return(min_p_tensor)
+}
+```
 
+```{r}
+compute_final_p_val <- function(min_p_tensor, n_permute) {
+  # Get the dimensions of the tensor
+  dim_tensor <- dim(min_p_tensor)
+  
+  # Initialize an empty matrix to store the p-value counts
+  final_p_vals <- matrix(0, nrow = dim_tensor[3], ncol = dim_tensor[2], 
+                         dimnames = list(dimnames(min_p_tensor)[[3]], dimnames(min_p_tensor)[[2]]))
+  
+  # Use mclapply to parallelize over each slice of the tensor (rows)
+  results <- mclapply(1:dim_tensor[3], function(i) {
+    # Extract the current slice (2D matrix)
+    current_slice <- min_p_tensor[,,i]
+    
+    # Extract the original values (the first row)
+    original_values <- current_slice[1,]
+    
+    # Use matrix broadcasting and colSums to count the number of permutation values smaller than original
+    colSums(current_slice <= matrix(original_values, nrow = nrow(current_slice), 
+                                    ncol = ncol(current_slice), byrow = TRUE))
+  }, mc.cores = parallel::detectCores() - 1)  # Adjust based on available cores
+  
+  # Assign the results to the final_p_vals matrix
+  for (i in 1:dim_tensor[3]) {
+    final_p_vals[i, ] <- results[[i]]
+  }
+  
+  return(final_p_vals / (n_permute + 1))
+}
 
- unique_row_names <- unique(rownames(copy))
+compute_final_p_val_skew_normal <- function(tensor) {
+  # Get the dimensions of the tensor
+  dim_tensor <- dim(tensor)
+  
+  p_value_matrix <- matrix(NA, nrow = dim_tensor[3], ncol = dim_tensor[2])
+  
+  # Apply mclapply in parallel over the 3rd dimension (slices)
+  result <- mclapply(1:dim_tensor[3], function(j) {
+    # Apply fit_and_evaluate_skew_normal to each column vector in the 2nd dimension for the current slice
+    sapply(1:dim_tensor[2], function(i) {
+      fit_and_evaluate_skew_normal(tensor[,i,j], 2, T)
+    })
+  }, mc.cores = parallel::detectCores() - 1)  # Use all but 1 core for parallel processing
+  
+  # Combine results into p_value_matrix
+  for (j in 1:dim_tensor[3]) {
+    p_value_matrix[j,] <- result[[j]]
+  }
+  rownames(p_value_matrix)<-dimnames(tensor)[[3]]
+  colnames(p_value_matrix)<-dimnames(tensor)[[2]]
 
-# Initialize an empty list to store the comparison results
-comparison_results <- list()
+  return(p_value_matrix)
+}
+```
 
-# Loop over each unique row name
-for (row_name in unique_row_names) {
-  # Extract the rows with the current row name from both matrices
-  copy_rows <- copy[rownames(copy) == row_name, ]
-  permuted_rows <- permuted[rownames(permuted) == row_name,  ]
-  if(bigger){
-    comparison <- permuted_rows > copy_rows
+```{r}
+analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_module_index_matrix, n_permute, use_resample, use_approximation){
+  #permuted grna assignment matrix
+  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+  # test statistics 
+  test_result <- t_test(response_matrix,grna_assignment_matrix_combined, (n_permute+1))
+  print ("calculation of test statistics complete")
+   # combined statistics 
+  combined_result <-combine_test_statistics(test_result, gene_module_index_matrix)
+  print ("combine test statistics complete")
+  #change matrix to tensor
+  test_tensor<-convert_matrix_to_tensor(combined_result,n_permute,grna_assignment_matrix)
+  if (!use_approximation){
+  #calculate p-value
+  p_tensor <- compute_p_value_from_tensor(test_tensor,n_permute,1)
+  print ("compute p value complete")
+  min_pval <- min_p_val(p_tensor, gene_module_index_matrix) 
+  final_p <- compute_final_p_val(min_pval,n_permute)
+
   } else {
-    comparison <- permuted_rows < copy_rows
+    p_tensor <- compute_p_value_from_skew_normal(test_tensor, 1)
+    print ("compute p value complete")
+    min_pval <- min_p_val(p_tensor, gene_module_index_matrix)
+    final_p <- compute_final_p_val_skew_normal(min_pval)
   }
-  
-  
-   p_values <- colSums(comparison) / n_permute
-  # Store the result in the list
-  comparison_results[[row_name]] <- p_values
-}
-
-# Combine the results into a single matrix using cbind
-p_val <- do.call(rbind, comparison_results)
+ 
+  return(final_p)
 }
 ```
 
 ```{r}
-min_p_val <- function(p_val_matrix, n_modules){
+setwd("/project/xuanyao/jiaming/Getting_started")
+gene_names<-rownames(sceptre_object@response_matrix[[1]])
+
+gene_modules <- readRDS("data/gene_modules_id.rds")
+gene_in_modules <- vector("logical", length(gene_names))
+
+# Loop through each gene in gene_names
+for (i in seq_along(gene_names)) {
+  gene <- gene_names[i]
   
- min_values_by_group <- list()
-  group_size <- as.integer(ncol(p_val_matrix)/n_modules)
-# Loop over each group
-for (i in 1:n_modules) {
-  
-  # Extract the columns for the current group
-  start_col <- (i - 1) * group_size + 1
-  end_col <- i * group_size
-  current_group <-p_val_matrix[, start_col:end_col]
-  
-  # Compute the row-wise minimum for the current group
-  row_min <- apply(current_group, 1, min, na.rm = TRUE)
-  
-  # Store the result
-  min_values_by_group[[i]] <- row_min
+  # Check if the gene is in any module and return TRUE if it is found in any module
+  gene_in_modules[i] <- any(sapply(gene_modules, function(module) gene %in% module))
 }
 
-# Combine the results into a matrix (each column corresponds to the row-wise minimum of a group)
-min_values_matrix <- do.call(cbind, min_values_by_group)
-return(min_values_matrix)
-}
-```
+response_matrix_raw<-sceptre_object@response_matrix[[1]][gene_in_modules,]
 
-```{r}
-response_matrix<-sceptre_object@response_matrix[[1]][gene_in_modules,]
+row_sums <- rowSums(response_matrix_raw!=0)
+
+gene_to_exclude <- rownames(response_matrix_raw)[row_sums <= 0.05*ncol(response_matrix_raw)]
+
+response_matrix <- response_matrix_raw[!rownames(response_matrix_raw) %in% gene_to_exclude, ]
+
+gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
+
 covariate <- sceptre_object@covariate_data_frame
-n_cells <- ncol(response_matrix)
-n_genes <- nrow(response_matrix)
-all_cells <- seq_len(n_cells)
+
 use_resample <- T
-n_permute <- 100
+use_approximation <- T
+n_permute <- 50
 grna_assignment_matrix <-get_grna_assignments(
   sceptre_object = sceptre_object
-)[1:10,] # choose first 10 perturbation for demostration
+)[189:200,] # choose first 10 perturbation for demostration
 n_rows <- nrow(grna_assignment_matrix)
 ```
 
 ```{r}
-analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_modules,n_permute, use_resample){
-  #permuted grna assignment matrix
-  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+peak_mem_usage <- peakRAM(
+  result <- analysis_gene_module(grna_assignment_matrix, response_matrix,
+                                 gene_module_index_matrix, n_permute, use_resample, use_approximation)
+)
+
+print(peak_mem_usage)
+```
+
+```{r}
+result[,1:3]
+```
+
+```{r}
+result[,1:3]
+```
+
+```{r}
+write.csv(result, "output/result_remove_na_gene.csv", row.names = TRUE)
+```
+
+```{r}
+grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
   # test statistics from permutation
   t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined, n_permute)
-  # combined statistics from permutation
-  print ("calculation of test statistics from permutation complete")
   combined_result_permuted <- do.call(cbind, lapply(gene_modules, function(module) {
   combine_test_statistics(t_result_permuted, module)
 }))
@@ -490,33 +828,195 @@ analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_m
 }))
   # original p value
   original_p_val <- compute_p_val_one_vs_group(original_combined,combined_result_permuted, n_permute, T)
-  # minimum  original p value
-  min_p_val_original <-min_p_val(original_p_val, length(gene_modules))
-  print("start to compute p value from permutation")
-  # permutation p values
-  permutation_p_val <- by(combined_result_permuted, rownames(combined_result_permuted), compute_p_val)
+```
 
-  permutation_p_val_matrix <- do.call(rbind, permutation_p_val)
-  print("p value from permutation complete")
-  rownames(permutation_p_val_matrix) <- rep(rownames(grna_assignment_matrix),each = n_permute)
-  # minimum p value from permutation
-  min_p_val_permuted <- min_p_val(permutation_p_val_matrix, length(gene_modules))
-  
-  #final p value
-  final_p <- compute_p_val_one_vs_group(min_p_val_original, min_p_val_permuted, n_permute, F)
-  colnames(final_p) <- names(gene_modules)
-  return(final_p)
+## Calibration using gene modules and choose min p as test statistics
+
+```{r}
+library(ggplot2)
+gg_qqplot <- function(ps, ci = 0.95) {
+  n  <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
+                alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color="red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po)
 }
+
+pval_vector_2 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_10000.csv", header = TRUE, row.names = 1)))
+gg_qqplot(pval_vector_2)
 ```
 
 ```{r}
-result <- analysis_gene_module(grna_assignment_matrix,  response_matrix, gene_modules, n_permute, use_resample)
+pval_vector <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_rank.csv", header = TRUE, row.names = 1)))
+gg_qqplot(pval_vector)
 ```
 
 ```{r}
-write.csv(result, "result.csv", row.names = TRUE)
+pval_vector_3 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_2000.csv", header = TRUE, row.names = 1)))
+gg_qqplot(pval_vector_3)
 ```
 
 ```{r}
+qqplot(pval_vector_2, pval_vector_3, main = "Q-Q Plot of Two Vectors",
+       xlab = "Quantiles of Vector 1", ylab = "Quantiles of Vector 2")
 
+# Add a 45-degree reference line
+abline(0, 1, col = "red")
+```
+
+```{r}
+qqplot(pval_vector, pval_vector_2, main = "Q-Q Plot of Two Vectors",
+       xlab = "Quantiles of Vector 1", ylab = "Quantiles of Vector 2")
+
+# Add a 45-degree reference line
+abline(0, 1, col = "red")
+```
+
+```{r}
+cor(pval_vector_3,pval_vector_2)
+```
+
+## Calibration using gene modules (before choosing min p)
+
+```{r}
+gg_qqplot(as.vector(as.matrix(original_p_val)))
+```
+
+```{r}
+zero_positions <- which(original_p_val == 0, arr.ind = TRUE)
+zero_positions
+```
+
+```{r}
+original_p_val[3,c(14,35,224,237,238,252)]
+```
+
+```{r}
+pval_flat <- as.vector(as.matrix(original_p_val))  # Flatten the matrix
+rownames_flat <- rep(rownames(original_p_val), each = ncol(original_p_val))  # Corresponding row names
+
+# Step 2: Create a data frame to hold both p-values and corresponding rows
+pval_data <- data.frame(
+  row = rownames_flat,
+  pval = pval_flat
+)
+
+# Step 3: Apply the Benjamini-Hochberg (BH) correction
+pval_data$adjusted_pval <- p.adjust(pval_data$pval, method = "BH")
+
+# Step 4: Sort by the adjusted p-values (if necessary)
+smallest_adjusted_pvals <- pval_data[order(pval_data$adjusted_pval), ]
+
+# Step 5: Display the 20 smallest adjusted p-values
+smallest_adjusted_pvals[1:20, ]
+```
+
+## Calibration before considering gene modules (i.e. t-test and its null distribution from conditional resampling)
+
+```{r}
+p_val_before_combining_gene_module <- compute_p_val_one_vs_group(original_test[[1]],as.matrix(do.call(rbind, t_result_permuted)), 1000, T)
+```
+
+```{r}
+gg_qqplot(as.vector(as.matrix(p_val_before_combining_gene_module)))
+```
+
+```{r}
+zero_positions <- which( p_val_before_combining_gene_module== 0, arr.ind = TRUE)
+zero_positions
+```
+
+## Sceptre
+
+```{r}
+pval_sceptre<-readRDS("/project/xuanyao/jiaming/Getting_started/docs/output/trans_union_singleton_both/results_run_calibration_check.rds")$p_value
+gg_qqplot(pval_sceptre)
+```
+
+```{r}
+gg_qqplot(sample(pval_sceptre, size = 600, replace = FALSE))
+```
+
+```{r}
+n_permute=50
+grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+  # test statistics from permutation
+  t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined, (n_permute+1))
+```
+
+```{r}
+combined_test_statistics<-combine_test_statistics(t_result_permuted, gene_module_index_matrix)
+```
+
+```{r}
+combined_test_statistics[1:30,1:2]
+```
+
+```{r}
+tensor<-convert_matrix_to_tensor(combined_test_statistics, (n_permute), grna_assignment_matrix) 
+```
+
+```{r}
+compute_p_value_from_tensor(tensor,n_permute,1)[1:30,1:2,"NTC-1"]
+```
+
+```{r}
+compute_p_value_from_skew_normal(tensor,1)[1:30,1:2,"NTC-1"]
+```
+
+```{r}
+compute_p_value_from_skew_normal_2(tensor,1)[1:30,1:2,"NTC-1"]
+```
+
+```{r}
+rank_tensor(tensor)[,,"NTC-1"]
+```
+
+```{r}
+(52-rank_tensor(tensor))[1:30,1:2,"NTC-4"]
+```
+
+```{r}
+ranked_tensor <- rank_tensor(tensor)
+compute_p_value_from_rank(ranked_tensor,T,50)[1:30,1:2,"NTC-4"]
+```
+
+```{r}
+pval_tensor[1:30,1:6,"NTC-1"]
+```
+
+```{r}
+apply(pval_tensor[1:30, 7:12, "NTC-2"], 1, min, na.rm = TRUE)
+
+```
+
+```{r}
+hh<-min_p_val_2(pval_tensor,gene_module_index_matrix)[,2,"NTC-3"]
+```
+
+```{r}
+min_p_val<- min_p_val(pval_tensor,gene_module_index_matrix)
+```
+
+```{r}
+compute_final_p_val(min_p_val, n_permute)[,1:3]
+```
+
+```{r}
+y <- c(1.2, 2.3, 3.5, 4.7, 5.8)
+
+# Call the C++ function
+xixi <- fit_and_evaluate_skew_normal(y,2,F)
+
+xixi
 ```
