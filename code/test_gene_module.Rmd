@@ -24,6 +24,7 @@ sourceCpp("code/fit_skew_normal.cpp")
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 Morris_data <- T
 
+setwd("/project/xuanyao/jiaming/Getting_started")
 
 if (Morris_data) {
   directories <- "data/STINGseq-v1_GDO"
@@ -288,7 +289,7 @@ slice_to_list <- function(large_matrix, n_permute) {
   return(sliced_matrices)
 }
 
-t_test <- function(response_matrix, grna_assignment_matrix, n_permute){
+t_test <- function(response_matrix, grna_assignment_matrix){
   
   n_cells <- ncol(response_matrix)
   n_genes <- nrow(response_matrix)
@@ -313,10 +314,10 @@ t_test <- function(response_matrix, grna_assignment_matrix, n_permute){
   
   t_statistics <- (mean_expression_trt-mean_expression_control)/sqrt(var_expression_trt/as.vector(grna_infected_cell_count)+var_expression_control/as.vector(grna_control_cell_count))
   
-  return(slice_to_list(t_statistics, n_permute))
+  return(t_statistics)
 }
 
-wilcox_test <- function(response_matrix, grna_assignment_matrix, n_permute){
+wilcox_test <- function(response_matrix, grna_assignment_matrix){
   
   n_rows <- nrow(grna_assignment_matrix)
   
@@ -328,18 +329,13 @@ wilcox_test <- function(response_matrix, grna_assignment_matrix, n_permute){
   
   names(wilcox_result) <- rownames(grna_assignment_matrix)
   
-  combined_list <- list()
+  statistic_list <- lapply(wilcox_result, function(df) df$statistic)
+
+
+  statistic_matrix <- do.call(rbind, statistic_list)
+  colnames(statistic_matrix) <- rownames(response_matrix)
   
-  for (i in 1:(n_permute)) {
-  # Extract n_rows elements for each group and assign it to the new list
-  grna_result <- wilcox_result[((i - 1) * n_rows + 1):(i * n_rows)]
-  stat_matrix <- do.call(rbind, lapply(grna_result, function(df) df$statistic))
-  rownames(stat_matrix) <- names(grna_result)
-  colnames(stat_matrix) <- rownames(response_matrix)
-  
-  combined_list[[i]] <- stat_matrix
-}
-  return(combined_list)
+  return(statistic_matrix)
 }
 ```
 
@@ -379,15 +375,13 @@ combine_columns_from_matrices <- function(matrices,gene_module_matrix) {
 }
 
 combine_test_statistics <- function(test_result, gene_module_matrix){
-  test_result_matrix <- do.call(rbind, test_result)
-
     
-    power_sum_1 <- test_result_matrix%*%gene_module_matrix
-    power_sum_2 <- test_result_matrix^2%*%gene_module_matrix
-    power_sum_3 <- test_result_matrix^3%*%gene_module_matrix
-    power_sum_4 <- test_result_matrix^4%*%gene_module_matrix
-    power_sum_5 <- test_result_matrix^5%*%gene_module_matrix
-    power_sum_6 <- test_result_matrix^6%*%gene_module_matrix
+    power_sum_1 <- test_result%*%gene_module_matrix
+    power_sum_2 <- test_result^2%*%gene_module_matrix
+    power_sum_3 <- test_result^3%*%gene_module_matrix
+    power_sum_4 <- test_result^4%*%gene_module_matrix
+    power_sum_5 <- test_result^5%*%gene_module_matrix
+    power_sum_6 <- test_result^6%*%gene_module_matrix
     
     combined_matrix <- combine_columns_from_matrices(list(power_sum_1,power_sum_2,power_sum_3,power_sum_4,power_sum_5,power_sum_6), gene_module_matrix)
   
@@ -726,11 +720,17 @@ compute_final_p_val_skew_normal <- function(tensor) {
 ```
 
 ```{r}
-analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_module_index_matrix, n_permute, use_resample, use_approximation){
+analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_module_index_matrix, test_type ,n_permute, use_resample, use_approximation){
   #permuted grna assignment matrix
   grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
   # test statistics 
-  test_result <- t_test(response_matrix,grna_assignment_matrix_combined, (n_permute+1))
+  if (test_type=="t_test"){
+  test_result <- t_test(response_matrix,grna_assignment_matrix_combined)
+  } else if (test_type=="wilcox_test") {
+    test_result <- wilcox_test(response_matrix,grna_assignment_matrix_combined)
+  } else {
+    stop("Unknown test type")
+  }
   print ("calculation of test statistics complete")
    # combined statistics 
   combined_result <-combine_test_statistics(test_result, gene_module_index_matrix)
@@ -783,8 +783,9 @@ gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_mo
 covariate <- sceptre_object@covariate_data_frame
 
 use_resample <- T
-use_approximation <- T
-n_permute <- 50
+use_approximation <- F
+test_type="wilcox_test"
+n_permute <- 10
 grna_assignment_matrix <-get_grna_assignments(
   sceptre_object = sceptre_object
 )[189:200,] # choose first 10 perturbation for demostration
@@ -792,16 +793,17 @@ n_rows <- nrow(grna_assignment_matrix)
 ```
 
 ```{r}
+test_type="wilcox_test"
+
 peak_mem_usage <- peakRAM(
   result <- analysis_gene_module(grna_assignment_matrix, response_matrix,
-                                 gene_module_index_matrix, n_permute, use_resample, use_approximation)
+                                 gene_module_index_matrix,test_type, n_permute, use_resample, use_approximation)
 )
 
-print(peak_mem_usage)
 ```
 
 ```{r}
-result[,1:3]
+result[1:5,1:3]
 ```
 
 ```{r}
@@ -852,8 +854,8 @@ gg_qqplot <- function(ps, ci = 0.95) {
     xlab(log10Pe) + ylab(log10Po)
 }
 
-pval_vector_2 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_10000.csv", header = TRUE, row.names = 1)))
-gg_qqplot(pval_vector_2)
+pval_vector_5000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_5000.csv", header = TRUE, row.names = 1)))
+gg_qqplot(pval_vector_5000)
 ```
 
 ```{r}
@@ -862,13 +864,13 @@ gg_qqplot(pval_vector)
 ```
 
 ```{r}
-pval_vector_3 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_2000.csv", header = TRUE, row.names = 1)))
-gg_qqplot(pval_vector_3)
+pval_vector_2000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_2000.csv", header = TRUE, row.names = 1)))
+gg_qqplot(pval_vector_2000)
 ```
 
 ```{r}
-qqplot(pval_vector_2, pval_vector_3, main = "Q-Q Plot of Two Vectors",
-       xlab = "Quantiles of Vector 1", ylab = "Quantiles of Vector 2")
+qqplot(pval_vector, pval_vector_10000, main = "Skew Normal Approximation (10000 null statisitcs)",
+       xlab = "10000 null with no approximation", ylab = "10000 null with skew normal approximation")
 
 # Add a 45-degree reference line
 abline(0, 1, col = "red")
@@ -883,7 +885,7 @@ abline(0, 1, col = "red")
 ```
 
 ```{r}
-cor(pval_vector_3,pval_vector_2)
+cor(pval_vector_2000,pval_vector)
 ```
 
 ## Calibration using gene modules (before choosing min p)
@@ -948,7 +950,7 @@ gg_qqplot(sample(pval_sceptre, size = 600, replace = FALSE))
 ```
 
 ```{r}
-n_permute=50
+n_permute=10
 grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
   # test statistics from permutation
   t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined, (n_permute+1))
@@ -1019,4 +1021,45 @@ y <- c(1.2, 2.3, 3.5, 4.7, 5.8)
 xixi <- fit_and_evaluate_skew_normal(y,2,F)
 
 xixi
+```
+
+```{r}
+table_data <- data.frame(
+  Type = c("No approximation", "Skew normal", "Skew normal", "Skew normal"),
+  "Perturbation" = c("12","12","12","12"),
+  "Null statistics" = c("10000", "10000", "5000", "2000"),
+  "Running time" = c("4832s", "5282s", "1894s", "596s"),
+  "Peak RAM" = c("60952MiB", "60952MiB", "30873MiB", "12801MiB"),
+  "Correlation with standard" = c("1(standard)", "0.9192", "0.9325", "0.9355"),
+  stringsAsFactors = FALSE
+)
+
+# View the empty table
+View(table_data)
+```
+
+```{r}
+statistic_list <- lapply(wilcox_result_permuted, function(df) df$statistic)
+
+# Step 2: Combine the statistic lists into a matrix (each column represents a dataframe)
+# We use do.call and cbind to combine the statistic columns into a matrix
+statistic_matrix <- do.call(rbind, statistic_list)
+colnames(statistic_matrix)<-colnames(response_matrix)
+```
+
+```{r}
+rownames(statistic_matrix)
+```
+
+```{r}
+pval_vector_2000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv", header = TRUE, row.names = 1)))
+gg_qqplot(pval_vector_2000)
+```
+
+```{r}
+sum(pval_vector_2000>0)
+```
+
+```{r}
+read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv", header = TRUE, row.names = 1)[,1:3]
 ```
