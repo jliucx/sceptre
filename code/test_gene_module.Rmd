@@ -64,7 +64,7 @@ sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
     discovery_pairs=discovery_pairs_trans, 
     positive_control_pairs=positive_control_pairs, 
     side="both") |>
-  assign_grnas()
+  assign_grnas(parallel = T)
 ```
 
 ## Modifying and overwrite the functions in Presto library to do wilcoxon test
@@ -755,6 +755,8 @@ analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_m
 }
 ```
 
+## Data filtering
+
 ```{r}
 setwd("/project/xuanyao/jiaming/Getting_started")
 gene_names<-rownames(sceptre_object@response_matrix[[1]])
@@ -799,7 +801,6 @@ peak_mem_usage <- peakRAM(
   result <- analysis_gene_module(grna_assignment_matrix, response_matrix,
                                  gene_module_index_matrix,test_type, n_permute, use_resample, use_approximation)
 )
-
 ```
 
 ```{r}
@@ -829,7 +830,7 @@ grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_mat
   combine_test_statistics(original_test, module)
 }))
   # original p value
-  original_p_val <- compute_p_val_one_vs_group(original_combined,combined_result_permuted, n_permute, T)
+  original_p_val <- compute_p_val_one_vs_group(original_combined, combined_result_permuted,  n_permute, T)
 ```
 
 ## Calibration using gene modules and choose min p as test statistics
@@ -950,10 +951,84 @@ gg_qqplot(sample(pval_sceptre, size = 600, replace = FALSE))
 ```
 
 ```{r}
-n_permute=10
+t_test <- function(response_matrix, grna_assignment_matrix) {
+  
+  # Start timing for the first block
+  start_time <- Sys.time()
+  
+  n_cells <- ncol(response_matrix)
+  n_genes <- nrow(response_matrix)
+  all_cells <- seq_len(n_cells)
+  n_rows <- nrow(grna_assignment_matrix)
+  
+  end_time <- Sys.time()
+  print(paste("Time for setup:", end_time - start_time))
+  
+  # Start timing for the next block
+  start_time <- Sys.time()
+  
+  grna_infected_cell_count <- grna_assignment_matrix %*% matrix(rep(1, n_cells), nrow = n_cells)
+  end_time <- Sys.time()
+  print(paste("Time for infected cell count:", end_time - start_time))
+  
+  start_time <- Sys.time()
+  mean_expression_trt <- grna_assignment_matrix %*% t(response_matrix) / as.vector(grna_infected_cell_count)
+  
+  end_time <- Sys.time()
+  print(paste("Time for infected cell mean:", end_time - start_time))
+  
+  # Repeat this for other blocks of code
+  start_time <- Sys.time()
+
+  mean_expression_squared_trt <- grna_assignment_matrix %*% t(response_matrix^2) / as.vector(grna_infected_cell_count)
+  end_time <- Sys.time()
+  print(paste("Time for infected cell mean squared:", end_time - start_time))
+  
+  start_time <- Sys.time()
+  
+  var_expression_trt <- mean_expression_squared_trt - mean_expression_trt^2
+  
+  end_time <- Sys.time()
+  print(paste("Time for variance calculation (treated):", end_time - start_time))
+  
+  # Continue for other calculations
+  start_time <- Sys.time()
+  
+  grna_control_cell_count <- n_cells - grna_infected_cell_count
+  mean_expression_control <- (1 - grna_assignment_matrix) %*% t(response_matrix) / as.vector(grna_control_cell_count)
+  
+  end_time <- Sys.time()
+  
+  print(paste("Time for control mean calculation:", end_time - start_time))
+  
+  start_time <- Sys.time()
+
+  mean_expression_squared_control <- (1 - grna_assignment_matrix) %*% t(response_matrix^2) / as.vector(grna_control_cell_count)
+
+  end_time <- Sys.time()
+  
+   print(paste("Time for control mean squared:", end_time - start_time))
+   
+   start_time <- Sys.time()
+   var_expression_control <- mean_expression_squared_control - mean_expression_control^2
+   end_time <- Sys.time()
+   
+   print(paste("Time for control variance:", end_time - start_time))
+   
+   start_time <- Sys.time()
+
+  t_statistics <- (mean_expression_trt - mean_expression_control) /
+    sqrt(var_expression_trt / as.vector(grna_infected_cell_count) + var_expression_control / as.vector(grna_control_cell_count))
+  
+  end_time <- Sys.time()
+  print(paste("Time for t-statistics calculation:", end_time - start_time))
+  
+  return(t_statistics)
+}
+n_permute=10000
 grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
   # test statistics from permutation
-  t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined, (n_permute+1))
+  t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined)
 ```
 
 ```{r}
@@ -1052,12 +1127,12 @@ rownames(statistic_matrix)
 ```
 
 ```{r}
-pval_vector_2000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv", header = TRUE, row.names = 1)))
-gg_qqplot(pval_vector_2000)
+pval_vector_10000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv", header = TRUE, row.names = 1)))
+gg_qqplot(pval_vector_10000)
 ```
 
 ```{r}
-sum(pval_vector_2000>0)
+sum(is.na(pval_vector_2000))
 ```
 
 ```{r}
