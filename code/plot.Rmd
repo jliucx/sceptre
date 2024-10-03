@@ -1,0 +1,129 @@
+---
+title: "Summary"
+output: pdf_document
+---
+
+```{r}
+library(ggplot2)
+gg_qqplot <- function(ps, ci = 0.95) {
+  n  <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
+                alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color="red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po)
+}
+p_t_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
+p_t_2000_skn_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
+p_t_10000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
+p_t_2000_skn_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
+```
+
+## Runtime and peakRAM comparison
+
+```{r,echo=F}
+table_data <- data.frame(
+  Type = c("t test (No approximation)", "t test (Skew normal)"),
+  "Perturbation" = c("24","24"),
+  "Null statistics" = c("10000","2000"),
+  "Running time" = c("18320s", "6245s"),
+  "Peak RAM" = c("121904MB",  "22324MB"),
+  stringsAsFactors = FALSE
+)
+
+# View the empty table
+print(table_data)
+```
+
+## Calibration check (t-test)
+
+**Calibration of NT grna pval estimated from 10000 null statistics (No approximation)**
+
+```{r, echo=FALSE}
+gg_qqplot(p_t_10000_negative)
+```
+
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation**
+
+```{r,echo=F}
+gg_qqplot(p_t_2000_skn_negative)
+```
+
+## Power check (t-test)
+
+**Power of NT grna pval estimated from 10000 null statistics with no approximation**
+
+```{r,echo=F}
+gg_qqplot(p_t_10000_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation**
+
+```{r,echo=F}
+gg_qqplot(p_t_2000_skn_positive)
+```
+
+## Plots comparing pval from no approximation and skew normal approximation
+
+```{r}
+# Binding the vectors
+p_10000 <- c(p_t_10000_negative, p_t_10000_positive)
+p_skn_2000 <- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
+
+# Scatter plot of bind_10000 against bind_2000
+plot(p_10000, p_skn_2000, 
+     xlab = "p values of 10000 null statistics with no approximation", 
+     ylab = "p values of 2000 null statistics with skewed t", 
+     main = "Skew t approximation (2000 null statistics)",
+     pch = 16,  # pch = 16 gives solid circles
+     cex = 0.6,  # cex < 1 reduces the size of the points,
+     col = "red"
+)
+
+```
+
+## Calibration check (wilcoxon-test)
+
+```{r}
+p_wilcox_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv", header = TRUE, row.names = 1)))
+gg_qqplot(p_wilcox_10000_negative)
+```
+
+## Normalizing gene expression data before analysis
+
+All the results below are from normalizing gene expression data before analysis
+
+```{r}
+p_t_10000_negative_normal <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation.csv", header = TRUE, row.names = 1))[13:24,])
+
+p_t_10000_positive_normal <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation.csv", header = TRUE, row.names = 1))[1:12,])
+
+p_wilcox_10000_negative_normal <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation_normalized.csv", header = TRUE, row.names = 1)))
+```
+
+**Calibration result of t-test**
+
+```{r}
+gg_qqplot(p_t_10000_negative_normal)
+```
+
+**Power of t-test**
+
+```{r}
+gg_qqplot(p_t_10000_positive_normal)
+```
+
+**Calibration result of wilcoxon-test**
+
+```{r}
+gg_qqplot(p_wilcox_10000_negative_normal)
+```
