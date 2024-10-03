@@ -23,3 +23,7 @@ Paper on power increasing:
 [TATES Summary](TATES.html)
 
 [Asymptotic indepdent U Statistics](U_Statistics.html)
+
+Results:
+
+[Calibration and power check of t test and wilcoxon test](plot.html)
