@@ -26,6 +26,12 @@ p_t_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Get
 p_t_2000_skn_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
 p_t_10000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
 p_t_2000_skn_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
+p_t_rank_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv", header = TRUE, row.names = 1))[23:34,])
+p_t_rank_2000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv", header = TRUE, row.names = 1))[1:22,])
+p_t_rank_normalize_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv", header = TRUE, row.names = 1))[23:34,])
+p_t_rank_normalize_2000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv", header = TRUE, row.names = 1))[1:22,])
+p_t_log_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv", header = TRUE, row.names = 1))[23:34,])
+p_t_log_2000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv", header = TRUE, row.names = 1))[1:22,])
 ```
 
 ## Runtime and peakRAM comparison
@@ -35,8 +41,8 @@ table_data <- data.frame(
   Type = c("t test (No approximation)", "t test (Skew normal)"),
   "Perturbation" = c("24","24"),
   "Null statistics" = c("10000","2000"),
-  "Running time" = c("18320s", "6245s"),
-  "Peak RAM" = c("121904MB",  "22324MB"),
+  "Running time" = c("6128s", "6245s"),
+  "Peak RAM" = c("124150MB",  "22324MB"),
   stringsAsFactors = FALSE
 )
 
@@ -44,7 +50,7 @@ table_data <- data.frame(
 print(table_data)
 ```
 
-## Calibration check (t-test)
+# Calibration check (t-test)
 
 **Calibration of NT grna pval estimated from 10000 null statistics (No approximation)**
 
@@ -58,7 +64,25 @@ gg_qqplot(p_t_10000_negative)
 gg_qqplot(p_t_2000_skn_negative)
 ```
 
-## Power check (t-test)
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_normalize_2000_negative)
+```
+
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_log_2000_negative)
+```
+
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_2000_negative)
+```
+
+# Power check (t-test)
 
 **Power of NT grna pval estimated from 10000 null statistics with no approximation**
 
@@ -70,6 +94,30 @@ gg_qqplot(p_t_10000_positive)
 
 ```{r,echo=F}
 gg_qqplot(p_t_2000_skn_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation (include trans-effect SNPs)**
+
+```{r}
+gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))))
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_normalize_2000_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_log_2000_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_2000_positive)
 ```
 
 ## Plots comparing pval from no approximation and skew normal approximation
@@ -122,32 +170,14 @@ p_wilcox_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiamin
 gg_qqplot(p_wilcox_10000_negative)
 ```
 
-## Normalizing gene expression data before analysis
+## Wilcoxon p values for each perturbation-gene pair
 
-All the results below are from normalizing gene expression data before analysis
-
-```{r}
-p_t_10000_negative_normal <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation.csv", header = TRUE, row.names = 1))[13:24,])
-
-p_t_10000_positive_normal <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation.csv", header = TRUE, row.names = 1))[1:12,])
-
-p_wilcox_10000_negative_normal <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation_normalized.csv", header = TRUE, row.names = 1)))
+```{r echo=FALSE}
+knitr::include_graphics("images/wilcox_pval.png", error = FALSE)
 ```
 
-**Calibration result of t-test**
+## Wilcoxon statistics for each perturbation-gene pair
 
-```{r}
-gg_qqplot(p_t_10000_negative_normal)
-```
-
-**Power of t-test**
-
-```{r}
-gg_qqplot(p_t_10000_positive_normal)
-```
-
-**Calibration result of wilcoxon-test**
-
-```{r}
-gg_qqplot(p_wilcox_10000_negative_normal)
+```{r echo=FALSE}
+knitr::include_graphics("images/wilcox_statistics.png", error = FALSE)
 ```
