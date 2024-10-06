@@ -382,7 +382,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-10-03
+<strong>Last updated:</strong> 2024-10-06
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -499,6 +499,30 @@ output/calibration_power_t_2000_use_approximation_2.csv
 </tr>
 <tr>
 <td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_rank.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_log.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 /project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv
 </td>
 <td style="text-align:left;">
@@ -513,22 +537,6 @@ output/power_include_trans_t_2000_use_approximation.csv
 output/calibration_wilcoxon_10000_no_approximation.csv
 </td>
 </tr>
-<tr>
-<td style="text-align:left;">
-/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation.csv
-</td>
-<td style="text-align:left;">
-output/calibration_power_t_10000_no_approximation.csv
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation_normalized.csv
-</td>
-<td style="text-align:left;">
-output/calibration_wilcoxon_10000_no_approximation_normalized.csv
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -537,16 +545,16 @@ output/calibration_wilcoxon_10000_no_approximation_normalized.csv
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree4413b88c7a6a07136be1dfbf00e3cc5d3c06661dtargetblank4413b88a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/4413b88c7a6a07136be1dfbf00e3cc5d3c06661d" target="_blank">4413b88</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0e40b6cfa15970519a9b2e3665a5dfa180315053targetblank0e40b6ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/0e40b6cfa15970519a9b2e3665a5dfa180315053" target="_blank">0e40b6c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree4413b88c7a6a07136be1dfbf00e3cc5d3c06661dtargetblank4413b88a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0e40b6cfa15970519a9b2e3665a5dfa180315053targetblank0e40b6ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/4413b88c7a6a07136be1dfbf00e3cc5d3c06661d" target="_blank">4413b88</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/0e40b6cfa15970519a9b2e3665a5dfa180315053" target="_blank">0e40b6c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -565,6 +573,8 @@ Untracked files:
     Untracked:  analysis/sceptre_singleton.Rmd
     Untracked:  analysis/sceptre_threshold.Rmd
     Untracked:  code/fit_skew_normal.cpp
+    Untracked:  code/job-info-2.err
+    Untracked:  code/job-info-2.out
     Untracked:  code/plot.pdf
     Untracked:  code/t_test_time.R
     Untracked:  code/test_gene_module.R
@@ -579,22 +589,6 @@ Untracked files:
     Untracked:  data/gene_modules_id.rds
     Untracked:  data/msig_50_table_gene_per_row_immune_related.txt
     Untracked:  data/msig_50_table_immune_related.txt
-    Untracked:  output/calibration_power_t_10000_no_approximation.csv
-    Untracked:  output/calibration_power_t_10000_no_approximation_2.csv
-    Untracked:  output/calibration_power_t_2000_use_approximation.csv
-    Untracked:  output/calibration_power_t_2000_use_approximation_2.csv
-    Untracked:  output/calibration_wilcoxon_10000_no_approximation.csv
-    Untracked:  output/calibration_wilcoxon_10000_no_approximation_normalized.csv
-    Untracked:  output/power_include_trans_t_2000_use_approximation.csv
-    Untracked:  output/result.csv
-    Untracked:  output/result_calibration.csv
-    Untracked:  output/result_calibration_2.csv
-    Untracked:  output/result_calibration_use_approximation_10000.csv
-    Untracked:  output/result_calibration_use_approximation_2000.csv
-    Untracked:  output/result_calibration_use_approximation_5000.csv
-    Untracked:  output/result_calibration_use_rank.csv
-    Untracked:  output/result_calibration_use_rank_parallel.csv
-    Untracked:  output/result_remove_na_gene.csv
     Untracked:  output/sceptre_outputs/trans_mixture.txt
     Untracked:  output/sceptre_outputs_cis/
     Untracked:  output/sceptre_outputs_cis_singleton/
@@ -663,6 +657,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/0e40b6cfa15970519a9b2e3665a5dfa180315053/analysis/plot.Rmd" target="_blank">0e40b6c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-06
+</td>
+<td>
+update ranked t, log t and normalized t
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/0097970ede58d637e1e16418ef23f3c815f6dace/docs/plot.html" target="_blank">0097970</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -759,15 +787,21 @@ gg_qqplot &lt;- function(ps, ci = 0.95) {
 p_t_10000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv&quot;, header = TRUE, row.names = 1))[13:24,])
 p_t_2000_skn_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv&quot;, header = TRUE, row.names = 1))[13:24,])
 p_t_10000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv&quot;, header = TRUE, row.names = 1))[1:12,])
-p_t_2000_skn_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv&quot;, header = TRUE, row.names = 1))[1:12,])</code></pre>
+p_t_2000_skn_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv&quot;, header = TRUE, row.names = 1))[1:12,])
+p_t_rank_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_t_rank_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_t_rank_normalize_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_t_rank_normalize_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_t_log_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_t_log_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv&quot;, header = TRUE, row.names = 1))[1:22,])</code></pre>
 <div id="runtime-and-peakram-comparison" class="section level2">
 <h2>Runtime and peakRAM comparison</h2>
 <pre><code>                       Type Perturbation Null.statistics Running.time Peak.RAM
-1 t test (No approximation)           24           10000       18320s 121904MB
+1 t test (No approximation)           24           10000        6128s 124150MB
 2      t test (Skew normal)           24            2000        6245s  22324MB</code></pre>
 </div>
-<div id="calibration-check-t-test" class="section level2">
-<h2>Calibration check (t-test)</h2>
+<div id="calibration-check-t-test" class="section level1">
+<h1>Calibration check (t-test)</h1>
 <p><strong>Calibration of NT grna pval estimated from 10000 null statistics (No approximation)</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -846,10 +880,7 @@ jliucx
 </table>
 </div>
 </div>
-</div>
-<div id="power-check-t-test" class="section level2">
-<h2>Power check (t-test)</h2>
-<p><strong>Power of NT grna pval estimated from 10000 null statistics with no approximation</strong></p>
+<p><strong>Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
@@ -888,7 +919,7 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation</strong></p>
+<p><strong>Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
@@ -927,22 +958,7 @@ jliucx
 </table>
 </div>
 </div>
-</div>
-<div id="plots-comparing-pval-from-no-approximation-and-skew-normal-approximation" class="section level2">
-<h2>Plots comparing pval from no approximation and skew normal approximation</h2>
-<pre class="r"><code># Binding the vectors
-p_10000 &lt;- c(p_t_10000_negative, p_t_10000_positive)
-p_skn_2000 &lt;- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
-
-# Scatter plot of bind_10000 against bind_2000
-plot(p_10000, p_skn_2000, 
-     xlab = &quot;p values of 10000 null statistics with no approximation&quot;, 
-     ylab = &quot;p values of 2000 null statistics with skewed t&quot;, 
-     main = &quot;Skew t approximation (2000 null statistics)&quot;,
-     pch = 16,  # pch = 16 gives solid circles
-     cex = 0.6,  # cex &lt; 1 reduces the size of the points,
-     col = &quot;red&quot;
-)</code></pre>
+<p><strong>Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
@@ -982,11 +998,9 @@ jliucx
 </div>
 </div>
 </div>
-<div id="including-snps-that-have-trans-effect-as-positive-control" class="section level2">
-<h2>Including SNPs that have trans effect as positive control</h2>
-<p><strong>Original positive control (12*50 pvals)</strong></p>
-<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[11:22,])
-gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<div id="power-check-t-test" class="section level1">
+<h1>Power check (t-test)</h1>
+<p><strong>Power of NT grna pval estimated from 10000 null statistics with no approximation</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
@@ -1036,9 +1050,7 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Positive control of SNPs that have trans effect</strong> <strong>only (10*50 pvals)</strong></p>
-<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[1:10,])
-gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
@@ -1077,9 +1089,8 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Positive control after including SNPs that have trans effect (22*50 pvals)</strong></p>
-<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1)))
-gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation (include trans-effect SNPs)</strong></p>
+<pre class="r"><code>gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))))</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
@@ -1129,11 +1140,7 @@ jliucx
 </table>
 </div>
 </div>
-</div>
-<div id="calibration-check-wilcoxon-test" class="section level2">
-<h2>Calibration check (wilcoxon-test)</h2>
-<pre class="r"><code>p_wilcox_10000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv&quot;, header = TRUE, row.names = 1)))
-gg_qqplot(p_wilcox_10000_negative)</code></pre>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
@@ -1183,17 +1190,57 @@ jliucx
 </table>
 </div>
 </div>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）</strong></p>
+<p><img src="figure/plot.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/4413b88c7a6a07136be1dfbf00e3cc5d3c06661d/docs/figure/plot.Rmd/unnamed-chunk-12-1.png" target="_blank">4413b88</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-03
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/f7074355805417e42e37bcd41f74e8b78c3f57f9/docs/figure/plot.Rmd/unnamed-chunk-12-1.png" target="_blank">f707435</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-03
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="normalizing-gene-expression-data-before-analysis" class="section level2">
-<h2>Normalizing gene expression data before analysis</h2>
-<p>All the results below are from normalizing gene expression data before analysis</p>
-<pre class="r"><code>p_t_10000_negative_normal &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation.csv&quot;, header = TRUE, row.names = 1))[13:24,])
-
-p_t_10000_positive_normal &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation.csv&quot;, header = TRUE, row.names = 1))[1:12,])
-
-p_wilcox_10000_negative_normal &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation_normalized.csv&quot;, header = TRUE, row.names = 1)))</code></pre>
-<p><strong>Calibration result of t-test</strong></p>
-<pre class="r"><code>gg_qqplot(p_t_10000_negative_normal)</code></pre>
+</div>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
@@ -1232,8 +1279,21 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Power of t-test</strong></p>
-<pre class="r"><code>gg_qqplot(p_t_10000_positive_normal)</code></pre>
+<div id="plots-comparing-pval-from-no-approximation-and-skew-normal-approximation" class="section level2">
+<h2>Plots comparing pval from no approximation and skew normal approximation</h2>
+<pre class="r"><code># Binding the vectors
+p_10000 &lt;- c(p_t_10000_negative, p_t_10000_positive)
+p_skn_2000 &lt;- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
+
+# Scatter plot of bind_10000 against bind_2000
+plot(p_10000, p_skn_2000, 
+     xlab = &quot;p values of 10000 null statistics with no approximation&quot;, 
+     ylab = &quot;p values of 2000 null statistics with skewed t&quot;, 
+     main = &quot;Skew t approximation (2000 null statistics)&quot;,
+     pch = 16,  # pch = 16 gives solid circles
+     cex = 0.6,  # cex &lt; 1 reduces the size of the points,
+     col = &quot;red&quot;
+)</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
@@ -1272,8 +1332,12 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Calibration result of wilcoxon-test</strong></p>
-<pre class="r"><code>gg_qqplot(p_wilcox_10000_negative_normal)</code></pre>
+</div>
+<div id="including-snps-that-have-trans-effect-as-positive-control" class="section level2">
+<h2>Including SNPs that have trans effect as positive control</h2>
+<p><strong>Original positive control (12*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[11:22,])
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
@@ -1306,6 +1370,102 @@ jliucx
 </td>
 <td>
 2024-10-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Positive control of SNPs that have trans effect</strong> <strong>only (10*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[1:10,])
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Positive control after including SNPs that have trans effect (22*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1)))
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="calibration-check-wilcoxon-test" class="section level2">
+<h2>Calibration check (wilcoxon-test)</h2>
+<pre class="r"><code>p_wilcox_10000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv&quot;, header = TRUE, row.names = 1)))
+gg_qqplot(p_wilcox_10000_negative)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="wilcoxon-p-values-for-each-perturbation-gene-pair" class="section level2">
+<h2>Wilcoxon p values for each perturbation-gene pair</h2>
+<p><img src="images/wilcox_pval.png" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-wilcox_pval">
+Past versions of wilcox_pval.png
+</button>
+</p>
+<div id="fig-wilcox_pval" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/0e40b6cfa15970519a9b2e3665a5dfa180315053/docs/images/wilcox_pval.png" target="_blank">0e40b6c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="wilcoxon-statistics-for-each-perturbation-gene-pair" class="section level2">
+<h2>Wilcoxon statistics for each perturbation-gene pair</h2>
+<p><img src="images/wilcox_statistics.png" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-wilcox_statistics">
+Past versions of wilcox_statistics.png
+</button>
+</p>
+<div id="fig-wilcox_statistics" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/0e40b6cfa15970519a9b2e3665a5dfa180315053/docs/images/wilcox_statistics.png" target="_blank">0e40b6c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-06
 </td>
 </tr>
 </tbody>
@@ -1354,6 +1514,7 @@ loaded via a namespace (and not attached):
 [45] scales_1.3.0      ps_1.7.5          promises_1.2.0.1  htmltools_0.5.8.1
 [49] colorspace_2.1-0  httpuv_1.6.1      labeling_0.4.3    utf8_1.2.1       
 [53] stringi_1.6.2     munsell_0.5.0     cachem_1.0.8     </code></pre>
+</div>
 </div>
 </div>
 
