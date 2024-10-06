@@ -170,13 +170,13 @@ p_wilcox_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiamin
 gg_qqplot(p_wilcox_10000_negative)
 ```
 
-## Wilcoxon p values for each perturbation-gene pair
+## Wilcoxon null p values for each perturbation-gene pair
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/wilcox_pval.png", error = FALSE)
 ```
 
-## Wilcoxon statistics for each perturbation-gene pair
+## Wilcoxon null statistics for each perturbation-gene pair
 
 ```{r echo=FALSE}
 knitr::include_graphics("images/wilcox_statistics.png", error = FALSE)
