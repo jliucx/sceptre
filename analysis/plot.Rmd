@@ -200,7 +200,7 @@ p_wilcox_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Gett
 gg_qqplot(p_wilcox_positive)
 ```
 
-## On whole dataset: 
+## On whole dataset:
 
 ```{r}
 gene_modules <- readRDS("data/gene_modules_id.rds")
@@ -397,7 +397,7 @@ unique(significant_result$grna_target)
 ```
 
 ```{r}
-knitr::include_graphics("images/paper_finding.png", error = FALSE)
+knitr::include_graphics("images/paper_finding_2.png", error = FALSE)
 ```
 
 ```{r}
