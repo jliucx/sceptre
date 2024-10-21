@@ -399,3 +399,7 @@ unique(significant_result$grna_target)
 ```{r}
 knitr::include_graphics("images/paper_finding.png", error = FALSE)
 ```
+
+```{r}
+grna_target_data_frame[c(87,117,125,151,165),]
+```
