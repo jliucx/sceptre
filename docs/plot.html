@@ -382,7 +382,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-10-06
+<strong>Last updated:</strong> 2024-10-20
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -523,6 +523,30 @@ output/calibration_power_include_trans_t_2000_use_approximation_log.csv
 </tr>
 <tr>
 <td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/test_rank_wilcox.csv
+</td>
+<td style="text-align:left;">
+output/test_rank_wilcox.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 /project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv
 </td>
 <td style="text-align:left;">
@@ -531,10 +555,26 @@ output/power_include_trans_t_2000_use_approximation.csv
 </tr>
 <tr>
 <td style="text-align:left;">
-/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv
+/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset.csv
 </td>
 <td style="text-align:left;">
-output/calibration_wilcoxon_10000_no_approximation.csv
+output/t_test_on_whole_dataset.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset_author_threshold.csv
+</td>
+<td style="text-align:left;">
+output/t_test_on_whole_dataset_author_threshold.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold/results_run_discovery_analysis.rds
+</td>
+<td style="text-align:left;">
+output/both_trans_author_threshold/results_run_discovery_analysis.rds
 </td>
 </tr>
 </tbody>
@@ -545,16 +585,16 @@ output/calibration_wilcoxon_10000_no_approximation.csv
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed94a7904046dbb9d3837e43660e81b705bf712d6targetblankd94a790a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/d94a7904046dbb9d3837e43660e81b705bf712d6" target="_blank">d94a790</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreefc1169ddb5d6fc583ae0bc210317a9bd229f55f2targetblankfc1169da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/fc1169ddb5d6fc583ae0bc210317a9bd229f55f2" target="_blank">fc1169d</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed94a7904046dbb9d3837e43660e81b705bf712d6targetblankd94a790a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreefc1169ddb5d6fc583ae0bc210317a9bd229f55f2targetblankfc1169da" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/d94a7904046dbb9d3837e43660e81b705bf712d6" target="_blank">d94a790</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/fc1169ddb5d6fc583ae0bc210317a9bd229f55f2" target="_blank">fc1169d</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -563,6 +603,7 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    analysis/job-info.err
     Ignored:    analysis/job-info.out
     Ignored:    analysis/run.sh
@@ -573,11 +614,14 @@ Untracked files:
     Untracked:  analysis/sceptre_singleton.Rmd
     Untracked:  analysis/sceptre_threshold.Rmd
     Untracked:  code/fit_skew_normal.cpp
+    Untracked:  code/job-info-1.err
+    Untracked:  code/job-info-1.out
     Untracked:  code/job-info-2.err
     Untracked:  code/job-info-2.out
     Untracked:  code/plot.pdf
+    Untracked:  code/t_test.cpp
     Untracked:  code/t_test_time.R
-    Untracked:  code/test_gene_module.R
+    Untracked:  code/test_gene_module_reduced.R
     Untracked:  data/GDO_threshold/
     Untracked:  data/Homo_sapiens.GRCh38.112.gtf.gz
     Untracked:  data/STINGseq-v1_GDO/
@@ -586,9 +630,14 @@ Untracked files:
     Untracked:  data/filtered_keep_gene.gtf
     Untracked:  data/gene_module.txt
     Untracked:  data/gene_module_id.txt
+    Untracked:  data/gene_module_threshold/
     Untracked:  data/gene_modules_id.rds
     Untracked:  data/msig_50_table_gene_per_row_immune_related.txt
     Untracked:  data/msig_50_table_immune_related.txt
+    Untracked:  output/both_trans_author_threshold/
+    Untracked:  output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation.csv
+    Untracked:  output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv
+    Untracked:  output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv
     Untracked:  output/sceptre_outputs/trans_mixture.txt
     Untracked:  output/sceptre_outputs_cis/
     Untracked:  output/sceptre_outputs_cis_singleton/
@@ -597,6 +646,9 @@ Untracked files:
     Untracked:  output/sceptre_outputs_trans_omit_NTC3_12/
     Untracked:  output/sceptre_outputs_trans_threshold/
     Untracked:  output/sceptre_outputs_trans_threshold_omit_NTC3_12/
+    Untracked:  output/t_test_on_whole_dataset.csv
+    Untracked:  output/t_test_on_whole_dataset_author_threshold.csv
+    Untracked:  output/test_rank_wilcox.csv
     Untracked:  output/trans_singleton_threshold5/
     Untracked:  output/trans_singleton_threshold_author_omit/
     Untracked:  output/try_rcc/
@@ -657,6 +709,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/fc1169ddb5d6fc583ae0bc210317a9bd229f55f2/analysis/plot.Rmd" target="_blank">fc1169d</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-21
+</td>
+<td>
+compare the findings with paper
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/481c9f69fe10dbf79f49ef5b92307330f40211dc/docs/plot.html" target="_blank">481c9f6</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -801,7 +887,28 @@ update result 10.3
 </div>
 </div>
 <pre class="r"><code>library(ggplot2)
-gg_qqplot &lt;- function(ps, ci = 0.95) {
+library(dplyr)</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(readr)
+directories &lt;- &quot;data/STINGseq-v1_GDO&quot;
+grna_target_data_frame &lt;- data.frame(read_csv(paste0(directories,&quot;/grna_target_data_frame.csv&quot;)))</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  grna_id = col_character(),
+  grna_target = col_character(),
+  chr = col_character(),
+  start = col_double(),
+  end = col_double()
+)</code></pre>
+<pre class="r"><code>gg_qqplot &lt;- function(ps, ci = 0.95) {
   n  &lt;- length(ps)
   df &lt;- data.frame(
     observed = -log10(sort(ps)),
@@ -827,7 +934,13 @@ p_t_rank_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao
 p_t_rank_normalize_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv&quot;, header = TRUE, row.names = 1))[23:34,])
 p_t_rank_normalize_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv&quot;, header = TRUE, row.names = 1))[1:22,])
 p_t_log_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv&quot;, header = TRUE, row.names = 1))[23:34,])
-p_t_log_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv&quot;, header = TRUE, row.names = 1))[1:22,])</code></pre>
+p_t_log_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_wilcox_p_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_wilcox_p_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_new_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_new_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_test &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_test_2 &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/test_rank_wilcox.csv&quot;, header = TRUE, row.names = 1))[1:22,])</code></pre>
 <div id="runtime-and-peakram-comparison" class="section level2">
 <h2>Runtime and peakRAM comparison</h2>
 <pre><code>                       Type Perturbation Null.statistics Running.time Peak.RAM
@@ -1064,10 +1177,7 @@ jliucx
 </table>
 </div>
 </div>
-</div>
-<div id="power-check-t-test" class="section level1">
-<h1>Power check (t-test)</h1>
-<p><strong>Power of NT grna pval estimated from 10000 null statistics with no approximation</strong></p>
+<pre class="r"><code>gg_qqplot(p_wilcox_p_2000_negative)</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
@@ -1128,7 +1238,10 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation</strong></p>
+</div>
+<div id="power-check-t-test" class="section level1">
+<h1>Power check (t-test)</h1>
+<p><strong>Power of NT grna pval estimated from 10000 null statistics with no approximation</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
@@ -1178,8 +1291,7 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation (include trans-effect SNPs)</strong></p>
-<pre class="r"><code>gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))))</code></pre>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
@@ -1229,7 +1341,8 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）</strong></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation (include trans-effect SNPs)</strong></p>
+<pre class="r"><code>gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))))</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
@@ -1290,7 +1403,7 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）</strong></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
@@ -1351,7 +1464,7 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）</strong></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
@@ -1401,21 +1514,7 @@ jliucx
 </table>
 </div>
 </div>
-<div id="plots-comparing-pval-from-no-approximation-and-skew-normal-approximation" class="section level2">
-<h2>Plots comparing pval from no approximation and skew normal approximation</h2>
-<pre class="r"><code># Binding the vectors
-p_10000 &lt;- c(p_t_10000_negative, p_t_10000_positive)
-p_skn_2000 &lt;- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
-
-# Scatter plot of bind_10000 against bind_2000
-plot(p_10000, p_skn_2000, 
-     xlab = &quot;p values of 10000 null statistics with no approximation&quot;, 
-     ylab = &quot;p values of 2000 null statistics with skewed t&quot;, 
-     main = &quot;Skew t approximation (2000 null statistics)&quot;,
-     pch = 16,  # pch = 16 gives solid circles
-     cex = 0.6,  # cex &lt; 1 reduces the size of the points,
-     col = &quot;red&quot;
-)</code></pre>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）</strong></p>
 <p><img src="figure/plot.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
@@ -1465,12 +1564,7 @@ jliucx
 </table>
 </div>
 </div>
-</div>
-<div id="including-snps-that-have-trans-effect-as-positive-control" class="section level2">
-<h2>Including SNPs that have trans effect as positive control</h2>
-<p><strong>Original positive control (12*50 pvals)</strong></p>
-<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[11:22,])
-gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<pre class="r"><code>gg_qqplot(p_wilcox_p_2000_positive)</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
@@ -1520,9 +1614,21 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Positive control of SNPs that have trans effect</strong> <strong>only (10*50 pvals)</strong></p>
-<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[1:10,])
-gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<div id="plots-comparing-pval-from-no-approximation-and-skew-normal-approximation" class="section level2">
+<h2>Plots comparing pval from no approximation and skew normal approximation</h2>
+<pre class="r"><code># Binding the vectors
+p_10000 &lt;- c(p_t_10000_negative, p_t_10000_positive)
+p_skn_2000 &lt;- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
+
+# Scatter plot of bind_10000 against bind_2000
+plot(p_10000, p_skn_2000, 
+     xlab = &quot;p values of 10000 null statistics with no approximation&quot;, 
+     ylab = &quot;p values of 2000 null statistics with skewed t&quot;, 
+     main = &quot;Skew t approximation (2000 null statistics)&quot;,
+     pch = 16,  # pch = 16 gives solid circles
+     cex = 0.6,  # cex &lt; 1 reduces the size of the points,
+     col = &quot;red&quot;
+)</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
@@ -1561,8 +1667,11 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Positive control after including SNPs that have trans effect (22*50 pvals)</strong></p>
-<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1)))
+</div>
+<div id="including-snps-that-have-trans-effect-as-positive-control" class="section level2">
+<h2>Including SNPs that have trans effect as positive control</h2>
+<p><strong>Original positive control (12*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[11:22,])
 gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1602,11 +1711,9 @@ jliucx
 </table>
 </div>
 </div>
-</div>
-<div id="calibration-check-wilcoxon-test" class="section level2">
-<h2>Calibration check (wilcoxon-test)</h2>
-<pre class="r"><code>p_wilcox_10000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv&quot;, header = TRUE, row.names = 1)))
-gg_qqplot(p_wilcox_10000_negative)</code></pre>
+<p><strong>Positive control of SNPs that have trans effect</strong> <strong>only (10*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[1:10,])
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
 <p><img src="figure/plot.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
@@ -1645,16 +1752,36 @@ jliucx
 </table>
 </div>
 </div>
+<p><strong>Positive control after including SNPs that have trans effect (22*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1)))
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="wilcoxon-null-p-values-for-each-perturbation-gene-pair" class="section level2">
-<h2>Wilcoxon null p values for each perturbation-gene pair</h2>
-<p><img src="images/wilcox_pval.png" style="display: block; margin: auto;" /></p>
+<div id="calibration-check-wilcoxon-test" class="section level2">
+<h2>Calibration check (wilcoxon-test)</h2>
+<p>I use wilcoxon p value as statistics, and find the left-tail probability to calculate p-value.</p>
+<pre class="r"><code>p_wilcox_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+gg_qqplot(p_wilcox_negative)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="power-check-wilcoxon-test" class="section level2">
+<h2>Power check (wilcoxon-test)</h2>
+<pre class="r"><code>p_wilcox_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+gg_qqplot(p_wilcox_positive)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="on-whole-dataset" class="section level2">
+<h2>On whole dataset:</h2>
+<pre class="r"><code>gene_modules &lt;- readRDS(&quot;data/gene_modules_id.rds&quot;)
+
+knitr::include_graphics(&quot;images/run_time.png&quot;, error = FALSE)</code></pre>
+<p><img src="images/run_time.png" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-wilcox_pval">
-Past versions of wilcox_pval.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-run_time">
+Past versions of run_time.png
 </button>
 </p>
-<div id="fig-wilcox_pval" class="collapse">
+<div id="fig-run_time" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1673,29 +1800,506 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/0e40b6cfa15970519a9b2e3665a5dfa180315053/docs/images/wilcox_pval.png" target="_blank">0e40b6c</a>
+<a href="https://github.com/jliucx/sceptre/blob/fc1169ddb5d6fc583ae0bc210317a9bd229f55f2/docs/images/run_time.png" target="_blank">fc1169d</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-10-06
+2024-10-21
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+<div id="use-mixture-model-to-assign-grna-to-cells" class="section level3">
+<h3>use mixture model to assign gRNA to cells</h3>
+<pre class="r"><code>p_test_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset.csv&quot;, header = TRUE, row.names = 1))[c(87,88,117,118,125,126,151,152,165,166,177:188),])
+gg_qqplot(p_test_positive)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p_test_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset.csv&quot;, header = TRUE, row.names = 1))[189:200,])
+gg_qqplot(p_test_negative)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-23-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="wilcoxon-null-statistics-for-each-perturbation-gene-pair" class="section level2">
-<h2>Wilcoxon null statistics for each perturbation-gene pair</h2>
-<p><img src="images/wilcox_statistics.png" style="display: block; margin: auto;" /></p>
+</div>
+<div id="use-author-suggested-thresholds-to-assign-grna-to-cells" class="section level2">
+<h2>use author suggested thresholds to assign grna to cells</h2>
+<pre class="r"><code>p_test_positive_2 &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset_author_threshold.csv&quot;, header = TRUE, row.names = 1))[c(87,88,117,118,125,126,151,152,165,166,177:188),])
+gg_qqplot(p_test_positive_2)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p_test_negative_2 &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset_author_threshold.csv&quot;, header = TRUE, row.names = 1))[189:200,])
+gg_qqplot(p_test_negative_2)</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-24-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="now-we-use-the-significant-signals-from-sceptre-output-to-construct-grna-to-gene-module-positive-control-pairs." class="section level2">
+<h2>Now we use the significant signals from sceptre output to construct grna-to-gene-module positive control pairs.</h2>
+<pre class="r"><code>results_run_discovery_analysis &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold/results_run_discovery_analysis.rds&quot;)
+
+results_run_discovery_analysis[1:10,c(1,2,7)]</code></pre>
+<pre><code>       response_id  grna_id       p_value
+1  ENSG00000135486 SNP-83_1 1.180013e-126
+2  ENSG00000109943   CD52-2 1.772732e-125
+3  ENSG00000130203 SNP-62_2 1.162737e-116
+4  ENSG00000248098 SNP-70_1  4.753347e-74
+5  ENSG00000119912 SNP-44_1  1.246293e-65
+6  ENSG00000158669 SNP-60_2  3.560838e-64
+7  ENSG00000204390   CD52-2  5.804028e-54
+8  ENSG00000066583 SNP-62_2  2.493081e-53
+9  ENSG00000129167 SNP-62_2  1.187078e-51
+10 ENSG00000197465 SNP-62_2  3.382718e-51</code></pre>
+<pre class="r"><code>module_results &lt;- list()
+
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(results_run_discovery_analysis[1:1141,]))) {
+  response_id &lt;- results_run_discovery_analysis$response_id[i]
+  grna_id &lt;- results_run_discovery_analysis$grna_id[i]
+  
+  # Find the modules that contain the response_id
+  containing_modules &lt;- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
+  
+  # Store the result for this response_id and grna_id
+  module_results[[i]] &lt;- data.frame(response_id = response_id, grna_id = grna_id, module = containing_modules)
+}
+
+# Combine all results into a single data frame
+module_results_df_2 &lt;- do.call(rbind, module_results)
+module_results &lt;- module_results_df_2[,2:3] %&gt;%
+  distinct()
+
+module_results[1:10,]</code></pre>
+<pre><code>    grna_id                             module
+1  SNP-83_1            HALLMARK_MYC_TARGETS_V1
+2    CD52-2       HALLMARK_ALLOGRAFT_REJECTION
+3  SNP-62_2              HALLMARK_ADIPOGENESIS
+4  SNP-62_2     HALLMARK_XENOBIOTIC_METABOLISM
+5  SNP-70_1              HALLMARK_ADIPOGENESIS
+6  SNP-70_1 HALLMARK_OXIDATIVE_PHOSPHORYLATION
+7  SNP-44_1           HALLMARK_SPERMATOGENESIS
+8  SNP-44_1                HALLMARK_PEROXISOME
+9  SNP-60_2              HALLMARK_ADIPOGENESIS
+10   CD52-2           HALLMARK_SPERMATOGENESIS</code></pre>
+</div>
+<div id="use-author-suggested-threshold-to-assign-grna-to-cell" class="section level2">
+<h2>use author suggested threshold to assign grna to cell</h2>
+<pre class="r"><code>result_gene_module &lt;- read_csv(&quot;output/t_test_on_whole_dataset_author_threshold.csv&quot;)</code></pre>
+<pre><code>Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  .default = col_double(),
+  X1 = col_character()
+)
+ℹ Use `spec()` for the full column specifications.</code></pre>
+<pre class="r"><code> # result_gene_module &lt;- read_csv(&quot;output/t_test_on_whole_dataset.csv&quot;)
+
+p_values &lt;- c()
+
+# Iterate over each row in module_results_df_2
+for (i in seq_len(nrow(module_results))) {
+  grna_id &lt;- module_results$grna_id[i]
+  module &lt;- module_results$module[i]
+  
+  # Find the row in result_gene_module corresponding to the grna_id
+  row_index &lt;- which(result_gene_module$X1 == grna_id)
+  
+  # Find the column corresponding to the module
+  column_index &lt;- which(names(result_gene_module) == module)
+  
+  # Get the corresponding p-value
+  if (length(row_index) &gt; 0 &amp;&amp; length(column_index) &gt; 0) {
+    p_value &lt;- result_gene_module[row_index, column_index]
+  } else {
+    p_value &lt;- NA  # If no match is found
+  }
+  
+  # Append the p-value to the vector
+  p_values &lt;- c(p_values, p_value)
+}
+gg_qqplot(unlist(p_values))</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="discoveries-on-gene-sets" class="section level2">
+<h2>Discoveries on gene sets</h2>
+<pre class="r"><code>p_value &lt;- as.numeric(as.matrix(result_gene_module[1:176,-1]))
+
+# Step 2: Apply BH correction
+p_values_adjusted &lt;- p.adjust(p_value, method = &quot;BH&quot;)
+
+# Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
+p_values_matrix &lt;- matrix(p_values_adjusted, nrow = 176, ncol = ncol(result_gene_module) - 1)
+
+# Step 4: Identify significant pairs (adjusted p-values &lt; 0.05)
+significant_pairs &lt;- p_values_matrix &lt; 0.05
+
+# Extract the significant pairs (gene names and modules)
+significant_genes &lt;- result_gene_module$X1[row(significant_pairs)[significant_pairs]]
+significant_modules &lt;- colnames(result_gene_module)[-1][col(significant_pairs)[significant_pairs]]
+
+# Combine significant pairs into a data frame
+significant_results &lt;- data.frame(grna = significant_genes, module = significant_modules, adjusted_p_value = p_values_matrix[significant_pairs])
+
+# Show the significant results
+significant_results</code></pre>
+<pre><code>       grna                                     module adjusted_p_value
+1  SNP-63_1                           HALLMARK_HYPOXIA     2.724429e-03
+2  SNP-63_1                    HALLMARK_G2M_CHECKPOINT     1.114311e-04
+3  SNP-63_1                      HALLMARK_ADIPOGENESIS     1.139027e-02
+4  SNP-63_1           HALLMARK_ESTROGEN_RESPONSE_EARLY     6.893277e-05
+5  SNP-63_1                        HALLMARK_MYOGENESIS     7.987539e-03
+6  SNP-63_1         HALLMARK_INTERFERON_GAMMA_RESPONSE     8.906502e-05
+7  SNP-63_1                   HALLMARK_APICAL_JUNCTION     4.091720e-03
+8  SNP-63_1                        HALLMARK_COMPLEMENT     0.000000e+00
+9  SNP-63_2                        HALLMARK_COMPLEMENT     4.129643e-02
+10 SNP-76_2                        HALLMARK_COMPLEMENT     1.509104e-05
+11 SNP-63_1                  HALLMARK_MTORC1_SIGNALING     5.816951e-04
+12 SNP-63_1                    HALLMARK_MYC_TARGETS_V1     2.364896e-03
+13 SNP-63_2 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION     1.509104e-05
+14 SNP-63_1             HALLMARK_INFLAMMATORY_RESPONSE     1.163178e-04
+15 SNP-63_1             HALLMARK_XENOBIOTIC_METABOLISM     2.147303e-02
+16 SNP-63_1         HALLMARK_OXIDATIVE_PHOSPHORYLATION     0.000000e+00
+17 SNP-63_1                        HALLMARK_GLYCOLYSIS     4.292874e-02
+18 SNP-63_1               HALLMARK_ALLOGRAFT_REJECTION     1.132732e-05
+19 SNP-63_1                   HALLMARK_MITOTIC_SPINDLE     1.327047e-05
+20 SNP-63_1               HALLMARK_IL2_STAT5_SIGNALING     1.780815e-03
+21 SNP-63_1                         HALLMARK_APOPTOSIS     8.906502e-05
+22 SNP-63_1             HALLMARK_FATTY_ACID_METABOLISM     8.906502e-05
+23 SNP-63_1                    HALLMARK_UV_RESPONSE_UP     2.549596e-05
+24 SNP-63_1                        HALLMARK_DNA_REPAIR     2.850123e-05
+25 SNP-63_1                    HALLMARK_UV_RESPONSE_DN     2.549596e-05
+26 SNP-63_1                       HALLMARK_COAGULATION     0.000000e+00
+27 SNP-63_2                       HALLMARK_COAGULATION     8.906502e-05
+28 SNP-76_2                       HALLMARK_COAGULATION     1.509104e-05
+29 SNP-63_1                        HALLMARK_PEROXISOME     3.494961e-05
+30 SNP-63_1         HALLMARK_INTERFERON_ALPHA_RESPONSE     1.798851e-05
+31 SNP-44_2           HALLMARK_IL6_JAK_STAT3_SIGNALING     9.570327e-03
+32 SNP-63_1           HALLMARK_CHOLESTEROL_HOMEOSTASIS     4.608315e-02
+33 SNP-63_1                    HALLMARK_MYC_TARGETS_V2     1.505608e-04
+34 SNP-63_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY     0.000000e+00
+35 SNP-63_1                    HALLMARK_APICAL_SURFACE     4.859373e-02
+36 SNP-63_2                    HALLMARK_APICAL_SURFACE     4.258292e-02
+37 SNP-63_1                   HALLMARK_NOTCH_SIGNALING     1.392135e-03</code></pre>
+<pre class="r"><code>significant_results_with_target &lt;- significant_results %&gt;%
+  left_join(grna_target_data_frame, by = c(&quot;grna&quot; = &quot;grna_id&quot;))
+
+# Show the updated significant results with the grna_target column
+(significant_result&lt;-significant_results_with_target[,c(1,2,4,3)])</code></pre>
+<pre><code>       grna                                     module grna_target
+1  SNP-63_1                           HALLMARK_HYPOXIA    rs524137
+2  SNP-63_1                    HALLMARK_G2M_CHECKPOINT    rs524137
+3  SNP-63_1                      HALLMARK_ADIPOGENESIS    rs524137
+4  SNP-63_1           HALLMARK_ESTROGEN_RESPONSE_EARLY    rs524137
+5  SNP-63_1                        HALLMARK_MYOGENESIS    rs524137
+6  SNP-63_1         HALLMARK_INTERFERON_GAMMA_RESPONSE    rs524137
+7  SNP-63_1                   HALLMARK_APICAL_JUNCTION    rs524137
+8  SNP-63_1                        HALLMARK_COMPLEMENT    rs524137
+9  SNP-63_2                        HALLMARK_COMPLEMENT    rs524137
+10 SNP-76_2                        HALLMARK_COMPLEMENT  rs73660574
+11 SNP-63_1                  HALLMARK_MTORC1_SIGNALING    rs524137
+12 SNP-63_1                    HALLMARK_MYC_TARGETS_V1    rs524137
+13 SNP-63_2 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION    rs524137
+14 SNP-63_1             HALLMARK_INFLAMMATORY_RESPONSE    rs524137
+15 SNP-63_1             HALLMARK_XENOBIOTIC_METABOLISM    rs524137
+16 SNP-63_1         HALLMARK_OXIDATIVE_PHOSPHORYLATION    rs524137
+17 SNP-63_1                        HALLMARK_GLYCOLYSIS    rs524137
+18 SNP-63_1               HALLMARK_ALLOGRAFT_REJECTION    rs524137
+19 SNP-63_1                   HALLMARK_MITOTIC_SPINDLE    rs524137
+20 SNP-63_1               HALLMARK_IL2_STAT5_SIGNALING    rs524137
+21 SNP-63_1                         HALLMARK_APOPTOSIS    rs524137
+22 SNP-63_1             HALLMARK_FATTY_ACID_METABOLISM    rs524137
+23 SNP-63_1                    HALLMARK_UV_RESPONSE_UP    rs524137
+24 SNP-63_1                        HALLMARK_DNA_REPAIR    rs524137
+25 SNP-63_1                    HALLMARK_UV_RESPONSE_DN    rs524137
+26 SNP-63_1                       HALLMARK_COAGULATION    rs524137
+27 SNP-63_2                       HALLMARK_COAGULATION    rs524137
+28 SNP-76_2                       HALLMARK_COAGULATION  rs73660574
+29 SNP-63_1                        HALLMARK_PEROXISOME    rs524137
+30 SNP-63_1         HALLMARK_INTERFERON_ALPHA_RESPONSE    rs524137
+31 SNP-44_2           HALLMARK_IL6_JAK_STAT3_SIGNALING  rs12784232
+32 SNP-63_1           HALLMARK_CHOLESTEROL_HOMEOSTASIS    rs524137
+33 SNP-63_1                    HALLMARK_MYC_TARGETS_V2    rs524137
+34 SNP-63_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY    rs524137
+35 SNP-63_1                    HALLMARK_APICAL_SURFACE    rs524137
+36 SNP-63_2                    HALLMARK_APICAL_SURFACE    rs524137
+37 SNP-63_1                   HALLMARK_NOTCH_SIGNALING    rs524137
+   adjusted_p_value
+1      2.724429e-03
+2      1.114311e-04
+3      1.139027e-02
+4      6.893277e-05
+5      7.987539e-03
+6      8.906502e-05
+7      4.091720e-03
+8      0.000000e+00
+9      4.129643e-02
+10     1.509104e-05
+11     5.816951e-04
+12     2.364896e-03
+13     1.509104e-05
+14     1.163178e-04
+15     2.147303e-02
+16     0.000000e+00
+17     4.292874e-02
+18     1.132732e-05
+19     1.327047e-05
+20     1.780815e-03
+21     8.906502e-05
+22     8.906502e-05
+23     2.549596e-05
+24     2.850123e-05
+25     2.549596e-05
+26     0.000000e+00
+27     8.906502e-05
+28     1.509104e-05
+29     3.494961e-05
+30     1.798851e-05
+31     9.570327e-03
+32     4.608315e-02
+33     1.505608e-04
+34     0.000000e+00
+35     4.859373e-02
+36     4.258292e-02
+37     1.392135e-03</code></pre>
+<pre class="r"><code>unique(significant_result$grna_target)</code></pre>
+<pre><code>[1] &quot;rs524137&quot;   &quot;rs73660574&quot; &quot;rs12784232&quot;</code></pre>
+</div>
+<div id="use-mixture-model-to-assign-grna-to-cell" class="section level2">
+<h2>use mixture model to assign grna to cell</h2>
+<pre class="r"><code># result_gene_module &lt;- read_csv(&quot;output/t_test_on_whole_dataset_author_threshold.csv&quot;)
+ result_gene_module &lt;- read_csv(&quot;output/t_test_on_whole_dataset.csv&quot;)</code></pre>
+<pre><code>Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  .default = col_double(),
+  X1 = col_character()
+)
+ℹ Use `spec()` for the full column specifications.</code></pre>
+<pre class="r"><code>p_values &lt;- c()
+
+# Iterate over each row in module_results_df_2
+for (i in seq_len(nrow(module_results))) {
+  grna_id &lt;- module_results$grna_id[i]
+  module &lt;- module_results$module[i]
+  
+  # Find the row in result_gene_module corresponding to the grna_id
+  row_index &lt;- which(result_gene_module$X1 == grna_id)
+  
+  # Find the column corresponding to the module
+  column_index &lt;- which(names(result_gene_module) == module)
+  
+  # Get the corresponding p-value
+  if (length(row_index) &gt; 0 &amp;&amp; length(column_index) &gt; 0) {
+    p_value &lt;- result_gene_module[row_index, column_index]
+  } else {
+    p_value &lt;- NA  # If no match is found
+  }
+  
+  # Append the p-value to the vector
+  p_values &lt;- c(p_values, p_value)
+}
+gg_qqplot(unlist(p_values))</code></pre>
+<p><img src="figure/plot.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p_value &lt;- as.numeric(as.matrix(result_gene_module[1:176,-1]))
+
+# Step 2: Apply BH correction
+p_values_adjusted &lt;- p.adjust(p_value, method = &quot;BH&quot;)
+
+# Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
+p_values_matrix &lt;- matrix(p_values_adjusted, nrow = 176, ncol = ncol(result_gene_module) - 1)
+
+# Step 4: Identify significant pairs (adjusted p-values &lt; 0.05)
+significant_pairs &lt;- p_values_matrix &lt; 0.05
+
+# Extract the significant pairs (gene names and modules)
+significant_genes &lt;- result_gene_module$X1[row(significant_pairs)[significant_pairs]]
+significant_modules &lt;- colnames(result_gene_module)[-1][col(significant_pairs)[significant_pairs]]
+
+# Combine significant pairs into a data frame
+significant_results &lt;- data.frame(grna = significant_genes, module = significant_modules, adjusted_p_value = p_values_matrix[significant_pairs])
+
+# Show the significant results
+significant_results</code></pre>
+<pre><code>       grna                                     module adjusted_p_value
+1  SNP-44_2           HALLMARK_TNFA_SIGNALING_VIA_NFKB     9.270946e-06
+2  SNP-63_1                           HALLMARK_HYPOXIA     4.074903e-03
+3  SNP-63_2                           HALLMARK_HYPOXIA     1.875647e-04
+4  SNP-63_1                    HALLMARK_G2M_CHECKPOINT     8.031072e-03
+5  SNP-63_1           HALLMARK_ESTROGEN_RESPONSE_EARLY     5.883611e-04
+6  SNP-63_1                        HALLMARK_MYOGENESIS     5.209172e-05
+7  SNP-63_2                        HALLMARK_MYOGENESIS     7.100231e-05
+8  SNP-27_1         HALLMARK_INTERFERON_GAMMA_RESPONSE     1.163661e-05
+9  SNP-63_1         HALLMARK_INTERFERON_GAMMA_RESPONSE     2.875340e-03
+10 SNP-63_1                   HALLMARK_APICAL_JUNCTION     1.595493e-04
+11 SNP-63_1                        HALLMARK_COMPLEMENT     2.987026e-02
+12 SNP-63_2                        HALLMARK_COMPLEMENT     2.781916e-04
+13 SNP-63_1                  HALLMARK_MTORC1_SIGNALING     1.678987e-05
+14 SNP-63_1                       HALLMARK_E2F_TARGETS     0.000000e+00
+15 SNP-63_1                    HALLMARK_MYC_TARGETS_V1     1.811814e-05
+16 SNP-63_1 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION     2.520655e-02
+17 SNP-63_2 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION     1.409064e-03
+18 SNP-65_1 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION     3.154095e-02
+19 SNP-63_1             HALLMARK_INFLAMMATORY_RESPONSE     1.640519e-02
+20 SNP-63_1             HALLMARK_XENOBIOTIC_METABOLISM     2.781916e-04
+21 SNP-63_1                        HALLMARK_GLYCOLYSIS     3.403628e-02
+22 SNP-63_2                        HALLMARK_GLYCOLYSIS     3.484208e-03
+23 SNP-63_1                       HALLMARK_P53_PATHWAY     3.313770e-05
+24 SNP-63_2                       HALLMARK_P53_PATHWAY     3.532752e-04
+25 SNP-44_2                   HALLMARK_HEME_METABOLISM     2.710147e-02
+26 SNP-83_2                   HALLMARK_HEME_METABOLISM     1.163661e-05
+27 SNP-83_2                 HALLMARK_KRAS_SIGNALING_UP     1.678987e-05
+28 SNP-44_2                 HALLMARK_KRAS_SIGNALING_DN     3.879002e-05
+29 SNP-63_1             HALLMARK_FATTY_ACID_METABOLISM     7.599962e-06
+30 SNP-63_2             HALLMARK_FATTY_ACID_METABOLISM     3.879002e-05
+31 SNP-63_1                    HALLMARK_UV_RESPONSE_UP     1.163661e-05
+32 SNP-63_1                       HALLMARK_COAGULATION     1.963639e-03
+33 SNP-63_2                       HALLMARK_COAGULATION     2.781916e-04
+34 SNP-76_2                       HALLMARK_COAGULATION     4.039679e-02
+35 SNP-63_1         HALLMARK_UNFOLDED_PROTEIN_RESPONSE     2.750545e-05
+36 SNP-63_1                 HALLMARK_ANDROGEN_RESPONSE     1.707791e-05
+37 SNP-63_2                 HALLMARK_ANDROGEN_RESPONSE     4.334270e-02
+38 SNP-27_1         HALLMARK_INTERFERON_ALPHA_RESPONSE     7.982329e-05
+39 SNP-83_2         HALLMARK_INTERFERON_ALPHA_RESPONSE     3.313770e-05
+40 SNP-44_2           HALLMARK_IL6_JAK_STAT3_SIGNALING     8.611847e-05
+41 SNP-63_1           HALLMARK_CHOLESTEROL_HOMEOSTASIS     2.750545e-05
+42 SNP-63_1                    HALLMARK_MYC_TARGETS_V2     1.040198e-02
+43 SNP-11_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY     1.163661e-05
+44 SNP-44_2   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY     2.605349e-02
+45 SNP-63_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY     1.900981e-05
+46 SNP-63_2   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY     2.527050e-05
+47 SNP-77_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY     2.750545e-05
+48 SNP-44_2                    HALLMARK_APICAL_SURFACE     1.409064e-03
+49 SNP-63_1                    HALLMARK_APICAL_SURFACE     1.900981e-05
+50 SNP-63_2                    HALLMARK_APICAL_SURFACE     1.743951e-02
+51 SNP-74_1                    HALLMARK_APICAL_SURFACE     2.102931e-02
+52 SNP-26_2                      HALLMARK_ANGIOGENESIS     4.334270e-02
+53 SNP-63_1                   HALLMARK_NOTCH_SIGNALING     2.781916e-04</code></pre>
+<pre class="r"><code>significant_results_with_target &lt;- significant_results %&gt;%
+  left_join(grna_target_data_frame, by = c(&quot;grna&quot; = &quot;grna_id&quot;))
+
+# Show the updated significant results with the grna_target column
+(significant_result&lt;-significant_results_with_target[,c(1,2,4,3)])</code></pre>
+<pre><code>       grna                                     module       grna_target
+1  SNP-44_2           HALLMARK_TNFA_SIGNALING_VIA_NFKB        rs12784232
+2  SNP-63_1                           HALLMARK_HYPOXIA          rs524137
+3  SNP-63_2                           HALLMARK_HYPOXIA          rs524137
+4  SNP-63_1                    HALLMARK_G2M_CHECKPOINT          rs524137
+5  SNP-63_1           HALLMARK_ESTROGEN_RESPONSE_EARLY          rs524137
+6  SNP-63_1                        HALLMARK_MYOGENESIS          rs524137
+7  SNP-63_2                        HALLMARK_MYOGENESIS          rs524137
+8  SNP-27_1         HALLMARK_INTERFERON_GAMMA_RESPONSE        rs11525582
+9  SNP-63_1         HALLMARK_INTERFERON_GAMMA_RESPONSE          rs524137
+10 SNP-63_1                   HALLMARK_APICAL_JUNCTION          rs524137
+11 SNP-63_1                        HALLMARK_COMPLEMENT          rs524137
+12 SNP-63_2                        HALLMARK_COMPLEMENT          rs524137
+13 SNP-63_1                  HALLMARK_MTORC1_SIGNALING          rs524137
+14 SNP-63_1                       HALLMARK_E2F_TARGETS          rs524137
+15 SNP-63_1                    HALLMARK_MYC_TARGETS_V1          rs524137
+16 SNP-63_1 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION          rs524137
+17 SNP-63_2 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION          rs524137
+18 SNP-65_1 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION       rs550065584
+19 SNP-63_1             HALLMARK_INFLAMMATORY_RESPONSE          rs524137
+20 SNP-63_1             HALLMARK_XENOBIOTIC_METABOLISM          rs524137
+21 SNP-63_1                        HALLMARK_GLYCOLYSIS          rs524137
+22 SNP-63_2                        HALLMARK_GLYCOLYSIS          rs524137
+23 SNP-63_1                       HALLMARK_P53_PATHWAY          rs524137
+24 SNP-63_2                       HALLMARK_P53_PATHWAY          rs524137
+25 SNP-44_2                   HALLMARK_HEME_METABOLISM        rs12784232
+26 SNP-83_2                   HALLMARK_HEME_METABOLISM        rs79755767
+27 SNP-83_2                 HALLMARK_KRAS_SIGNALING_UP        rs79755767
+28 SNP-44_2                 HALLMARK_KRAS_SIGNALING_DN        rs12784232
+29 SNP-63_1             HALLMARK_FATTY_ACID_METABOLISM          rs524137
+30 SNP-63_2             HALLMARK_FATTY_ACID_METABOLISM          rs524137
+31 SNP-63_1                    HALLMARK_UV_RESPONSE_UP          rs524137
+32 SNP-63_1                       HALLMARK_COAGULATION          rs524137
+33 SNP-63_2                       HALLMARK_COAGULATION          rs524137
+34 SNP-76_2                       HALLMARK_COAGULATION        rs73660574
+35 SNP-63_1         HALLMARK_UNFOLDED_PROTEIN_RESPONSE          rs524137
+36 SNP-63_1                 HALLMARK_ANDROGEN_RESPONSE          rs524137
+37 SNP-63_2                 HALLMARK_ANDROGEN_RESPONSE          rs524137
+38 SNP-27_1         HALLMARK_INTERFERON_ALPHA_RESPONSE        rs11525582
+39 SNP-83_2         HALLMARK_INTERFERON_ALPHA_RESPONSE        rs79755767
+40 SNP-44_2           HALLMARK_IL6_JAK_STAT3_SIGNALING        rs12784232
+41 SNP-63_1           HALLMARK_CHOLESTEROL_HOMEOSTASIS          rs524137
+42 SNP-63_1                    HALLMARK_MYC_TARGETS_V2          rs524137
+43 SNP-11_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY 1:198630156_CCA_C
+44 SNP-44_2   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY        rs12784232
+45 SNP-63_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY          rs524137
+46 SNP-63_2   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY          rs524137
+47 SNP-77_1   HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY        rs75522380
+48 SNP-44_2                    HALLMARK_APICAL_SURFACE        rs12784232
+49 SNP-63_1                    HALLMARK_APICAL_SURFACE          rs524137
+50 SNP-63_2                    HALLMARK_APICAL_SURFACE          rs524137
+51 SNP-74_1                    HALLMARK_APICAL_SURFACE         rs7200918
+52 SNP-26_2                      HALLMARK_ANGIOGENESIS         rs9325434
+53 SNP-63_1                   HALLMARK_NOTCH_SIGNALING          rs524137
+   adjusted_p_value
+1      9.270946e-06
+2      4.074903e-03
+3      1.875647e-04
+4      8.031072e-03
+5      5.883611e-04
+6      5.209172e-05
+7      7.100231e-05
+8      1.163661e-05
+9      2.875340e-03
+10     1.595493e-04
+11     2.987026e-02
+12     2.781916e-04
+13     1.678987e-05
+14     0.000000e+00
+15     1.811814e-05
+16     2.520655e-02
+17     1.409064e-03
+18     3.154095e-02
+19     1.640519e-02
+20     2.781916e-04
+21     3.403628e-02
+22     3.484208e-03
+23     3.313770e-05
+24     3.532752e-04
+25     2.710147e-02
+26     1.163661e-05
+27     1.678987e-05
+28     3.879002e-05
+29     7.599962e-06
+30     3.879002e-05
+31     1.163661e-05
+32     1.963639e-03
+33     2.781916e-04
+34     4.039679e-02
+35     2.750545e-05
+36     1.707791e-05
+37     4.334270e-02
+38     7.982329e-05
+39     3.313770e-05
+40     8.611847e-05
+41     2.750545e-05
+42     1.040198e-02
+43     1.163661e-05
+44     2.605349e-02
+45     1.900981e-05
+46     2.527050e-05
+47     2.750545e-05
+48     1.409064e-03
+49     1.900981e-05
+50     1.743951e-02
+51     2.102931e-02
+52     4.334270e-02
+53     2.781916e-04</code></pre>
+<pre class="r"><code>unique(significant_result$grna_target)</code></pre>
+<pre><code> [1] &quot;rs12784232&quot;        &quot;rs524137&quot;          &quot;rs11525582&quot;       
+ [4] &quot;rs550065584&quot;       &quot;rs79755767&quot;        &quot;rs73660574&quot;       
+ [7] &quot;1:198630156_CCA_C&quot; &quot;rs75522380&quot;        &quot;rs7200918&quot;        
+[10] &quot;rs9325434&quot;        </code></pre>
+<pre class="r"><code>knitr::include_graphics(&quot;images/paper_finding.png&quot;, error = FALSE)</code></pre>
+<p><img src="images/paper_finding.png" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-wilcox_statistics">
-Past versions of wilcox_statistics.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-paper_finding">
+Past versions of paper_finding.png
 </button>
 </p>
-<div id="fig-wilcox_statistics" class="collapse">
+<div id="fig-paper_finding" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1714,13 +2318,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/0e40b6cfa15970519a9b2e3665a5dfa180315053/docs/images/wilcox_statistics.png" target="_blank">0e40b6c</a>
+<a href="https://github.com/jliucx/sceptre/blob/fc1169ddb5d6fc583ae0bc210317a9bd229f55f2/docs/images/paper_finding.png" target="_blank">fc1169d</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-10-06
+2024-10-21
 </td>
 </tr>
 </tbody>
@@ -1752,23 +2356,24 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.5.1   workflowr_1.7.1
+[1] readr_1.4.0     dplyr_1.1.4     ggplot2_3.5.1   workflowr_1.7.1
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.12       highr_0.11        compiler_4.1.0    pillar_1.9.0     
- [5] bslib_0.7.0       later_1.2.0       git2r_0.32.0      jquerylib_0.1.4  
- [9] tools_4.1.0       getPass_0.2-2     digest_0.6.33     gtable_0.3.0     
-[13] jsonlite_1.8.7    evaluate_0.23     lifecycle_1.0.4   tibble_3.2.1     
-[17] pkgconfig_2.0.3   rlang_1.1.2       cli_3.6.1         rstudioapi_0.15.0
-[21] yaml_2.2.1        xfun_0.45         fastmap_1.1.1     withr_2.5.2      
-[25] dplyr_1.1.4       httr_1.4.2        stringr_1.5.1     knitr_1.48       
-[29] generics_0.1.3    fs_1.6.3          vctrs_0.6.4       sass_0.4.9       
-[33] tidyselect_1.2.0  grid_4.1.0        rprojroot_2.0.4   glue_1.6.2       
-[37] R6_2.5.1          processx_3.8.4    fansi_1.0.5       rmarkdown_2.27   
-[41] farver_2.1.1      callr_3.7.6       magrittr_2.0.3    whisker_0.4.1    
-[45] scales_1.3.0      ps_1.7.5          promises_1.2.0.1  htmltools_0.5.8.1
-[49] colorspace_2.1-0  httpuv_1.6.1      labeling_0.4.3    utf8_1.2.1       
-[53] stringi_1.6.2     munsell_0.5.0     cachem_1.0.8     </code></pre>
+ [1] tidyselect_1.2.0  xfun_0.45         bslib_0.7.0       colorspace_2.1-0 
+ [5] vctrs_0.6.4       generics_0.1.3    htmltools_0.5.8.1 yaml_2.2.1       
+ [9] utf8_1.2.1        rlang_1.1.2       jquerylib_0.1.4   later_1.2.0      
+[13] pillar_1.9.0      glue_1.6.2        withr_2.5.2       lifecycle_1.0.4  
+[17] stringr_1.5.1     munsell_0.5.0     gtable_0.3.0      evaluate_0.23    
+[21] labeling_0.4.3    knitr_1.48        callr_3.7.6       fastmap_1.1.1    
+[25] httpuv_1.6.1      ps_1.7.5          fansi_1.0.5       highr_0.11       
+[29] Rcpp_1.0.12       promises_1.2.0.1  scales_1.3.0      cachem_1.0.8     
+[33] jsonlite_1.8.7    farver_2.1.1      fs_1.6.3          hms_1.1.0        
+[37] digest_0.6.33     stringi_1.6.2     processx_3.8.4    getPass_0.2-2    
+[41] rprojroot_2.0.4   grid_4.1.0        cli_3.6.1         tools_4.1.0      
+[45] magrittr_2.0.3    sass_0.4.9        tibble_3.2.1      crayon_1.5.2     
+[49] whisker_0.4.1     pkgconfig_2.0.3   ellipsis_0.3.2    rmarkdown_2.27   
+[53] httr_1.4.2        rstudioapi_0.15.0 R6_2.5.1          git2r_0.32.0     
+[57] compiler_4.1.0   </code></pre>
 </div>
 </div>
 </div>
