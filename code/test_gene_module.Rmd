@@ -1,3 +1,5 @@
+------------------------------------------------------------------------
+
 ---
 title: "gene_module"
 output: pdf_document
@@ -16,6 +18,7 @@ library(parallel)
 library(BH)
 library(Rcpp)
 library(peakRAM)
+library(sgt)
 
 sourceCpp("code/fit_skew_normal.cpp")
 
@@ -25,6 +28,7 @@ sourceCpp("code/fit_skew_normal.cpp")
 Morris_data <- T
 
 setwd("/project/xuanyao/jiaming/Getting_started")
+
 
 if (Morris_data) {
   directories <- "data/STINGseq-v1_GDO"
@@ -64,7 +68,7 @@ sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
     discovery_pairs=discovery_pairs_trans, 
     positive_control_pairs=positive_control_pairs, 
     side="both") |>
-  assign_grnas(parallel = T)
+  assign_grnas()
 ```
 
 ## Modifying and overwrite the functions in Presto library to do wilcoxon test
@@ -136,7 +140,8 @@ tidy_results_reduced <- function(wide_res, features, groups) {
   # Select the relevant columns
   res %>% dplyr::select(
     feature,
-    statistic
+    statistic,
+    pval
   )
 }
 
@@ -176,18 +181,18 @@ wilcoxauc.default <- function(X, y, groups_use = NULL, verbose = TRUE, ...) {
     if (is(X, "dgCMatrix")) {
         rank_res <- rank_matrix(Matrix::t(X))
     } else {
-        rank_res <- rank_matrix(X)
+        rank_res <- t(rank_matrix(t(X)))
     }
-
+      
     ustat <- compute_ustat(rank_res$X_ranked, y, n1n2, group.size)
-    #pvals <- compute_pval(ustat, rank_res$ties, ncol(X), n1n2)
+    pvals <- compute_pval(ustat, rank_res$ties, ncol(X), n1n2)
   
 
     
     results_list <- lapply(seq_along(ustat), function(i) {
   # Create a res_list for each i-th vector in ustat and pvals
     res_list <- list(
-    #pval = pvals[[i]],
+    pval = pvals[[i]],
     statistic = t(ustat[[i]])
   )
   
@@ -272,6 +277,8 @@ permutation_or_resampling <- function(grna_assignment_matrix, n_permute, use_res
 ## Revised functions to calculate both original statistics and permuted statistics at a time
 
 ```{r}
+
+
 slice_to_list <- function(large_matrix, n_permute) {
   # Initialize an empty list to store the smaller matrices
   sliced_matrices <- list()
@@ -288,48 +295,50 @@ slice_to_list <- function(large_matrix, n_permute) {
   
   return(sliced_matrices)
 }
+t_test <- function(response_matrix, grna_assignment_matrix) {
 
-t_test <- function(response_matrix, grna_assignment_matrix){
-  
+  response_matrix <- as.matrix(response_matrix)
+  grna_assignment_matrix <- as.matrix(grna_assignment_matrix)
+
   n_cells <- ncol(response_matrix)
   n_genes <- nrow(response_matrix)
   all_cells <- seq_len(n_cells)
   n_rows <- nrow(grna_assignment_matrix)
-  
-  grna_infected_cell_count <- grna_assignment_matrix%*%matrix(rep(1,n_cells),nrow=n_cells)
-  
-  mean_expression_trt <- grna_assignment_matrix%*%t(response_matrix)/as.vector(grna_infected_cell_count)
-  
-  mean_expression_squared_trt <- grna_assignment_matrix%*%t(response_matrix^2)/as.vector(grna_infected_cell_count)
-  
+
+  response_matrix_t <- t(response_matrix)
+  response_matrix_t_squared <-response_matrix_t^2
+
+  grna_infected_cell_count <- as.vector(grna_assignment_matrix %*% matrix(rep(1, n_cells), nrow = n_cells))
+
+  mean_expression_trt <- grna_assignment_matrix %*% response_matrix_t / grna_infected_cell_count
+  mean_expression_squared_trt <- grna_assignment_matrix %*% response_matrix_t_squared / grna_infected_cell_count
   var_expression_trt <- mean_expression_squared_trt - mean_expression_trt^2
-  
-  grna_control_cell_count <- n_cells-grna_infected_cell_count
-  
-  mean_expression_control <- (1-grna_assignment_matrix)%*%t(response_matrix)/as.vector(grna_control_cell_count)
-  
-  mean_expression_squared_control <-(1-grna_assignment_matrix)%*%t(response_matrix^2)/as.vector(grna_control_cell_count)
-  
+
+  grna_control_cell_count <- n_cells - grna_infected_cell_count
+  mean_expression_control <- (1 - grna_assignment_matrix) %*% response_matrix_t / grna_control_cell_count
+  mean_expression_squared_control <- (1 - grna_assignment_matrix) %*% response_matrix_t_squared / grna_control_cell_count
   var_expression_control <- mean_expression_squared_control - mean_expression_control^2
-  
-  t_statistics <- (mean_expression_trt-mean_expression_control)/sqrt(var_expression_trt/as.vector(grna_infected_cell_count)+var_expression_control/as.vector(grna_control_cell_count))
-  
+
+  t_statistics <- (mean_expression_trt - mean_expression_control) / sqrt(var_expression_trt / grna_infected_cell_count + var_expression_control / grna_control_cell_count)
+
   return(t_statistics)
 }
+
 
 wilcox_test <- function(response_matrix, grna_assignment_matrix){
   
   n_rows <- nrow(grna_assignment_matrix)
   
   response_dgC <- as(as.matrix(response_matrix),"dgCMatrix")
+  # response_dgC <- as.matrix(response_matrix)
 
   grna_assignment_list <- split(grna_assignment_matrix, row(grna_assignment_matrix))
   
   wilcox_result <- wilcoxauc(response_dgC,grna_assignment_list)
-  
+
   names(wilcox_result) <- rownames(grna_assignment_matrix)
   
-  statistic_list <- lapply(wilcox_result, function(df) df$statistic)
+  statistic_list <- lapply(wilcox_result, function(df) df$pval)
 
 
   statistic_matrix <- do.call(rbind, statistic_list)
@@ -717,41 +726,162 @@ compute_final_p_val_skew_normal <- function(tensor) {
 
   return(p_value_matrix)
 }
+
+fit_skew_t <- function(x,TStat1){
+  x.mean = mean(x)
+  x.sd = sd(x)
+  x.norm = (x - x.mean)/x.sd
+  mod = sgt.mle(X.f = ~x.norm,
+                start = list(mu = 0, sigma = 1, lambda = 0, p = 2, q = 10))
+  para = mod$estimate
+  p = psgt((TStat1-x.mean)/x.sd, mu = para['mu'], sigma = para['sigma'],
+           lambda = para['lambda'], p = para['p'], q = para['q']) 
+  return(p)
+}
+
+compute_final_p_val_skew_normal_2 <- function(tensor) {
+
+  dim_tensor <- dim(tensor)
+  p_value_matrix <- matrix(NA, nrow = dim_tensor[3], ncol = dim_tensor[2])
+  
+  # Apply over the third dimension
+  result <- lapply(1:dim_tensor[3], function(j) {
+    sapply(1:dim_tensor[2], function(i) {
+      fit_skew_t(tensor[-1, i, j],tensor[1,i,j])  # Apply function across the first dimension for each (i,j)
+    })
+  })
+
+  # Combine results into p_value_matrix
+  for (j in 1:dim_tensor[3]) {
+    p_value_matrix[j, ] <- result[[j]]
+  }
+
+  rownames(p_value_matrix) <- dimnames(tensor)[[3]]
+  colnames(p_value_matrix) <- dimnames(tensor)[[2]]
+
+  return(p_value_matrix)
+}
+library(parallel)
+
+compute_final_p_val_skew_normal_2 <- function(tensor) {
+
+  dim_tensor <- dim(tensor)
+  p_value_matrix <- matrix(NA, nrow = dim_tensor[3], ncol = dim_tensor[2])
+  
+  # Detect the number of cores for parallel processing
+  num_cores <- detectCores() - 1  # Reserve 1 core for system processes
+  
+  # Parallelize the outer loop over the third dimension
+  result <- mclapply(1:dim_tensor[3], function(j) {
+    sapply(1:dim_tensor[2], function(i) {
+      fit_skew_t(tensor[-1, i, j], tensor[1,i,j])  # Apply function across the first dimension for each (i,j)
+    })
+  }, mc.cores = num_cores)  # Set number of cores for parallel processing
+  
+  # Combine results into p_value_matrix
+  for (j in 1:dim_tensor[3]) {
+    p_value_matrix[j, ] <- result[[j]]
+  }
+
+  rownames(p_value_matrix) <- dimnames(tensor)[[3]]
+  colnames(p_value_matrix) <- dimnames(tensor)[[2]]
+
+  return(p_value_matrix)
+}
+
 ```
 
 ```{r}
-analysis_gene_module <- function(grna_assignment_matrix, response_matrix, gene_module_index_matrix, test_type ,n_permute, use_resample, use_approximation){
-  #permuted grna assignment matrix
+analysis_gene_module <- function (grna_assignment_matrix, response_matrix, gene_module_index_matrix, test_type, n_permute, use_resample, use_approximation) {
+
+  func_start_time <- Sys.time()
+
+  # permuted grna assignment matrix
   grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
-  # test statistics 
-  if (test_type=="t_test"){
-  test_result <- t_test(response_matrix,grna_assignment_matrix_combined)
-  } else if (test_type=="wilcox_test") {
-    test_result <- wilcox_test(response_matrix,grna_assignment_matrix_combined)
+
+  # Test statistics calculation
+  step_start_time <- Sys.time()
+  if (test_type == "t_test") {
+    test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
+    step_end_time <- Sys.time()
+  print(paste("Time for test statistics calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Combined statistics
+  step_start_time <- Sys.time()
+  combined_result <- combine_test_statistics(test_result, gene_module_index_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for combine test statistics:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Change matrix to tensor
+  step_start_time <- Sys.time()
+  test_tensor <- convert_matrix_to_tensor(combined_result, n_permute, grna_assignment_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for matrix to tensor conversion:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Calculate p-value
+  step_start_time <- Sys.time()
+  p_tensor <- compute_p_value_from_tensor(test_tensor, n_permute, 1)
+    step_end_time <- Sys.time()
+  print(paste("Time for p-value calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+    
+
+  } else if (test_type == "wilcox_test") {
+    test_result <- wilcox_test(response_matrix, grna_assignment_matrix_combined)
+    step_end_time <- Sys.time()
+  print(paste("Time for test statistics calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Combined statistics
+  step_start_time <- Sys.time()
+  combined_result <- combine_test_statistics(test_result, gene_module_index_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for combine test statistics:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Change matrix to tensor
+  step_start_time <- Sys.time()
+  test_tensor <- convert_matrix_to_tensor(combined_result, n_permute, grna_assignment_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for matrix to tensor conversion:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Calculate p-value
+  step_start_time <- Sys.time()
+  p_tensor <- compute_p_value_from_tensor(test_tensor, n_permute, 2)
+    step_end_time <- Sys.time()
+  print(paste("Time for p-value calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
   } else {
     stop("Unknown test type")
   }
-  print ("calculation of test statistics complete")
-   # combined statistics 
-  combined_result <-combine_test_statistics(test_result, gene_module_index_matrix)
-  print ("combine test statistics complete")
-  #change matrix to tensor
-  test_tensor<-convert_matrix_to_tensor(combined_result,n_permute,grna_assignment_matrix)
-  if (!use_approximation){
-  #calculate p-value
-  p_tensor <- compute_p_value_from_tensor(test_tensor,n_permute,1)
-  print ("compute p value complete")
-  min_pval <- min_p_val(p_tensor, gene_module_index_matrix) 
-  final_p <- compute_final_p_val(min_pval,n_permute)
-
-  } else {
-    p_tensor <- compute_p_value_from_skew_normal(test_tensor, 1)
-    print ("compute p value complete")
-    min_pval <- min_p_val(p_tensor, gene_module_index_matrix)
-    final_p <- compute_final_p_val_skew_normal(min_pval)
-  }
+  
+  min_pval <- min_p_val(p_tensor, gene_module_index_matrix)
+  
+  precompute_p <- compute_final_p_val(min_pval, n_permute)
+  
+  if (use_approximation) {
  
-  return(final_p)
+    n_test <- dim(precompute_p)[1]
+    threshold <- 0.1/n_test + sqrt(0.1/n_test/n_permute)
+    indices <- which(precompute_p <= threshold, arr.ind = TRUE)
+
+
+# Use apply to loop through indices
+apply(indices, 1, function(idx) {
+    i <- idx[2]
+    j <- idx[1]
+    
+    # Perform the fit_skew_t calculation
+    result <- fit_skew_t(min_pval[-1, i, j], min_pval[1, i, j])
+    
+    # Update final_p inside the function
+    precompute_p[j, i] <<- result  
+})
+}
+    
+  
+
+  # End timer for the entire function
+func_end_time <- Sys.time()
+print(paste("Total function execution time:", as.numeric(difftime(func_end_time, func_start_time, units = "secs"))))
+
+  return(precompute_p)
 }
 ```
 
@@ -763,7 +893,7 @@ gene_names<-rownames(sceptre_object@response_matrix[[1]])
 
 gene_modules <- readRDS("data/gene_modules_id.rds")
 gene_in_modules <- vector("logical", length(gene_names))
-
+covariate <- sceptre_object@covariate_data_frame
 # Loop through each gene in gene_names
 for (i in seq_along(gene_names)) {
   gene <- gene_names[i]
@@ -774,69 +904,162 @@ for (i in seq_along(gene_names)) {
 
 response_matrix_raw<-sceptre_object@response_matrix[[1]][gene_in_modules,]
 
-row_sums <- rowSums(response_matrix_raw!=0)
 
-gene_to_exclude <- rownames(response_matrix_raw)[row_sums <= 0.05*ncol(response_matrix_raw)]
+response_matrix_normalized<-t(t(response_matrix_raw)/covariate$response_n_umis)
+response_matrix_normalized<-response_matrix_raw
 
-response_matrix <- response_matrix_raw[!rownames(response_matrix_raw) %in% gene_to_exclude, ]
+row_sums <- rowSums(response_matrix_normalized!=0)
+
+gene_to_exclude <- rownames(response_matrix_normalized)[row_sums <= 0.05*ncol(response_matrix_normalized)]
+
+response_matrix <- response_matrix_normalized[!rownames(response_matrix_normalized) %in% gene_to_exclude,]
 
 gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
 
-covariate <- sceptre_object@covariate_data_frame
+```
 
+```{r}
+length(gene_to_exclude)
+```
+
+## Parameters
+
+```{r}
 use_resample <- T
-use_approximation <- F
-test_type="wilcox_test"
-n_permute <- 10
+use_approximation <- T
+test_type="t_test"
+n_permute <- 1000
+
 grna_assignment_matrix <-get_grna_assignments(
   sceptre_object = sceptre_object
-)[189:200,] # choose first 10 perturbation for demostration
-n_rows <- nrow(grna_assignment_matrix)
-```
-
-```{r}
-test_type="wilcox_test"
-
-peak_mem_usage <- peakRAM(
-  result <- analysis_gene_module(grna_assignment_matrix, response_matrix,
-                                 gene_module_index_matrix,test_type, n_permute, use_resample, use_approximation)
 )
+n_rows <- nrow(grna_assignment_matrix)
+
+
 ```
 
 ```{r}
-result[1:5,1:3]
-```
 
-```{r}
-result[,1:3]
-```
+analyze_chunk <- function(chunk) {
+  analysis_gene_module(
+    chunk, 
+    t(rank_matrix(as.matrix(response_matrix))$X_ranked), 
+    gene_module_index_matrix, 
+    test_type, 
+    n_permute, 
+    use_resample, 
+    use_approximation
+  )
+}
 
-```{r}
-write.csv(result, "output/result_remove_na_gene.csv", row.names = TRUE)
-```
+# Get the total number of rows in the grna_assignment_matrix
+n_rows <- nrow(grna_assignment_matrix)
 
-```{r}
-grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
-  # test statistics from permutation
-  t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined, n_permute)
-  combined_result_permuted <- do.call(cbind, lapply(gene_modules, function(module) {
-  combine_test_statistics(t_result_permuted, module)
+# Define the number of rows to process per iteration
+chunk_size <- 30
+
+# Split the grna_assignment_matrix into chunks of 30 rows
+chunks <- split(1:n_rows, rep(1:ceiling(n_rows / chunk_size), each = chunk_size, length.out = n_rows))
+
+# Ensure each chunk is converted back to a matrix and then apply the analysis_gene_module function
+result <- do.call(rbind, lapply(chunks, function(rows) {
+  chunk_matrix <- grna_assignment_matrix[rows, , drop = FALSE]  
+  analyze_chunk(chunk_matrix)
 }))
-  print ("combine test statistics from permutation complete")
-  #original test statistics
-  original_test <- t_test(response_matrix,grna_assignment_matrix,1)
-  # original combined test statistics
-  original_combined <- do.call(cbind, lapply(gene_modules, function(module) {
-  combine_test_statistics(original_test, module)
-}))
-  # original p value
-  original_p_val <- compute_p_val_one_vs_group(original_combined, combined_result_permuted,  n_permute, T)
+
+
+
 ```
 
-## Calibration using gene modules and choose min p as test statistics
+```{r}
+
+gg_qqplot(as.vector(as.matrix(results[177:188,1:3])))
+```
+
+## Tests
+
+```{r}
+  func_start_time <- Sys.time()
+
+  # permuted grna assignment matrix
+  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+
+  # Test statistics calculation
+  step_start_time <- Sys.time()
+  if (test_type == "t_test") {
+    test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
+    step_end_time <- Sys.time()
+  print(paste("Time for test statistics calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Combined statistics
+  step_start_time <- Sys.time()
+  combined_result <- combine_test_statistics(test_result, gene_module_index_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for combine test statistics:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Change matrix to tensor
+  step_start_time <- Sys.time()
+  test_tensor <- convert_matrix_to_tensor(combined_result, n_permute, grna_assignment_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for matrix to tensor conversion:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Calculate p-value
+  step_start_time <- Sys.time()
+  p_tensor <- compute_p_value_from_tensor(test_tensor, n_permute, 1)
+    step_end_time <- Sys.time()
+  print(paste("Time for p-value calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+    
+
+  } else if (test_type == "wilcox_test") {
+    test_result <- wilcox_test(t(rank_matrix(as.matrix(response_matrix))$X_ranked), grna_assignment_matrix_combined)
+    step_end_time <- Sys.time()
+  print(paste("Time for test statistics calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Combined statistics
+  step_start_time <- Sys.time()
+  combined_result <- combine_test_statistics(test_result, gene_module_index_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for combine test statistics:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Change matrix to tensor
+  step_start_time <- Sys.time()
+  test_tensor <- convert_matrix_to_tensor(combined_result, n_permute, grna_assignment_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for matrix to tensor conversion:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+
+  # Calculate p-value
+  step_start_time <- Sys.time()
+  p_tensor <- compute_p_value_from_tensor(test_tensor, n_permute, 2)
+    step_end_time <- Sys.time()
+  print(paste("Time for p-value calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+  } else {
+    stop("Unknown test type")
+  }
+  
+  min_pval <- min_p_val(p_tensor, gene_module_index_matrix)
+  
+  precompute_p <- compute_final_p_val(min_pval, n_permute)
+```
+
+```{r}
+wilcox_test(response_matrix, grna_assignment_matrix)[1:5,1:5]
+```
+
+```{r}
+wilcox_test(t(rank_matrix(as.matrix(response_matrix))$X_ranked), grna_assignment_matrix)[1:5,1:5]
+```
+
+```{r}
+wilcox.test(t(rank_matrix(as.matrix(response_matrix))$X_ranked)[2,] ~ grna_assignment_matrix[1,])
+```
+
+```{r}
+class(t(rank_matrix(as.matrix(response_matrix))$X_ranked))
+```
 
 ```{r}
 library(ggplot2)
+
 gg_qqplot <- function(ps, ci = 0.95) {
   n  <- length(ps)
   df <- data.frame(
@@ -855,286 +1078,843 @@ gg_qqplot <- function(ps, ci = 0.95) {
     xlab(log10Pe) + ylab(log10Po)
 }
 
-pval_vector_5000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_5000.csv", header = TRUE, row.names = 1)))
-gg_qqplot(pval_vector_5000)
+p_new_positive <- as.vector(as.matrix(precompute_p)[1:22,])
+p_new_negative <- as.vector(as.matrix(precompute_p)[23:34,])
 ```
 
 ```{r}
-pval_vector <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_rank.csv", header = TRUE, row.names = 1)))
-gg_qqplot(pval_vector)
+gg_qqplot(p_new_positive)
+gg_qqplot(p_new_negative)
+
 ```
 
 ```{r}
-pval_vector_2000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_use_approximation_2000.csv", header = TRUE, row.names = 1)))
-gg_qqplot(pval_vector_2000)
-```
+  func_start_time <- Sys.time()
 
-```{r}
-qqplot(pval_vector, pval_vector_10000, main = "Skew Normal Approximation (10000 null statisitcs)",
-       xlab = "10000 null with no approximation", ylab = "10000 null with skew normal approximation")
+  # permuted grna assignment matrix
+  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
 
-# Add a 45-degree reference line
-abline(0, 1, col = "red")
-```
+  # Test statistics calculation
+  step_start_time <- Sys.time()
+  if (test_type == "t_test") {
+    test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
+    step_end_time <- Sys.time()
+  print(paste("Time for test statistics calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
 
-```{r}
-qqplot(pval_vector, pval_vector_2, main = "Q-Q Plot of Two Vectors",
-       xlab = "Quantiles of Vector 1", ylab = "Quantiles of Vector 2")
+  # Combined statistics
+  step_start_time <- Sys.time()
+  combined_result <- combine_test_statistics(test_result, gene_module_index_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for combine test statistics:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
 
-# Add a 45-degree reference line
-abline(0, 1, col = "red")
-```
+  # Change matrix to tensor
+  step_start_time <- Sys.time()
+  test_tensor <- convert_matrix_to_tensor(combined_result, n_permute, grna_assignment_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for matrix to tensor conversion:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
 
-```{r}
-cor(pval_vector_2000,pval_vector)
-```
+  # Calculate p-value
+  step_start_time <- Sys.time()
+  p_tensor <- compute_p_value_from_tensor(test_tensor, n_permute, 1)
+    step_end_time <- Sys.time()
+  print(paste("Time for p-value calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+    
 
-## Calibration using gene modules (before choosing min p)
+  } else if (test_type == "wilcox_test") {
+    test_result <- wilcox_test(response_matrix, grna_assignment_matrix_combined)
+    step_end_time <- Sys.time()
+  print(paste("Time for test statistics calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
 
-```{r}
-gg_qqplot(as.vector(as.matrix(original_p_val)))
-```
+  # Combined statistics
+  step_start_time <- Sys.time()
+  combined_result <- combine_test_statistics(test_result, gene_module_index_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for combine test statistics:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
 
-```{r}
-zero_positions <- which(original_p_val == 0, arr.ind = TRUE)
-zero_positions
-```
+  # Change matrix to tensor
+  step_start_time <- Sys.time()
+  test_tensor <- convert_matrix_to_tensor(combined_result, n_permute, grna_assignment_matrix)
+  step_end_time <- Sys.time()
+  print(paste("Time for matrix to tensor conversion:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
 
-```{r}
-original_p_val[3,c(14,35,224,237,238,252)]
-```
-
-```{r}
-pval_flat <- as.vector(as.matrix(original_p_val))  # Flatten the matrix
-rownames_flat <- rep(rownames(original_p_val), each = ncol(original_p_val))  # Corresponding row names
-
-# Step 2: Create a data frame to hold both p-values and corresponding rows
-pval_data <- data.frame(
-  row = rownames_flat,
-  pval = pval_flat
-)
-
-# Step 3: Apply the Benjamini-Hochberg (BH) correction
-pval_data$adjusted_pval <- p.adjust(pval_data$pval, method = "BH")
-
-# Step 4: Sort by the adjusted p-values (if necessary)
-smallest_adjusted_pvals <- pval_data[order(pval_data$adjusted_pval), ]
-
-# Step 5: Display the 20 smallest adjusted p-values
-smallest_adjusted_pvals[1:20, ]
-```
-
-## Calibration before considering gene modules (i.e. t-test and its null distribution from conditional resampling)
-
-```{r}
-p_val_before_combining_gene_module <- compute_p_val_one_vs_group(original_test[[1]],as.matrix(do.call(rbind, t_result_permuted)), 1000, T)
-```
-
-```{r}
-gg_qqplot(as.vector(as.matrix(p_val_before_combining_gene_module)))
-```
-
-```{r}
-zero_positions <- which( p_val_before_combining_gene_module== 0, arr.ind = TRUE)
-zero_positions
-```
-
-## Sceptre
-
-```{r}
-pval_sceptre<-readRDS("/project/xuanyao/jiaming/Getting_started/docs/output/trans_union_singleton_both/results_run_calibration_check.rds")$p_value
-gg_qqplot(pval_sceptre)
-```
-
-```{r}
-gg_qqplot(sample(pval_sceptre, size = 600, replace = FALSE))
-```
-
-```{r}
-t_test <- function(response_matrix, grna_assignment_matrix) {
+  # Calculate p-value
+  step_start_time <- Sys.time()
+  p_tensor <- compute_p_value_from_tensor(test_tensor, n_permute, 2)
+    step_end_time <- Sys.time()
+  print(paste("Time for p-value calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
+  } else {
+    stop("Unknown test type")
+  }
   
-  # Start timing for the first block
-  start_time <- Sys.time()
+  min_pval <- min_p_val(p_tensor, gene_module_index_matrix)
   
-  n_cells <- ncol(response_matrix)
-  n_genes <- nrow(response_matrix)
-  all_cells <- seq_len(n_cells)
-  n_rows <- nrow(grna_assignment_matrix)
+  precompute_p <- compute_final_p_val(min_pval, n_permute)
   
-  end_time <- Sys.time()
-  print(paste("Time for setup:", end_time - start_time))
-  
-  # Start timing for the next block
-  start_time <- Sys.time()
-  
-  grna_infected_cell_count <- grna_assignment_matrix %*% matrix(rep(1, n_cells), nrow = n_cells)
-  end_time <- Sys.time()
-  print(paste("Time for infected cell count:", end_time - start_time))
-  
-  start_time <- Sys.time()
-  mean_expression_trt <- grna_assignment_matrix %*% t(response_matrix) / as.vector(grna_infected_cell_count)
-  
-  end_time <- Sys.time()
-  print(paste("Time for infected cell mean:", end_time - start_time))
-  
-  # Repeat this for other blocks of code
-  start_time <- Sys.time()
+  if (use_approximation) {
+ 
+    n_test <- dim(precompute_p)[1]
+    threshold <- 0.1/n_test + sqrt(0.1/n_test/n_permute)
+    indices <- which(precompute_p <= threshold, arr.ind = TRUE)
 
-  mean_expression_squared_trt <- grna_assignment_matrix %*% t(response_matrix^2) / as.vector(grna_infected_cell_count)
-  end_time <- Sys.time()
-  print(paste("Time for infected cell mean squared:", end_time - start_time))
-  
-  start_time <- Sys.time()
-  
-  var_expression_trt <- mean_expression_squared_trt - mean_expression_trt^2
-  
-  end_time <- Sys.time()
-  print(paste("Time for variance calculation (treated):", end_time - start_time))
-  
-  # Continue for other calculations
-  start_time <- Sys.time()
-  
-  grna_control_cell_count <- n_cells - grna_infected_cell_count
-  mean_expression_control <- (1 - grna_assignment_matrix) %*% t(response_matrix) / as.vector(grna_control_cell_count)
-  
-  end_time <- Sys.time()
-  
-  print(paste("Time for control mean calculation:", end_time - start_time))
-  
-  start_time <- Sys.time()
 
-  mean_expression_squared_control <- (1 - grna_assignment_matrix) %*% t(response_matrix^2) / as.vector(grna_control_cell_count)
-
-  end_time <- Sys.time()
-  
-   print(paste("Time for control mean squared:", end_time - start_time))
-   
-   start_time <- Sys.time()
-   var_expression_control <- mean_expression_squared_control - mean_expression_control^2
-   end_time <- Sys.time()
-   
-   print(paste("Time for control variance:", end_time - start_time))
-   
-   start_time <- Sys.time()
-
-  t_statistics <- (mean_expression_trt - mean_expression_control) /
-    sqrt(var_expression_trt / as.vector(grna_infected_cell_count) + var_expression_control / as.vector(grna_control_cell_count))
-  
-  end_time <- Sys.time()
-  print(paste("Time for t-statistics calculation:", end_time - start_time))
-  
-  return(t_statistics)
+# Use apply to loop through indices
+apply(indices, 1, function(idx) {
+    i <- idx[2]
+    j <- idx[1]
+    
+    # Perform the fit_skew_t calculation
+    result <- fit_skew_t(min_pval[-1, i, j], min_pval[1, i, j])
+    
+    # Update final_p inside the function
+    precompute_p[j, i] <<- result  
+})
 }
-n_permute=10000
-grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
-  # test statistics from permutation
-  t_result_permuted <- t_test(response_matrix,grna_assignment_matrix_combined)
-```
-
-```{r}
-combined_test_statistics<-combine_test_statistics(t_result_permuted, gene_module_index_matrix)
-```
-
-```{r}
-combined_test_statistics[1:30,1:2]
-```
-
-```{r}
-tensor<-convert_matrix_to_tensor(combined_test_statistics, (n_permute), grna_assignment_matrix) 
-```
-
-```{r}
-compute_p_value_from_tensor(tensor,n_permute,1)[1:30,1:2,"NTC-1"]
-```
-
-```{r}
-compute_p_value_from_skew_normal(tensor,1)[1:30,1:2,"NTC-1"]
-```
-
-```{r}
-compute_p_value_from_skew_normal_2(tensor,1)[1:30,1:2,"NTC-1"]
-```
-
-```{r}
-rank_tensor(tensor)[,,"NTC-1"]
-```
-
-```{r}
-(52-rank_tensor(tensor))[1:30,1:2,"NTC-4"]
-```
-
-```{r}
-ranked_tensor <- rank_tensor(tensor)
-compute_p_value_from_rank(ranked_tensor,T,50)[1:30,1:2,"NTC-4"]
-```
-
-```{r}
-pval_tensor[1:30,1:6,"NTC-1"]
-```
-
-```{r}
-apply(pval_tensor[1:30, 7:12, "NTC-2"], 1, min, na.rm = TRUE)
 
 ```
 
 ```{r}
-hh<-min_p_val_2(pval_tensor,gene_module_index_matrix)[,2,"NTC-3"]
+sum(precompute_p<1e-3)
+
+```
+
+# Oct. 10
+
+```{r}
+t_test(t(as.matrix(covariate$response_n_umis)),grna_assignment_matrix)
 ```
 
 ```{r}
-min_p_val<- min_p_val(pval_tensor,gene_module_index_matrix)
+(t_test_result <- t.test(response_matrix[4,]~ grna_assignment_matrix[5,]))
 ```
 
 ```{r}
-compute_final_p_val(min_p_val, n_permute)[,1:3]
+grna_assignment_matrix <-get_grna_assignments(
+  sceptre_object = sceptre_object
+)[189:200,]
+response_matrix_raw<-sceptre_object@response_matrix[[1]][gene_in_modules,]
+
+
+response_matrix_normalized<-response_matrix_raw
+
+
+row_sums <- rowSums(response_matrix_normalized!=0)
+
+gene_to_exclude <- rownames(response_matrix_normalized)[row_sums <= 0.05*ncol(response_matrix_normalized)]
+
+response_matrix <- response_matrix_normalized[!rownames(response_matrix_normalized) %in% gene_to_exclude, ]
 ```
 
 ```{r}
-y <- c(1.2, 2.3, 3.5, 4.7, 5.8)
+use_resample <- T
+use_approximation <- T
+test_type="t_test"
+n_permute <- 1000
+grna_assignment_matrix <-get_grna_assignments(
+  sceptre_object = sceptre_object
+)[189:200,] # choose first 10 perturbation for demostration
+n_rows <- nrow(grna_assignment_matrix)
+func_start_time <- Sys.time()
 
-# Call the C++ function
-xixi <- fit_and_evaluate_skew_normal(y,2,F)
-
-xixi
+  # Test statistics calculation
+  step_start_time <- Sys.time()
+  if (test_type == "t_test") {
+    test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
+  } else if (test_type == "wilcox_test") {
+    test_result <- wilcox_test(response_matrix, grna_assignment_matrix)
+  } else {
+    stop("Unknown test type")
+  }
+  step_end_time <- Sys.time()
+  print(paste("Time for test statistics calculation:", as.numeric(difftime(step_end_time, step_start_time, units = "secs"))))
 ```
 
 ```{r}
-table_data <- data.frame(
-  Type = c("No approximation", "Skew normal", "Skew normal", "Skew normal"),
-  "Perturbation" = c("12","12","12","12"),
-  "Null statistics" = c("10000", "10000", "5000", "2000"),
-  "Running time" = c("4832s", "5282s", "1894s", "596s"),
-  "Peak RAM" = c("60952MiB", "60952MiB", "30873MiB", "12801MiB"),
-  "Correlation with standard" = c("1(standard)", "0.9192", "0.9325", "0.9355"),
-  stringsAsFactors = FALSE
+t_result <- apply(t(rank_matrix(as.matrix(response_matrix))$X_ranked), 1, function(row) {
+  t_test_result <- t.test(row ~ grna_assignment_matrix[1,])
+  return(t_test_result$p.value)
+})
+```
+
+```{r}
+t_result[1:10]
+```
+
+```{r}
+threshold <- 0.05/n_test + sqrt(0.05/n_test/n_permute)
+threshold
+```
+
+```{r}
+which(precompute_p <= threshold, arr.ind = TRUE)
+```
+
+```{r}
+indices <- which(precompute_p <= threshold, arr.ind = TRUE)
+
+# Use apply() to apply the function to each row of the indices matrix
+results <- apply(indices, 1, function(idx) {
+  i <- idx[2]
+  j <- idx[1]
+  fit_skew_t(min_pval[-1, i, j], min_pval[1, i, j])
+})
+
+# Print or process the results
+results
+```
+
+```{r}
+result_origin <- apply(indices, 1, function(idx) {
+  i <- idx[1]
+  j <- idx[2]
+  precompute_p[i,j]
+})
+```
+
+## Data filtering
+
+```{r}
+matrix_file_path <- "/project/xuanyao/jiaming/Getting_started/data/gene_module_author_threshold/matrix.mtx"
+sparse_matrix <- readMM(matrix_file_path)
+```
+
+```{r}
+library(readr)
+
+# Read compressed files using read.table() as an alternative
+barcodes <- read.table(gzfile("/project/xuanyao/jiaming/Getting_started/data/gene_module_author_threshold/barcodes.tsv.gz"), header = FALSE)
+
+
+```
+
+```{r}
+features <- read.table(gzfile("/project/xuanyao/jiaming/Getting_started/data/gene_module_author_threshold/features.tsv.gz"), header = FALSE, fill = TRUE, sep = "\t")
+
+```
+
+```{r}
+features
+```
+
+```{r}
+gene_names<-features$V1
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+gene_modules <- readRDS("data/gene_modules_id.rds")
+gene_in_modules <- vector("logical", length(gene_names))
+
+
+for (i in seq_along(gene_names)) {
+  gene <- gene_names[i]
+  gene_in_modules[i] <- any(sapply(gene_modules, function(module) gene %in% module))
+}
+
+
+```
+
+```{r}
+
+row_sums <- rowSums(response_matrix_normalized!=0)
+
+
+
+features_tem <- features[gene_in_modules,]
+features_reduced <- features_tem[!features_tem$V1 %in% gene_to_exclude,]
+matrix_tem <- sparse_matrix[gene_in_modules,]
+matrix_reduced <- matrix_tem[!features_tem$V1 %in% gene_to_exclude,]
+
+```
+
+```{r}
+nrow(features_reduced)
+nrow(matrix_reduced)
+```
+
+```{r}
+nrow(features_reduced)
+nrow(matrix_reduced)
+```
+
+```{r}
+features_final <- rbind(features_reduced,features[36602:nrow(features),])
+matrix_final <- rbind(matrix_reduced,sparse_matrix[36602:nrow(features),])
+```
+
+```{r}
+write.table(features_final, file = gzfile("/project/xuanyao/jiaming/Getting_started/data/gene_module_author_threshold/features.tsv.gz"), 
+            sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+```
+
+```{r}
+writeMM(matrix_final, file = "/project/xuanyao/jiaming/Getting_started/data/gene_module_author_threshold/matrix.mtx")
+
+```
+
+## Sceptre using min p to combine
+
+```{r}
+results_run_discovery_analysis <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")
+
+```
+
+```{r}
+results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")
+```
+
+```{r}
+results_run_power_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_power_check.rds")
+
+```
+
+```{r}
+results_run_power_check
+```
+
+```{r}
+sceptre_result <- rbind(results_run_discovery_analysis[,1:8],results_run_calibration_check[,1:8],results_run_power_check)
+
+sceptre_result_filter <- subset(sceptre_result, pass_qc == TRUE)
+
+```
+
+```{r}
+sceptre_result <- sceptre_result_filter[,c(1,2,3,7)]
+sceptre_result
+```
+
+```{r}
+sceptre_result$adjusted_p_value <- p.adjust(sceptre_result$p_value, method = "BH")
+
+# Filter for significant results (adjusted p-value < 0.05)
+significant_results_sceptre <- subset(sceptre_result, adjusted_p_value < 0.05)
+
+# Display the significant results
+significant_results_sceptre
+```
+
+```{r}
+
+module_results <- list()
+
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(significant_results_sceptre))) {
+  response_id <- significant_results_sceptre$response_id[i]
+  grna_id <- significant_results_sceptre$grna_id[i]
+  grna_target <- significant_results_sceptre$grna_target[i]
+  pval<-significant_results_sceptre$p_value[i]
+  
+  # Find the modules that contain the response_id
+  containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
+  
+  # Store the result for this response_id and grna_id
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
+}
+
+# Combine all results into a single data frame
+module_results_df_2 <- do.call(rbind, module_results)
+module_results <- module_results_df_2[,-1] 
+
+module_results
+
+
+```
+
+```{r}
+sceptre_minp <- module_results %>%
+  group_by(grna_id, module) %>%
+  slice_min(order_by = pval, n = 1) %>%
+  ungroup()
+
+# Display the result
+sceptre_minp
+```
+
+```{r}
+sum(sceptre_minp$grna_target=="non-targeting")
+```
+
+## Sceptre using ACAT to combine
+
+```{r}
+module_results <- list()
+
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(sceptre_result))) {
+  response_id <- sceptre_result$response_id[i]
+  grna_id <- sceptre_result$grna_id[i]
+  grna_target <- sceptre_result$grna_target[i]
+  pval<-sceptre_result$p_value[i]
+  
+  # Find the modules that contain the response_id
+  containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
+  
+  # Store the result for this response_id and grna_id
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
+}
+
+# Combine all results into a single data frame
+module_results_df_2 <- do.call(rbind, module_results)
+module_results <- module_results_df_2[,-1] 
+
+module_results
+```
+
+```{r}
+module_results$pval[module_results$pval == 1] <- 0.999
+```
+
+```{r}
+library(ACAT)
+module_results_unique <- module_results %>%
+  group_by(grna_id, grna_target, module) %>%
+  summarize(acat_pval = ACAT(pval), .groups = "drop")
+
+# Display the resulting dataset
+module_results_unique
+```
+
+BH correction to find significant result
+
+```{r}
+module_results_unique <- module_results_unique %>%
+  mutate(adjusted_pval = p.adjust(acat_pval, method = "BH"))
+
+# Filter for significant rows (adjusted p-value < 0.05)
+sceptre_ACAT <- module_results_unique %>%
+  filter(adjusted_pval < 0.05)
+
+# Display the significant results
+sceptre_ACAT
+
+```
+
+```{r}
+sum(significant_results_ACAT$grna_target=="non-targeting")
+```
+
+## Our method
+
+```{r}
+result_gene_module <- read_csv("output/t_test_on_whole_reduced_dataset_normalized_threshold.csv")
+```
+
+```{r}
+result_gene_module[200,]
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+gg_qqplot <- function(ps, ci = 0.95) {
+  n  <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
+                alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color="red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po)
+}
+gg_qqplot(as.vector(as.matrix(result_gene_module[189:198,-1])))
+```
+
+```{r}
+# Step 1: Flatten the matrix of p-values (excluding the first column "X1")
+p_value <- as.numeric(as.matrix(result_gene_module[,-1]))
+
+# Step 2: Apply BH correction
+p_values_adjusted <- p.adjust(p_value, method = "BH")
+
+# Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
+p_values_matrix <- matrix(p_values_adjusted, nrow = nrow(result_gene_module), ncol = ncol(result_gene_module) - 1)
+
+# Step 4: Identify significant pairs (adjusted p-values < 0.05)
+significant_pairs <- p_values_matrix < 0.05
+
+# Extract the significant pairs (gene names and modules)
+significant_genes <- result_gene_module$X1[row(significant_pairs)[significant_pairs]]
+significant_modules <- colnames(result_gene_module)[-1][col(significant_pairs)[significant_pairs]]
+
+# Combine significant pairs into a data frame
+significant_results <- data.frame(grna = significant_genes, module = significant_modules, adjusted_p_value = p_values_matrix[significant_pairs])
+
+# Show the significant results
+significant_results
+
+```
+
+```{r}
+significant_results_with_target <- significant_results %>%
+  left_join(grna_target_data_frame, by = c("grna" = "grna_id"))
+
+# Show the updated significant results with the grna_target column
+(significant_result_ours<-significant_results_with_target[,c(1,4,2,3)])
+```
+
+```{r}
+sum(significant_result_ours$grna_target=="non-targeting")	
+```
+
+```{r}
+unique(significant_result_ours$grna)
+```
+
+## Use sceptre function to fit skew t
+
+```{r}
+result_gene_module <- read_csv("output/try_sceptre_skew_fit_normalized_threshold.csv")
+result_gene_module[1:198,]
+gg_qqplot(as.vector(as.matrix(result_gene_module[189:198,-1])))
+p_value <- as.numeric(as.matrix(result_gene_module[1:198,-1]))
+
+# Step 2: Apply BH correction
+p_values_adjusted <- p.adjust(p_value, method = "BH")
+
+# Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
+p_values_matrix <- matrix(p_values_adjusted, nrow = 198, ncol = ncol(result_gene_module) - 1)
+
+# Step 4: Identify significant pairs (adjusted p-values < 0.05)
+significant_pairs <- p_values_matrix < 0.05
+
+# Extract the significant pairs (gene names and modules)
+significant_genes <- result_gene_module$X1[row(significant_pairs)[significant_pairs]]
+significant_modules <- colnames(result_gene_module)[-1][col(significant_pairs)[significant_pairs]]
+
+# Combine significant pairs into a data frame
+significant_results <- data.frame(grna = significant_genes, module = significant_modules, adjusted_p_value = p_values_matrix[significant_pairs])
+
+# Show the significant results
+significant_results
+significant_results_with_target <- significant_results %>%
+  left_join(grna_target_data_frame, by = c("grna" = "grna_id"))
+
+# Show the updated significant results with the grna_target column
+(significant_result<-significant_results_with_target[,c(1,4,2,3)])
+```
+
+## Comparing 3 methods
+
+```{r}
+sceptre_minp[,c(1,3)]
+sceptre_ACAT[,c(1,3)]
+significant_result_ours[,c(1,3)]
+```
+
+```{r}
+library(eulerr)
+
+# Define the sets and calculate overlaps
+set_minp <- unique(paste(sceptre_minp %>% pull(1), sceptre_minp %>% pull(3), sep = "_"))
+set_acat <- unique(paste(sceptre_ACAT %>% pull(1), sceptre_ACAT %>% pull(3), sep = "_"))
+set_ours <- unique(paste(significant_result_ours %>% pull(1), significant_result_ours %>% pull(3), sep = "_"))
+
+# Calculate intersections manually
+only_minp <- length(set_minp) - length(intersect(set_minp, set_acat)) - length(intersect(set_minp, set_ours)) + length(intersect_all)
+only_acat <- length(set_acat) - length(intersect(set_acat, set_minp)) - length(intersect(set_acat, set_ours)) + length(intersect_all)
+only_ours <- length(set_ours) - length(intersect(set_ours, set_minp)) - length(intersect(set_ours, set_acat)) + length(intersect_all)
+minp_acat <- length(intersect_minp_acat) - length(intersect_all)
+minp_ours <- length(intersect_minp_ours) - length(intersect_all)
+acat_ours <- length(intersect_acat_ours) - length(intersect_all)
+all_three <- length(intersect_all)
+
+# Prepare data for eulerr
+venn_data <- c(
+  MinP = only_minp,
+  ACAT = only_acat,
+  Ours = only_ours,
+  "MinP&ACAT" = minp_acat,
+  "MinP&Ours" = minp_ours,
+  "ACAT&Ours" = acat_ours,
+  "MinP&ACAT&Ours" = all_three
 )
 
-# View the empty table
-View(table_data)
+# Plot the Venn diagram with counts
+plot(euler(venn_data), 
+     fills = c("red", "yellow", "green"), 
+     edges = "black", 
+     quantities = TRUE)  # Show quantities in the regions
+
+```
+
+## Only consider discovery sets (without considering control sets)
+
+```{r}
+sceptre_result <- results_run_discovery_analysis
+sceptre_result_filter1 <- subset(sceptre_result, pass_qc == TRUE)
+sceptre_result_filter <- subset(sceptre_result_filter1, !grepl("^CD52", grna_id))
+sceptre_result <- sceptre_result_filter[,c(1,2,3,7)]
+sceptre_result$adjusted_p_value <- p.adjust(sceptre_result$p_value, method = "BH")
+
+# Filter for significant results (adjusted p-value < 0.05)
+significant_results_sceptre <- subset(sceptre_result, adjusted_p_value < 0.05)
+
+module_results <- list()
+
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(significant_results_sceptre))) {
+  response_id <- significant_results_sceptre$response_id[i]
+  grna_id <- significant_results_sceptre$grna_id[i]
+  grna_target <- significant_results_sceptre$grna_target[i]
+  pval<-significant_results_sceptre$p_value[i]
+  
+  # Find the modules that contain the response_id
+  containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
+  
+  # Store the result for this response_id and grna_id
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
+}
+
+# Combine all results into a single data frame
+module_results_df_2 <- do.call(rbind, module_results)
+module_results <- module_results_df_2[,-1] 
+sceptre_minp <- module_results %>%
+  group_by(grna_id, module) %>%
+  slice_min(order_by = pval, n = 1) %>%
+  ungroup()
+
+# Display the result
+sceptre_minp
+
 ```
 
 ```{r}
-statistic_list <- lapply(wilcox_result_permuted, function(df) df$statistic)
+module_results <- list()
 
-# Step 2: Combine the statistic lists into a matrix (each column represents a dataframe)
-# We use do.call and cbind to combine the statistic columns into a matrix
-statistic_matrix <- do.call(rbind, statistic_list)
-colnames(statistic_matrix)<-colnames(response_matrix)
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(sceptre_result))) {
+  response_id <- sceptre_result$response_id[i]
+  grna_id <- sceptre_result$grna_id[i]
+  grna_target <- sceptre_result$grna_target[i]
+  pval<-sceptre_result$p_value[i]
+  
+  # Find the modules that contain the response_id
+  containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
+  
+  # Store the result for this response_id and grna_id
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
+}
+
+# Combine all results into a single data frame
+module_results_df_2 <- do.call(rbind, module_results)
+module_results <- module_results_df_2[,-1] 
+module_results$pval[module_results$pval == 1] <- 0.999
+
+module_results_unique <- module_results %>%
+  group_by(grna_id, grna_target, module) %>%
+  summarize(acat_pval = ACAT(pval), .groups = "drop")
+module_results_unique <- module_results_unique %>%
+  mutate(adjusted_pval = p.adjust(acat_pval, method = "BH"))
+
+# Filter for significant rows (adjusted p-value < 0.05)
+sceptre_ACAT <- module_results_unique %>%
+  filter(adjusted_pval < 0.05)
+
+# Display the significant results
+sceptre_ACAT
 ```
 
 ```{r}
-rownames(statistic_matrix)
+n_analyze =178
+p_value <- as.numeric(as.matrix(result_gene_module[1:n_analyze,-1]))
+
+# Step 2: Apply BH correction
+p_values_adjusted <- p.adjust(p_value, method = "BH")
+
+# Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
+p_values_matrix <- matrix(p_values_adjusted, nrow = n_analyze, ncol = ncol(result_gene_module) - 1)
+
+# Step 4: Identify significant pairs (adjusted p-values < 0.05)
+significant_pairs <- p_values_matrix < 0.05
+
+# Extract the significant pairs (gene names and modules)
+significant_genes <- result_gene_module$X1[row(significant_pairs)[significant_pairs]]
+significant_modules <- colnames(result_gene_module)[-1][col(significant_pairs)[significant_pairs]]
+
+# Combine significant pairs into a data frame
+significant_results <- data.frame(grna = significant_genes, module = significant_modules, adjusted_p_value = p_values_matrix[significant_pairs])
+
+# Show the significant results
+significant_results_with_target <- significant_results %>%
+  left_join(grna_target_data_frame, by = c("grna" = "grna_id"))
+
+# Show the updated significant results with the grna_target column
+(significant_result_ours<-significant_results_with_target[,c(1,4,2,3)])
 ```
 
 ```{r}
-pval_vector_10000 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv", header = TRUE, row.names = 1)))
-gg_qqplot(pval_vector_10000)
+set_minp <- unique(paste(sceptre_minp %>% pull(1), sceptre_minp %>% pull(3), sep = "_"))
+set_acat <- unique(paste(sceptre_ACAT %>% pull(1), sceptre_ACAT %>% pull(3), sep = "_"))
+set_ours <- unique(paste(significant_result_ours %>% pull(1), significant_result_ours %>% pull(3), sep = "_"))
+
+# Calculate intersections manually
+only_minp <- length(set_minp) - length(intersect(set_minp, set_acat)) - length(intersect(set_minp, set_ours)) + length(intersect_all)
+only_acat <- length(set_acat) - length(intersect(set_acat, set_minp)) - length(intersect(set_acat, set_ours)) + length(intersect_all)
+only_ours <- length(set_ours) - length(intersect(set_ours, set_minp)) - length(intersect(set_ours, set_acat)) + length(intersect_all)
+minp_acat <- length(intersect_minp_acat) - length(intersect_all)
+minp_ours <- length(intersect_minp_ours) - length(intersect_all)
+acat_ours <- length(intersect_acat_ours) - length(intersect_all)
+all_three <- length(intersect_all)
+
+# Prepare data for eulerr
+venn_data <- c(
+  MinP = only_minp,
+  ACAT = only_acat,
+  Ours = only_ours,
+  "MinP&ACAT" = minp_acat,
+  "MinP&Ours" = minp_ours,
+  "ACAT&Ours" = acat_ours,
+  "MinP&ACAT&Ours" = all_three
+)
+
+# Plot the Venn diagram with counts
+plot(euler(venn_data), 
+     fills = c("red", "yellow", "green"), 
+     edges = "black", 
+     quantities = TRUE)  # Show quantities in the regions
+```
+
+## Test on gene p value
+
+```{r}
+t_test_on_whole_dataset_gene_wise <- read_csv("output/t_test_on_whole_dataset_gene_wise.csv")
 ```
 
 ```{r}
-sum(is.na(pval_vector_2000))
+ncol(t_test_on_whole_dataset_gene_wise)
 ```
 
 ```{r}
-read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_wilcoxon_10000_no_approximation.csv", header = TRUE, row.names = 1)[,1:3]
+results_run_discovery_analysis[,c(1,2,7)]
+```
+
+```{r}
+t_test_on_whole_dataset_gene_wise[1:5,1:5]
+```
+
+```{r}
+length(unique(results_run_discovery_analysis$response_id))
+```
+
+```{r}
+colnames(t_test_on_whole_dataset_gene_wise) <- c("grna",rownames(response_matrix))
+```
+
+```{r}
+t_test_on_whole_dataset_gene_wise[,1:5]
+```
+
+```{r}
+results_run_discovery_analysis[,c(1,2,7)]
+```
+
+```{r}
+selected_rows <- results_run_discovery_analysis[results_run_discovery_analysis$response_id %in% rownames(response_matrix), c(1,2,7)]
+```
+
+```{r}
+selected_rows
+```
+
+```{r}
+matrix_data <- dcast(selected_rows, grna_id ~ response_id, value.var = "p_value")
+```
+
+```{r}
+matrix_data_2<-matrix_data[,-1]
+rownames(matrix_data_2)<-matrix_data[,1]
+```
+
+```{r}
+matrix_data_2[1:5,1:5]
+```
+
+```{r}
+our_test<-as.matrix(t_test_on_whole_dataset_gene_wise[1:178,-1])
+rownames(our_test) <- rownames(grna_assignment_matrix)[1:178]
+```
+
+```{r}
+dim(matrix_data_2)
+```
+
+```{r}
+dim(our_test)
+```
+
+```{r}
+our_test[1:5,1:3]
+```
+
+```{r}
+sum(is.na(matrix_data_2))
+```
+
+```{r}
+matrix_data_ordered <- matrix_data_2[match(rownames(our_test), rownames(matrix_data_2)), ]
+
+# Reorder the columns based on t_test_on_whole_dataset_gene_wise column order
+matrix_data_ordered <- matrix_data_ordered[, match(colnames(our_test), colnames(matrix_data_ordered))]
+```
+
+```{r}
+sceptre_result <- matrix_data_ordered
+```
+
+```{r}
+sceptre_result[1:5,1:3]
+```
+
+```{r}
+sum(our_test<1e-30)
+```
+
+```{r}
+vect1 <- as.numeric(as.matrix(sceptre_result))
+vect2 <- as.numeric(as.matrix(our_test))
+
+# Filter out NA values
+valid_indices <- which(!is.na(vect1) & !is.na(vect2) )
+
+# Create filtered vectors without NAs
+filtered_vect1 <- vect1[valid_indices]
+filtered_vect2 <- vect2[valid_indices]
+```
+
+```{r}
+plot(filtered_vect1,filtered_vect2)
+```
+
+```{r}
+t_test_on_whole_dataset_gene_wise[179:188,1:3]
+```
+
+```{r}
+t_test_on_whole_dataset_gene_wise[which(t_test_on_whole_dataset_gene_wise$grna=="SNP-10_1"),"ENSG00000001167"]
+```
+
+```{r}
+covariate
+```
+
+```{r}
+umis_quantiles <- quantile(covariate$response_n_umis, probs = c(0.01, 0.99))
+nonzero_quantiles <- quantile(covariate$response_n_nonzero, probs = c(0.01, 0.99))
+
+# Identify rows that are outside the quantile ranges
+out_of_range_indices <- which(
+  covariate$response_n_umis < umis_quantiles[1] | 
+  covariate$response_n_umis > umis_quantiles[2] | 
+  covariate$response_n_nonzero < nonzero_quantiles[1] | 
+  covariate$response_n_nonzero > nonzero_quantiles[2]
+)
+
+# Display the indices
+out_of_range_indices
 ```
