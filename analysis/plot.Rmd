@@ -186,7 +186,7 @@ gg_qqplot(p_t_10000_positive_include_trans)
 
 ## Calibration check (wilcoxon-test)
 
-I use wilcoxon p value as statistics, and find the left-tail probability to calculate p-value.
+I use wilcoxon p-value as statistics, and find the left-tail probability to calculate p-value.
 
 ```{r}
 p_wilcox_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[23:34,])
@@ -203,103 +203,170 @@ gg_qqplot(p_wilcox_positive)
 ## On whole dataset:
 
 ```{r}
+results_run_discovery_analysis <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")
+results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")
+results_run_power_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_power_check.rds")
+```
+
+```{r}
+results_run_power_check
+```
+
+```{r}
 gene_modules <- readRDS("data/gene_modules_id.rds")
+sceptre_result <- rbind(results_run_discovery_analysis[,1:8],results_run_calibration_check[,1:8],results_run_power_check)
 
-knitr::include_graphics("images/run_time.png", error = FALSE)
+sceptre_result_filter <- subset(sceptre_result, pass_qc == TRUE)
+sceptre_result <- sceptre_result_filter[,c(1,2,3,7)]
+
 ```
 
-### use mixture model to assign gRNA to cells
+## Sceptre capturing all modules containing significant genes
 
 ```{r}
-p_test_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset.csv", header = TRUE, row.names = 1))[c(87,88,117,118,125,126,151,152,165,166,177:188),])
-gg_qqplot(p_test_positive)
+sceptre_result$adjusted_p_value <- p.adjust(sceptre_result$p_value, method = "BH")
 
-p_test_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset.csv", header = TRUE, row.names = 1))[189:200,])
-gg_qqplot(p_test_negative)
-```
-
-## use author suggested thresholds to assign grna to cells
-
-```{r}
-p_test_positive_2 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset_author_threshold.csv", header = TRUE, row.names = 1))[c(87,88,117,118,125,126,151,152,165,166,177:188),])
-gg_qqplot(p_test_positive_2)
-
-p_test_negative_2 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/t_test_on_whole_dataset_author_threshold.csv", header = TRUE, row.names = 1))[189:200,])
-gg_qqplot(p_test_negative_2)
-```
-
-## Now we use the significant signals from sceptre output to construct grna-to-gene-module positive control pairs.
-
-```{r}
-results_run_discovery_analysis <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold/results_run_discovery_analysis.rds")
-
-results_run_discovery_analysis[1:10,c(1,2,7)]
+# Filter for significant results (adjusted p-value < 0.05)
+significant_results_sceptre <- subset(sceptre_result, adjusted_p_value < 0.05)
 
 module_results <- list()
 
 # Iterate over each response_id from results_run_discovery_analysis
-for (i in seq_len(nrow(results_run_discovery_analysis[1:1141,]))) {
-  response_id <- results_run_discovery_analysis$response_id[i]
-  grna_id <- results_run_discovery_analysis$grna_id[i]
+for (i in seq_len(nrow(significant_results_sceptre))) {
+  response_id <- significant_results_sceptre$response_id[i]
+  grna_id <- significant_results_sceptre$grna_id[i]
+  grna_target <- significant_results_sceptre$grna_target[i]
+  pval<-significant_results_sceptre$p_value[i]
   
   # Find the modules that contain the response_id
   containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
   
   # Store the result for this response_id and grna_id
-  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id, module = containing_modules)
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
 }
 
 # Combine all results into a single data frame
 module_results_df_2 <- do.call(rbind, module_results)
-module_results <- module_results_df_2[,2:3] %>%
-  distinct()
+module_results <- module_results_df_2[,-1] 
 
-module_results[1:10,]
+sceptre_minp <- module_results %>%
+  group_by(grna_id, module) %>%
+  slice_min(order_by = pval, n = 1) %>%
+  ungroup()
+
+# Display the result
+sceptre_minp
 ```
 
-## use author suggested threshold to assign grna to cell
+```{r}
+sum(sceptre_minp$grna_target=="non-targeting")
+```
+
+## Sceptre output using ACAT to combine
 
 ```{r}
-result_gene_module <- read_csv("output/t_test_on_whole_dataset_author_threshold.csv")
- # result_gene_module <- read_csv("output/t_test_on_whole_dataset.csv")
+module_results <- list()
 
-p_values <- c()
-
-# Iterate over each row in module_results_df_2
-for (i in seq_len(nrow(module_results))) {
-  grna_id <- module_results$grna_id[i]
-  module <- module_results$module[i]
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(sceptre_result))) {
+  response_id <- sceptre_result$response_id[i]
+  grna_id <- sceptre_result$grna_id[i]
+  grna_target <- sceptre_result$grna_target[i]
+  pval<-sceptre_result$p_value[i]
   
-  # Find the row in result_gene_module corresponding to the grna_id
-  row_index <- which(result_gene_module$X1 == grna_id)
+  # Find the modules that contain the response_id
+  containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
   
-  # Find the column corresponding to the module
-  column_index <- which(names(result_gene_module) == module)
-  
-  # Get the corresponding p-value
-  if (length(row_index) > 0 && length(column_index) > 0) {
-    p_value <- result_gene_module[row_index, column_index]
-  } else {
-    p_value <- NA  # If no match is found
-  }
-  
-  # Append the p-value to the vector
-  p_values <- c(p_values, p_value)
+  # Store the result for this response_id and grna_id
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
 }
-gg_qqplot(unlist(p_values))
+
+# Combine all results into a single data frame
+module_results_df_2 <- do.call(rbind, module_results)
+module_results <- module_results_df_2[,-1] 
+
+module_results$pval[module_results$pval == 1] <- 0.999
+library(ACAT)
+module_results_unique <- module_results %>%
+  group_by(grna_id, grna_target, module) %>%
+  summarize(acat_pval = ACAT(pval), .groups = "drop")
+
+module_results_unique <- module_results_unique %>%
+  mutate(adjusted_pval = p.adjust(acat_pval, method = "BH"))
+
+# Filter for significant rows (adjusted p-value < 0.05)
+sceptre_ACAT <- module_results_unique %>%
+  filter(adjusted_pval < 0.05)
+
+# Display the significant results
+sceptre_ACAT
+
 ```
 
-## Discoveries on gene sets
+```{r}
+sum(sceptre_ACAT$grna_target=="non-targeting")
+```
+
+## Our method
 
 ```{r}
+result_gene_module <- read_csv("output/t_test_on_whole_reduced_dataset_normalized_threshold.csv")
+gg_qqplot(as.vector(as.matrix(result_gene_module[189:198,-1])))
+```
 
-p_value <- as.numeric(as.matrix(result_gene_module[1:176,-1]))
+```{r}
+p_value <- as.numeric(as.matrix(result_gene_module[,-1]))
 
 # Step 2: Apply BH correction
 p_values_adjusted <- p.adjust(p_value, method = "BH")
 
 # Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
-p_values_matrix <- matrix(p_values_adjusted, nrow = 176, ncol = ncol(result_gene_module) - 1)
+p_values_matrix <- matrix(p_values_adjusted, nrow = nrow(result_gene_module), ncol = ncol(result_gene_module) - 1)
+
+p_values_raw_matrix <- matrix(p_value, nrow = nrow(result_gene_module), ncol = ncol(result_gene_module) - 1)
+
+# Step 4: Identify significant pairs (adjusted p-values < 0.05)
+significant_pairs <- p_values_matrix < 0.05
+
+# Extract the significant pairs (gene names and modules)
+significant_genes <- result_gene_module$X1[row(significant_pairs)[significant_pairs]]
+significant_modules <- colnames(result_gene_module)[-1][col(significant_pairs)[significant_pairs]]
+
+# Combine significant pairs into a data frame
+significant_results <- data.frame(grna = significant_genes, module = significant_modules, p_value = p_values_raw_matrix[significant_pairs], adjusted_p_value = p_values_matrix[significant_pairs])
+
+significant_results_with_target <- significant_results %>%
+  left_join(grna_target_data_frame, by = c("grna" = "grna_id"))
+
+# Show the updated significant results with the grna_target column
+(significant_result_ours<-significant_results_with_target[,c(1,5,2,3,4)])
+```
+
+```{r}
+sum(significant_result_ours$grna_target=="non-targeting")	
+```
+
+```{r}
+unique(significant_result_ours$grna)
+```
+
+```{r}
+unique(significant_result_ours$grna_target)
+```
+
+## Use sceptre function to fit skew t
+
+```{r}
+result_gene_module <- read_csv("output/try_sceptre_skew_fit_normalized_threshold.csv")
+result_gene_module[1:198,]
+gg_qqplot(as.vector(as.matrix(result_gene_module[189:198,-1])))
+p_value <- as.numeric(as.matrix(result_gene_module[1:198,-1]))
+
+# Step 2: Apply BH correction
+p_values_adjusted <- p.adjust(p_value, method = "BH")
+
+# Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
+p_values_matrix <- matrix(p_values_adjusted, nrow = 198, ncol = ncol(result_gene_module) - 1)
 
 # Step 4: Identify significant pairs (adjusted p-values < 0.05)
 significant_pairs <- p_values_matrix < 0.05
@@ -313,93 +380,357 @@ significant_results <- data.frame(grna = significant_genes, module = significant
 
 # Show the significant results
 significant_results
-
-```
-
-```{r}
 significant_results_with_target <- significant_results %>%
   left_join(grna_target_data_frame, by = c("grna" = "grna_id"))
 
 # Show the updated significant results with the grna_target column
-(significant_result<-significant_results_with_target[,c(1,2,4,3)])
+(significant_result<-significant_results_with_target[,c(1,4,2,3)])
+```
+
+## Comparing 3 methods
+
+### Sceptre on whole dataset
+
+```{r,echo=F}
+knitr::include_graphics("images/sceptre.png", error = FALSE)
+```
+
+```{r,echo=F}
+knitr::include_graphics("images/sceptre_boost_speed.png", error = FALSE)
+knitr::include_graphics("images/sceptre_boost_speed_2.png", error = FALSE)
+
+```
+
+### Quick skewed t fit from sceptre (poor fit)
+
+```{r,echo=F}
+knitr::include_graphics("images/quick_fit.png", error = FALSE)
+```
+
+### Our skewed t fit (good fit)
+
+```{r,echo=F}
+knitr::include_graphics("images/slow_fit.png", error = FALSE)
 ```
 
 ```{r}
-unique(significant_result$grna_target)
+grna_counts_minp <- sceptre_minp %>%
+  count(grna_id) %>%
+  arrange(desc(n))
+
+# Display the result
+grna_counts_minp
+
+
+grna_counts_ACAT <- sceptre_ACAT %>%
+  count(grna_id) %>%
+  arrange(desc(n))
+
+# Display the result
+grna_counts_ACAT
+
+
+grna_counts <- significant_result_ours %>%
+  count(grna) %>%
+  arrange(desc(n))
+
+# Display the result
+grna_counts
 ```
 
-## use mixture model to assign grna to cell
+```{r}
+library(eulerr)
+
+# Define the sets and calculate overlaps
+set_minp <- unique(paste(sceptre_minp %>% pull(1), sceptre_minp %>% pull(3), sep = "_"))
+set_acat <- unique(paste(sceptre_ACAT %>% pull(1), sceptre_ACAT %>% pull(3), sep = "_"))
+set_ours <- unique(paste(significant_result_ours %>% pull(1), significant_result_ours %>% pull(3), sep = "_"))
+
+# Calculate intersections manually
+intersect_all <- intersect(intersect(set_minp, set_acat), set_ours)
+intersect_minp_acat<-intersect(set_minp, set_acat)
+intersect_minp_ours<-intersect(set_minp, set_ours)
+intersect_acat_ours<-intersect(set_acat, set_ours)
+
+only_minp <- length(set_minp) - length(intersect(set_minp, set_acat)) - length(intersect(set_minp, set_ours)) + length(intersect_all)
+only_acat <- length(set_acat) - length(intersect(set_acat, set_minp)) - length(intersect(set_acat, set_ours)) + length(intersect_all)
+only_ours <- length(set_ours) - length(intersect(set_ours, set_minp)) - length(intersect(set_ours, set_acat)) + length(intersect_all)
+minp_acat <- length(intersect_minp_acat) - length(intersect_all)
+minp_ours <- length(intersect_minp_ours) - length(intersect_all)
+acat_ours <- length(intersect_acat_ours) - length(intersect_all)
+all_three <- length(intersect_all)
+
+# Prepare data for eulerr
+venn_data <- c(
+  MinP = only_minp,
+  ACAT = only_acat,
+  Ours = only_ours,
+  "MinP&ACAT" = minp_acat,
+  "MinP&Ours" = minp_ours,
+  "ACAT&Ours" = acat_ours,
+  "MinP&ACAT&Ours" = all_three
+)
+
+# Plot the Venn diagram with counts
+plot(euler(venn_data), 
+     fills = c("red", "yellow", "green"), 
+     edges = "black", 
+     quantities = TRUE)  # Show quantities in the regions
+
+```
+
+## Only consider discovery sets (without considering control sets)
 
 ```{r}
-# result_gene_module <- read_csv("output/t_test_on_whole_dataset_author_threshold.csv")
- result_gene_module <- read_csv("output/t_test_on_whole_dataset.csv")
+sceptre_result <- results_run_discovery_analysis
+sceptre_result_filter1 <- subset(sceptre_result, pass_qc == TRUE)
+sceptre_result_filter <- subset(sceptre_result_filter1, !grepl("^CD52", grna_id))
+sceptre_result <- sceptre_result_filter[,c(1,2,3,7)]
+sceptre_result$adjusted_p_value <- p.adjust(sceptre_result$p_value, method = "BH")
 
-p_values <- c()
+# Filter for significant results (adjusted p-value < 0.05)
+significant_results_sceptre <- subset(sceptre_result, adjusted_p_value < 0.05)
 
-# Iterate over each row in module_results_df_2
-for (i in seq_len(nrow(module_results))) {
-  grna_id <- module_results$grna_id[i]
-  module <- module_results$module[i]
+module_results <- list()
+
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(significant_results_sceptre))) {
+  response_id <- significant_results_sceptre$response_id[i]
+  grna_id <- significant_results_sceptre$grna_id[i]
+  grna_target <- significant_results_sceptre$grna_target[i]
+  pval<-significant_results_sceptre$p_value[i]
   
-  # Find the row in result_gene_module corresponding to the grna_id
-  row_index <- which(result_gene_module$X1 == grna_id)
+  # Find the modules that contain the response_id
+  containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
   
-  # Find the column corresponding to the module
-  column_index <- which(names(result_gene_module) == module)
-  
-  # Get the corresponding p-value
-  if (length(row_index) > 0 && length(column_index) > 0) {
-    p_value <- result_gene_module[row_index, column_index]
-  } else {
-    p_value <- NA  # If no match is found
-  }
-  
-  # Append the p-value to the vector
-  p_values <- c(p_values, p_value)
+  # Store the result for this response_id and grna_id
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
 }
-gg_qqplot(unlist(p_values))
+
+# Combine all results into a single data frame
+module_results_df_2 <- do.call(rbind, module_results)
+module_results <- module_results_df_2[,-1] 
+sceptre_minp <- module_results %>%
+  group_by(grna_id, module) %>%
+  slice_min(order_by = pval, n = 1) %>%
+  ungroup()
+
+# Display the result
+sceptre_minp
 ```
 
 ```{r}
-p_value <- as.numeric(as.matrix(result_gene_module[1:176,-1]))
+module_results <- list()
+
+# Iterate over each response_id from results_run_discovery_analysis
+for (i in seq_len(nrow(sceptre_result))) {
+  response_id <- sceptre_result$response_id[i]
+  grna_id <- sceptre_result$grna_id[i]
+  grna_target <- sceptre_result$grna_target[i]
+  pval<-sceptre_result$p_value[i]
+  
+  # Find the modules that contain the response_id
+  containing_modules <- names(gene_modules)[sapply(gene_modules, function(module) response_id %in% module)]
+  
+  # Store the result for this response_id and grna_id
+  module_results[[i]] <- data.frame(response_id = response_id, grna_id = grna_id,grna_target=grna_target, module = containing_modules, pval=pval)
+}
+
+# Combine all results into a single data frame
+module_results_df_2 <- do.call(rbind, module_results)
+module_results <- module_results_df_2[,-1] 
+module_results$pval[module_results$pval == 1] <- 0.999
+
+module_results_unique <- module_results %>%
+  group_by(grna_id, grna_target, module) %>%
+  summarize(acat_pval = ACAT(pval), .groups = "drop")
+module_results_unique <- module_results_unique %>%
+  mutate(adjusted_pval = p.adjust(acat_pval, method = "BH"))
+
+# Filter for significant rows (adjusted p-value < 0.05)
+sceptre_ACAT <- module_results_unique %>%
+  filter(adjusted_pval < 0.05)
+
+# Display the significant results
+sceptre_ACAT
+```
+
+```{r}
+result_gene_module <- read_csv("output/t_test_on_whole_reduced_dataset_normalized_threshold.csv")
+result_gene_module_snp <- result_gene_module[1:178,]
+p_value <- as.numeric(as.matrix(result_gene_module_snp[,-1]))
 
 # Step 2: Apply BH correction
 p_values_adjusted <- p.adjust(p_value, method = "BH")
 
 # Step 3: Reshape the adjusted p-values back into the original matrix shape (same as result_gene_module)
-p_values_matrix <- matrix(p_values_adjusted, nrow = 176, ncol = ncol(result_gene_module) - 1)
+p_values_matrix <- matrix(p_values_adjusted, nrow = nrow(result_gene_module_snp), ncol = ncol(result_gene_module_snp) - 1)
+
+p_values_raw_matrix <- matrix(p_value, nrow = nrow(result_gene_module_snp), ncol = ncol(result_gene_module_snp) - 1)
 
 # Step 4: Identify significant pairs (adjusted p-values < 0.05)
 significant_pairs <- p_values_matrix < 0.05
 
 # Extract the significant pairs (gene names and modules)
-significant_genes <- result_gene_module$X1[row(significant_pairs)[significant_pairs]]
-significant_modules <- colnames(result_gene_module)[-1][col(significant_pairs)[significant_pairs]]
+significant_genes <- result_gene_module_snp$X1[row(significant_pairs)[significant_pairs]]
+significant_modules <- colnames(result_gene_module_snp)[-1][col(significant_pairs)[significant_pairs]]
 
 # Combine significant pairs into a data frame
-significant_results <- data.frame(grna = significant_genes, module = significant_modules, adjusted_p_value = p_values_matrix[significant_pairs])
+significant_results <- data.frame(grna = significant_genes, module = significant_modules, p_value = p_values_raw_matrix[significant_pairs], adjusted_p_value = p_values_matrix[significant_pairs])
 
-# Show the significant results
-significant_results
-
-```
-
-```{r}
 significant_results_with_target <- significant_results %>%
   left_join(grna_target_data_frame, by = c("grna" = "grna_id"))
 
 # Show the updated significant results with the grna_target column
-(significant_result<-significant_results_with_target[,c(1,2,4,3)])
+(significant_result_ours<-significant_results_with_target[,c(1,5,2,3,4)])
 ```
 
 ```{r}
-unique(significant_result$grna_target)
+set_minp <- unique(paste(sceptre_minp %>% pull(1), sceptre_minp %>% pull(3), sep = "_"))
+set_acat <- unique(paste(sceptre_ACAT %>% pull(1), sceptre_ACAT %>% pull(3), sep = "_"))
+set_ours <- unique(paste(significant_result_ours %>% pull(1), significant_result_ours %>% pull(3), sep = "_"))
+
+# Calculate intersections manually
+intersect_all <- intersect(intersect(set_minp, set_acat), set_ours)
+intersect_minp_acat<-intersect(set_minp, set_acat)
+intersect_minp_ours<-intersect(set_minp, set_ours)
+intersect_acat_ours<-intersect(set_acat, set_ours)
+
+only_minp <- length(set_minp) - length(intersect(set_minp, set_acat)) - length(intersect(set_minp, set_ours)) + length(intersect_all)
+only_acat <- length(set_acat) - length(intersect(set_acat, set_minp)) - length(intersect(set_acat, set_ours)) + length(intersect_all)
+only_ours <- length(set_ours) - length(intersect(set_ours, set_minp)) - length(intersect(set_ours, set_acat)) + length(intersect_all)
+minp_acat <- length(intersect_minp_acat) - length(intersect_all)
+minp_ours <- length(intersect_minp_ours) - length(intersect_all)
+acat_ours <- length(intersect_acat_ours) - length(intersect_all)
+all_three <- length(intersect_all)
+
+# Prepare data for eulerr
+venn_data <- c(
+  MinP = only_minp,
+  ACAT = only_acat,
+  Ours = only_ours,
+  "MinP&ACAT" = minp_acat,
+  "MinP&Ours" = minp_ours,
+  "ACAT&Ours" = acat_ours,
+  "MinP&ACAT&Ours" = all_three
+)
+
+# Plot the Venn diagram with counts
+plot(euler(venn_data), 
+     fills = c("red", "yellow", "green"), 
+     edges = "black", 
+     quantities = TRUE)  # Show quantities in the regions
+```
+
+## Test on gene p value
+
+```{r}
+p_val_SNP <- read_csv("output/SNP62_SNP60_for_all_genes.csv")
+gene_names <- read.table("docs/row_names.txt", stringsAsFactors = FALSE)[,1]
+colnames(p_val_SNP) <- c("grna",gene_names)
 ```
 
 ```{r}
-knitr::include_graphics("images/paper_finding_2.png", error = FALSE)
+p_val_SNP
 ```
 
 ```{r}
-grna_target_data_frame[c(87,117,125,151,165),]
+head(sceptre_result[sceptre_result$grna_id=="SNP-62_2",c(1,2,4)])
+```
+
+```{r}
+p_values <- as.numeric(p_val_SNP[1, -1])  # Exclude 'grna' column
+response_ids_pval <- names(p_val_SNP)[-1]  # The response IDs from p_val_SNP excluding 'grna'
+
+# Filter based on p-values < 0.01
+filtered_indices <- which(p_values < 0.01)
+filtered_p_values <- p_values[filtered_indices]
+filtered_response_ids <- response_ids_pval[filtered_indices]
+
+# Filter `sceptre_result` to only include matching response_ids
+matched_sceptre_result <- sceptre_result[sceptre_result$response_id %in% filtered_response_ids, ]
+
+# Ensure ordering of `sceptre_result` matches `filtered_response_ids`
+matched_sceptre_result <- matched_sceptre_result[match(filtered_response_ids, matched_sceptre_result$response_id), ]
+
+# Extract p-values from `sceptre_result` and ensure they are in the same order
+sceptre_p_values <- matched_sceptre_result$p_value
+
+# Create a data frame for plotting
+plot_data <- data.frame(
+  response_id = filtered_response_ids,
+  p_val_SNP = filtered_p_values,
+  sceptre_p_value = sceptre_p_values
+)
+```
+
+## qqplot of gene p-values from our methods and sceptre
+
+```{r}
+sorted_filtered_p_values <- sort(filtered_p_values)
+sorted_sceptre_p_values <- sort(sceptre_p_values)
+
+
+# Create a data frame for plotting
+qq_data <- data.frame(
+  theoretical = sorted_filtered_p_values,
+  sample = sorted_sceptre_p_values
+)
+
+# Plot the QQ plot
+ggplot(qq_data, aes(x = theoretical, y = sample)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(
+    x = " P-Value from our method",
+    y = " P-Value from sceptre",
+    title = "QQ Plot of P-Values from Our Method vs Sceptre"
+  ) +
+  theme_minimal()
+```
+
+## Scatter plot (problematic)
+
+```{r}
+library(ggplot2)
+ggplot(plot_data, aes(x = p_val_SNP, y =(sceptre_p_value))) +
+  geom_point() +
+  labs(x = "P-Value from our method (< 0.01)", y = "P-Value from sceptre", title = "Scatter Plot of Filtered P-Values") +
+  theme_minimal()
+```
+
+## Histogram (problematic)
+
+```{r}
+all_p_values <- as.numeric(p_val_SNP[1,-1])
+
+# Filter p-values smaller than 0.01
+filtered_p_values <- all_p_values[all_p_values < 0.01]
+
+# Create a data frame for ggplot
+p_values_df <- data.frame(p_value = filtered_p_values)
+
+# Plot the histogram
+ggplot(p_values_df, aes(x = p_value)) +
+  geom_histogram(bins = 2106, color = "black", fill = "blue") +
+  labs(
+    x = "P-Value",
+    y = "Frequency",
+    title = "Histogram of P-Values < 0.01"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+library(tidyr)
+
+
+p_val_SNP_df <- as.data.frame(p_val_SNP[1, -1])
+
+# Filter for p-values within the range and extract gene names (columns) and values
+peak_pvals <- p_val_SNP_df %>%
+  select_if(~ . > 0.0014 & . <= 0.0015) %>%
+  gather(key = "gene_id", value = "p_value")
+
+peak_pvals
 ```
