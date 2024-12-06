@@ -258,7 +258,7 @@ for (index in indices) {
     filtered_vector1, filtered_vector2,
     xlab = "Gene Wise P Values",
     ylab = "Sceptre Wide P Values",
-    main = paste0("Scatter Plot for Index ", index),
+    main = paste0("Scatter Plot for ", index, " th perturbation"),
     pch = 16,
     col = "blue",
     cex = 0.7
@@ -270,9 +270,9 @@ for (index in indices) {
   # QQ Plot
   qqplot(
     filtered_vector1, filtered_vector2,
-    xlab = "Theoretical Quantiles",
-    ylab = "Sample Quantiles",
-    main = paste0("QQ Plot for Index ", index),
+    xlab = "Gene Wise P Values",
+    ylab = "Sceptre Wide P Values",
+    main = paste0("QQ Plot for ", index, " th perturbation"),
     pch = 16,
     col = "blue",
     cex = 0.7
