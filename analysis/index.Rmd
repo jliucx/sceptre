@@ -25,3 +25,4 @@ Paper on power increasing:
 Results:
 
 [Calibration and power check of t test and wilcoxon test](plot.html)
+[Debug](debug.html)

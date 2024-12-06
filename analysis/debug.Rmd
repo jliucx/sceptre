@@ -1,0 +1,632 @@
+---
+title: "Debug"
+author: "jliucx"
+date: "2024-12-5"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+directories <- "data/STINGseq-v1_GDO"
+grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
+
+
+gg_qqplot <- function(ps, ci = 0.95) {
+  n  <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
+                alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color="red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po)
+}
+p_t_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
+p_t_2000_skn_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
+p_t_10000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
+p_t_2000_skn_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
+p_t_rank_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv", header = TRUE, row.names = 1))[23:34,])
+p_t_rank_2000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv", header = TRUE, row.names = 1))[1:22,])
+p_t_rank_normalize_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv", header = TRUE, row.names = 1))[23:34,])
+p_t_rank_normalize_2000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv", header = TRUE, row.names = 1))[1:22,])
+p_t_log_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv", header = TRUE, row.names = 1))[23:34,])
+p_t_log_2000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv", header = TRUE, row.names = 1))[1:22,])
+p_wilcox_p_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[23:34,])
+p_wilcox_p_2000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[1:22,])
+p_new_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv", header = TRUE, row.names = 1))[1:22,])
+p_new_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv", header = TRUE, row.names = 1))[23:34,])
+p_test <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[1:22,])
+p_test_2 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/test_rank_wilcox.csv", header = TRUE, row.names = 1))[1:22,])
+
+```
+
+## Runtime and peakRAM comparison
+
+```{r,echo=F}
+table_data <- data.frame(
+  Type = c("t test (No approximation)", "t test (Skew normal)"),
+  "Perturbation" = c("24","24"),
+  "Null statistics" = c("10000","2000"),
+  "Running time" = c("6128s", "6245s"),
+  "Peak RAM" = c("124150MB",  "22324MB"),
+  stringsAsFactors = FALSE
+)
+
+# View the empty table
+print(table_data)
+```
+
+# Calibration check (t-test)
+
+**Calibration of NT grna pval estimated from 10000 null statistics (No approximation)**
+
+```{r, echo=FALSE}
+gg_qqplot(p_t_10000_negative)
+```
+
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation**
+
+```{r,echo=F}
+gg_qqplot(p_t_2000_skn_negative)
+```
+
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_normalize_2000_negative)
+```
+
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_log_2000_negative)
+```
+
+**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_2000_negative)
+```
+
+```{r}
+gg_qqplot(p_wilcox_p_2000_negative)
+```
+
+# Power check (t-test)
+
+**Power of NT grna pval estimated from 10000 null statistics with no approximation**
+
+```{r,echo=F}
+gg_qqplot(p_t_10000_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation**
+
+```{r,echo=F}
+gg_qqplot(p_t_2000_skn_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation (include trans-effect SNPs)**
+
+```{r}
+gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))))
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_normalize_2000_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_log_2000_positive)
+```
+
+**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
+
+```{r,echo=F}
+gg_qqplot(p_t_rank_2000_positive)
+```
+
+```{r}
+gg_qqplot(p_wilcox_p_2000_positive)
+```
+
+## Plots comparing pval from no approximation and skew normal approximation
+
+```{r}
+# Binding the vectors
+p_10000 <- c(p_t_10000_negative, p_t_10000_positive)
+p_skn_2000 <- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
+
+# Scatter plot of bind_10000 against bind_2000
+plot(p_10000, p_skn_2000, 
+     xlab = "p values of 10000 null statistics with no approximation", 
+     ylab = "p values of 2000 null statistics with skewed t", 
+     main = "Skew t approximation (2000 null statistics)",
+     pch = 16,  # pch = 16 gives solid circles
+     cex = 0.6,  # cex < 1 reduces the size of the points,
+     col = "red"
+)
+
+```
+
+## Including SNPs that have trans effect as positive control
+
+**Original positive control (12\*50 pvals)**
+
+```{r}
+p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))[11:22,])
+gg_qqplot(p_t_10000_positive_include_trans)
+```
+
+**Positive control of SNPs that have trans effect** **only (10\*50 pvals)**
+
+```{r}
+p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))[1:10,])
+gg_qqplot(p_t_10000_positive_include_trans)
+
+```
+
+**Positive control after including SNPs that have trans effect (22\*50 pvals)**
+
+```{r}
+p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1)))
+gg_qqplot(p_t_10000_positive_include_trans)
+```
+
+## Calibration check (wilcoxon-test)
+
+I use wilcoxon p-value as statistics, and find the left-tail probability to calculate p-value.
+
+```{r}
+p_wilcox_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[23:34,])
+gg_qqplot(p_wilcox_negative)
+```
+
+## Power check (wilcoxon-test)
+
+```{r}
+p_wilcox_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[1:22,])
+gg_qqplot(p_wilcox_positive)
+```
+## Test on gene p value
+
+```{r}
+library(tidyr)
+gene_modules <- readRDS("data/gene_modules_id.rds")
+
+gene_wise_p <- read_csv("output/startover/test/gene_wise_p.csv")
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-15
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+# Display the reformatted data frame
+rownames(gene_wise_p) <- gene_wise_p$X1
+
+# Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
+sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+# Reorder columns of sceptre_wide to match gene_wise_p
+sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
+
+```
+```{r}
+gene_wise_p[1:5,1:5]
+sceptre_wide[1:5,1:5]
+```
+```{r}
+# Define indices
+indices <- c(10, 20, 30, 120, 124)
+
+
+# Loop through indices for scatter and QQ plots
+for (index in indices) {
+  # Extract vectors for the current index
+  vector1 <- as.vector(as.matrix(gene_wise_p[index, -1]))
+  vector2 <- as.vector(as.matrix(sceptre_wide[index, ]))
+  
+  # Filter out NA values
+  valid_indices <- !is.na(vector1) & !is.na(vector2)
+  filtered_vector1 <- vector1[valid_indices]
+  filtered_vector2 <- vector2[valid_indices]
+  
+  # Scatter Plot
+  plot(
+    filtered_vector1, filtered_vector2,
+    xlab = "Gene Wise P Values",
+    ylab = "Sceptre Wide P Values",
+    main = paste0("Scatter Plot for Index ", index),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+  
+  # Pause for user input to display the next plot
+  # readline(prompt = "Press [Enter] to view the QQ plot for this index...")
+
+  # QQ Plot
+  qqplot(
+    filtered_vector1, filtered_vector2,
+    xlab = "Theoretical Quantiles",
+    ylab = "Sample Quantiles",
+    main = paste0("QQ Plot for Index ", index),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+  abline(0, 1, col = "red", lwd = 2)
+  
+  # Pause again before moving to the next index
+  # readline(prompt = "Press [Enter] to move to the next index...")
+}
+
+```
+
+
+
+
+
+## Convert sceptre p-value to test statistics
+
+
+```{r,echo=F}
+knitr::include_graphics("images/test_statistics_SNP_62-2.png", error = FALSE)
+knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
+```
+
+## Compare gene module discoveries
+
+### ACAT of gene wise p from our method (i.e. t test)
+```{r}
+library(ACAT)
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id <- rownames(gene_wise_p)[i]
+  p_values_row <- gene_wise_p[i,]  # Exclude grna_id column
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        acat_pval <- ACAT(module_p_values)
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t <- do.call(rbind, module_results)
+
+module_results_t$bh_pval <- p.adjust(module_results_t$acat_pval, method = "BH")
+module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$module, sep = "_")
+```
+
+```{r}
+head(module_results_t)
+```
+### ACAT of gene wise p from sceptre glm
+```{r}
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,]  # Exclude grna_id column
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        acat_pval <- ACAT(module_p_values)
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+```
+
+```{r}
+head(module_results_sceptre)
+```
+## Comparison of Module p values (t-ACAT vs Sceptre-ACAT)
+
+```{r}
+# Define indices
+indices <- c(10, 20, 30, 120, 124)
+
+# Loop through indices
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    module_results_t$acat_pval[(50 * k + 1):(50 * k + 50)],
+    module_results_sceptre$acat_pval[(50 * k + 1):(50 * k + 50)],
+    xlab = "T-ACAT P-Value",
+    ylab = "Sceptre ACAT P-Value",
+    main = paste0("Scatter Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,  # Point style
+    col = "blue",  # Point color
+    cex = 0.7,  # Point size
+        xlim = c(0,1),
+    ylim = c(0,1)
+
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = "Press [Enter] to view the QQ plot...")
+
+  # QQ Plot
+  qqplot(
+    module_results_t$acat_pval[(50 * k + 1):(50 * k + 50)],
+    module_results_sceptre$acat_pval[(50 * k + 1):(50 * k + 50)],
+    xlab = "T-ACAT P-Value",
+    ylab = "Sceptre ACAT P-Value",
+    main = paste0("QQ Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+  abline(0, 1, col = "red", lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = "Press [Enter] to move to the next index...")
+}
+
+```
+### minp
+```{r}
+library(tibble)
+
+minp <- read.csv("output/startover/test/minp.csv")
+
+minp_long <- minp %>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+minp_long <- minp_long %>% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+minp_long <- minp_long %>%
+  mutate(bh_pval = p.adjust(p_value, method = "BH"))
+
+head(minp_long)
+```
+
+### our method
+```{r}
+our_method <-  read.csv("output/startover/test/our_method.csv",nrows = 208)
+colnames(our_method)[1] <- "grna_id"
+our_method_long <- our_method %>%
+  # rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values (if any)
+our_method_long <- our_method_long %>% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+our_method_long <- our_method_long %>%
+  mutate(bh_pval = p.adjust(p_value, method = "BH"))
+head(our_method_long)
+
+```
+## Comparison of Module p values (minp vs our method)
+```{r}
+indices <- c(10, 20, 30, 120, 124)
+
+# Loop through indices
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    our_method_long$p_value[(50 * k + 1):(50 * k + 50)],
+    minp_long$p_value[(50 * k + 1):(50 * k + 50)],
+    xlab = "Our P-Value",
+    ylab = "Minp P-Value",
+    main = paste0("Scatter Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,  # Point style
+    col = "blue",  # Point color
+    cex = 0.7,  # Point size
+    xlim = c(0,1),
+    ylim = c(0,1)
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = "Press [Enter] to view the QQ plot...")
+
+  # QQ Plot
+  qqplot(
+    our_method_long$p_value[(50 * k + 1):(50 * k + 50)],
+    minp_long$p_value[(50 * k + 1):(50 * k + 50)],
+    xlab = "Our P-Value",
+    ylab = "Minp P-Value",
+    main = paste0("QQ Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+  abline(0, 1, col = "red", lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = "Press [Enter] to move to the next index...")
+}
+```
+## Comparison of discoveries of four methods
+
+```{r}
+significant_level <- 0.2
+
+
+significant_ids_gene_wise_p <- module_results_sceptre$identifier[module_results_sceptre$bh_pval < significant_level]
+significant_ids_gene_wise_p_t <- module_results_t$identifier[module_results_t$bh_pval < significant_level]
+
+
+
+significant_pairs <- minp_long %>%
+  filter(bh_pval < significant_level)
+
+significant_pairs <- significant_pairs %>%
+  mutate(identifier = paste(grna_id, module, sep = "_"))
+
+significant_identifiers_minp<- significant_pairs$identifier
+
+significant_pairs_ours <- our_method_long %>%
+  filter(bh_pval < significant_level)
+
+significant_pairs_ours <- significant_pairs_ours %>%
+  mutate(identifier = paste(grna_id, module, sep = "_"))
+
+significant_identifiers_ours <- significant_pairs_ours$identifier
+
+library(eulerr)
+
+# Prepare the sets
+venn_data <- list(
+  `Sceptre+ACAT` = significant_ids_gene_wise_p,
+  `t+ACAT` = significant_ids_gene_wise_p_t,
+  `minp method` = significant_identifiers_minp,
+  `Our method` = significant_identifiers_ours
+)
+
+# Generate the Euler diagram
+plot(euler(venn_data),
+     fills = list(fill = c("red", "blue", "green","yellow"), alpha = 0.5),
+     edges = TRUE,
+     quantities = TRUE, # Add set sizes
+     main  = paste("Significant Gene Modules Overlap at level", significant_level, "(no approximation)") )
+```
+### Calibration check
+```{r}
+gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
+  n <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color = "red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po) +
+    ggtitle(title)  # Add title
+}
+
+ntc_our <- our_method_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+ select(grna_id, p_value)
+
+ntc_minp <- minp_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, p_value)
+
+ntc_t <- module_results_t %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+```
+```{r}
+ntc_sceptre 
+```
+
+
+```{r}
+gg_qqplot(as.vector(ntc_our$p_value), title="Negative control our method")
+gg_qqplot(as.vector(ntc_minp$p_value), title="Negative control minp")
+gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-ACAT")
+gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-ACAT")
+
+```
+
+
