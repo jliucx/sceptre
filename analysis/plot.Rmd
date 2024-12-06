@@ -689,48 +689,79 @@ ggplot(qq_data, aes(x = theoretical, y = sample)) +
   theme_minimal()
 ```
 
-## Scatter plot (problematic)
+## Convert sceptre p-value to test statistics
 
 ```{r}
-library(ggplot2)
-ggplot(plot_data, aes(x = p_val_SNP, y =(sceptre_p_value))) +
-  geom_point() +
-  labs(x = "P-Value from our method (< 0.01)", y = "P-Value from sceptre", title = "Scatter Plot of Filtered P-Values") +
-  theme_minimal()
+results_run_discovery_analysis <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")
+results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")
+results_run_power_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_power_check.rds")
+sceptre_result <- rbind(results_run_discovery_analysis[,1:8],results_run_calibration_check[,1:8],results_run_power_check)
+
+sceptre_result_filter <- subset(sceptre_result, pass_qc == TRUE)
+sceptre_result <- sceptre_result_filter[,c(1,2,3,7)]
+sceptre_result$adjusted_p_value <- p.adjust(sceptre_result$p_value, method = "BH")
 ```
 
-## Histogram (problematic)
-
-```{r}
-all_p_values <- as.numeric(p_val_SNP[1,-1])
-
-# Filter p-values smaller than 0.01
-filtered_p_values <- all_p_values[all_p_values < 0.01]
-
-# Create a data frame for ggplot
-p_values_df <- data.frame(p_value = filtered_p_values)
-
-# Plot the histogram
-ggplot(p_values_df, aes(x = p_value)) +
-  geom_histogram(bins = 2106, color = "black", fill = "blue") +
-  labs(
-    x = "P-Value",
-    y = "Frequency",
-    title = "Histogram of P-Values < 0.01"
-  ) +
-  theme_minimal()
+```{r,echo=F}
+knitr::include_graphics("images/test_statistics_SNP_62-2.png", error = FALSE)
+knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
 ```
 
 ```{r}
-library(tidyr)
+SNP_gene_statistics_sceptre_approximation <- read_csv("output/SNP_gene_statistics_sceptre_approximation.csv")
 
+```
 
-p_val_SNP_df <- as.data.frame(p_val_SNP[1, -1])
+```{r}
+filtered_sceptre <- sceptre_result %>%
+  filter(grna_id == "SNP-62_2") %>%
+  select(response_id, p_value)
 
-# Filter for p-values within the range and extract gene names (columns) and values
-peak_pvals <- p_val_SNP_df %>%
-  select_if(~ . > 0.0014 & . <= 0.0015) %>%
-  gather(key = "gene_id", value = "p_value")
+SNP_gene_long <- as.data.frame(t(SNP_gene_statistics_sceptre_approximation[124,-1]))
+SNP_gene_long$response_id <- rownames(SNP_gene_long)
+rownames(SNP_gene_long) <- NULL
+colnames(SNP_gene_long)[1] <- "t_pval"  # Renaming for clarity
 
-peak_pvals
+# Merge with filtered_sceptre by matching response_id
+merged_data <- filtered_sceptre %>%
+  left_join(SNP_gene_long, by = "response_id")
+
+# Display the merged result
+merged_data
+```
+
+```{r}
+
+# Adjust p-values for multiple testing
+merged_data$adj_p_value <- p.adjust(merged_data$p_value, method = "BH")
+merged_data$adj_SNP_value <- p.adjust(merged_data$t_pval, method = "BH")
+
+# Create unique identifiers by concatenating `grna_id` and `response_id` for each set
+sceptre_glm_pairs <- paste(merged_data$grna_id[merged_data$adj_p_value < 0.05], 
+                           merged_data$response_id[merged_data$adj_p_value < 0.05], sep = "_")
+our_test_pairs <- paste(merged_data$grna_id[merged_data$adj_SNP_value < 0.05], 
+                        merged_data$response_id[merged_data$adj_SNP_value < 0.05], sep = "_")
+
+# Generate the list for the Euler diagram
+venn_data <- list(
+  `sceptre glm` = sceptre_glm_pairs,
+  `our test` = our_test_pairs
+)
+
+# Plot the Euler diagram
+plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "green"), alpha = 0.5),
+  edges = TRUE,
+  quantities = TRUE,
+  main = "Significant perturbation-gene pairs (SNP_62-2)"
+)
+
+```
+
+```{r}
+ggplot(merged_data, aes(x = p_value, y = t_pval)) +
+  geom_point(alpha = 0.7) +
+  labs(x = "Our p-value", y = "SNP value", title = "Scatter Plot of Gene-wise p-values") + # Set x-axis limits to avoid zero
+  theme_minimal()
 ```
