@@ -203,7 +203,7 @@ gg_qqplot(p_wilcox_negative)
 p_wilcox_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[1:22,])
 gg_qqplot(p_wilcox_positive)
 ```
-## Test on gene p value
+# Test on gene p value
 
 ```{r}
 library(tidyr)
@@ -297,7 +297,7 @@ knitr::include_graphics("images/test_statistics_SNP_62-2.png", error = FALSE)
 knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
 ```
 
-## Compare gene module discoveries
+# Compare gene module discoveries
 
 ### ACAT of gene wise p from our method (i.e. t test)
 ```{r}
@@ -534,7 +534,7 @@ for (k in indices) {
   # readline(prompt = "Press [Enter] to move to the next index...")
 }
 ```
-## Comparison of discoveries of four methods
+# Comparison of discoveries of four methods
 
 ```{r}
 significant_level <- 0.2
@@ -578,7 +578,7 @@ plot(euler(venn_data),
      quantities = TRUE, # Add set sizes
      main  = paste("Significant Gene Modules Overlap at level", significant_level, "(no approximation)") )
 ```
-### Calibration check
+# Calibration check
 ```{r}
 gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
   n <- length(ps)
