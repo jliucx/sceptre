@@ -537,46 +537,48 @@ for (k in indices) {
 # Comparison of discoveries of four methods
 
 ```{r}
-significant_level <- 0.2
-
-
-significant_ids_gene_wise_p <- module_results_sceptre$identifier[module_results_sceptre$bh_pval < significant_level]
-significant_ids_gene_wise_p_t <- module_results_t$identifier[module_results_t$bh_pval < significant_level]
-
-
-
-significant_pairs <- minp_long %>%
-  filter(bh_pval < significant_level)
-
-significant_pairs <- significant_pairs %>%
-  mutate(identifier = paste(grna_id, module, sep = "_"))
-
-significant_identifiers_minp<- significant_pairs$identifier
-
-significant_pairs_ours <- our_method_long %>%
-  filter(bh_pval < significant_level)
-
-significant_pairs_ours <- significant_pairs_ours %>%
-  mutate(identifier = paste(grna_id, module, sep = "_"))
-
-significant_identifiers_ours <- significant_pairs_ours$identifier
-
 library(eulerr)
 
-# Prepare the sets
-venn_data <- list(
-  `Sceptre+ACAT` = significant_ids_gene_wise_p,
-  `t+ACAT` = significant_ids_gene_wise_p_t,
-  `minp method` = significant_identifiers_minp,
-  `Our method` = significant_identifiers_ours
-)
+# Define significant levels
+significant_levels <- c(0.01, 0.05, 0.1, 0.2, 0.25)
 
-# Generate the Euler diagram
-plot(euler(venn_data),
-     fills = list(fill = c("red", "blue", "green","yellow"), alpha = 0.5),
-     edges = TRUE,
-     quantities = TRUE, # Add set sizes
-     main  = paste("Significant Gene Modules Overlap at level", significant_level, "(no approximation)") )
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < significant_level]
+  significant_ids_gene_wise_p_t <- module_results_t$identifier[
+    module_results_t$bh_pval < significant_level]
+  
+  significant_pairs <- minp_long %>%
+    filter(bh_pval < significant_level) %>%
+    mutate(identifier = paste(grna_id, module, sep = "_"))
+  significant_identifiers_minp <- significant_pairs$identifier
+  
+  significant_pairs_ours <- our_method_long %>%
+    filter(bh_pval < significant_level) %>%
+    mutate(identifier = paste(grna_id, module, sep = "_"))
+  significant_identifiers_ours <- significant_pairs_ours$identifier
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+ACAT` = significant_ids_gene_wise_p,
+    `t+ACAT` = significant_ids_gene_wise_p_t,
+    `minp method` = significant_identifiers_minp,
+    `Our method` = significant_identifiers_ours
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot <- plot(euler(venn_data),
+                     fills = list(fill = c("red", "blue", "green", "yellow"), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste("Significant Gene Modules Overlap at level", significant_level, "(no approximation)")
+  )
+  
+  print(euler_plot)  # Display the plot in the R plotting window
+}
+
 ```
 # Calibration check
 ```{r}
