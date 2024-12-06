@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="jliucx" />
+
+
+<title>Debug</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sceptre application and power increasing techniques</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jliucx/sceptre">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Debug</h1>
+<h4 class="author">jliucx</h4>
+<h4 class="date">2024-12-5</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-12-05
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Getting_started/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240712code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20240712)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240712code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240712)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_t_10000_no_approximation_2.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_t_2000_use_approximation_2.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_rank.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_log.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv
+</td>
+<td style="text-align:left;">
+output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/test_rank_wilcox.csv
+</td>
+<td style="text-align:left;">
+output/test_rank_wilcox.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv
+</td>
+<td style="text-align:left;">
+output/power_include_trans_t_2000_use_approximation.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds
+</td>
+<td style="text-align:left;">
+output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
+</td>
+<td style="text-align:left;">
+output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree1faa081940e22b2598c255cb471903566f2ada75targetblank1faa081a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/1faa081940e22b2598c255cb471903566f2ada75" target="_blank">1faa081</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree1faa081940e22b2598c255cb471903566f2ada75targetblank1faa081a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/1faa081940e22b2598c255cb471903566f2ada75" target="_blank">1faa081</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/job-info.err
+    Ignored:    analysis/job-info.out
+    Ignored:    analysis/run.sh
+    Ignored:    analysis/run_R.sh
+
+Untracked files:
+    Untracked:  Rplots.pdf
+    Untracked:  analysis/sceptre_singleton.R
+    Untracked:  analysis/sceptre_singleton.Rmd
+    Untracked:  analysis/sceptre_threshold.Rmd
+    Untracked:  code/debug.Rmd
+    Untracked:  code/fit_skew_normal.cpp
+    Untracked:  code/functions.R
+    Untracked:  code/minp.R
+    Untracked:  code/permutation.err
+    Untracked:  code/permutation.out
+    Untracked:  code/startover.R
+    Untracked:  code/t_test.cpp
+    Untracked:  code/test.err
+    Untracked:  code/test.out
+    Untracked:  code/test_gene_module_reduced.R
+    Untracked:  code/test_gene_module_reduced.Rmd
+    Untracked:  code/test_gene_p.R
+    Untracked:  code/test_gene_p.Rmd
+    Untracked:  data/
+    Untracked:  output/SNP_gene_statistics_sceptre_approximation.csv
+    Untracked:  output/SNP_gene_statistics_sceptre_no_approximation.csv
+    Untracked:  output/SNP_p_no_approximation.csv
+    Untracked:  output/SNP_p_t_statistics_approximation.csv
+    Untracked:  output/both_trans_author_permutation/
+    Untracked:  output/debug/
+    Untracked:  output/try_sceptre_skew_fit_normalized_threshold_quantile_transform.csv
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/TATES.Rmd
+    Modified:   analysis/_site.yml
+    Deleted:    analysis/create_grna_target_data_frame.Rmd
+    Modified:   analysis/qqplot.Rmd
+    Modified:   analysis/sceptre.Rmd
+    Modified:   analysis/sceptre_example.Rmd
+    Deleted:    analysis/seurat_example.Rmd
+    Modified:   analysis/summary.Rmd
+    Deleted:    analysis/try_Knit.Rmd
+    Deleted:    analysis/try_rcc.Rmd
+    Deleted:    code/job-info.err
+    Deleted:    code/job-info.out
+    Modified:   code/plot.Rmd
+    Deleted:    code/results.csv
+    Deleted:    code/results_wilcox_pval.csv
+    Modified:   code/run_R.sh
+    Modified:   code/test_gene_module.R
+    Modified:   code/test_gene_module.Rmd
+    Deleted:    code/try.R
+    Deleted:    code/try.Rmd
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_assign_grnas.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_grna_count_distributions.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_calibration_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_discovery_analysis.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_power_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_qc.png
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/debug.Rmd</code>) and HTML (<code>docs/debug.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/1faa081940e22b2598c255cb471903566f2ada75/analysis/debug.Rmd" target="_blank">1faa081</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+update
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(readr)
+directories &lt;- &quot;data/STINGseq-v1_GDO&quot;
+grna_target_data_frame &lt;- data.frame(read_csv(paste0(directories,&quot;/grna_target_data_frame.csv&quot;)))</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  grna_id = col_character(),
+  grna_target = col_character(),
+  chr = col_character(),
+  start = col_double(),
+  end = col_double()
+)</code></pre>
+<pre class="r"><code>gg_qqplot &lt;- function(ps, ci = 0.95) {
+  n  &lt;- length(ps)
+  df &lt;- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  log10Pe &lt;- expression(paste(&quot;Expected -log&quot;[10], plain(P)))
+  log10Po &lt;- expression(paste(&quot;Observed -log&quot;[10], plain(P)))
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
+                alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color=&quot;red&quot;) +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po)
+}
+p_t_10000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv&quot;, header = TRUE, row.names = 1))[13:24,])
+p_t_2000_skn_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv&quot;, header = TRUE, row.names = 1))[13:24,])
+p_t_10000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv&quot;, header = TRUE, row.names = 1))[1:12,])
+p_t_2000_skn_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv&quot;, header = TRUE, row.names = 1))[1:12,])
+p_t_rank_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_t_rank_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_t_rank_normalize_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_t_rank_normalize_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_t_log_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_t_log_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_log.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_wilcox_p_2000_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_wilcox_p_2000_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_new_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_new_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+p_test &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+p_test_2 &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/test_rank_wilcox.csv&quot;, header = TRUE, row.names = 1))[1:22,])</code></pre>
+<div id="runtime-and-peakram-comparison" class="section level2">
+<h2>Runtime and peakRAM comparison</h2>
+<pre><code>                       Type Perturbation Null.statistics Running.time Peak.RAM
+1 t test (No approximation)           24           10000        6128s 124150MB
+2      t test (Skew normal)           24            2000        6245s  22324MB</code></pre>
+</div>
+<div id="calibration-check-t-test" class="section level1">
+<h1>Calibration check (t-test)</h1>
+<p><strong>Calibration of NT grna pval estimated from 10000 null statistics (No approximation)</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(p_wilcox_p_2000_negative)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="power-check-t-test" class="section level1">
+<h1>Power check (t-test)</h1>
+<p><strong>Power of NT grna pval estimated from 10000 null statistics with no approximation</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation (include trans-effect SNPs)</strong></p>
+<pre class="r"><code>gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))))</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Power of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）</strong></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(p_wilcox_p_2000_positive)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="plots-comparing-pval-from-no-approximation-and-skew-normal-approximation" class="section level2">
+<h2>Plots comparing pval from no approximation and skew normal approximation</h2>
+<pre class="r"><code># Binding the vectors
+p_10000 &lt;- c(p_t_10000_negative, p_t_10000_positive)
+p_skn_2000 &lt;- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
+
+# Scatter plot of bind_10000 against bind_2000
+plot(p_10000, p_skn_2000, 
+     xlab = &quot;p values of 10000 null statistics with no approximation&quot;, 
+     ylab = &quot;p values of 2000 null statistics with skewed t&quot;, 
+     main = &quot;Skew t approximation (2000 null statistics)&quot;,
+     pch = 16,  # pch = 16 gives solid circles
+     cex = 0.6,  # cex &lt; 1 reduces the size of the points,
+     col = &quot;red&quot;
+)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="including-snps-that-have-trans-effect-as-positive-control" class="section level2">
+<h2>Including SNPs that have trans effect as positive control</h2>
+<p><strong>Original positive control (12*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[11:22,])
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Positive control of SNPs that have trans effect</strong> <strong>only (10*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1))[1:10,])
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>Positive control after including SNPs that have trans effect (22*50 pvals)</strong></p>
+<pre class="r"><code>p_t_10000_positive_include_trans &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv&quot;, header = TRUE, row.names = 1)))
+gg_qqplot(p_t_10000_positive_include_trans)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="calibration-check-wilcoxon-test" class="section level2">
+<h2>Calibration check (wilcoxon-test)</h2>
+<p>I use wilcoxon p-value as statistics, and find the left-tail probability to calculate p-value.</p>
+<pre class="r"><code>p_wilcox_negative &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[23:34,])
+gg_qqplot(p_wilcox_negative)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="power-check-wilcoxon-test" class="section level2">
+<h2>Power check (wilcoxon-test)</h2>
+<pre class="r"><code>p_wilcox_positive &lt;- as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv&quot;, header = TRUE, row.names = 1))[1:22,])
+gg_qqplot(p_wilcox_positive)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /> ## Test on gene p value</p>
+<pre class="r"><code>library(tidyr)
+gene_modules &lt;- readRDS(&quot;data/gene_modules_id.rds&quot;)
+
+gene_wise_p &lt;- read_csv(&quot;output/startover/test/gene_wise_p.csv&quot;)</code></pre>
+<pre><code>Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  .default = col_double(),
+  X1 = col_character()
+)
+ℹ Use `spec()` for the full column specifications.</code></pre>
+<pre class="r"><code>sceptre &lt;- rbind(readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds&quot;)[,c(1,2,7)],
+                 readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds&quot;)[,c(1,2,7)])
+
+sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-15
+sceptre &lt;- sceptre[!is.na(sceptre$p_value), ]
+sceptre_wide &lt;- sceptre %&gt;%
+  pivot_wider(names_from = response_id, values_from = p_value) %&gt;%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) &lt;- sceptre_wide$grna_id
+sceptre_wide &lt;- sceptre_wide[, -1]
+
+# Display the reformatted data frame
+rownames(gene_wise_p) &lt;- gene_wise_p$X1</code></pre>
+<pre><code>Warning: Setting row names on a tibble is deprecated.</code></pre>
+<pre class="r"><code># Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
+sceptre_wide &lt;- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+# Reorder columns of sceptre_wide to match gene_wise_p
+sceptre_wide &lt;- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]</code></pre>
+<pre class="r"><code>gene_wise_p[1:5,1:5]</code></pre>
+<pre><code># A tibble: 5 × 5
+  X1      ENSG00000187608 ENSG00000188157 ENSG00000176022 ENSG00000157933
+  &lt;chr&gt;             &lt;dbl&gt;           &lt;dbl&gt;           &lt;dbl&gt;           &lt;dbl&gt;
+1 SNP-1_1           0.686           0.176           0.204           0.263
+2 SNP-1_2           0.733           0.780           0.667           0.527
+3 SNP-2_1           0.813           0.915           0.890           0.436
+4 SNP-2_2           0.357           0.748           0.222           0.497
+5 SNP-3_1           0.406           0.159           0.965           0.411</code></pre>
+<pre class="r"><code>sceptre_wide[1:5,1:5]</code></pre>
+<pre><code>        ENSG00000187608 ENSG00000188157 ENSG00000176022 ENSG00000157933
+SNP-1_1           0.740           0.616           0.336           0.512
+SNP-1_2           0.348           0.888           0.800           0.608
+SNP-2_1           0.592           0.628           0.300           0.648
+SNP-2_2           0.420           0.448           0.296           0.296
+SNP-3_1           0.636           0.168           0.300           0.872
+        ENSG00000157916
+SNP-1_1           0.360
+SNP-1_2           0.420
+SNP-2_1           0.584
+SNP-2_2           0.576
+SNP-3_1           0.916</code></pre>
+<pre class="r"><code># Define indices
+indices &lt;- c(10, 20, 30, 120, 124)
+
+
+# Loop through indices for scatter and QQ plots
+for (index in indices) {
+  # Extract vectors for the current index
+  vector1 &lt;- as.vector(as.matrix(gene_wise_p[index, -1]))
+  vector2 &lt;- as.vector(as.matrix(sceptre_wide[index, ]))
+  
+  # Filter out NA values
+  valid_indices &lt;- !is.na(vector1) &amp; !is.na(vector2)
+  filtered_vector1 &lt;- vector1[valid_indices]
+  filtered_vector2 &lt;- vector2[valid_indices]
+  
+  # Scatter Plot
+  plot(
+    filtered_vector1, filtered_vector2,
+    xlab = &quot;Gene Wise P Values&quot;,
+    ylab = &quot;Sceptre Wide P Values&quot;,
+    main = paste0(&quot;Scatter Plot for Index &quot;, index),
+    pch = 16,
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+  
+  # Pause for user input to display the next plot
+  # readline(prompt = &quot;Press [Enter] to view the QQ plot for this index...&quot;)
+
+  # QQ Plot
+  qqplot(
+    filtered_vector1, filtered_vector2,
+    xlab = &quot;Theoretical Quantiles&quot;,
+    ylab = &quot;Sample Quantiles&quot;,
+    main = paste0(&quot;QQ Plot for Index &quot;, index),
+    pch = 16,
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)
+  
+  # Pause again before moving to the next index
+  # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
+}</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-24-10.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="convert-sceptre-p-value-to-test-statistics" class="section level2">
+<h2>Convert sceptre p-value to test statistics</h2>
+<p><img src="images/test_statistics_SNP_62-2.png" style="display: block; margin: auto;" /><img src="images/test_statistics_SNP_63-1.png" style="display: block; margin: auto;" /></p>
+</div>
+<div id="compare-gene-module-discoveries" class="section level2">
+<h2>Compare gene module discoveries</h2>
+<div id="acat-of-gene-wise-p-from-our-method-i.e.-t-test" class="section level3">
+<h3>ACAT of gene wise p from our method (i.e. t test)</h3>
+<pre class="r"><code>library(ACAT)
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id &lt;- rownames(gene_wise_p)[i]
+  p_values_row &lt;- gene_wise_p[i,]  # Exclude grna_id column
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        acat_pval &lt;- ACAT(module_p_values)
+        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t &lt;- do.call(rbind, module_results)
+
+module_results_t$bh_pval &lt;- p.adjust(module_results_t$acat_pval, method = &quot;BH&quot;)
+module_results_t$identifier &lt;- paste(module_results_t$grna_id, module_results_t$module, sep = &quot;_&quot;)</code></pre>
+<pre class="r"><code>head(module_results_t)</code></pre>
+<pre><code>  grna_id                           module  acat_pval   bh_pval
+1 SNP-1_1 HALLMARK_TNFA_SIGNALING_VIA_NFKB 0.51914491 0.9322264
+2 SNP-1_1                 HALLMARK_HYPOXIA 0.62724531 0.9766941
+3 SNP-1_1          HALLMARK_G2M_CHECKPOINT 0.30389703 0.7667471
+4 SNP-1_1            HALLMARK_ADIPOGENESIS 0.04876272 0.3405858
+5 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_EARLY 0.10709308 0.4885522
+6 SNP-1_1  HALLMARK_ESTROGEN_RESPONSE_LATE 0.41331653 0.8610532
+                                identifier
+1 SNP-1_1_HALLMARK_TNFA_SIGNALING_VIA_NFKB
+2                 SNP-1_1_HALLMARK_HYPOXIA
+3          SNP-1_1_HALLMARK_G2M_CHECKPOINT
+4            SNP-1_1_HALLMARK_ADIPOGENESIS
+5 SNP-1_1_HALLMARK_ESTROGEN_RESPONSE_EARLY
+6  SNP-1_1_HALLMARK_ESTROGEN_RESPONSE_LATE</code></pre>
+</div>
+<div id="acat-of-gene-wise-p-from-sceptre-glm" class="section level3">
+<h3>ACAT of gene wise p from sceptre glm</h3>
+<pre class="r"><code>module_results &lt;- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id &lt;- rownames(sceptre_wide)[i]
+  p_values_row &lt;- sceptre_wide[i,]  # Exclude grna_id column
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        acat_pval &lt;- ACAT(module_p_values)
+        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre &lt;- do.call(rbind, module_results)
+module_results_sceptre$bh_pval &lt;- p.adjust(module_results_sceptre$acat_pval, method = &quot;BH&quot;)
+module_results_sceptre$identifier &lt;- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = &quot;_&quot;)</code></pre>
+<pre class="r"><code>head(module_results_sceptre)</code></pre>
+<pre><code>  grna_id                           module acat_pval   bh_pval
+1 SNP-1_1 HALLMARK_TNFA_SIGNALING_VIA_NFKB 0.2577621 0.8174862
+2 SNP-1_1                 HALLMARK_HYPOXIA 0.1977606 0.7510908
+3 SNP-1_1          HALLMARK_G2M_CHECKPOINT 0.3435884 0.8945221
+4 SNP-1_1            HALLMARK_ADIPOGENESIS 1.0000000 1.0000000
+5 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_EARLY 0.5996319 1.0000000
+6 SNP-1_1  HALLMARK_ESTROGEN_RESPONSE_LATE 0.2195660 0.7747451
+                                identifier
+1 SNP-1_1_HALLMARK_TNFA_SIGNALING_VIA_NFKB
+2                 SNP-1_1_HALLMARK_HYPOXIA
+3          SNP-1_1_HALLMARK_G2M_CHECKPOINT
+4            SNP-1_1_HALLMARK_ADIPOGENESIS
+5 SNP-1_1_HALLMARK_ESTROGEN_RESPONSE_EARLY
+6  SNP-1_1_HALLMARK_ESTROGEN_RESPONSE_LATE</code></pre>
+</div>
+</div>
+<div id="comparison-of-module-p-values-t-acat-vs-sceptre-acat" class="section level2">
+<h2>Comparison of Module p values (t-ACAT vs Sceptre-ACAT)</h2>
+<pre class="r"><code># Define indices
+indices &lt;- c(10, 20, 30, 120, 124)
+
+# Loop through indices
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    module_results_t$acat_pval[(50 * k + 1):(50 * k + 50)],
+    module_results_sceptre$acat_pval[(50 * k + 1):(50 * k + 50)],
+    xlab = &quot;T-ACAT P-Value&quot;,
+    ylab = &quot;Sceptre ACAT P-Value&quot;,
+    main = paste0(&quot;Scatter Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,  # Point style
+    col = &quot;blue&quot;,  # Point color
+    cex = 0.7,  # Point size
+        xlim = c(0,1),
+    ylim = c(0,1)
+
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = &quot;Press [Enter] to view the QQ plot...&quot;)
+
+  # QQ Plot
+  qqplot(
+    module_results_t$acat_pval[(50 * k + 1):(50 * k + 50)],
+    module_results_sceptre$acat_pval[(50 * k + 1):(50 * k + 50)],
+    xlab = &quot;T-ACAT P-Value&quot;,
+    ylab = &quot;Sceptre ACAT P-Value&quot;,
+    main = paste0(&quot;QQ Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
+}</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-30-10.png" width="672" style="display: block; margin: auto;" /> ### minp</p>
+<pre class="r"><code>library(tibble)
+
+minp &lt;- read.csv(&quot;output/startover/test/minp.csv&quot;)
+
+minp_long &lt;- minp %&gt;%
+  rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
+
+# Remove rows with NA p-values
+minp_long &lt;- minp_long %&gt;% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+minp_long &lt;- minp_long %&gt;%
+  mutate(bh_pval = p.adjust(p_value, method = &quot;BH&quot;))
+
+head(minp_long)</code></pre>
+<pre><code># A tibble: 6 × 4
+  grna_id module                           p_value bh_pval
+  &lt;chr&gt;   &lt;chr&gt;                              &lt;dbl&gt;   &lt;dbl&gt;
+1 SNP-1_1 HALLMARK_TNFA_SIGNALING_VIA_NFKB  0.495    0.750
+2 SNP-1_1 HALLMARK_HYPOXIA                  0.347    0.677
+3 SNP-1_1 HALLMARK_G2M_CHECKPOINT           0.260    0.618
+4 SNP-1_1 HALLMARK_ADIPOGENESIS             0.0376   0.257
+5 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_EARLY  0.162    0.515
+6 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_LATE   0.540    0.771</code></pre>
+<div id="our-method" class="section level3">
+<h3>our method</h3>
+<pre class="r"><code>our_method &lt;-  read.csv(&quot;output/startover/test/our_method.csv&quot;,nrows = 208)
+colnames(our_method)[1] &lt;- &quot;grna_id&quot;
+our_method_long &lt;- our_method %&gt;%
+  # rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
+
+# Remove rows with NA p-values (if any)
+our_method_long &lt;- our_method_long %&gt;% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+our_method_long &lt;- our_method_long %&gt;%
+  mutate(bh_pval = p.adjust(p_value, method = &quot;BH&quot;))
+head(our_method_long)</code></pre>
+<pre><code># A tibble: 6 × 4
+  grna_id module                           p_value bh_pval
+  &lt;chr&gt;   &lt;chr&gt;                              &lt;dbl&gt;   &lt;dbl&gt;
+1 SNP-1_1 HALLMARK_TNFA_SIGNALING_VIA_NFKB  0.153    0.622
+2 SNP-1_1 HALLMARK_HYPOXIA                  0.171    0.635
+3 SNP-1_1 HALLMARK_G2M_CHECKPOINT           0.0610   0.528
+4 SNP-1_1 HALLMARK_ADIPOGENESIS             0.332    0.690
+5 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_EARLY  0.235    0.661
+6 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_LATE   0.742    0.810</code></pre>
+</div>
+</div>
+<div id="comparison-of-module-p-values-minp-vs-our-method" class="section level2">
+<h2>Comparison of Module p values (minp vs our method)</h2>
+<pre class="r"><code>indices &lt;- c(10, 20, 30, 120, 124)
+
+# Loop through indices
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    our_method_long$p_value[(50 * k + 1):(50 * k + 50)],
+    minp_long$p_value[(50 * k + 1):(50 * k + 50)],
+    xlab = &quot;Our P-Value&quot;,
+    ylab = &quot;Minp P-Value&quot;,
+    main = paste0(&quot;Scatter Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,  # Point style
+    col = &quot;blue&quot;,  # Point color
+    cex = 0.7,  # Point size
+    xlim = c(0,1),
+    ylim = c(0,1)
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = &quot;Press [Enter] to view the QQ plot...&quot;)
+
+  # QQ Plot
+  qqplot(
+    our_method_long$p_value[(50 * k + 1):(50 * k + 50)],
+    minp_long$p_value[(50 * k + 1):(50 * k + 50)],
+    xlab = &quot;Our P-Value&quot;,
+    ylab = &quot;Minp P-Value&quot;,
+    main = paste0(&quot;QQ Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
+}</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-33-10.png" width="672" style="display: block; margin: auto;" /> ## Comparison of discoveries of four methods</p>
+<pre class="r"><code>significant_level &lt;- 0.2
+
+
+significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[module_results_sceptre$bh_pval &lt; significant_level]
+significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[module_results_t$bh_pval &lt; significant_level]
+
+
+
+significant_pairs &lt;- minp_long %&gt;%
+  filter(bh_pval &lt; significant_level)
+
+significant_pairs &lt;- significant_pairs %&gt;%
+  mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
+
+significant_identifiers_minp&lt;- significant_pairs$identifier
+
+significant_pairs_ours &lt;- our_method_long %&gt;%
+  filter(bh_pval &lt; significant_level)
+
+significant_pairs_ours &lt;- significant_pairs_ours %&gt;%
+  mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
+
+significant_identifiers_ours &lt;- significant_pairs_ours$identifier
+
+library(eulerr)
+
+# Prepare the sets
+venn_data &lt;- list(
+  `Sceptre+ACAT` = significant_ids_gene_wise_p,
+  `t+ACAT` = significant_ids_gene_wise_p_t,
+  `minp method` = significant_identifiers_minp,
+  `Our method` = significant_identifiers_ours
+)
+
+# Generate the Euler diagram
+plot(euler(venn_data),
+     fills = list(fill = c(&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;,&quot;yellow&quot;), alpha = 0.5),
+     edges = TRUE,
+     quantities = TRUE, # Add set sizes
+     main  = paste(&quot;Significant Gene Modules Overlap at level&quot;, significant_level, &quot;(no approximation)&quot;) )</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /> ### Calibration check</p>
+<pre class="r"><code>gg_qqplot &lt;- function(ps, ci = 0.95, title = &quot;QQ Plot&quot;) {
+  n &lt;- length(ps)
+  df &lt;- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  
+  log10Pe &lt;- expression(paste(&quot;Expected -log&quot;[10], plain(P)))
+  log10Po &lt;- expression(paste(&quot;Observed -log&quot;[10], plain(P)))
+  
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color = &quot;red&quot;) +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po) +
+    ggtitle(title)  # Add title
+}
+
+ntc_our &lt;- our_method_long %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+ select(grna_id, p_value)
+
+ntc_minp &lt;- minp_long %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, p_value)
+
+ntc_t &lt;- module_results_t %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, acat_pval)
+
+ntc_sceptre &lt;- module_results_sceptre %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, acat_pval)</code></pre>
+<pre class="r"><code>ntc_sceptre </code></pre>
+<pre><code>    grna_id    acat_pval
+1     NTC-1 5.896564e-01
+2     NTC-1 1.000000e+00
+3     NTC-1 1.000000e+00
+4     NTC-1 1.000000e+00
+5     NTC-1 2.421415e-01
+6     NTC-1 4.801899e-01
+7     NTC-1 2.191499e-01
+8     NTC-1 1.000000e+00
+9     NTC-1 1.000000e+00
+10    NTC-1 1.496589e-01
+11    NTC-1 4.249339e-01
+12    NTC-1 5.237205e-02
+13    NTC-1 6.887789e-01
+14    NTC-1 3.448949e-02
+15    NTC-1 3.035380e-01
+16    NTC-1 1.000000e+00
+17    NTC-1 1.988749e-01
+18    NTC-1 6.529904e-01
+19    NTC-1 1.000000e+00
+20    NTC-1 7.115029e-02
+21    NTC-1 1.000000e+00
+22    NTC-1 6.395246e-01
+23    NTC-1 8.465279e-01
+24    NTC-1 1.000000e+00
+25    NTC-1 6.170033e-01
+26    NTC-1 1.000000e+00
+27    NTC-1 4.850911e-01
+28    NTC-1 4.106205e-01
+29    NTC-1 1.000000e+00
+30    NTC-1 5.339767e-01
+31    NTC-1 2.624756e-01
+32    NTC-1 1.000000e+00
+33    NTC-1 4.013925e-01
+34    NTC-1 2.352170e-01
+35    NTC-1 4.791625e-01
+36    NTC-1 3.629073e-01
+37    NTC-1 5.601282e-01
+38    NTC-1 7.683964e-01
+39    NTC-1 1.000000e+00
+40    NTC-1 3.577778e-01
+41    NTC-1 3.117629e-01
+42    NTC-1 5.220157e-02
+43    NTC-1 6.385927e-01
+44    NTC-1 5.035170e-01
+45    NTC-1 5.853147e-01
+46    NTC-1 2.223504e-01
+47    NTC-1 5.442354e-01
+48    NTC-1 2.403801e-01
+49    NTC-1 7.671587e-02
+50    NTC-1 5.198573e-01
+51    NTC-2 5.400966e-01
+52    NTC-2 1.520318e-01
+53    NTC-2 3.129258e-02
+54    NTC-2 1.000000e+00
+55    NTC-2 1.000000e+00
+56    NTC-2 7.825731e-01
+57    NTC-2 1.000000e+00
+58    NTC-2 3.515532e-01
+59    NTC-2 1.715803e-14
+60    NTC-2 3.799005e-02
+61    NTC-2 3.269409e-01
+62    NTC-2 1.000000e+00
+63    NTC-2 1.490523e-01
+64    NTC-2 4.508237e-01
+65    NTC-2 4.244273e-01
+66    NTC-2 7.365561e-02
+67    NTC-2 2.984871e-02
+68    NTC-2 2.444540e-31
+69    NTC-2 1.000000e+00
+70    NTC-2 2.820512e-01
+71    NTC-2 7.518027e-01
+72    NTC-2 8.929197e-01
+73    NTC-2 6.707266e-01
+74    NTC-2 1.000000e+00
+75    NTC-2 3.447336e-01
+76    NTC-2 1.266439e-01
+77    NTC-2 4.834209e-02
+78    NTC-2 2.813687e-01
+79    NTC-2 1.413240e-01
+80    NTC-2 2.595262e-02
+81    NTC-2 2.219531e-02
+82    NTC-2 1.478822e-01
+83    NTC-2 6.279439e-01
+84    NTC-2 8.457862e-01
+85    NTC-2 8.358766e-02
+86    NTC-2 7.536082e-01
+87    NTC-2 6.490383e-01
+88    NTC-2 4.782147e-01
+89    NTC-2 1.157616e-01
+90    NTC-2 2.333255e-01
+91    NTC-2 8.836246e-01
+92    NTC-2 4.508583e-03
+93    NTC-2 6.762627e-01
+94    NTC-2 1.918240e-01
+95    NTC-2 2.259633e-01
+96    NTC-2 1.795633e-01
+97    NTC-2 3.014591e-01
+98    NTC-2 5.436117e-01
+99    NTC-2 2.858318e-01
+100   NTC-2 1.865402e-01
+101   NTC-4 1.000000e+00
+102   NTC-4 1.000000e+00
+103   NTC-4 1.000000e+00
+104   NTC-4 1.000000e+00
+105   NTC-4 7.726733e-01
+106   NTC-4 7.024554e-01
+107   NTC-4 1.000000e+00
+108   NTC-4 1.000000e+00
+109   NTC-4 1.000000e+00
+110   NTC-4 1.758349e-01
+111   NTC-4 1.000000e+00
+112   NTC-4 1.000000e+00
+113   NTC-4 1.000000e+00
+114   NTC-4 4.002409e-01
+115   NTC-4 1.000000e+00
+116   NTC-4 6.031500e-01
+117   NTC-4 1.000000e+00
+118   NTC-4 1.000000e+00
+119   NTC-4 1.000000e+00
+120   NTC-4 9.978199e-03
+121   NTC-4 6.518816e-01
+122   NTC-4 8.412478e-01
+123   NTC-4 8.760595e-01
+124   NTC-4 2.378193e-01
+125   NTC-4 2.127823e-01
+126   NTC-4 1.000000e+00
+127   NTC-4 2.086742e-01
+128   NTC-4 5.794950e-02
+129   NTC-4 3.516668e-01
+130   NTC-4 3.109060e-01
+131   NTC-4 5.054995e-01
+132   NTC-4 4.527119e-01
+133   NTC-4 1.653076e-01
+134   NTC-4 1.000000e+00
+135   NTC-4 1.000000e+00
+136   NTC-4 1.000000e+00
+137   NTC-4 1.000000e+00
+138   NTC-4 7.177145e-01
+139   NTC-4 1.250518e-01
+140   NTC-4 6.686381e-01
+141   NTC-4 9.951814e-02
+142   NTC-4 7.655306e-02
+143   NTC-4 1.414995e-01
+144   NTC-4 8.525576e-01
+145   NTC-4 8.693614e-01
+146   NTC-4 9.214035e-01
+147   NTC-4 1.679632e-01
+148   NTC-4 9.595810e-01
+149   NTC-4 5.273149e-01
+150   NTC-4 1.274328e-01
+151   NTC-5 1.000000e+00
+152   NTC-5 1.000000e+00
+153   NTC-5 6.730255e-01
+154   NTC-5 3.820148e-01
+155   NTC-5 6.428584e-01
+156   NTC-5 5.118851e-01
+157   NTC-5 6.120686e-01
+158   NTC-5 2.518408e-01
+159   NTC-5 5.536544e-01
+160   NTC-5 2.696375e-01
+161   NTC-5 2.112575e-01
+162   NTC-5 4.120847e-01
+163   NTC-5 6.212410e-01
+164   NTC-5 1.130255e-01
+165   NTC-5 1.000000e+00
+166   NTC-5 8.289336e-01
+167   NTC-5 1.000000e+00
+168   NTC-5 5.089602e-01
+169   NTC-5 1.000000e+00
+170   NTC-5 1.612509e-01
+171   NTC-5 1.000000e+00
+172   NTC-5 1.000000e+00
+173   NTC-5 6.080929e-01
+174   NTC-5 5.249232e-01
+175   NTC-5 1.000000e+00
+176   NTC-5 4.532058e-01
+177   NTC-5 4.574564e-01
+178   NTC-5 1.000000e+00
+179   NTC-5 1.000000e+00
+180   NTC-5 4.054788e-01
+181   NTC-5 5.519477e-01
+182   NTC-5 5.261548e-01
+183   NTC-5 1.844157e-01
+184   NTC-5 5.988844e-01
+185   NTC-5 7.562643e-01
+186   NTC-5 4.467926e-01
+187   NTC-5 4.650368e-01
+188   NTC-5 1.000000e+00
+189   NTC-5 1.000000e+00
+190   NTC-5 1.000000e+00
+191   NTC-5 1.000000e+00
+192   NTC-5 2.446116e-01
+193   NTC-5 7.799469e-01
+194   NTC-5 2.262664e-02
+195   NTC-5 4.564089e-01
+196   NTC-5 7.216555e-01
+197   NTC-5 4.595335e-01
+198   NTC-5 5.938645e-01
+199   NTC-5 6.555444e-01
+200   NTC-5 6.985229e-01
+201   NTC-6 7.070073e-01
+202   NTC-6 1.000000e+00
+203   NTC-6 1.000000e+00
+204   NTC-6 1.000000e+00
+205   NTC-6 6.968661e-01
+206   NTC-6 1.000000e+00
+207   NTC-6 5.165091e-01
+208   NTC-6 1.000000e+00
+209   NTC-6 6.261206e-01
+210   NTC-6 5.959085e-01
+211   NTC-6 1.000000e+00
+212   NTC-6 1.000000e+00
+213   NTC-6 1.000000e+00
+214   NTC-6 5.167294e-01
+215   NTC-6 2.973846e-01
+216   NTC-6 1.000000e+00
+217   NTC-6 1.000000e+00
+218   NTC-6 8.106608e-01
+219   NTC-6 1.000000e+00
+220   NTC-6 1.000000e+00
+221   NTC-6 1.422584e-01
+222   NTC-6 8.127117e-01
+223   NTC-6 6.023241e-01
+224   NTC-6 6.173050e-01
+225   NTC-6 1.000000e+00
+226   NTC-6 5.495196e-01
+227   NTC-6 4.468977e-01
+228   NTC-6 1.000000e+00
+229   NTC-6 1.000000e+00
+230   NTC-6 6.330268e-01
+231   NTC-6 2.037455e-01
+232   NTC-6 7.014893e-01
+233   NTC-6 7.244376e-01
+234   NTC-6 5.804787e-01
+235   NTC-6 5.496714e-01
+236   NTC-6 3.387241e-01
+237   NTC-6 7.122117e-01
+238   NTC-6 1.000000e+00
+239   NTC-6 1.000000e+00
+240   NTC-6 5.150955e-01
+241   NTC-6 5.774288e-01
+242   NTC-6 3.241806e-01
+243   NTC-6 3.358176e-01
+244   NTC-6 3.635874e-01
+245   NTC-6 8.374860e-01
+246   NTC-6 8.569122e-01
+247   NTC-6 1.000000e+00
+248   NTC-6 4.544979e-01
+249   NTC-6 5.766005e-01
+250   NTC-6 2.340821e-01
+251   NTC-7 1.043107e-01
+252   NTC-7 1.656221e-01
+253   NTC-7 2.291765e-01
+254   NTC-7 1.000000e+00
+255   NTC-7 3.717544e-01
+256   NTC-7 2.069395e-01
+257   NTC-7 4.057043e-01
+258   NTC-7 1.000000e+00
+259   NTC-7 7.900404e-01
+260   NTC-7 1.921419e-01
+261   NTC-7 1.000000e+00
+262   NTC-7 1.028351e-01
+263   NTC-7 3.168728e-01
+264   NTC-7 1.271153e-01
+265   NTC-7 1.257463e-01
+266   NTC-7 6.002036e-02
+267   NTC-7 1.000000e+00
+268   NTC-7 1.000000e+00
+269   NTC-7 6.141743e-01
+270   NTC-7 1.542860e-01
+271   NTC-7 3.620686e-01
+272   NTC-7 4.964990e-01
+273   NTC-7 4.004470e-01
+274   NTC-7 1.407777e-01
+275   NTC-7 6.633004e-02
+276   NTC-7 2.711513e-01
+277   NTC-7 1.490964e-01
+278   NTC-7 1.000000e+00
+279   NTC-7 8.912174e-02
+280   NTC-7 6.446533e-01
+281   NTC-7 6.802052e-02
+282   NTC-7 1.593486e-01
+283   NTC-7 1.000000e+00
+284   NTC-7 1.000000e+00
+285   NTC-7 1.852937e-01
+286   NTC-7 1.000000e+00
+287   NTC-7 5.288094e-01
+288   NTC-7 1.000000e+00
+289   NTC-7 3.383969e-01
+290   NTC-7 9.087853e-02
+291   NTC-7 4.736012e-01
+292   NTC-7 1.950673e-02
+293   NTC-7 1.000000e+00
+294   NTC-7 5.615134e-01
+295   NTC-7 8.453662e-01
+296   NTC-7 6.300224e-01
+297   NTC-7 7.771920e-01
+298   NTC-7 6.984397e-01
+299   NTC-7 9.233492e-01
+300   NTC-7 7.569106e-01
+301   NTC-8 1.000000e+00
+302   NTC-8 1.000000e+00
+303   NTC-8 4.100813e-02
+304   NTC-8 1.000000e+00
+305   NTC-8 2.771426e-01
+306   NTC-8 1.417667e-01
+307   NTC-8 4.717767e-02
+308   NTC-8 1.567469e-01
+309   NTC-8 2.367071e-01
+310   NTC-8 1.000000e+00
+311   NTC-8 2.542666e-01
+312   NTC-8 1.000000e+00
+313   NTC-8 4.699792e-01
+314   NTC-8 2.366804e-02
+315   NTC-8 7.320330e-01
+316   NTC-8 1.158494e-01
+317   NTC-8 1.000000e+00
+318   NTC-8 6.336512e-01
+319   NTC-8 2.337830e-01
+320   NTC-8 5.321802e-01
+321   NTC-8 1.000000e+00
+322   NTC-8 1.922336e-01
+323   NTC-8 8.406049e-01
+324   NTC-8 3.263956e-02
+325   NTC-8 7.278668e-01
+326   NTC-8 1.099563e-02
+327   NTC-8 3.082975e-01
+328   NTC-8 8.323951e-01
+329   NTC-8 3.559900e-01
+330   NTC-8 7.499039e-01
+331   NTC-8 1.000000e+00
+332   NTC-8 1.000000e+00
+333   NTC-8 1.026686e-01
+334   NTC-8 8.736215e-01
+335   NTC-8 1.754001e-01
+336   NTC-8 1.870897e-01
+337   NTC-8 5.943247e-01
+338   NTC-8 1.092310e-02
+339   NTC-8 1.653652e-01
+340   NTC-8 7.566981e-01
+341   NTC-8 7.068149e-01
+342   NTC-8 1.000000e+00
+343   NTC-8 8.712671e-01
+344   NTC-8 3.081914e-02
+345   NTC-8 6.674601e-01
+346   NTC-8 4.545963e-01
+347   NTC-8 8.816774e-02
+348   NTC-8 8.366235e-01
+349   NTC-8 5.118804e-01
+350   NTC-8 1.164625e-01
+351   NTC-9 1.000000e+00
+352   NTC-9 5.460383e-01
+353   NTC-9 1.000000e+00
+354   NTC-9 2.176323e-01
+355   NTC-9 6.553965e-01
+356   NTC-9 5.501519e-01
+357   NTC-9 1.960627e-01
+358   NTC-9 5.119865e-01
+359   NTC-9 2.424396e-01
+360   NTC-9 1.000000e+00
+361   NTC-9 8.076968e-01
+362   NTC-9 1.000000e+00
+363   NTC-9 4.726881e-02
+364   NTC-9 5.835354e-02
+365   NTC-9 6.491898e-01
+366   NTC-9 1.853138e-01
+367   NTC-9 1.000000e+00
+368   NTC-9 7.509799e-01
+369   NTC-9 5.055154e-01
+370   NTC-9 8.261586e-01
+371   NTC-9 2.618693e-01
+372   NTC-9 1.000000e+00
+373   NTC-9 1.000000e+00
+374   NTC-9 1.003074e-01
+375   NTC-9 1.014989e-01
+376   NTC-9 4.094216e-02
+377   NTC-9 1.000000e+00
+378   NTC-9 4.676909e-02
+379   NTC-9 7.181140e-01
+380   NTC-9 3.816610e-01
+381   NTC-9 4.809323e-01
+382   NTC-9 1.000000e+00
+383   NTC-9 4.994510e-02
+384   NTC-9 1.000000e+00
+385   NTC-9 4.806544e-01
+386   NTC-9 1.000000e+00
+387   NTC-9 6.804671e-02
+388   NTC-9 6.494511e-01
+389   NTC-9 7.229868e-01
+390   NTC-9 2.983311e-01
+391   NTC-9 3.146180e-01
+392   NTC-9 7.375161e-02
+393   NTC-9 5.366715e-01
+394   NTC-9 5.754388e-03
+395   NTC-9 7.282026e-01
+396   NTC-9 1.111992e-01
+397   NTC-9 7.667970e-01
+398   NTC-9 1.779123e-02
+399   NTC-9 1.865579e-02
+400   NTC-9 1.618814e-02
+401  NTC-10 1.194824e-01
+402  NTC-10 6.093671e-01
+403  NTC-10 1.000000e+00
+404  NTC-10 1.000000e+00
+405  NTC-10 1.000000e+00
+406  NTC-10 3.340096e-02
+407  NTC-10 1.000000e+00
+408  NTC-10 8.016634e-02
+409  NTC-10 1.896422e-01
+410  NTC-10 1.029142e-01
+411  NTC-10 9.706567e-02
+412  NTC-10 1.736912e-01
+413  NTC-10 8.457634e-02
+414  NTC-10 1.644041e-01
+415  NTC-10 1.703135e-01
+416  NTC-10 1.230886e-01
+417  NTC-10 1.000000e+00
+418  NTC-10 1.000000e+00
+419  NTC-10 1.000000e+00
+420  NTC-10 1.000000e+00
+421  NTC-10 1.358809e-01
+422  NTC-10 1.052175e-01
+423  NTC-10 8.182096e-01
+424  NTC-10 9.053225e-02
+425  NTC-10 1.000000e+00
+426  NTC-10 1.000000e+00
+427  NTC-10 1.000000e+00
+428  NTC-10 1.000000e+00
+429  NTC-10 7.220488e-02
+430  NTC-10 5.071840e-01
+431  NTC-10 5.519474e-01
+432  NTC-10 9.739125e-02
+433  NTC-10 2.591167e-01
+434  NTC-10 1.626005e-01
+435  NTC-10 1.000000e+00
+436  NTC-10 1.054693e-01
+437  NTC-10 3.612384e-01
+438  NTC-10 3.776057e-02
+439  NTC-10 2.545797e-02
+440  NTC-10 3.834501e-02
+441  NTC-10 1.329253e-02
+442  NTC-10 1.238766e-01
+443  NTC-10 1.000000e+00
+444  NTC-10 8.448716e-01
+445  NTC-10 3.275317e-03
+446  NTC-10 9.354201e-02
+447  NTC-10 2.517532e-01
+448  NTC-10 2.894677e-01
+449  NTC-10 5.812973e-03
+450  NTC-10 6.027942e-01
+451  NTC-11 1.000000e+00
+452  NTC-11 5.814896e-01
+453  NTC-11 1.000000e+00
+454  NTC-11 1.031946e-01
+455  NTC-11 1.000000e+00
+456  NTC-11 2.764734e-01
+457  NTC-11 1.000000e+00
+458  NTC-11 4.633256e-01
+459  NTC-11 1.000000e+00
+460  NTC-11 1.000000e+00
+461  NTC-11 2.841801e-02
+462  NTC-11 2.608109e-01
+463  NTC-11 1.745313e-01
+464  NTC-11 1.419239e-01
+465  NTC-11 1.000000e+00
+466  NTC-11 4.164271e-01
+467  NTC-11 1.862725e-01
+468  NTC-11 3.318153e-01
+469  NTC-11 3.125985e-01
+470  NTC-11 6.550046e-01
+471  NTC-11 1.000000e+00
+472  NTC-11 6.686621e-01
+473  NTC-11 1.000000e+00
+474  NTC-11 1.332191e-01
+475  NTC-11 7.186178e-01
+476  NTC-11 1.000000e+00
+477  NTC-11 7.756353e-02
+478  NTC-11 1.099840e-01
+479  NTC-11 1.000000e+00
+480  NTC-11 1.000000e+00
+481  NTC-11 6.314714e-01
+482  NTC-11 1.610089e-01
+483  NTC-11 6.820763e-01
+484  NTC-11 1.228352e-01
+485  NTC-11 1.000000e+00
+486  NTC-11 2.503166e-01
+487  NTC-11 1.000000e+00
+488  NTC-11 1.000000e+00
+489  NTC-11 4.477717e-02
+490  NTC-11 2.105732e-01
+491  NTC-11 5.314069e-01
+492  NTC-11 2.214633e-01
+493  NTC-11 1.000000e+00
+494  NTC-11 7.269704e-01
+495  NTC-11 8.372354e-01
+496  NTC-11 8.368811e-01
+497  NTC-11 6.841861e-01
+498  NTC-11 1.000000e+00
+499  NTC-11 1.564449e-01
+500  NTC-11 8.963191e-01</code></pre>
+<pre class="r"><code>gg_qqplot(as.vector(ntc_our$p_value), title=&quot;Negative control our method&quot;)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(as.vector(ntc_minp$p_value), title=&quot;Negative control minp&quot;)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-37-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(as.vector(ntc_t$acat_pval), title=&quot;Negative control t-ACAT&quot;)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-37-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Negative control sceptre-ACAT&quot;)</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-37-4.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el8-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
+ [4] LC_COLLATE=C         LC_MONETARY=C        LC_MESSAGES=C       
+ [7] LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C        
+[10] LC_TELEPHONE=C       LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] eulerr_7.0.2    tibble_3.2.1    ACAT_0.91       tidyr_1.3.0    
+[5] readr_1.4.0     dplyr_1.1.4     ggplot2_3.5.1   workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.0  xfun_0.45         bslib_0.7.0       purrr_1.0.2      
+ [5] colorspace_2.1-0  vctrs_0.6.4       generics_0.1.3    htmltools_0.5.8.1
+ [9] yaml_2.2.1        utf8_1.2.1        rlang_1.1.2       jquerylib_0.1.4  
+[13] later_1.2.0       pillar_1.9.0      glue_1.6.2        withr_2.5.2      
+[17] lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0     gtable_0.3.0     
+[21] evaluate_0.23     labeling_0.4.3    knitr_1.48        callr_3.7.6      
+[25] fastmap_1.1.1     httpuv_1.6.1      ps_1.7.5          fansi_1.0.5      
+[29] highr_0.11        Rcpp_1.0.12       promises_1.2.0.1  scales_1.3.0     
+[33] cachem_1.0.8      jsonlite_1.8.7    farver_2.1.1      fs_1.6.3         
+[37] hms_1.1.0         digest_0.6.33     stringi_1.6.2     processx_3.8.4   
+[41] getPass_0.2-2     polyclip_1.10-6   rprojroot_2.0.4   grid_4.1.0       
+[45] cli_3.6.1         tools_4.1.0       magrittr_2.0.3    sass_0.4.9       
+[49] crayon_1.5.2      whisker_0.4.1     pkgconfig_2.0.3   ellipsis_0.3.2   
+[53] polylabelr_0.2.0  rmarkdown_2.27    httr_1.4.2        rstudioapi_0.15.0
+[57] R6_2.5.1          git2r_0.32.0      compiler_4.1.0   </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

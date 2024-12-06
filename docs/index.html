@@ -306,7 +306,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-10-03
+<strong>Last updated:</strong> 2024-12-05
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -337,16 +337,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0097970ede58d637e1e16418ef23f3c815f6dacetargetblank0097970a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/0097970ede58d637e1e16418ef23f3c815f6dace" target="_blank">0097970</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree1faa081940e22b2598c255cb471903566f2ada75targetblank1faa081a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/1faa081940e22b2598c255cb471903566f2ada75" target="_blank">1faa081</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0097970ede58d637e1e16418ef23f3c815f6dacetargetblank0097970a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree1faa081940e22b2598c255cb471903566f2ada75targetblank1faa081a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/0097970ede58d637e1e16418ef23f3c815f6dace" target="_blank">0097970</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/1faa081940e22b2598c255cb471903566f2ada75" target="_blank">1faa081</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -361,51 +361,32 @@ Ignored files:
     Ignored:    analysis/run_R.sh
 
 Untracked files:
+    Untracked:  Rplots.pdf
     Untracked:  analysis/sceptre_singleton.R
     Untracked:  analysis/sceptre_singleton.Rmd
     Untracked:  analysis/sceptre_threshold.Rmd
+    Untracked:  code/debug.Rmd
     Untracked:  code/fit_skew_normal.cpp
-    Untracked:  code/plot.pdf
-    Untracked:  code/t_test_time.R
-    Untracked:  code/test_gene_module.R
-    Untracked:  data/GDO_threshold/
-    Untracked:  data/Homo_sapiens.GRCh38.112.gtf.gz
-    Untracked:  data/STINGseq-v1_GDO/
-    Untracked:  data/STINGseq-v1_HTO/
-    Untracked:  data/STINGseq-v1_cDNA/
-    Untracked:  data/filtered_keep_gene.gtf
-    Untracked:  data/gene_module.txt
-    Untracked:  data/gene_module_id.txt
-    Untracked:  data/gene_modules_id.rds
-    Untracked:  data/msig_50_table_gene_per_row_immune_related.txt
-    Untracked:  data/msig_50_table_immune_related.txt
-    Untracked:  output/calibration_power_t_10000_no_approximation.csv
-    Untracked:  output/calibration_power_t_10000_no_approximation_2.csv
-    Untracked:  output/calibration_power_t_2000_use_approximation.csv
-    Untracked:  output/calibration_power_t_2000_use_approximation_2.csv
-    Untracked:  output/calibration_wilcoxon_10000_no_approximation.csv
-    Untracked:  output/calibration_wilcoxon_10000_no_approximation_normalized.csv
-    Untracked:  output/power_include_trans_t_2000_use_approximation.csv
-    Untracked:  output/result.csv
-    Untracked:  output/result_calibration.csv
-    Untracked:  output/result_calibration_2.csv
-    Untracked:  output/result_calibration_use_approximation_10000.csv
-    Untracked:  output/result_calibration_use_approximation_2000.csv
-    Untracked:  output/result_calibration_use_approximation_5000.csv
-    Untracked:  output/result_calibration_use_rank.csv
-    Untracked:  output/result_calibration_use_rank_parallel.csv
-    Untracked:  output/result_remove_na_gene.csv
-    Untracked:  output/sceptre_outputs/trans_mixture.txt
-    Untracked:  output/sceptre_outputs_cis/
-    Untracked:  output/sceptre_outputs_cis_singleton/
-    Untracked:  output/sceptre_outputs_cis_threshold/
-    Untracked:  output/sceptre_outputs_cis_threshold5/
-    Untracked:  output/sceptre_outputs_trans_omit_NTC3_12/
-    Untracked:  output/sceptre_outputs_trans_threshold/
-    Untracked:  output/sceptre_outputs_trans_threshold_omit_NTC3_12/
-    Untracked:  output/trans_singleton_threshold5/
-    Untracked:  output/trans_singleton_threshold_author_omit/
-    Untracked:  output/try_rcc/
+    Untracked:  code/functions.R
+    Untracked:  code/minp.R
+    Untracked:  code/permutation.err
+    Untracked:  code/permutation.out
+    Untracked:  code/startover.R
+    Untracked:  code/t_test.cpp
+    Untracked:  code/test.err
+    Untracked:  code/test.out
+    Untracked:  code/test_gene_module_reduced.R
+    Untracked:  code/test_gene_module_reduced.Rmd
+    Untracked:  code/test_gene_p.R
+    Untracked:  code/test_gene_p.Rmd
+    Untracked:  data/
+    Untracked:  output/SNP_gene_statistics_sceptre_approximation.csv
+    Untracked:  output/SNP_gene_statistics_sceptre_no_approximation.csv
+    Untracked:  output/SNP_p_no_approximation.csv
+    Untracked:  output/SNP_p_t_statistics_approximation.csv
+    Untracked:  output/both_trans_author_permutation/
+    Untracked:  output/debug/
+    Untracked:  output/try_sceptre_skew_fit_normalized_threshold_quantile_transform.csv
 
 Unstaged changes:
     Modified:   .gitignore
@@ -419,12 +400,22 @@ Unstaged changes:
     Modified:   analysis/summary.Rmd
     Deleted:    analysis/try_Knit.Rmd
     Deleted:    analysis/try_rcc.Rmd
-    Modified:   code/job-info.err
-    Modified:   code/job-info.out
+    Deleted:    code/job-info.err
+    Deleted:    code/job-info.out
     Modified:   code/plot.Rmd
+    Deleted:    code/results.csv
+    Deleted:    code/results_wilcox_pval.csv
     Modified:   code/run_R.sh
+    Modified:   code/test_gene_module.R
     Modified:   code/test_gene_module.Rmd
-    Deleted:    output/sceptre_outputs/analysis_summary.txt
+    Deleted:    code/try.R
+    Deleted:    code/try.Rmd
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_assign_grnas.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_grna_count_distributions.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_calibration_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_discovery_analysis.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_power_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_qc.png
 
 </code></pre>
 <p>
@@ -463,6 +454,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/1faa081940e22b2598c255cb471903566f2ada75/analysis/index.Rmd" target="_blank">1faa081</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/714f9c6b95c887000f08f603a0dc0947f8885d3e/docs/index.html" target="_blank">714f9c6</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-10-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1362,7 +1387,7 @@ Start workflowr project.
 <p><a href="TATES.html">TATES Summary</a></p>
 <p><a href="U_Statistics.html">Asymptotic indepdent U Statistics</a></p>
 <p>Results:</p>
-<p><a href="plot.html">Calibration and power check of t test and wilcoxon test</a></p>
+<p><a href="plot.html">Calibration and power check of t test and wilcoxon test</a> <a href="debug.html">Debug</a></p>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
