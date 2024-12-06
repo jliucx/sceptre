@@ -616,9 +616,7 @@ ntc_sceptre <- module_results_sceptre %>%
   filter(startsWith(grna_id, "NTC")) %>%
   select(grna_id, acat_pval)
 ```
-```{r}
-ntc_sceptre 
-```
+
 
 
 ```{r}
