@@ -580,16 +580,16 @@ output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree2b98c6c4cd346db6b8f6195f7fd3e850c4245c7etargetblank2b98c6ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/2b98c6c4cd346db6b8f6195f7fd3e850c4245c7e" target="_blank">2b98c6c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree4b95ed14dc1a15437252c30c012b7551513261cbtargetblank4b95ed1a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/4b95ed14dc1a15437252c30c012b7551513261cb" target="_blank">4b95ed1</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree2b98c6c4cd346db6b8f6195f7fd3e850c4245c7etargetblank2b98c6ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree4b95ed14dc1a15437252c30c012b7551513261cbtargetblank4b95ed1a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/2b98c6c4cd346db6b8f6195f7fd3e850c4245c7e" target="_blank">2b98c6c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/4b95ed14dc1a15437252c30c012b7551513261cb" target="_blank">4b95ed1</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -697,6 +697,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/4b95ed14dc1a15437252c30c012b7551513261cb/analysis/debug.Rmd" target="_blank">4b95ed1</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+add more comparison
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/986bb0f6ba4e11fef2920356185de645246d969d/docs/debug.html" target="_blank">986bb0f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1742,7 +1776,7 @@ for (index in indices) {
     filtered_vector1, filtered_vector2,
     xlab = &quot;Gene Wise P Values&quot;,
     ylab = &quot;Sceptre Wide P Values&quot;,
-    main = paste0(&quot;Scatter Plot for Index &quot;, index),
+    main = paste0(&quot;Scatter Plot for &quot;, index, &quot; th perturbation&quot;),
     pch = 16,
     col = &quot;blue&quot;,
     cex = 0.7
@@ -1754,9 +1788,9 @@ for (index in indices) {
   # QQ Plot
   qqplot(
     filtered_vector1, filtered_vector2,
-    xlab = &quot;Theoretical Quantiles&quot;,
-    ylab = &quot;Sample Quantiles&quot;,
-    main = paste0(&quot;QQ Plot for Index &quot;, index),
+    xlab = &quot;Gene Wise P Values&quot;,
+    ylab = &quot;Sceptre Wide P Values&quot;,
+    main = paste0(&quot;QQ Plot for &quot;, index, &quot; th perturbation&quot;),
     pch = 16,
     col = &quot;blue&quot;,
     cex = 0.7
@@ -3257,6 +3291,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/986bb0f6ba4e11fef2920356185de645246d969d/docs/figure/debug.Rmd/unnamed-chunk-34-1.png" target="_blank">986bb0f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-34-1.png" target="_blank">8974f05</a>
 </td>
 <td>
@@ -3272,7 +3317,161 @@ jliucx
 </div>
 <pre><code>Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-34-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-34-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-34-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-34-5.png" width="672" style="display: block; margin: auto;" /> # Calibration check</p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-34-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-2">
+Past versions of unnamed-chunk-34-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/986bb0f6ba4e11fef2920356185de645246d969d/docs/figure/debug.Rmd/unnamed-chunk-34-2.png" target="_blank">986bb0f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-34-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-3">
+Past versions of unnamed-chunk-34-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/986bb0f6ba4e11fef2920356185de645246d969d/docs/figure/debug.Rmd/unnamed-chunk-34-3.png" target="_blank">986bb0f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-34-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-4">
+Past versions of unnamed-chunk-34-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/986bb0f6ba4e11fef2920356185de645246d969d/docs/figure/debug.Rmd/unnamed-chunk-34-4.png" target="_blank">986bb0f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-34-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-5">
+Past versions of unnamed-chunk-34-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/986bb0f6ba4e11fef2920356185de645246d969d/docs/figure/debug.Rmd/unnamed-chunk-34-5.png" target="_blank">986bb0f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="calibration-check" class="section level1">
+<h1>Calibration check</h1>
 <pre class="r"><code>gg_qqplot &lt;- function(ps, ci = 0.95, title = &quot;QQ Plot&quot;) {
   n &lt;- length(ps)
   df &lt;- data.frame(
