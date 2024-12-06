@@ -580,16 +580,16 @@ output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree3445431536ad25c5891ca16ddaa091b5091ee387targetblank3445431a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/3445431536ad25c5891ca16ddaa091b5091ee387" target="_blank">3445431</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930targetblank7fe73c2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930" target="_blank">7fe73c2</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree3445431536ad25c5891ca16ddaa091b5091ee387targetblank3445431a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930targetblank7fe73c2a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/3445431536ad25c5891ca16ddaa091b5091ee387" target="_blank">3445431</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930" target="_blank">7fe73c2</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -697,6 +697,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930/analysis/debug.Rmd" target="_blank">7fe73c2</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/59e52af0b3933c12bd0bc04d5215ef9dc84afd0d/docs/debug.html" target="_blank">59e52af</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -3235,664 +3269,14 @@ ntc_t &lt;- module_results_t %&gt;%
 ntc_sceptre &lt;- module_results_sceptre %&gt;%
   filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
   select(grna_id, acat_pval)</code></pre>
-<pre class="r"><code>ntc_sceptre </code></pre>
-<pre><code>    grna_id    acat_pval
-1     NTC-1 5.896564e-01
-2     NTC-1 1.000000e+00
-3     NTC-1 1.000000e+00
-4     NTC-1 1.000000e+00
-5     NTC-1 2.421415e-01
-6     NTC-1 4.801899e-01
-7     NTC-1 2.191499e-01
-8     NTC-1 1.000000e+00
-9     NTC-1 1.000000e+00
-10    NTC-1 1.496589e-01
-11    NTC-1 4.249339e-01
-12    NTC-1 5.237205e-02
-13    NTC-1 6.887789e-01
-14    NTC-1 3.448949e-02
-15    NTC-1 3.035380e-01
-16    NTC-1 1.000000e+00
-17    NTC-1 1.988749e-01
-18    NTC-1 6.529904e-01
-19    NTC-1 1.000000e+00
-20    NTC-1 7.115029e-02
-21    NTC-1 1.000000e+00
-22    NTC-1 6.395246e-01
-23    NTC-1 8.465279e-01
-24    NTC-1 1.000000e+00
-25    NTC-1 6.170033e-01
-26    NTC-1 1.000000e+00
-27    NTC-1 4.850911e-01
-28    NTC-1 4.106205e-01
-29    NTC-1 1.000000e+00
-30    NTC-1 5.339767e-01
-31    NTC-1 2.624756e-01
-32    NTC-1 1.000000e+00
-33    NTC-1 4.013925e-01
-34    NTC-1 2.352170e-01
-35    NTC-1 4.791625e-01
-36    NTC-1 3.629073e-01
-37    NTC-1 5.601282e-01
-38    NTC-1 7.683964e-01
-39    NTC-1 1.000000e+00
-40    NTC-1 3.577778e-01
-41    NTC-1 3.117629e-01
-42    NTC-1 5.220157e-02
-43    NTC-1 6.385927e-01
-44    NTC-1 5.035170e-01
-45    NTC-1 5.853147e-01
-46    NTC-1 2.223504e-01
-47    NTC-1 5.442354e-01
-48    NTC-1 2.403801e-01
-49    NTC-1 7.671587e-02
-50    NTC-1 5.198573e-01
-51    NTC-2 5.400966e-01
-52    NTC-2 1.520318e-01
-53    NTC-2 3.129258e-02
-54    NTC-2 1.000000e+00
-55    NTC-2 1.000000e+00
-56    NTC-2 7.825731e-01
-57    NTC-2 1.000000e+00
-58    NTC-2 3.515532e-01
-59    NTC-2 1.715803e-14
-60    NTC-2 3.799005e-02
-61    NTC-2 3.269409e-01
-62    NTC-2 1.000000e+00
-63    NTC-2 1.490523e-01
-64    NTC-2 4.508237e-01
-65    NTC-2 4.244273e-01
-66    NTC-2 7.365561e-02
-67    NTC-2 2.984871e-02
-68    NTC-2 2.444540e-31
-69    NTC-2 1.000000e+00
-70    NTC-2 2.820512e-01
-71    NTC-2 7.518027e-01
-72    NTC-2 8.929197e-01
-73    NTC-2 6.707266e-01
-74    NTC-2 1.000000e+00
-75    NTC-2 3.447336e-01
-76    NTC-2 1.266439e-01
-77    NTC-2 4.834209e-02
-78    NTC-2 2.813687e-01
-79    NTC-2 1.413240e-01
-80    NTC-2 2.595262e-02
-81    NTC-2 2.219531e-02
-82    NTC-2 1.478822e-01
-83    NTC-2 6.279439e-01
-84    NTC-2 8.457862e-01
-85    NTC-2 8.358766e-02
-86    NTC-2 7.536082e-01
-87    NTC-2 6.490383e-01
-88    NTC-2 4.782147e-01
-89    NTC-2 1.157616e-01
-90    NTC-2 2.333255e-01
-91    NTC-2 8.836246e-01
-92    NTC-2 4.508583e-03
-93    NTC-2 6.762627e-01
-94    NTC-2 1.918240e-01
-95    NTC-2 2.259633e-01
-96    NTC-2 1.795633e-01
-97    NTC-2 3.014591e-01
-98    NTC-2 5.436117e-01
-99    NTC-2 2.858318e-01
-100   NTC-2 1.865402e-01
-101   NTC-4 1.000000e+00
-102   NTC-4 1.000000e+00
-103   NTC-4 1.000000e+00
-104   NTC-4 1.000000e+00
-105   NTC-4 7.726733e-01
-106   NTC-4 7.024554e-01
-107   NTC-4 1.000000e+00
-108   NTC-4 1.000000e+00
-109   NTC-4 1.000000e+00
-110   NTC-4 1.758349e-01
-111   NTC-4 1.000000e+00
-112   NTC-4 1.000000e+00
-113   NTC-4 1.000000e+00
-114   NTC-4 4.002409e-01
-115   NTC-4 1.000000e+00
-116   NTC-4 6.031500e-01
-117   NTC-4 1.000000e+00
-118   NTC-4 1.000000e+00
-119   NTC-4 1.000000e+00
-120   NTC-4 9.978199e-03
-121   NTC-4 6.518816e-01
-122   NTC-4 8.412478e-01
-123   NTC-4 8.760595e-01
-124   NTC-4 2.378193e-01
-125   NTC-4 2.127823e-01
-126   NTC-4 1.000000e+00
-127   NTC-4 2.086742e-01
-128   NTC-4 5.794950e-02
-129   NTC-4 3.516668e-01
-130   NTC-4 3.109060e-01
-131   NTC-4 5.054995e-01
-132   NTC-4 4.527119e-01
-133   NTC-4 1.653076e-01
-134   NTC-4 1.000000e+00
-135   NTC-4 1.000000e+00
-136   NTC-4 1.000000e+00
-137   NTC-4 1.000000e+00
-138   NTC-4 7.177145e-01
-139   NTC-4 1.250518e-01
-140   NTC-4 6.686381e-01
-141   NTC-4 9.951814e-02
-142   NTC-4 7.655306e-02
-143   NTC-4 1.414995e-01
-144   NTC-4 8.525576e-01
-145   NTC-4 8.693614e-01
-146   NTC-4 9.214035e-01
-147   NTC-4 1.679632e-01
-148   NTC-4 9.595810e-01
-149   NTC-4 5.273149e-01
-150   NTC-4 1.274328e-01
-151   NTC-5 1.000000e+00
-152   NTC-5 1.000000e+00
-153   NTC-5 6.730255e-01
-154   NTC-5 3.820148e-01
-155   NTC-5 6.428584e-01
-156   NTC-5 5.118851e-01
-157   NTC-5 6.120686e-01
-158   NTC-5 2.518408e-01
-159   NTC-5 5.536544e-01
-160   NTC-5 2.696375e-01
-161   NTC-5 2.112575e-01
-162   NTC-5 4.120847e-01
-163   NTC-5 6.212410e-01
-164   NTC-5 1.130255e-01
-165   NTC-5 1.000000e+00
-166   NTC-5 8.289336e-01
-167   NTC-5 1.000000e+00
-168   NTC-5 5.089602e-01
-169   NTC-5 1.000000e+00
-170   NTC-5 1.612509e-01
-171   NTC-5 1.000000e+00
-172   NTC-5 1.000000e+00
-173   NTC-5 6.080929e-01
-174   NTC-5 5.249232e-01
-175   NTC-5 1.000000e+00
-176   NTC-5 4.532058e-01
-177   NTC-5 4.574564e-01
-178   NTC-5 1.000000e+00
-179   NTC-5 1.000000e+00
-180   NTC-5 4.054788e-01
-181   NTC-5 5.519477e-01
-182   NTC-5 5.261548e-01
-183   NTC-5 1.844157e-01
-184   NTC-5 5.988844e-01
-185   NTC-5 7.562643e-01
-186   NTC-5 4.467926e-01
-187   NTC-5 4.650368e-01
-188   NTC-5 1.000000e+00
-189   NTC-5 1.000000e+00
-190   NTC-5 1.000000e+00
-191   NTC-5 1.000000e+00
-192   NTC-5 2.446116e-01
-193   NTC-5 7.799469e-01
-194   NTC-5 2.262664e-02
-195   NTC-5 4.564089e-01
-196   NTC-5 7.216555e-01
-197   NTC-5 4.595335e-01
-198   NTC-5 5.938645e-01
-199   NTC-5 6.555444e-01
-200   NTC-5 6.985229e-01
-201   NTC-6 7.070073e-01
-202   NTC-6 1.000000e+00
-203   NTC-6 1.000000e+00
-204   NTC-6 1.000000e+00
-205   NTC-6 6.968661e-01
-206   NTC-6 1.000000e+00
-207   NTC-6 5.165091e-01
-208   NTC-6 1.000000e+00
-209   NTC-6 6.261206e-01
-210   NTC-6 5.959085e-01
-211   NTC-6 1.000000e+00
-212   NTC-6 1.000000e+00
-213   NTC-6 1.000000e+00
-214   NTC-6 5.167294e-01
-215   NTC-6 2.973846e-01
-216   NTC-6 1.000000e+00
-217   NTC-6 1.000000e+00
-218   NTC-6 8.106608e-01
-219   NTC-6 1.000000e+00
-220   NTC-6 1.000000e+00
-221   NTC-6 1.422584e-01
-222   NTC-6 8.127117e-01
-223   NTC-6 6.023241e-01
-224   NTC-6 6.173050e-01
-225   NTC-6 1.000000e+00
-226   NTC-6 5.495196e-01
-227   NTC-6 4.468977e-01
-228   NTC-6 1.000000e+00
-229   NTC-6 1.000000e+00
-230   NTC-6 6.330268e-01
-231   NTC-6 2.037455e-01
-232   NTC-6 7.014893e-01
-233   NTC-6 7.244376e-01
-234   NTC-6 5.804787e-01
-235   NTC-6 5.496714e-01
-236   NTC-6 3.387241e-01
-237   NTC-6 7.122117e-01
-238   NTC-6 1.000000e+00
-239   NTC-6 1.000000e+00
-240   NTC-6 5.150955e-01
-241   NTC-6 5.774288e-01
-242   NTC-6 3.241806e-01
-243   NTC-6 3.358176e-01
-244   NTC-6 3.635874e-01
-245   NTC-6 8.374860e-01
-246   NTC-6 8.569122e-01
-247   NTC-6 1.000000e+00
-248   NTC-6 4.544979e-01
-249   NTC-6 5.766005e-01
-250   NTC-6 2.340821e-01
-251   NTC-7 1.043107e-01
-252   NTC-7 1.656221e-01
-253   NTC-7 2.291765e-01
-254   NTC-7 1.000000e+00
-255   NTC-7 3.717544e-01
-256   NTC-7 2.069395e-01
-257   NTC-7 4.057043e-01
-258   NTC-7 1.000000e+00
-259   NTC-7 7.900404e-01
-260   NTC-7 1.921419e-01
-261   NTC-7 1.000000e+00
-262   NTC-7 1.028351e-01
-263   NTC-7 3.168728e-01
-264   NTC-7 1.271153e-01
-265   NTC-7 1.257463e-01
-266   NTC-7 6.002036e-02
-267   NTC-7 1.000000e+00
-268   NTC-7 1.000000e+00
-269   NTC-7 6.141743e-01
-270   NTC-7 1.542860e-01
-271   NTC-7 3.620686e-01
-272   NTC-7 4.964990e-01
-273   NTC-7 4.004470e-01
-274   NTC-7 1.407777e-01
-275   NTC-7 6.633004e-02
-276   NTC-7 2.711513e-01
-277   NTC-7 1.490964e-01
-278   NTC-7 1.000000e+00
-279   NTC-7 8.912174e-02
-280   NTC-7 6.446533e-01
-281   NTC-7 6.802052e-02
-282   NTC-7 1.593486e-01
-283   NTC-7 1.000000e+00
-284   NTC-7 1.000000e+00
-285   NTC-7 1.852937e-01
-286   NTC-7 1.000000e+00
-287   NTC-7 5.288094e-01
-288   NTC-7 1.000000e+00
-289   NTC-7 3.383969e-01
-290   NTC-7 9.087853e-02
-291   NTC-7 4.736012e-01
-292   NTC-7 1.950673e-02
-293   NTC-7 1.000000e+00
-294   NTC-7 5.615134e-01
-295   NTC-7 8.453662e-01
-296   NTC-7 6.300224e-01
-297   NTC-7 7.771920e-01
-298   NTC-7 6.984397e-01
-299   NTC-7 9.233492e-01
-300   NTC-7 7.569106e-01
-301   NTC-8 1.000000e+00
-302   NTC-8 1.000000e+00
-303   NTC-8 4.100813e-02
-304   NTC-8 1.000000e+00
-305   NTC-8 2.771426e-01
-306   NTC-8 1.417667e-01
-307   NTC-8 4.717767e-02
-308   NTC-8 1.567469e-01
-309   NTC-8 2.367071e-01
-310   NTC-8 1.000000e+00
-311   NTC-8 2.542666e-01
-312   NTC-8 1.000000e+00
-313   NTC-8 4.699792e-01
-314   NTC-8 2.366804e-02
-315   NTC-8 7.320330e-01
-316   NTC-8 1.158494e-01
-317   NTC-8 1.000000e+00
-318   NTC-8 6.336512e-01
-319   NTC-8 2.337830e-01
-320   NTC-8 5.321802e-01
-321   NTC-8 1.000000e+00
-322   NTC-8 1.922336e-01
-323   NTC-8 8.406049e-01
-324   NTC-8 3.263956e-02
-325   NTC-8 7.278668e-01
-326   NTC-8 1.099563e-02
-327   NTC-8 3.082975e-01
-328   NTC-8 8.323951e-01
-329   NTC-8 3.559900e-01
-330   NTC-8 7.499039e-01
-331   NTC-8 1.000000e+00
-332   NTC-8 1.000000e+00
-333   NTC-8 1.026686e-01
-334   NTC-8 8.736215e-01
-335   NTC-8 1.754001e-01
-336   NTC-8 1.870897e-01
-337   NTC-8 5.943247e-01
-338   NTC-8 1.092310e-02
-339   NTC-8 1.653652e-01
-340   NTC-8 7.566981e-01
-341   NTC-8 7.068149e-01
-342   NTC-8 1.000000e+00
-343   NTC-8 8.712671e-01
-344   NTC-8 3.081914e-02
-345   NTC-8 6.674601e-01
-346   NTC-8 4.545963e-01
-347   NTC-8 8.816774e-02
-348   NTC-8 8.366235e-01
-349   NTC-8 5.118804e-01
-350   NTC-8 1.164625e-01
-351   NTC-9 1.000000e+00
-352   NTC-9 5.460383e-01
-353   NTC-9 1.000000e+00
-354   NTC-9 2.176323e-01
-355   NTC-9 6.553965e-01
-356   NTC-9 5.501519e-01
-357   NTC-9 1.960627e-01
-358   NTC-9 5.119865e-01
-359   NTC-9 2.424396e-01
-360   NTC-9 1.000000e+00
-361   NTC-9 8.076968e-01
-362   NTC-9 1.000000e+00
-363   NTC-9 4.726881e-02
-364   NTC-9 5.835354e-02
-365   NTC-9 6.491898e-01
-366   NTC-9 1.853138e-01
-367   NTC-9 1.000000e+00
-368   NTC-9 7.509799e-01
-369   NTC-9 5.055154e-01
-370   NTC-9 8.261586e-01
-371   NTC-9 2.618693e-01
-372   NTC-9 1.000000e+00
-373   NTC-9 1.000000e+00
-374   NTC-9 1.003074e-01
-375   NTC-9 1.014989e-01
-376   NTC-9 4.094216e-02
-377   NTC-9 1.000000e+00
-378   NTC-9 4.676909e-02
-379   NTC-9 7.181140e-01
-380   NTC-9 3.816610e-01
-381   NTC-9 4.809323e-01
-382   NTC-9 1.000000e+00
-383   NTC-9 4.994510e-02
-384   NTC-9 1.000000e+00
-385   NTC-9 4.806544e-01
-386   NTC-9 1.000000e+00
-387   NTC-9 6.804671e-02
-388   NTC-9 6.494511e-01
-389   NTC-9 7.229868e-01
-390   NTC-9 2.983311e-01
-391   NTC-9 3.146180e-01
-392   NTC-9 7.375161e-02
-393   NTC-9 5.366715e-01
-394   NTC-9 5.754388e-03
-395   NTC-9 7.282026e-01
-396   NTC-9 1.111992e-01
-397   NTC-9 7.667970e-01
-398   NTC-9 1.779123e-02
-399   NTC-9 1.865579e-02
-400   NTC-9 1.618814e-02
-401  NTC-10 1.194824e-01
-402  NTC-10 6.093671e-01
-403  NTC-10 1.000000e+00
-404  NTC-10 1.000000e+00
-405  NTC-10 1.000000e+00
-406  NTC-10 3.340096e-02
-407  NTC-10 1.000000e+00
-408  NTC-10 8.016634e-02
-409  NTC-10 1.896422e-01
-410  NTC-10 1.029142e-01
-411  NTC-10 9.706567e-02
-412  NTC-10 1.736912e-01
-413  NTC-10 8.457634e-02
-414  NTC-10 1.644041e-01
-415  NTC-10 1.703135e-01
-416  NTC-10 1.230886e-01
-417  NTC-10 1.000000e+00
-418  NTC-10 1.000000e+00
-419  NTC-10 1.000000e+00
-420  NTC-10 1.000000e+00
-421  NTC-10 1.358809e-01
-422  NTC-10 1.052175e-01
-423  NTC-10 8.182096e-01
-424  NTC-10 9.053225e-02
-425  NTC-10 1.000000e+00
-426  NTC-10 1.000000e+00
-427  NTC-10 1.000000e+00
-428  NTC-10 1.000000e+00
-429  NTC-10 7.220488e-02
-430  NTC-10 5.071840e-01
-431  NTC-10 5.519474e-01
-432  NTC-10 9.739125e-02
-433  NTC-10 2.591167e-01
-434  NTC-10 1.626005e-01
-435  NTC-10 1.000000e+00
-436  NTC-10 1.054693e-01
-437  NTC-10 3.612384e-01
-438  NTC-10 3.776057e-02
-439  NTC-10 2.545797e-02
-440  NTC-10 3.834501e-02
-441  NTC-10 1.329253e-02
-442  NTC-10 1.238766e-01
-443  NTC-10 1.000000e+00
-444  NTC-10 8.448716e-01
-445  NTC-10 3.275317e-03
-446  NTC-10 9.354201e-02
-447  NTC-10 2.517532e-01
-448  NTC-10 2.894677e-01
-449  NTC-10 5.812973e-03
-450  NTC-10 6.027942e-01
-451  NTC-11 1.000000e+00
-452  NTC-11 5.814896e-01
-453  NTC-11 1.000000e+00
-454  NTC-11 1.031946e-01
-455  NTC-11 1.000000e+00
-456  NTC-11 2.764734e-01
-457  NTC-11 1.000000e+00
-458  NTC-11 4.633256e-01
-459  NTC-11 1.000000e+00
-460  NTC-11 1.000000e+00
-461  NTC-11 2.841801e-02
-462  NTC-11 2.608109e-01
-463  NTC-11 1.745313e-01
-464  NTC-11 1.419239e-01
-465  NTC-11 1.000000e+00
-466  NTC-11 4.164271e-01
-467  NTC-11 1.862725e-01
-468  NTC-11 3.318153e-01
-469  NTC-11 3.125985e-01
-470  NTC-11 6.550046e-01
-471  NTC-11 1.000000e+00
-472  NTC-11 6.686621e-01
-473  NTC-11 1.000000e+00
-474  NTC-11 1.332191e-01
-475  NTC-11 7.186178e-01
-476  NTC-11 1.000000e+00
-477  NTC-11 7.756353e-02
-478  NTC-11 1.099840e-01
-479  NTC-11 1.000000e+00
-480  NTC-11 1.000000e+00
-481  NTC-11 6.314714e-01
-482  NTC-11 1.610089e-01
-483  NTC-11 6.820763e-01
-484  NTC-11 1.228352e-01
-485  NTC-11 1.000000e+00
-486  NTC-11 2.503166e-01
-487  NTC-11 1.000000e+00
-488  NTC-11 1.000000e+00
-489  NTC-11 4.477717e-02
-490  NTC-11 2.105732e-01
-491  NTC-11 5.314069e-01
-492  NTC-11 2.214633e-01
-493  NTC-11 1.000000e+00
-494  NTC-11 7.269704e-01
-495  NTC-11 8.372354e-01
-496  NTC-11 8.368811e-01
-497  NTC-11 6.841861e-01
-498  NTC-11 1.000000e+00
-499  NTC-11 1.564449e-01
-500  NTC-11 8.963191e-01</code></pre>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_our$p_value), title=&quot;Negative control our method&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-1">
-Past versions of unnamed-chunk-37-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-1.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_minp$p_value), title=&quot;Negative control minp&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-2">
-Past versions of unnamed-chunk-37-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-2.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-36-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_t$acat_pval), title=&quot;Negative control t-ACAT&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-3">
-Past versions of unnamed-chunk-37-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-3.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-36-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Negative control sceptre-ACAT&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-4">
-Past versions of unnamed-chunk-37-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-4.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-36-4.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
