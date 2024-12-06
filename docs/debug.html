@@ -580,16 +580,16 @@ output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930targetblank7fe73c2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930" target="_blank">7fe73c2</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree2b98c6c4cd346db6b8f6195f7fd3e850c4245c7etargetblank2b98c6ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/2b98c6c4cd346db6b8f6195f7fd3e850c4245c7e" target="_blank">2b98c6c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930targetblank7fe73c2a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree2b98c6c4cd346db6b8f6195f7fd3e850c4245c7etargetblank2b98c6ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/7fe73c2e3ff9a6e6d8e1a681d3e568da5af7c930" target="_blank">7fe73c2</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/2b98c6c4cd346db6b8f6195f7fd3e850c4245c7e" target="_blank">2b98c6c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -697,6 +697,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2b98c6c4cd346db6b8f6195f7fd3e850c4245c7e/analysis/debug.Rmd" target="_blank">2b98c6c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+add more comparison
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/409b5c37058b52050f8fe9b714881454be19a54f/docs/debug.html" target="_blank">409b5c3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -3153,46 +3187,51 @@ jliucx
 </div>
 <div id="comparison-of-discoveries-of-four-methods" class="section level1">
 <h1>Comparison of discoveries of four methods</h1>
-<pre class="r"><code>significant_level &lt;- 0.2
+<pre class="r"><code>library(eulerr)
+
+# Define significant levels
+significant_levels &lt;- c(0.01, 0.05, 0.1, 0.2, 0.25)
 
 
-significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[module_results_sceptre$bh_pval &lt; significant_level]
-significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[module_results_t$bh_pval &lt; significant_level]
-
-
-
-significant_pairs &lt;- minp_long %&gt;%
-  filter(bh_pval &lt; significant_level)
-
-significant_pairs &lt;- significant_pairs %&gt;%
-  mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
-
-significant_identifiers_minp&lt;- significant_pairs$identifier
-
-significant_pairs_ours &lt;- our_method_long %&gt;%
-  filter(bh_pval &lt; significant_level)
-
-significant_pairs_ours &lt;- significant_pairs_ours %&gt;%
-  mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
-
-significant_identifiers_ours &lt;- significant_pairs_ours$identifier
-
-library(eulerr)
-
-# Prepare the sets
-venn_data &lt;- list(
-  `Sceptre+ACAT` = significant_ids_gene_wise_p,
-  `t+ACAT` = significant_ids_gene_wise_p_t,
-  `minp method` = significant_identifiers_minp,
-  `Our method` = significant_identifiers_ours
-)
-
-# Generate the Euler diagram
-plot(euler(venn_data),
-     fills = list(fill = c(&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;,&quot;yellow&quot;), alpha = 0.5),
-     edges = TRUE,
-     quantities = TRUE, # Add set sizes
-     main  = paste(&quot;Significant Gene Modules Overlap at level&quot;, significant_level, &quot;(no approximation)&quot;) )</code></pre>
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval &lt; significant_level]
+  significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
+    module_results_t$bh_pval &lt; significant_level]
+  
+  significant_pairs &lt;- minp_long %&gt;%
+    filter(bh_pval &lt; significant_level) %&gt;%
+    mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
+  significant_identifiers_minp &lt;- significant_pairs$identifier
+  
+  significant_pairs_ours &lt;- our_method_long %&gt;%
+    filter(bh_pval &lt; significant_level) %&gt;%
+    mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
+  significant_identifiers_ours &lt;- significant_pairs_ours$identifier
+  
+  # Prepare the sets
+  venn_data &lt;- list(
+    `Sceptre+ACAT` = significant_ids_gene_wise_p,
+    `t+ACAT` = significant_ids_gene_wise_p_t,
+    `minp method` = significant_identifiers_minp,
+    `Our method` = significant_identifiers_ours
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot &lt;- plot(euler(venn_data),
+                     fills = list(fill = c(&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, &quot;yellow&quot;), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste(&quot;Significant Gene Modules Overlap at level&quot;, significant_level, &quot;(no approximation)&quot;)
+  )
+  
+  print(euler_plot)  # Display the plot in the R plotting window
+}</code></pre>
+<pre><code>Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
+a multiple of shorter object length
+Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
+a multiple of shorter object length</code></pre>
 <p><img src="figure/debug.Rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-1">
@@ -3231,9 +3270,9 @@ jliucx
 </table>
 </div>
 </div>
-</div>
-<div id="calibration-check" class="section level1">
-<h1>Calibration check</h1>
+<pre><code>Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
+a multiple of shorter object length</code></pre>
+<p><img src="figure/debug.Rmd/unnamed-chunk-34-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-34-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-34-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-34-5.png" width="672" style="display: block; margin: auto;" /> # Calibration check</p>
 <pre class="r"><code>gg_qqplot &lt;- function(ps, ci = 0.95, title = &quot;QQ Plot&quot;) {
   n &lt;- length(ps)
   df &lt;- data.frame(
@@ -3271,12 +3310,160 @@ ntc_sceptre &lt;- module_results_sceptre %&gt;%
   select(grna_id, acat_pval)</code></pre>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_our$p_value), title=&quot;Negative control our method&quot;)</code></pre>
 <p><img src="figure/debug.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-36-1">
+Past versions of unnamed-chunk-36-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-36-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-36-1.png" target="_blank">409b5c3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_minp$p_value), title=&quot;Negative control minp&quot;)</code></pre>
 <p><img src="figure/debug.Rmd/unnamed-chunk-36-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-36-2">
+Past versions of unnamed-chunk-36-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-36-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-36-2.png" target="_blank">409b5c3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_t$acat_pval), title=&quot;Negative control t-ACAT&quot;)</code></pre>
 <p><img src="figure/debug.Rmd/unnamed-chunk-36-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-36-3">
+Past versions of unnamed-chunk-36-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-36-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-36-3.png" target="_blank">409b5c3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Negative control sceptre-ACAT&quot;)</code></pre>
 <p><img src="figure/debug.Rmd/unnamed-chunk-36-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-36-4">
+Past versions of unnamed-chunk-36-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-36-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-36-4.png" target="_blank">409b5c3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
