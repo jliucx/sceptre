@@ -171,15 +171,27 @@ Besides using power sum to combine gene-wise test statistics, I also consider th
 
 1. Subset, (consider only genes within the module, and *such that the library size for each cell has changed) 
 2. Filtered (removing analyzing genes that have low expression among all cells)
-3. Ranked (ranking the gene-expression level)
-4. Filtered (removing cells that have high/low library size) (optional)
+3. Normalized (divide expression by the library size)
+4. Ranked (ranking the gene-expression level)
+5. Filtered (removing cells that have high/low library size) (optional)
 
 ## Validity check
+
+**Da**
 ```{r}
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/approximation/our_method.csv",nrows = 208)[189:198,]))),title= "Validity check, 2000 null statistics with normal approximation")
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation/our_method.csv",nrows = 208)[189:198,-1]))),title= "Validity check, 10000 null statistics with no approximation")
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation_20000/our_method.csv",nrows = 208)[189:198,]))),title= "Validity check, 20000 null statistics with no approximation")
+
+
 ```
+**I also tried other settings**
+```{r}
+gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_not_rank/our_method.csv")[23:32,])),title="10000 null statistics, not normalized not rank")
+gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_rank/our_method.csv")[23:32,])),title="10000 null statistics, not normalized but rank")
+```
+
+
 **All plots shows a relatively good validity.**
 
 ## Power check
@@ -191,6 +203,13 @@ gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation_20000
 ```
 **1. Skew normal approximation has the lowest power**
 **2. Power can be further increased if we include number of permutation**
+
+
+**I also tried other settings**
+```{r}
+gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_not_rank/our_method.csv")[-(23:32),])),title="10000 null statistics, not normalized not rank")
+gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_rank/our_method.csv")[-(23:32),])),title="10000 null statistics, not normalized but rank")
+```
 
 ## Plots comparing pval from no approximation and skew t approximation
 
