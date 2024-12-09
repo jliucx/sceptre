@@ -580,16 +580,16 @@ output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree5e19f6b702065a13eea2d69687ef23ecb885fbfdtargetblank5e19f6ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/5e19f6b702065a13eea2d69687ef23ecb885fbfd" target="_blank">5e19f6b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreeb4b437bae21bd5d08aa65d633294c9fa59e8f5c1targetblankb4b437ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/b4b437bae21bd5d08aa65d633294c9fa59e8f5c1" target="_blank">b4b437b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree5e19f6b702065a13eea2d69687ef23ecb885fbfdtargetblank5e19f6ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreeb4b437bae21bd5d08aa65d633294c9fa59e8f5c1targetblankb4b437ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/5e19f6b702065a13eea2d69687ef23ecb885fbfd" target="_blank">5e19f6b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/b4b437bae21bd5d08aa65d633294c9fa59e8f5c1" target="_blank">b4b437b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -698,6 +698,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/b4b437bae21bd5d08aa65d633294c9fa59e8f5c1/analysis/debug.Rmd" target="_blank">b4b437b</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-09
+</td>
+<td>
+add more details
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/4358dc43d914f8852e252dacf6a5554ad44ae43e/docs/debug.html" target="_blank">4358dc4</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2240,6 +2274,8 @@ SNP-1_2           0.420
 SNP-2_1           0.584
 SNP-2_2           0.576
 SNP-3_1           0.916</code></pre>
+<div id="scatter-plots-to-compare-gene-wise-p-values-of-sceptre-glm-and-our-t-test" class="section level2" number="3.1">
+<h2 number="3.1"><span class="header-section-number">3.1</span> Scatter plots to compare gene wise P values of sceptre glm and our t test</h2>
 <pre class="r"><code># Define indices
 indices &lt;- c(10, 20, 30, 120, 124)
 
@@ -2702,8 +2738,9 @@ jliucx
 </table>
 </div>
 </div>
-<div id="convert-sceptre-p-value-to-test-statistics" class="section level2" number="3.1">
-<h2 number="3.1"><span class="header-section-number">3.1</span> Convert sceptre p-value to test statistics</h2>
+</div>
+<div id="convert-sceptre-p-value-to-test-statistics" class="section level2" number="3.2">
+<h2 number="3.2"><span class="header-section-number">3.2</span> Convert sceptre p-value to test statistics</h2>
 <p><strong>This is to see whether glm and our test gives a similar test statistics. Test statistics from glm is converted by quantile transformation</strong> <img src="images/test_statistics_SNP_62-2.png" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-test_statistics_SNP_62-2">
@@ -2780,9 +2817,15 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>The result is reasonable</strong> # Compare gene module discoveries</p>
-<div id="acat-of-gene-wise-p-from-our-method-i.e.-t-test" class="section level3" number="3.1.1">
-<h3 number="3.1.1"><span class="header-section-number">3.1.1</span> ACAT of gene wise p from our method (i.e. t test)</h3>
+<p><strong>The result is reasonable</strong></p>
+</div>
+</div>
+<div id="compare-gene-module-discoveries" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> Compare gene module discoveries</h1>
+<div id="using-acat-to-combine-gene-wise-p-values" class="section level2" number="4.1">
+<h2 number="4.1"><span class="header-section-number">4.1</span> Using ACAT to combine gene-wise p values</h2>
+<div id="acat-of-gene-wise-p-from-our-method-i.e.-t-test" class="section level3" number="4.1.1">
+<h3 number="4.1.1"><span class="header-section-number">4.1.1</span> ACAT of gene wise p from our method (i.e. t test)</h3>
 <pre class="r"><code>library(ACAT)
 module_results &lt;- list()
 
@@ -2850,8 +2893,8 @@ module_results_t$identifier &lt;- paste(module_results_t$grna_id, module_results
 5 SNP-1_1_HALLMARK_ESTROGEN_RESPONSE_EARLY
 6  SNP-1_1_HALLMARK_ESTROGEN_RESPONSE_LATE</code></pre>
 </div>
-<div id="acat-of-gene-wise-p-from-sceptre-glm" class="section level3" number="3.1.2">
-<h3 number="3.1.2"><span class="header-section-number">3.1.2</span> ACAT of gene wise p from sceptre glm</h3>
+<div id="acat-of-gene-wise-p-from-sceptre-glm" class="section level3" number="4.1.2">
+<h3 number="4.1.2"><span class="header-section-number">4.1.2</span> ACAT of gene wise p from sceptre glm</h3>
 <pre class="r"><code>module_results &lt;- list()
 
 # Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
@@ -2918,8 +2961,8 @@ module_results_sceptre$identifier &lt;- paste(module_results_sceptre$grna_id, mo
 6  SNP-1_1_HALLMARK_ESTROGEN_RESPONSE_LATE</code></pre>
 </div>
 </div>
-<div id="comparison-of-module-p-values-t-acat-vs-sceptre-acat" class="section level2" number="3.2">
-<h2 number="3.2"><span class="header-section-number">3.2</span> Comparison of Module p values (t-ACAT vs Sceptre-ACAT)</h2>
+<div id="comparison-of-module-p-values-t-acat-vs-sceptre-acat" class="section level2" number="4.2">
+<h2 number="4.2"><span class="header-section-number">4.2</span> Comparison of Module p values (t-ACAT vs Sceptre-ACAT)</h2>
 <pre class="r"><code># Define indices
  indices &lt;- c(11, 21, 30, 120)
 
@@ -3353,8 +3396,11 @@ jliucx
 </div>
 </div>
 <p><strong>The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session</strong></p>
-<div id="minp" class="section level3" number="3.2.1">
-<h3 number="3.2.1"><span class="header-section-number">3.2.1</span> minp</h3>
+</div>
+<div id="gene-module-p-value-by-internal-combination" class="section level2" number="4.3">
+<h2 number="4.3"><span class="header-section-number">4.3</span> Gene module p value by internal combination</h2>
+<div id="minp" class="section level3" number="4.3.1">
+<h3 number="4.3.1"><span class="header-section-number">4.3.1</span> minp</h3>
 <p>This gene-module p value is obtained by : 1. Obtain gene-wise test statistics and their corresponding p value 2. Take minimum p value within a gene module, as the test statistics 3. Use null distribution to find final p value</p>
 <pre class="r"><code>library(tibble)
 
@@ -3382,8 +3428,8 @@ head(minp_long)</code></pre>
 5 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_EARLY  0.162    0.515
 6 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_LATE   0.540    0.771</code></pre>
 </div>
-<div id="our-method" class="section level3" number="3.2.2">
-<h3 number="3.2.2"><span class="header-section-number">3.2.2</span> our method</h3>
+<div id="our-method" class="section level3" number="4.3.2">
+<h3 number="4.3.2"><span class="header-section-number">4.3.2</span> our method</h3>
 <pre class="r"><code>our_method &lt;-  read.csv(&quot;output/startover/test/our_method.csv&quot;,nrows = 208)
 colnames(our_method)[1] &lt;- &quot;grna_id&quot;
 our_method_long &lt;- our_method %&gt;%
@@ -3408,8 +3454,8 @@ head(our_method_long)</code></pre>
 6 SNP-1_1 HALLMARK_ESTROGEN_RESPONSE_LATE   0.742    0.810</code></pre>
 </div>
 </div>
-<div id="comparison-of-module-p-values-minp-vs-our-method" class="section level2" number="3.3">
-<h2 number="3.3"><span class="header-section-number">3.3</span> Comparison of Module p values (minp vs our method)</h2>
+<div id="comparison-of-module-p-values-minp-vs-our-method" class="section level2" number="4.4">
+<h2 number="4.4"><span class="header-section-number">4.4</span> Comparison of Module p values (minp vs our method)</h2>
 <p><strong>We want to investigate in which case minp has a significance difference from us</strong></p>
 <pre class="r"><code>indices &lt;- c(11, 20, 30, 120)
 
@@ -3798,8 +3844,8 @@ jliucx
 </div>
 </div>
 </div>
-<div id="comparison-of-discoveries-of-four-methods" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> Comparison of discoveries of four methods</h1>
+<div id="comparison-of-discoveries-of-four-methods" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Comparison of discoveries of four methods</h1>
 <pre class="r"><code>library(eulerr)
 
 # Define significant levels
@@ -4397,8 +4443,8 @@ jliucx
 </table>
 </div>
 </div>
-<div id="validity-check-1" class="section level2" number="4.1">
-<h2 number="4.1"><span class="header-section-number">4.1</span> Validity check</h2>
+<div id="validity-check-1" class="section level2" number="5.1">
+<h2 number="5.1"><span class="header-section-number">5.1</span> Validity check</h2>
 <pre class="r"><code>ntc_our &lt;- our_method_long %&gt;%
   filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
  select(grna_id, p_value)
