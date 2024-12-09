@@ -2,7 +2,9 @@
 title: "Debug"
 author: "jliucx"
 date: "2024-12-5"
-output: workflowr::wflow_html
+output: 
+  workflowr::wflow_html:
+    number_sections: true
 editor_options:
   chunk_output_type: inline
 ---
@@ -15,22 +17,24 @@ directories <- "data/STINGseq-v1_GDO"
 grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
 
 
-gg_qqplot <- function(ps, ci = 0.95) {
-  n  <- length(ps)
+gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
+  n <- length(ps)
   df <- data.frame(
     observed = -log10(sort(ps)),
     expected = -log10(ppoints(n)),
-    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
-    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+    clower = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
   )
+  
   log10Pe <- expression(paste("Expected -log"[10], plain(P)))
   log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  
   ggplot(df) +
-    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
-                alpha = 0.1) +
-    geom_point(aes(expected, observed), size = 1.5, color="red") +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color = "red") +
     geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
-    xlab(log10Pe) + ylab(log10Po)
+    xlab(log10Pe) + ylab(log10Po) +
+    ggtitle(title)  # Add title
 }
 p_t_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
 p_t_2000_skn_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
@@ -49,9 +53,10 @@ p_new_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting
 p_test <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[1:22,])
 p_test_2 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/test_rank_wilcox.csv", header = TRUE, row.names = 1))[1:22,])
 
+
 ```
 
-## Runtime and peakRAM comparison
+ Runtime and peakRAM comparison
 
 ```{r,echo=F}
 table_data <- data.frame(
@@ -67,43 +72,59 @@ table_data <- data.frame(
 print(table_data)
 ```
 
-# Calibration check (t-test)
+# Model comparison during method development
 
-**Calibration of NT grna pval estimated from 10000 null statistics (No approximation)**
+We tried different settings:
+1. Data containing whole gene or subset data containing gene of interest
+2. Whether or not to normalize the gene expression using cell library size
+3. Whether or not to rank the gene expression
+4. Whether or not to use approximation to obtain p value
+
+
+Data setting: The whole data containing all the gene, the propensity in estimated using logistics regression considering the cell specific information. (library size, etc.)
+
+## Our old model：use power sum to combine gene-wise test statistics
+
+### Validity check (P values of perturbation using Non-Targeting guide RNA)
+
+
+
+**QQ Plot of NT grna pval estimated from 10000 null statistics (No approximation)**
 
 ```{r, echo=FALSE}
 gg_qqplot(p_t_10000_negative)
 ```
 
-**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation**
 
 ```{r,echo=F}
 gg_qqplot(p_t_2000_skn_negative)
 ```
 
-**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_rank_normalize_2000_negative)
 ```
 
-**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_log_2000_negative)
 ```
 
-**Calibration of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_rank_2000_negative)
 ```
+**QQ Plot of NT grna pval estimated from 2000 null statistics using Wilcox test**
 
 ```{r}
 gg_qqplot(p_wilcox_p_2000_negative)
 ```
 
-# Power check (t-test)
+### Power check (using known cis-effect grna only)
 
 **Power of NT grna pval estimated from 10000 null statistics with no approximation**
 
@@ -144,11 +165,39 @@ gg_qqplot(p_t_rank_2000_positive)
 ```{r}
 gg_qqplot(p_wilcox_p_2000_positive)
 ```
+# Our new model
 
-## Plots comparing pval from no approximation and skew normal approximation
+Besides using power sum to combine gene-wise test statistics, I also consider the maximum test statistics as one of the combinations. The dataset we are using now is a
+
+1. Subset, (consider only genes within the module, and *such that the library size for each cell has changed) 
+2. Filtered (removing analyzing genes that have low expression among all cells)
+3. Ranked (ranking the gene-expression level)
+4. Filtered (removing cells that have high/low library size) (optional)
+
+## Validity check
+```{r}
+gg_qqplot(as.vector((as.matrix(read.csv("output/startover/approximation/our_method.csv",nrows = 208)[189:198,]))),title= "Validity check, 2000 null statistics with normal approximation")
+gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation/our_method.csv",nrows = 208)[189:198,-1]))),title= "Validity check, 10000 null statistics with no approximation")
+gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation_20000/our_method.csv",nrows = 208)[189:198,]))),title= "Validity check, 20000 null statistics with no approximation")
+```
+**All plots shows a relatively good validity.**
+
+## Power check
+**This includes perturbations on known trans-effective (rs12784232, rs35531439, rs524137, rs73660574, rs79755767) and cis-effective SNPs.**
+```{r}
+gg_qqplot(as.vector((as.matrix(read.csv("output/startover/approximation/our_method.csv",nrows = 208)[c(87,88,117,118,125,126,151,152,165,166,177:188),]))),title= "Power check, 2000 null statistics with skew normal approximation")
+gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation/our_method.csv",nrows = 208)[c(87,88,117,118,125,126,151,152,165,166,177:188),-1]))),title= "Power check, 10000 null statistics with no approximation")
+gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation_20000/our_method.csv",nrows = 208)[c(87,88,117,118,125,126,151,152,165,166,177:188),]))),title= "Power check, 20000 null statistics with no approximation")
+```
+**1. Skew normal approximation has the lowest power**
+**2. Power can be further increased if we include number of permutation**
+
+## Plots comparing pval from no approximation and skew t approximation
+
+Because the skew t approximation is very slow. Here the plot only contain positive control & negative control grnas.
+* Notice: I use directly p values to fit skew t curve.
 
 ```{r}
-# Binding the vectors
 p_10000 <- c(p_t_10000_negative, p_t_10000_positive)
 p_skn_2000 <- c(p_t_2000_skn_negative, p_t_2000_skn_positive)
 
@@ -163,53 +212,89 @@ plot(p_10000, p_skn_2000,
 )
 
 ```
+## Plots comparing pval from no approximation and skew normal approximation after quantile transformation
 
-## Including SNPs that have trans effect as positive control
-
-**Original positive control (12\*50 pvals)**
-
-```{r}
-p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))[11:22,])
-gg_qqplot(p_t_10000_positive_include_trans)
-```
-
-**Positive control of SNPs that have trans effect** **only (10\*50 pvals)**
+Fitting skew normal is fast. Here the plot contains the p values from all perturbations.
+Notice, before fitting skew normal, I applied quantile transform of p values, such that $\Phi^{-1}(p)\in R$, and then fit skew normal.
 
 ```{r}
-p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))[1:10,])
-gg_qqplot(p_t_10000_positive_include_trans)
-
+v1<-as.vector(as.matrix( read.csv("output/startover/approximation/our_method.csv",nrows = 208)))
+v2<-as.vector(as.matrix( read.csv("output/startover/no_approximation/our_method.csv"))[,-1])
+plot(v1, v2, 
+     xlab = "p values of 10000 null statistics with no approximation", 
+     ylab = "p values of 2000 null statistics with skewed normal", 
+     main = "Skew normal approximation (2000 null statistics)",
+     pch = 16,  # pch = 16 gives solid circles
+     cex = 0.6,  # cex < 1 reduces the size of the points,
+     col = "red"
+)
 ```
 
-**Positive control after including SNPs that have trans effect (22\*50 pvals)**
+## Plots comparing pval from 10000 null statistics and 20000 null statistics
 
 ```{r}
-p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1)))
-gg_qqplot(p_t_10000_positive_include_trans)
+plot(as.vector((as.matrix(read.csv("output/startover/test/our_method.csv",nrows = 208)[,-1]))), 
+     as.vector((as.matrix(read.csv("output/startover/no_approximation_20000/our_method.csv",nrows = 208)))), 
+     xlab = "p values of 10000 null statistics with no approximation", 
+     ylab = "p values of 20000 null statistics ", 
+     main = "Pval from 10000 null statistics and 20000 null statistics",
+     pch = 16,  # pch = 16 gives solid circles
+     cex = 0.6,  # cex < 1 reduces the size of the points,
+     col = "red"
+)
 ```
 
-## Calibration check (wilcoxon-test)
+## Conditional resampling
+```{r,eval=F}
+estimate_propensity <- function (grna_assignment_matrix, covariate) {
 
-I use wilcoxon p-value as statistics, and find the left-tail probability to calculate p-value.
+  estimated_prop <- matrix(NA, nrow = nrow(grna_assignment_matrix), ncol = ncol(grna_assignment_matrix))
 
-```{r}
-p_wilcox_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[23:34,])
-gg_qqplot(p_wilcox_negative)
+  # Loop through each row of the grna_assignment_matrix
+  for (i in 1:nrow(grna_assignment_matrix)) {
+
+    # Extract the current row from the grna_assignment_matrix
+    grna_row <- as.numeric(grna_assignment_matrix[i, ])
+
+    # Fit logistic regression model using covariates and the current row
+    glm_fit <- glm(grna_row ~ ., family = binomial(link = "logit"), data = covariate)
+
+    # Predict the fitted means (estimated probabilities) for this row
+    estimated_prop[i, ] <- predict(glm_fit, type = "response")
+  }
+  return(estimated_prop)
+}
+
+resample_and_combine<- function(grna_assignment_matrix, n_permute) {
+  propensity_matrix <- estimate_propensity(grna_assignment_matrix , covariate)
+
+  propensity <- do.call(rbind, replicate(n_permute, propensity_matrix, simplify = FALSE))
+
+
+  resampled_mat <- matrix(rbinom(n = length(propensity),
+                                 size = 1,
+                                 prob = as.vector(propensity)),
+                          nrow = nrow(propensity),
+                          ncol = ncol(propensity))
+
+  rownames(resampled_mat) <- rep(rownames(grna_assignment_matrix),n_permute)
+  combined_mat <- rbind(grna_assignment_matrix, resampled_mat)
+
+  return(combined_mat)
+}
 ```
 
-## Power check (wilcoxon-test)
-
-```{r}
-p_wilcox_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv", header = TRUE, row.names = 1))[1:22,])
-gg_qqplot(p_wilcox_positive)
+```{r,echo=F}
+knitr::include_graphics("images/propensity_histogram.png", error = FALSE)
 ```
+
 # Test on gene p value
 
 ```{r}
 library(tidyr)
 gene_modules <- readRDS("data/gene_modules_id.rds")
 
-gene_wise_p <- read_csv("output/startover/test/gene_wise_p.csv")
+gene_wise_p <- read.csv("output/startover/test/gene_wise_p.csv")
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")[,c(1,2,7)],
                  readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")[,c(1,2,7)])
 
@@ -218,13 +303,14 @@ sceptre <- sceptre[!is.na(sceptre$p_value), ]
 sceptre_wide <- sceptre %>%
   pivot_wider(names_from = response_id, values_from = p_value) %>%
   as.data.frame()
-
+```
+```{r}
 # Set the row names to be the grna_id and remove the grna_id column
 rownames(sceptre_wide) <- sceptre_wide$grna_id
 sceptre_wide <- sceptre_wide[, -1]
 
 # Display the reformatted data frame
-rownames(gene_wise_p) <- gene_wise_p$X1
+rownames(gene_wise_p) <- gene_wise_p$X
 
 # Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
 sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
@@ -233,6 +319,10 @@ sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% ro
 sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
 
 ```
+
+
+
+
 ```{r}
 gene_wise_p[1:5,1:5]
 sceptre_wide[1:5,1:5]
@@ -284,19 +374,19 @@ for (index in indices) {
 }
 
 ```
-
-
-
-
+**When calculating gene wise P values, we take absolute value of the test statistics and then take right-tail probability, however, the null distribution of test statistics is not symmetric around 0. It is right skewed and most of the test statistics are positive. Hence it lose power to detect negative statistics when taking absolute values**
+```{r,echo=F}
+knitr::include_graphics("images/test_statistics_histogram.png", error = FALSE)
+```
 
 ## Convert sceptre p-value to test statistics
 
-
+**This is to see whether glm and our test gives a similar test statistics. Test statistics from glm is converted by quantile transformation** 
 ```{r,echo=F}
 knitr::include_graphics("images/test_statistics_SNP_62-2.png", error = FALSE)
 knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
 ```
-
+**The result is reasonable**
 # Compare gene module discoveries
 
 ### ACAT of gene wise p from our method (i.e. t test)
@@ -417,7 +507,8 @@ head(module_results_sceptre)
 
 ```{r}
 # Define indices
-indices <- c(10, 20, 30, 120, 124)
+ indices <- c(11, 21, 30, 120)
+
 
 # Loop through indices
 for (k in indices) {
@@ -455,9 +546,14 @@ for (k in indices) {
   # Pause before moving to the next index
   # readline(prompt = "Press [Enter] to move to the next index...")
 }
-
 ```
+**The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session**
+
 ### minp
+This gene-module p value is obtained by :
+1. Obtain gene-wise test statistics and their corresponding p value
+2. Take minimum p value within a gene module, as the test statistics
+3. Use null distribution to find final p value
 ```{r}
 library(tibble)
 
@@ -495,8 +591,9 @@ head(our_method_long)
 
 ```
 ## Comparison of Module p values (minp vs our method)
+**We want to investigate in which case minp has a significance difference from us**
 ```{r}
-indices <- c(10, 20, 30, 120, 124)
+indices <- c(11, 20, 30, 120)
 
 # Loop through indices
 for (k in indices) {
@@ -573,34 +670,164 @@ for (significant_level in significant_levels) {
   euler_plot <- plot(euler(venn_data),
                      fills = list(fill = c("red", "blue", "green", "yellow"), alpha = 0.5),
                      edges = TRUE, quantities = TRUE,
-                     main = paste("Significant Gene Modules Overlap at level", significant_level, "(no approximation)")
+                     main = paste("Significant Gene Modules Overlap at level", significant_level, "(10000 null)")
   )
   
   print(euler_plot)  # Display the plot in the R plotting window
 }
 
 ```
-# Calibration check
+
+
+```{r,echo=F}
+gene_modules <- readRDS("data/gene_modules_id.rds")
+
+gene_wise_p  <- read.csv("output/startover/no_approximation_20000/gene_wise_p.csv", nrows = 208)
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-15
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+# Display the reformatted data frame
+# rownames(gene_wise_p) <- gene_wise_p$X1
+
+# Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
+sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+# Reorder columns of sceptre_wide to match gene_wise_p
+sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
+library(ACAT)
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id <- rownames(gene_wise_p)[i]
+  p_values_row <- gene_wise_p[i,]  # Exclude grna_id column
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        acat_pval <- ACAT(module_p_values)
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t <- do.call(rbind, module_results)
+
+module_results_t$bh_pval <- p.adjust(module_results_t$acat_pval, method = "BH")
+module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$module, sep = "_")
+minp <- read.csv("output/startover/no_approximation_20000/minp.csv")
+
+minp_long <- minp%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+minp_long <- minp_long %>% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+minp_long <- minp_long %>%
+  mutate(bh_pval = p.adjust(p_value, method = "BH"))
+
+our_method <-  read.csv("output/startover/no_approximation_20000/our_method.csv")
+our_method_long <- our_method %>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values (if any)
+our_method_long <- our_method_long %>% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+our_method_long <- our_method_long %>%
+  mutate(bh_pval = p.adjust(p_value, method = "BH"))
+
+```
+
 ```{r}
-gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
-  n <- length(ps)
-  df <- data.frame(
-    observed = -log10(sort(ps)),
-    expected = -log10(ppoints(n)),
-    clower = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
-    cupper = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+significant_levels <- c(0.01, 0.05, 0.1, 0.15, 0.2, 0.25)
+
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < significant_level]
+  significant_ids_gene_wise_p_t <- module_results_t$identifier[
+    module_results_t$bh_pval < significant_level]
+  
+  significant_pairs <- minp_long %>%
+    filter(bh_pval < significant_level) %>%
+    mutate(identifier = paste(grna_id, module, sep = "_"))
+  significant_identifiers_minp <- significant_pairs$identifier
+  
+  significant_pairs_ours <- our_method_long %>%
+    filter(bh_pval < significant_level) %>%
+    mutate(identifier = paste(grna_id, module, sep = "_"))
+  significant_identifiers_ours <- significant_pairs_ours$identifier
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+ACAT` = significant_ids_gene_wise_p,
+    `t+ACAT` = significant_ids_gene_wise_p_t,
+    `minp method` = significant_identifiers_minp,
+    `Our method` = significant_identifiers_ours
   )
   
-  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
-  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  # Generate the Euler diagram and display it
+  euler_plot <- plot(euler(venn_data),
+                     fills = list(fill = c("red", "blue", "green", "yellow"), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste("Significant Gene Modules Overlap at level", significant_level, "(20000 null)")
+  )
   
-  ggplot(df) +
-    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
-    geom_point(aes(expected, observed), size = 1.5, color = "red") +
-    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
-    xlab(log10Pe) + ylab(log10Po) +
-    ggtitle(title)  # Add title
+  print(euler_plot)  # Display the plot in the R plotting window
 }
+
+```
+
+
+# Calibration check
+```{r}
+
 
 ntc_our <- our_method_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
