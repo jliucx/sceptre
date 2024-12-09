@@ -508,53 +508,10 @@ module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, modul
 ```{r}
 head(module_results_sceptre)
 ```
-## Comparison of Module p values (t-ACAT vs Sceptre-ACAT)
 
-```{r}
-# Define indices
- indices <- c(11, 21, 30, 120)
-
-
-# Loop through indices
-for (k in indices) {
-  # Scatter Plot
-  plot(
-    module_results_t$acat_pval[(50 * k + 1):(50 * k + 50)],
-    module_results_sceptre$acat_pval[(50 * k + 1):(50 * k + 50)],
-    xlab = "T-ACAT P-Value",
-    ylab = "Sceptre ACAT P-Value",
-    main = paste0("Scatter Plot for Module P-Values of ", k, "th perturbation"),
-    pch = 16,  # Point style
-    col = "blue",  # Point color
-    cex = 0.7,  # Point size
-        xlim = c(0,1),
-    ylim = c(0,1)
-
-  )
-  
-  # Pause to allow the user to view the scatter plot
-  # readline(prompt = "Press [Enter] to view the QQ plot...")
-
-  # QQ Plot
-  qqplot(
-    module_results_t$acat_pval[(50 * k + 1):(50 * k + 50)],
-    module_results_sceptre$acat_pval[(50 * k + 1):(50 * k + 50)],
-    xlab = "T-ACAT P-Value",
-    ylab = "Sceptre ACAT P-Value",
-    main = paste0("QQ Plot for Module P-Values of ", k, "th perturbation"),
-    pch = 16,
-    col = "blue",
-    cex = 0.7
-  )
-  abline(0, 1, col = "red", lwd = 2)  # Add reference line
-  
-  # Pause before moving to the next index
-  # readline(prompt = "Press [Enter] to move to the next index...")
-}
-```
 **The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session**
 
-## Gene module p value by internal combination
+## Gene module p value by Internal combination
 
 ### minp
 This gene-module p value is obtained by :
