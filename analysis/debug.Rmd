@@ -327,6 +327,8 @@ sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
 gene_wise_p[1:5,1:5]
 sceptre_wide[1:5,1:5]
 ```
+
+## Scatter plots to compare gene wise P values of sceptre glm and our t test
 ```{r}
 # Define indices
 indices <- c(10, 20, 30, 120, 124)
@@ -387,7 +389,10 @@ knitr::include_graphics("images/test_statistics_SNP_62-2.png", error = FALSE)
 knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
 ```
 **The result is reasonable**
+
 # Compare gene module discoveries
+
+## Using ACAT to combine gene-wise p values
 
 ### ACAT of gene wise p from our method (i.e. t test)
 ```{r}
@@ -548,6 +553,8 @@ for (k in indices) {
 }
 ```
 **The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session**
+
+## Gene module p value by internal combination
 
 ### minp
 This gene-module p value is obtained by :
