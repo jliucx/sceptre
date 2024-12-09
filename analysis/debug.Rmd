@@ -72,7 +72,7 @@ table_data <- data.frame(
 print(table_data)
 ```
 
-# Model comparison during method development
+# Model comparison during method development (The results here are outdated, not our current result)
 
 We tried different settings:
 1. Data containing whole gene or subset data containing gene of interest
@@ -825,7 +825,7 @@ for (significant_level in significant_levels) {
 ```
 
 
-# Calibration check
+## Validity check
 ```{r}
 
 
