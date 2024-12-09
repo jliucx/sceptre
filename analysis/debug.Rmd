@@ -7,6 +7,8 @@ output:
     number_sections: true
 editor_options:
   chunk_output_type: inline
+  markdown: 
+    wrap: 72
 ---
 
 ```{r}
@@ -56,7 +58,7 @@ p_test_2 <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_start
 
 ```
 
- Runtime and peakRAM comparison
+Runtime and peakRAM comparison
 
 ```{r,echo=F}
 table_data <- data.frame(
@@ -74,51 +76,56 @@ print(table_data)
 
 # Model comparison during method development (The results here are outdated, not our current result)
 
-We tried different settings:
-1. Data containing whole gene or subset data containing gene of interest
-2. Whether or not to normalize the gene expression using cell library size
-3. Whether or not to rank the gene expression
-4. Whether or not to use approximation to obtain p value
+We tried different settings: 1. Data containing whole gene or subset
+data containing gene of interest 2. Whether or not to normalize the gene
+expression using cell library size 3. Whether or not to rank the gene
+expression 4. Whether or not to use approximation to obtain p value
 
-
-Data setting: The whole data containing all the gene, the propensity in estimated using logistics regression considering the cell specific information. (library size, etc.)
+Data setting: The whole data containing all the gene, the propensity in
+estimated using logistics regression considering the cell specific
+information. (library size, etc.)
 
 ## Our old model：use power sum to combine gene-wise test statistics
 
 ### Validity check (P values of perturbation using Non-Targeting guide RNA)
 
-
-
-**QQ Plot of NT grna pval estimated from 10000 null statistics (No approximation)**
+**QQ Plot of NT grna pval estimated from 10000 null statistics (No
+approximation)**
 
 ```{r, echo=FALSE}
 gg_qqplot(p_t_10000_negative)
 ```
 
-**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew
+t approximation**
 
 ```{r,echo=F}
 gg_qqplot(p_t_2000_skn_negative)
 ```
 
-**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew
+t approximation（normalized rank-based t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_rank_normalize_2000_negative)
 ```
 
-**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew
+t approximation（log transformed t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_log_2000_negative)
 ```
 
-**QQ Plot of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
+**QQ Plot of NT grna pval estimated from 2000 null statistics with skew
+t approximation（rank-based t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_rank_2000_negative)
 ```
-**QQ Plot of NT grna pval estimated from 2000 null statistics using Wilcox test**
+
+**QQ Plot of NT grna pval estimated from 2000 null statistics using
+Wilcox test**
 
 ```{r}
 gg_qqplot(p_wilcox_p_2000_negative)
@@ -126,37 +133,43 @@ gg_qqplot(p_wilcox_p_2000_negative)
 
 ### Power check (using known cis-effect grna only)
 
-**Power of NT grna pval estimated from 10000 null statistics with no approximation**
+**Power of NT grna pval estimated from 10000 null statistics with no
+approximation**
 
 ```{r,echo=F}
 gg_qqplot(p_t_10000_positive)
 ```
 
-**Power of NT grna pval estimated from 2000 null statistics with skew t approximation**
+**Power of NT grna pval estimated from 2000 null statistics with skew t
+approximation**
 
 ```{r,echo=F}
 gg_qqplot(p_t_2000_skn_positive)
 ```
 
-**Power of NT grna pval estimated from 2000 null statistics with skew t approximation (include trans-effect SNPs)**
+**Power of NT grna pval estimated from 2000 null statistics with skew t
+approximation (include trans-effect SNPs)**
 
-```{r}
+```{r,echo=F}
 gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))))
 ```
 
-**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（normalized rank-based t test）**
+**Power of NT grna pval estimated from 2000 null statistics with skew t
+approximation（normalized rank-based t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_rank_normalize_2000_positive)
 ```
 
-**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（log transformed t test）**
+**Power of NT grna pval estimated from 2000 null statistics with skew t
+approximation（log transformed t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_log_2000_positive)
 ```
 
-**Power of NT grna pval estimated from 2000 null statistics with skew t approximation（rank-based t test）**
+**Power of NT grna pval estimated from 2000 null statistics with skew t
+approximation（rank-based t test）**
 
 ```{r,echo=F}
 gg_qqplot(p_t_rank_2000_positive)
@@ -165,19 +178,23 @@ gg_qqplot(p_t_rank_2000_positive)
 ```{r}
 gg_qqplot(p_wilcox_p_2000_positive)
 ```
+
 # Our new model
 
-Besides using power sum to combine gene-wise test statistics, I also consider the maximum test statistics as one of the combinations. The dataset we are using now is a
+Besides using power sum to combine gene-wise test statistics, I also
+consider the maximum test statistics as one of the combinations. The
+dataset we are using now is a
 
-1. Subset, (consider only genes within the module, and *such that the library size for each cell has changed) 
-2. Filtered (removing analyzing genes that have low expression among all cells)
-3. Normalized (divide expression by the library size)
-4. Ranked (ranking the gene-expression level)
-5. Filtered (removing cells that have high/low library size) (optional)
+1.  Subset, (consider only genes within the module, and \*such that the
+    library size for each cell has changed)
+2.  Filtered (removing analyzing genes that have low expression among
+    all cells)
+3.  Normalized (divide expression by the library size)
+4.  Ranked (ranking the gene-expression level)
+5.  Filtered (removing cells that have high/low library size) (optional)
 
 ## Validity check
 
-**Da**
 ```{r}
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/approximation/our_method.csv",nrows = 208)[189:198,]))),title= "Validity check, 2000 null statistics with normal approximation")
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation/our_method.csv",nrows = 208)[189:198,-1]))),title= "Validity check, 10000 null statistics with no approximation")
@@ -185,36 +202,44 @@ gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation_20000
 
 
 ```
+
 **I also tried other settings**
-```{r}
+
+```{r,cache=F}
 gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_not_rank/our_method.csv")[23:32,])),title="10000 null statistics, not normalized not rank")
 gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_rank/our_method.csv")[23:32,])),title="10000 null statistics, not normalized but rank")
 ```
 
-
 **All plots shows a relatively good validity.**
 
 ## Power check
-**This includes perturbations on known trans-effective (rs12784232, rs35531439, rs524137, rs73660574, rs79755767) and cis-effective SNPs.**
+
+**This includes perturbations on known trans-effective (rs12784232,
+rs35531439, rs524137, rs73660574, rs79755767) and cis-effective SNPs.**
+
 ```{r}
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/approximation/our_method.csv",nrows = 208)[c(87,88,117,118,125,126,151,152,165,166,177:188),]))),title= "Power check, 2000 null statistics with skew normal approximation")
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation/our_method.csv",nrows = 208)[c(87,88,117,118,125,126,151,152,165,166,177:188),-1]))),title= "Power check, 10000 null statistics with no approximation")
 gg_qqplot(as.vector((as.matrix(read.csv("output/startover/no_approximation_20000/our_method.csv",nrows = 208)[c(87,88,117,118,125,126,151,152,165,166,177:188),]))),title= "Power check, 20000 null statistics with no approximation")
 ```
-**1. Skew normal approximation has the lowest power**
-**2. Power can be further increased if we include number of permutation**
 
+**1. Skew normal approximation has the lowest power**
+
+**2. Power can be further increased if we include number of
+permutation**
 
 **I also tried other settings**
-```{r}
+
+```{r,cache=F}
 gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_not_rank/our_method.csv")[-(23:32),])),title="10000 null statistics, not normalized not rank")
 gg_qqplot(as.vector(as.matrix(read.csv("output/startover/not_normalized_rank/our_method.csv")[-(23:32),])),title="10000 null statistics, not normalized but rank")
 ```
 
 ## Plots comparing pval from no approximation and skew t approximation
 
-Because the skew t approximation is very slow. Here the plot only contain positive control & negative control grnas.
-* Notice: I use directly p values to fit skew t curve.
+Because the skew t approximation is very slow. Here the plot only
+contain positive control & negative control grnas. \* Notice: I use
+directly p values to fit skew t curve.
 
 ```{r}
 p_10000 <- c(p_t_10000_negative, p_t_10000_positive)
@@ -231,10 +256,13 @@ plot(p_10000, p_skn_2000,
 )
 
 ```
+
 ## Plots comparing pval from no approximation and skew normal approximation after quantile transformation
 
-Fitting skew normal is fast. Here the plot contains the p values from all perturbations.
-Notice, before fitting skew normal, I applied quantile transform of p values, such that $\Phi^{-1}(p)\in R$, and then fit skew normal.
+Fitting skew normal is fast. Here the plot contains the p values from
+all perturbations. Notice, before fitting skew normal, I applied
+quantile transform of p values, such that $\Phi^{-1}(p)\in R$, and then
+fit skew normal.
 
 ```{r}
 v1<-as.vector(as.matrix( read.csv("output/startover/approximation/our_method.csv",nrows = 208)))
@@ -264,6 +292,7 @@ plot(as.vector((as.matrix(read.csv("output/startover/test/our_method.csv",nrows 
 ```
 
 ## Conditional resampling
+
 ```{r,eval=F}
 estimate_propensity <- function (grna_assignment_matrix, covariate) {
 
@@ -323,6 +352,7 @@ sceptre_wide <- sceptre %>%
   pivot_wider(names_from = response_id, values_from = p_value) %>%
   as.data.frame()
 ```
+
 ```{r}
 # Set the row names to be the grna_id and remove the grna_id column
 rownames(sceptre_wide) <- sceptre_wide$grna_id
@@ -339,15 +369,13 @@ sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
 
 ```
 
-
-
-
 ```{r}
 gene_wise_p[1:5,1:5]
 sceptre_wide[1:5,1:5]
 ```
 
 ## Scatter plots to compare gene wise P values of sceptre glm and our t test
+
 ```{r}
 # Define indices
 indices <- c(10, 20, 30, 120, 124)
@@ -395,18 +423,28 @@ for (index in indices) {
 }
 
 ```
-**When calculating gene wise P values, we take absolute value of the test statistics and then take right-tail probability, however, the null distribution of test statistics is not symmetric around 0. It is right skewed and most of the test statistics are positive. Hence it lose power to detect negative statistics when taking absolute values**
+
+**When calculating gene wise P values, we take absolute value of the
+test statistics and then take right-tail probability, however, the null
+distribution of test statistics is not symmetric around 0. It is right
+skewed and most of the test statistics are positive. Hence it lose power
+to detect negative statistics when taking absolute values**
+
 ```{r,echo=F}
 knitr::include_graphics("images/test_statistics_histogram.png", error = FALSE)
 ```
 
 ## Convert sceptre p-value to test statistics
 
-**This is to see whether glm and our test gives a similar test statistics. Test statistics from glm is converted by quantile transformation** 
+**This is to see whether glm and our test gives a similar test
+statistics. Test statistics from glm is converted by quantile
+transformation**
+
 ```{r,echo=F}
 knitr::include_graphics("images/test_statistics_SNP_62-2.png", error = FALSE)
 knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
 ```
+
 **The result is reasonable**
 
 # Compare gene module discoveries
@@ -414,6 +452,7 @@ knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
 ## Using ACAT to combine gene-wise p values ("External combination")
 
 ### ACAT of gene wise p from our method (i.e. t test)
+
 ```{r}
 library(ACAT)
 module_results <- list()
@@ -471,7 +510,9 @@ module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$
 ```{r}
 head(module_results_t)
 ```
+
 ### ACAT of gene wise p from sceptre glm
+
 ```{r}
 module_results <- list()
 
@@ -528,15 +569,20 @@ module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, modul
 head(module_results_sceptre)
 ```
 
-**The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session**
+**The ACAT of gene-wise p values from Sceptre glm and t test differ a
+lot. The pattern is different for different perturbation. This can be
+explained by the disparity of gene-wise p value in the previous
+session**
 
 ## Gene module p value by Internal combination
 
 ### minp
-This gene-module p value is obtained by :
-1. Obtain gene-wise test statistics and their corresponding p value
-2. Take minimum p value within a gene module, as the test statistics
-3. Use null distribution to find final p value
+
+This gene-module p value is obtained by : 1. Obtain gene-wise test
+statistics and their corresponding p value 2. Take minimum p value
+within a gene module, as the test statistics 3. Use null distribution to
+find final p value
+
 ```{r}
 library(tibble)
 
@@ -557,6 +603,7 @@ head(minp_long)
 ```
 
 ### our method
+
 ```{r}
 our_method <-  read.csv("output/startover/test/our_method.csv",nrows = 208)
 colnames(our_method)[1] <- "grna_id"
@@ -573,6 +620,7 @@ our_method_long <- our_method_long %>%
 head(our_method_long)
 
 ```
+
 ## Comparison of Module p values (t-ACAT vs Sceptre-ACAT)
 
 ```{r}
@@ -617,10 +665,17 @@ for (k in indices) {
   # readline(prompt = "Press [Enter] to move to the next index...")
 }
 ```
-**The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session**
+
+**The ACAT of gene-wise p values from Sceptre glm and t test differ a
+lot. The pattern is different for different perturbation. This can be
+explained by the disparity of gene-wise p value in the previous
+session**
 
 ## Comparison of Module p values (minp vs our method)
-**We want to investigate in which case minp has a significance difference from us**
+
+**We want to investigate in which case minp has a significance
+difference from us**
+
 ```{r}
 indices <- c(11, 20, 30, 120)
 
@@ -660,6 +715,7 @@ for (k in indices) {
   # readline(prompt = "Press [Enter] to move to the next index...")
 }
 ```
+
 # Comparison of discoveries of four methods
 
 ```{r}
@@ -706,7 +762,6 @@ for (significant_level in significant_levels) {
 }
 
 ```
-
 
 ```{r,echo=F}
 gene_modules <- readRDS("data/gene_modules_id.rds")
@@ -853,8 +908,8 @@ for (significant_level in significant_levels) {
 
 ```
 
-
 ## Validity check
+
 ```{r}
 
 
@@ -875,8 +930,6 @@ ntc_sceptre <- module_results_sceptre %>%
   select(grna_id, acat_pval)
 ```
 
-
-
 ```{r}
 gg_qqplot(as.vector(ntc_our$p_value), title="Negative control our method")
 gg_qqplot(as.vector(ntc_minp$p_value), title="Negative control minp")
@@ -884,5 +937,3 @@ gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-ACAT")
 gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-ACAT")
 
 ```
-
-
