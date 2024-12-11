@@ -432,7 +432,7 @@ knitr::include_graphics("images/test_statistics_histogram.png", error = FALSE)
 
 ## Detailed examination
 
-```{r,echo=F}
+```{r,include=FALSE}
 j <- which(sceptre_wide[10, ] < 0.05 & gene_wise_p[10, -1] > 0.995)
 dimnames(sceptre_wide)[[2]][j]
 ```
@@ -446,7 +446,7 @@ knitr::include_graphics("images/SNP_5.png", error = FALSE)
 ```
 
 ### SNP10_2 - ENSG00000164237
-```{r,echo=F}
+```{r,include=FALSE}
 j <- which(sceptre_wide[20, ] < 0.05 & gene_wise_p[20, -1] > 0.995)
 dimnames(sceptre_wide)[[2]][j]
 ```
@@ -463,7 +463,7 @@ knitr::include_graphics("images/SNP_10.png", error = FALSE)
 paste0("sceptres p value: ", sceptre_wide[20,j[2]], "; our p value: ", gene_wise_p[20, j[2]+1])
 ```
 ```{r,echo=F}
-knitr::include_graphics("images/SNP_10_2.png", error = FALSE)
+knitr::include_graphics("images/SNP10_2.png", error = FALSE)
 
 ```
 
