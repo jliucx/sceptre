@@ -385,7 +385,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-12-09
+<strong>Last updated:</strong> 2024-12-10
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -580,16 +580,16 @@ output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree01f6c9da8baa82c7bab36f26f5edb16a508921dctargetblank01f6c9da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/01f6c9da8baa82c7bab36f26f5edb16a508921dc" target="_blank">01f6c9d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreec990dd79249b72bb0bf3a6521bb44f646e0df863targetblankc990dd7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/c990dd79249b72bb0bf3a6521bb44f646e0df863" target="_blank">c990dd7</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree01f6c9da8baa82c7bab36f26f5edb16a508921dctargetblank01f6c9da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreec990dd79249b72bb0bf3a6521bb44f646e0df863targetblankc990dd7a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/01f6c9da8baa82c7bab36f26f5edb16a508921dc" target="_blank">01f6c9d</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/c990dd79249b72bb0bf3a6521bb44f646e0df863" target="_blank">c990dd7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -645,6 +645,7 @@ Unstaged changes:
     Modified:   analysis/summary.Rmd
     Deleted:    analysis/try_Knit.Rmd
     Deleted:    analysis/try_rcc.Rmd
+    Modified:   code/functions.R
     Deleted:    code/job-info.err
     Deleted:    code/job-info.out
     Modified:   code/plot.Rmd
@@ -700,6 +701,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/c990dd79249b72bb0bf3a6521bb44f646e0df863/analysis/debug.Rmd" target="_blank">c990dd7</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-11
+</td>
+<td>
+update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/1f98383beb97a7ebbce3e29c57a442ffbb56b5f5/docs/debug.html" target="_blank">1f98383</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2628,26 +2663,6 @@ sceptre_wide &lt;- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in%
 
 # Reorder columns of sceptre_wide to match gene_wise_p
 sceptre_wide &lt;- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]</code></pre>
-<pre class="r"><code>gene_wise_p[1:5,1:5]</code></pre>
-<pre><code>              X ENSG00000187608 ENSG00000188157 ENSG00000176022 ENSG00000157933
-SNP-1_1 SNP-1_1       0.6864314       0.1763824       0.2038796       0.2631737
-SNP-1_2 SNP-1_2       0.7334267       0.7804220       0.6667333       0.5274473
-SNP-2_1 SNP-2_1       0.8128187       0.9145085       0.8896110       0.4358564
-SNP-2_2 SNP-2_2       0.3568643       0.7475252       0.2217778       0.4966503
-SNP-3_1 SNP-3_1       0.4062594       0.1594841       0.9654035       0.4111589</code></pre>
-<pre class="r"><code>sceptre_wide[1:5,1:5]</code></pre>
-<pre><code>        ENSG00000187608 ENSG00000188157 ENSG00000176022 ENSG00000157933
-SNP-1_1           0.740           0.616           0.336           0.512
-SNP-1_2           0.348           0.888           0.800           0.608
-SNP-2_1           0.592           0.628           0.300           0.648
-SNP-2_2           0.420           0.448           0.296           0.296
-SNP-3_1           0.636           0.168           0.300           0.872
-        ENSG00000157916
-SNP-1_1           0.360
-SNP-1_2           0.420
-SNP-2_1           0.584
-SNP-2_2           0.576
-SNP-3_1           0.916</code></pre>
 <div id="scatter-plots-to-compare-gene-wise-p-values-of-sceptre-glm-and-our-t-test" class="section level2" number="3.1">
 <h2 number="3.1"><span class="header-section-number">3.1</span> Scatter plots to compare gene wise P values of sceptre glm and our t test</h2>
 <pre class="r"><code># Define indices
@@ -2694,386 +2709,7 @@ for (index in indices) {
   # Pause again before moving to the next index
   # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
 }</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-1">
-Past versions of unnamed-chunk-28-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-1.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-2">
-Past versions of unnamed-chunk-28-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-2.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-3">
-Past versions of unnamed-chunk-28-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-3.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-4">
-Past versions of unnamed-chunk-28-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-4.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-5">
-Past versions of unnamed-chunk-28-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-5.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-6">
-Past versions of unnamed-chunk-28-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-6.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-7.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-7">
-Past versions of unnamed-chunk-28-7.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-7.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-8.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-8">
-Past versions of unnamed-chunk-28-8.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-8.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-9.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-9">
-Past versions of unnamed-chunk-28-9.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-9" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-9.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-28-10.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-10">
-Past versions of unnamed-chunk-28-10.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-28-10" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-28-10.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-27-10.png" width="672" style="display: block; margin: auto;" /></p>
 <p><strong>When calculating gene wise P values, we take absolute value of the test statistics and then take right-tail probability, however, the null distribution of test statistics is not symmetric around 0. It is right skewed and most of the test statistics are positive. Hence it lose power to detect negative statistics when taking absolute values</strong></p>
 <p><img src="images/test_statistics_histogram.png" style="display: block; margin: auto;" /></p>
 <p>
@@ -3114,16 +2750,20 @@ jliucx
 </div>
 </div>
 </div>
-<div id="convert-sceptre-p-value-to-test-statistics" class="section level2" number="3.2">
-<h2 number="3.2"><span class="header-section-number">3.2</span> Convert sceptre p-value to test statistics</h2>
-<p><strong>This is to see whether glm and our test gives a similar test statistics. Test statistics from glm is converted by quantile transformation</strong></p>
-<p><img src="images/test_statistics_SNP_62-2.png" style="display: block; margin: auto;" /></p>
+<div id="detailed-examination" class="section level2" number="3.2">
+<h2 number="3.2"><span class="header-section-number">3.2</span> Detailed examination</h2>
+<pre><code>[1] &quot;ENSG00000140464&quot;</code></pre>
+<div id="snp5_2---ensg00000140464" class="section level3" number="3.2.1">
+<h3 number="3.2.1"><span class="header-section-number">3.2.1</span> SNP5_2 - ENSG00000140464</h3>
+<pre class="r"><code>paste0(&quot;sceptres p value: &quot;, sceptre_wide[10,j], &quot;; our p value: &quot;, gene_wise_p[10, j+1])</code></pre>
+<pre><code>[1] &quot;sceptres p value: 0.048; our p value: 0.998000199980002&quot;</code></pre>
+<p><img src="images/SNP_5.png" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-test_statistics_SNP_62-2">
-Past versions of test_statistics_SNP_62-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SNP_5">
+Past versions of SNP_5.png
 </button>
 </p>
-<div id="fig-test_statistics_SNP_62-2" class="collapse">
+<div id="fig-SNP_5" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -3142,26 +2782,34 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/a5259957e6fc58eb9f8804fa021f38944fbe2fdd/docs/images/test_statistics_SNP_62-2.png" target="_blank">a525995</a>
+<a href="https://github.com/jliucx/sceptre/blob/c990dd79249b72bb0bf3a6521bb44f646e0df863/docs/images/SNP_5.png" target="_blank">c990dd7</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-12-08
+2024-12-11
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p><img src="images/test_statistics_SNP_63-1.png" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp10_2---ensg00000164237" class="section level3" number="3.2.2">
+<h3 number="3.2.2"><span class="header-section-number">3.2.2</span> SNP10_2 - ENSG00000164237</h3>
+<pre><code> [1] &quot;ENSG00000164237&quot; &quot;ENSG00000152942&quot; &quot;ENSG00000204392&quot; &quot;ENSG00000111897&quot;
+ [5] &quot;ENSG00000196262&quot; &quot;ENSG00000065154&quot; &quot;ENSG00000177156&quot; &quot;ENSG00000033327&quot;
+ [9] &quot;ENSG00000110002&quot; &quot;ENSG00000167779&quot; &quot;ENSG00000170515&quot; &quot;ENSG00000103811&quot;</code></pre>
+<pre class="r"><code>paste0(&quot;sceptres p value: &quot;, sceptre_wide[20,j[1]], &quot;; our p value: &quot;, gene_wise_p[20, j[1]+1])</code></pre>
+<pre><code>[1] &quot;sceptres p value: 0.028; our p value: 0.997500249975003&quot;</code></pre>
+<p><img src="images/SNP_10.png" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-test_statistics_SNP_63-1">
-Past versions of test_statistics_SNP_63-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SNP_10">
+Past versions of SNP_10.png
 </button>
 </p>
-<div id="fig-test_statistics_SNP_63-1" class="collapse">
+<div id="fig-SNP_10" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -3180,20 +2828,26 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/a5259957e6fc58eb9f8804fa021f38944fbe2fdd/docs/images/test_statistics_SNP_63-1.png" target="_blank">a525995</a>
+<a href="https://github.com/jliucx/sceptre/blob/c990dd79249b72bb0bf3a6521bb44f646e0df863/docs/images/SNP_10.png" target="_blank">c990dd7</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-12-08
+2024-12-11
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p><strong>The result is reasonable</strong></p>
+</div>
+<div id="snp10_2---ensg00000152942" class="section level3" number="3.2.3">
+<h3 number="3.2.3"><span class="header-section-number">3.2.3</span> SNP10_2 - ENSG00000152942</h3>
+<pre class="r"><code>paste0(&quot;sceptres p value: &quot;, sceptre_wide[20,j[2]], &quot;; our p value: &quot;, gene_wise_p[20, j[2]+1])</code></pre>
+<pre><code>[1] &quot;sceptres p value: 0.00238274863238185; our p value: 0.998700129987001&quot;</code></pre>
+<p><img src="images/SNP_10_2.png" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 </div>
 <div id="compare-gene-module-discoveries" class="section level1" number="4">
@@ -3437,13 +3091,13 @@ for (k in indices) {
   # Pause before moving to the next index
   # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
 }</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-43-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-1">
-Past versions of unnamed-chunk-37-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-1">
+Past versions of unnamed-chunk-43-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-37-1" class="collapse">
+<div id="fig-unnamed-chunk-43-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -3462,81 +3116,26 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-1.png" target="_blank">d768b9d</a>
+<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-1.png" target="_blank">d768b9d</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
 2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-1.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-1.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-37-1.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-37-1.png" target="_blank">409b5c3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-1.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-43-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-2">
-Past versions of unnamed-chunk-37-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-2">
+Past versions of unnamed-chunk-43-2.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-37-2" class="collapse">
+<div id="fig-unnamed-chunk-43-2" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -3555,81 +3154,26 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-2.png" target="_blank">d768b9d</a>
+<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-2.png" target="_blank">d768b9d</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
 2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-2.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-2.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-37-2.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-37-2.png" target="_blank">409b5c3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-2.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-43-3.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-3">
-Past versions of unnamed-chunk-37-3.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-3">
+Past versions of unnamed-chunk-43-3.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-37-3" class="collapse">
+<div id="fig-unnamed-chunk-43-3" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -3648,81 +3192,26 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-3.png" target="_blank">d768b9d</a>
+<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-3.png" target="_blank">d768b9d</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
 2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-3.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-3.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-37-3.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-37-3.png" target="_blank">409b5c3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-3.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/debug.Rmd/unnamed-chunk-43-4.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-4">
-Past versions of unnamed-chunk-37-4.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-4">
+Past versions of unnamed-chunk-43-4.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-37-4" class="collapse">
+<div id="fig-unnamed-chunk-43-4" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -3741,133 +3230,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-4.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-4.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-4.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-37-4.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/409b5c37058b52050f8fe9b714881454be19a54f/docs/figure/debug.Rmd/unnamed-chunk-37-4.png" target="_blank">409b5c3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/8974f0542c11a9283c4fe313551d6d9d7f8746fd/docs/figure/debug.Rmd/unnamed-chunk-37-4.png" target="_blank">8974f05</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-5">
-Past versions of unnamed-chunk-37-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-5.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-5.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-5.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-37-5.png" target="_blank">b62c5ce</a>
+<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-4.png" target="_blank">d768b9d</a>
 </td>
 <td>
 jliucx
@@ -3880,186 +3243,7 @@ jliucx
 </table>
 </div>
 </div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-6">
-Past versions of unnamed-chunk-37-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-6.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-6.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-6.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-7.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-7">
-Past versions of unnamed-chunk-37-7.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-7.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-7.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-7.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-37-8.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-8">
-Past versions of unnamed-chunk-37-8.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-37-8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-37-8.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-37-8.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-37-8.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-43-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-43-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-43-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-43-8.png" width="672" style="display: block; margin: auto;" /></p>
 <p><strong>The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session</strong></p>
 </div>
 <div id="comparison-of-module-p-values-minp-vs-our-method" class="section level2" number="4.4">
@@ -4102,420 +3286,7 @@ for (k in indices) {
   # Pause before moving to the next index
   # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
 }</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-1">
-Past versions of unnamed-chunk-38-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-1.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-38-1.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-38-1.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-2">
-Past versions of unnamed-chunk-38-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-2.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-38-2.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-38-2.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-3">
-Past versions of unnamed-chunk-38-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-3.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-38-3.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-38-3.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-4">
-Past versions of unnamed-chunk-38-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-4.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-38-4.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-38-4.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-5">
-Past versions of unnamed-chunk-38-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-5.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-38-5.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-38-5.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-6">
-Past versions of unnamed-chunk-38-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-6.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-7.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-7">
-Past versions of unnamed-chunk-38-7.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-7.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-38-8.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-8">
-Past versions of unnamed-chunk-38-8.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-38-8.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-44-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-44-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-44-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-44-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-44-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-44-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-44-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-44-8.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="comparison-of-discoveries-of-four-methods" class="section level1" number="5">
@@ -4565,363 +3336,10 @@ for (significant_level in significant_levels) {
 a multiple of shorter object length
 Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-1">
-Past versions of unnamed-chunk-39-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-39-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-39-1.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-39-1.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-39-1.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-39-1.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-39-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-2">
-Past versions of unnamed-chunk-39-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-39-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-39-2.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-39-2.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-39-2.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-39-2.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-39-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-3">
-Past versions of unnamed-chunk-39-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-39-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-39-3.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-39-3.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-39-3.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-39-3.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-39-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-4">
-Past versions of unnamed-chunk-39-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-39-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-39-4.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-39-4.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-39-4.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-39-4.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-39-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-5">
-Past versions of unnamed-chunk-39-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-39-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-39-5.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-39-5.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-39-5.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-39-5.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-45-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-45-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-45-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-45-5.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>significant_levels &lt;- c(0.01, 0.05, 0.1, 0.15, 0.2, 0.25)
 
 
@@ -4964,368 +3382,10 @@ for (significant_level in significant_levels) {
 a multiple of shorter object length
 Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-1">
-Past versions of unnamed-chunk-41-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-41-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-41-1.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-41-1.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-41-1.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-41-1.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-41-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-2">
-Past versions of unnamed-chunk-41-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-41-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-41-2.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-41-2.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-41-2.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-41-2.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-41-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-3">
-Past versions of unnamed-chunk-41-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-41-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-41-3.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-41-3.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-41-3.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-41-3.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-41-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-4">
-Past versions of unnamed-chunk-41-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-41-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-41-4.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/15dd7c2f850a7654756d198394265a6348ebf79b/docs/figure/debug.Rmd/unnamed-chunk-41-4.png" target="_blank">15dd7c2</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4ff3dad86e9c9aef2c549196f5381896d9afcc8a/docs/figure/debug.Rmd/unnamed-chunk-41-4.png" target="_blank">4ff3dad</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/b62c5ce6963900c1368391748f71e41699ab26a9/docs/figure/debug.Rmd/unnamed-chunk-41-4.png" target="_blank">b62c5ce</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-41-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-5">
-Past versions of unnamed-chunk-41-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-41-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-41-5.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-41-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-6">
-Past versions of unnamed-chunk-41-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-41-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-41-6.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-47-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-47-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-47-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-47-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-47-6.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="validity-check-1" class="section level2" number="5.1">
 <h2 number="5.1"><span class="header-section-number">5.1</span> Validity check</h2>
 <pre class="r"><code>ntc_our &lt;- our_method_long %&gt;%
@@ -5344,161 +3404,13 @@ ntc_sceptre &lt;- module_results_sceptre %&gt;%
   filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
   select(grna_id, acat_pval)</code></pre>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_our$p_value), title=&quot;Negative control our method&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-43-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-1">
-Past versions of unnamed-chunk-43-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-43-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-1.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_minp$p_value), title=&quot;Negative control minp&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-43-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-2">
-Past versions of unnamed-chunk-43-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-43-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-2.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-49-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_t$acat_pval), title=&quot;Negative control t-ACAT&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-43-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-3">
-Past versions of unnamed-chunk-43-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-43-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-3.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-49-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Negative control sceptre-ACAT&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-43-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-4">
-Past versions of unnamed-chunk-43-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-43-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d768b9dacdc43704e5f4bb35986aa160d845b66b/docs/figure/debug.Rmd/unnamed-chunk-43-4.png" target="_blank">d768b9d</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-09
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-49-4.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
