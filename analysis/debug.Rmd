@@ -11,6 +11,7 @@ editor_options:
     wrap: 72
 ---
 
+
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -369,11 +370,6 @@ sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
 
 ```
 
-```{r}
-gene_wise_p[1:5,1:5]
-sceptre_wide[1:5,1:5]
-```
-
 ## Scatter plots to compare gene wise P values of sceptre glm and our t test
 
 ```{r}
@@ -434,18 +430,43 @@ to detect negative statistics when taking absolute values**
 knitr::include_graphics("images/test_statistics_histogram.png", error = FALSE)
 ```
 
-## Convert sceptre p-value to test statistics
-
-**This is to see whether glm and our test gives a similar test
-statistics. Test statistics from glm is converted by quantile
-transformation**
+## Detailed examination
 
 ```{r,echo=F}
-knitr::include_graphics("images/test_statistics_SNP_62-2.png", error = FALSE)
-knitr::include_graphics("images/test_statistics_SNP_63-1.png", error = FALSE)
+j <- which(sceptre_wide[10, ] < 0.05 & gene_wise_p[10, -1] > 0.995)
+dimnames(sceptre_wide)[[2]][j]
+```
+### SNP5_2 - ENSG00000140464
+```{r}
+paste0("sceptres p value: ", sceptre_wide[10,j], "; our p value: ", gene_wise_p[10, j+1])
+```
+```{r,echo=F}
+knitr::include_graphics("images/SNP_5.png", error = FALSE)
+
 ```
 
-**The result is reasonable**
+### SNP10_2 - ENSG00000164237
+```{r,echo=F}
+j <- which(sceptre_wide[20, ] < 0.05 & gene_wise_p[20, -1] > 0.995)
+dimnames(sceptre_wide)[[2]][j]
+```
+
+```{r}
+paste0("sceptres p value: ", sceptre_wide[20,j[1]], "; our p value: ", gene_wise_p[20, j[1]+1])
+```
+```{r,echo=F}
+knitr::include_graphics("images/SNP_10.png", error = FALSE)
+```
+### SNP10_2 - ENSG00000152942
+
+```{r}
+paste0("sceptres p value: ", sceptre_wide[20,j[2]], "; our p value: ", gene_wise_p[20, j[2]+1])
+```
+```{r,echo=F}
+knitr::include_graphics("images/SNP_10_2.png", error = FALSE)
+
+```
+
 
 # Compare gene module discoveries
 
