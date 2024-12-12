@@ -10,6 +10,117 @@ editor_options:
   markdown: 
     wrap: 72
 ---
+```{r,include=F}
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+library(presto)
+library(sceptre)
+library(sceptredata)
+library(readr)
+library(dplyr)
+library(Matrix)
+library(parallel)
+library(BH)
+library(Rcpp)
+library(peakRAM)
+library(sgt)
+
+
+sourceCpp("code/fit_skew_normal.cpp")
+source("code/functions.R")
+
+
+
+
+
+author_threshold <- T
+
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+if (author_threshold) {
+  #directories <- "data/STINGseq-v1_GDO"
+  directories <- "data/gene_module_author_threshold"
+  grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
+  grna_target_data_frame_omit  <- grna_target_data_frame %>%
+    filter(!(grna_id %in% c("NTC-3", "NTC-12")))
+
+  sceptre_object <- import_data_from_cellranger(
+    directories = directories,
+    moi = "high",
+    grna_target_data_frame = grna_target_data_frame_omit
+  )
+
+  positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
+
+  discovery_pairs_cis <- construct_cis_pairs(
+    sceptre_object = sceptre_object,
+    positive_control_pairs = positive_control_pairs,
+    response_position_data_frame=gene_position_data_frame_grch37,
+    distance_threshold = 5e5
+  )
+
+  discovery_pairs_trans <- construct_trans_pairs(
+    sceptre_object = sceptre_object,
+    positive_control_pairs = positive_control_pairs,
+    pairs_to_exclude = "pairs_containing_pc_targets"
+  )
+
+  sceptre_object <- sceptre_object |>  # |> is R's base pipe, similar to %>%
+    set_analysis_parameters(
+      discovery_pairs = discovery_pairs_trans,
+      positive_control_pairs = positive_control_pairs,
+      side = "both",
+      grna_integration_strategy="singleton"
+    ) |>
+    assign_grnas(
+      method = "thresholding",
+      threshold = 1
+    )
+
+}
+
+setwd("/project/xuanyao/jiaming/Getting_started")
+source("code/functions.R")
+
+
+gene_modules <- readRDS("data/gene_modules_id.rds")
+covariate <- sceptre_object@covariate_data_frame
+
+
+response_matrix_raw<-sceptre_object@response_matrix[[1]]
+
+response_matrix_normalized<-t(t(response_matrix_raw)/covariate$response_n_umis)
+# response_matrix_normalized <- response_matrix_raw
+
+
+response_matrix <- response_matrix_normalized
+
+gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
+
+# grna_assignment_matrix <-get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[,-out_of_range_indices]
+grna_assignment_matrix <-get_grna_assignments(
+  sceptre_object = sceptre_object
+)[189:190,]
+
+n_rows <- nrow(grna_assignment_matrix)
+
+
+use_resample <- T
+use_approximation <- F
+rank <- T
+test_type="t_test"
+n_permute <- 3000
+chunk_size <- 50
+
+if (rank) {
+  response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
+  rownames(response_matrix)<- readLines("docs/row_names.txt")
+}
+
+
+```
 
 
 ```{r}
@@ -374,8 +485,9 @@ sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
 
 ```{r}
 # Define indices
-indices <- c(10, 20, 30, 120, 124)
+indices <- c(10, 20, 124)
 
+par(mfrow = c(3, 2))
 
 # Loop through indices for scatter and QQ plots
 for (index in indices) {
@@ -417,8 +529,9 @@ for (index in indices) {
   # Pause again before moving to the next index
   # readline(prompt = "Press [Enter] to move to the next index...")
 }
-
+par(mfrow = c(1, 1))
 ```
+
 
 **When calculating gene wise P values, we take absolute value of the
 test statistics and then take right-tail probability, however, the null
@@ -436,7 +549,7 @@ knitr::include_graphics("images/test_statistics_histogram.png", error = FALSE)
 j <- which(sceptre_wide[10, ] < 0.05 & gene_wise_p[10, -1] > 0.995)
 dimnames(sceptre_wide)[[2]][j]
 ```
-### SNP5_2 - ENSG00000140464
+**SNP5_2 - ENSG00000140464**
 ```{r}
 paste0("sceptres p value: ", sceptre_wide[10,j], "; our p value: ", gene_wise_p[10, j+1])
 ```
@@ -445,7 +558,7 @@ knitr::include_graphics("images/SNP_5.png", error = FALSE)
 
 ```
 
-### SNP10_2 - ENSG00000164237
+**SNP10_2 - ENSG00000164237**
 ```{r,include=FALSE}
 j <- which(sceptre_wide[20, ] < 0.05 & gene_wise_p[20, -1] > 0.995)
 dimnames(sceptre_wide)[[2]][j]
@@ -457,13 +570,239 @@ paste0("sceptres p value: ", sceptre_wide[20,j[1]], "; our p value: ", gene_wise
 ```{r,echo=F}
 knitr::include_graphics("images/SNP_10.png", error = FALSE)
 ```
-### SNP10_2 - ENSG00000152942
+**SNP10_2 - ENSG00000152942**
 
 ```{r}
 paste0("sceptres p value: ", sceptre_wide[20,j[2]], "; our p value: ", gene_wise_p[20, j[2]+1])
 ```
 ```{r,echo=F}
 knitr::include_graphics("images/SNP10_2.png", error = FALSE)
+
+```
+
+## Fixing it by normalizing the null statistics before finding p values:
+
+
+```{r}
+indices <- c(10, 20, 124)
+
+
+# Loop through indices for scatter and QQ plots
+for (index in indices) {
+  # Extract vectors for the current index
+  vector1 <- as.vector(as.matrix( read.csv("output/newest/try/gene_wise_p.csv", nrows = 208)[index, -1]))
+  vector2 <- as.vector(as.matrix(sceptre_wide[index, ]))
+
+  # Filter out NA values
+  valid_indices <- !is.na(vector1) & !is.na(vector2)
+  filtered_vector1 <- vector1[valid_indices]
+  filtered_vector2 <- vector2[valid_indices]
+
+  # Scatter Plot
+  plot(
+    filtered_vector1, filtered_vector2,
+    xlab = "Gene Wise P Values",
+    ylab = "Sceptre Wide P Values",
+    main = paste0("Scatter Plot for ", index, " th perturbation"),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+
+  # Pause for user input to display the next plot
+  # readline(prompt = "Press [Enter] to view the QQ plot for this index...")
+
+  # QQ Plot
+  qqplot(
+    filtered_vector1, filtered_vector2,
+    xlab = "Gene Wise P Values",
+    ylab = "Sceptre Wide P Values",
+    main = paste0("QQ Plot for ", index, " th perturbation"),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+  abline(0, 1, col = "red", lwd = 2)
+
+  # Pause again before moving to the next index
+  # readline(prompt = "Press [Enter] to move to the next index...")
+}
+```
+
+## Biased histogram of test statistics
+
+**Select Non-targeting gRNA:**
+
+### Check the null distribution of the test statistics for each gene and see if the
+test statistics are always non-centered. 
+
+```{r,include=F}
+response_matrix_normalized<-t(t(response_matrix_raw)/covariate$response_n_umis)
+# response_matrix_normalized <- response_matrix_raw
+
+
+response_matrix <- response_matrix_normalized
+
+gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
+
+# grna_assignment_matrix <-get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[,-out_of_range_indices]
+grna_assignment_matrix <-get_grna_assignments(
+  sceptre_object = sceptre_object
+)[189:198,]
+
+n_rows <- nrow(grna_assignment_matrix)
+
+
+
+```
+
+
+```{r,include=F}
+
+use_resample <- T
+use_approximation <- F
+rank <- T
+test_type="t_test"
+n_permute <- 3000
+chunk_size <- 50
+
+if (rank) {
+  response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
+  rownames(response_matrix)<- readLines("docs/row_names.txt")
+}
+source("code/functions.R")
+  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+
+    test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
+
+    gene_wise_test_tensor <-  convert_matrix_to_tensor(test_result, n_permute, grna_assignment_matrix)
+```
+```{r}
+
+par(mfrow = c(3, 3))
+
+for (i in 1:9){
+value <- gene_wise_test_tensor[1, i, 1]
+
+# Plot the histogram
+hist(gene_wise_test_tensor[, i,1], main = paste0("Test statistics of " ,dimnames(gene_wise_test_tensor)[[3]][1], "-", dimnames(gene_wise_test_tensor)[[2]][i]), xlab="null test statistics")
+
+# Add a vertical line to indicate the value
+abline(v = value, col = "red", lwd = 2)
+
+# Optionally, add a label for the value
+text(value, par("usr")[4] * 0.9, paste("Value:", round(value, 2)), col = "red", pos = 4)
+}
+par(mfrow = c(1, 1))
+
+```
+
+
+### Check if the library size distribution is balanced between
+treated and control before and after propensity score weighting. 
+
+**Before propensity score weighting**
+
+```{r,echo=F}
+
+par(mfrow = c(3, 2))
+hist(covariate$response_n_umis[grna_assignment_matrix[1,]],breaks = 200, main="Histogram of covariate--Cell receiving NTC-1",xlab="Total gene ecxpression")
+hist(covariate$response_n_umis[!grna_assignment_matrix[1,]],breaks=200,main="Histogram of covariate--Cell NOT receiving NTC-1",,xlab="Total gene ecxpression")
+hist(covariate$response_n_umis[grna_assignment_matrix[2,]],breaks = 200, main="Histogram of covariate--Cell receiving NTC-2",xlab="Total gene ecxpression")
+hist(covariate$response_n_umis[!grna_assignment_matrix[2,]],breaks=200,main="Histogram of covariate--Cell NOT receiving NTC-2",,xlab="Total gene ecxpression")
+hist(covariate$response_n_umis[grna_assignment_matrix[3,]],breaks = 200, main="Histogram of covariate--Cell receiving NTC-3",xlab="Total gene ecxpression")
+hist(covariate$response_n_umis[!grna_assignment_matrix[3,]],breaks=200,main="Histogram of covariate--Cell NOT receiving NTC-3",,xlab="Total gene ecxpression")
+
+par(mfrow = c(1, 1))
+
+```
+
+```{r}
+propensity <- estimate_propensity(grna_assignment_matrix,covariate)
+
+```
+
+**After propensity score weighting**
+
+```{r,echo=F}
+weighted_response1 <-covariate$response_n_umis * propensity[1,]
+weighted_response2 <-covariate$response_n_umis * propensity[2,]
+weighted_response3 <-covariate$response_n_umis * propensity[3,]
+
+par(mfrow = c(3, 2))
+
+# Plot the histograms
+hist(weighted_response1[grna_assignment_matrix[1, ]], 
+     breaks = 200, 
+     main = "Histogram of covariate--Cell receiving NTC-1", 
+     xlab = "Total gene expression")
+
+hist(weighted_response1[!grna_assignment_matrix[1, ]], 
+     breaks = 200, 
+     main = "Histogram of covariate--Cell NOT receiving NTC-1", 
+     xlab = "Total gene expression")
+
+hist(weighted_response2[grna_assignment_matrix[2, ]], 
+     breaks = 200, 
+     main = "Histogram of covariate--Cell receiving NTC-2", 
+     xlab = "Total gene expression")
+
+hist(weighted_response2[!grna_assignment_matrix[2, ]], 
+     breaks = 200, 
+     main = "Histogram of covariate--Cell NOT receiving NTC-2", 
+     xlab = "Total gene expression")
+
+hist(weighted_response3[grna_assignment_matrix[3, ]], 
+     breaks = 200, 
+     main = "Histogram of covariate--Cell receiving NTC-3", 
+     xlab = "Total gene expression")
+
+hist(weighted_response3[!grna_assignment_matrix[3, ]], 
+     breaks = 200, 
+     main = "Histogram of covariate--Cell NOT receiving NTC-3", 
+     xlab = "Total gene expression")
+
+# Reset plotting layout to default
+par(mfrow = c(1, 1))
+```
+```{r}
+ranked_response<-round(response_matrix[1:6,])
+```
+
+
+### Compute the glm test statistics using the glm function in R 
+
+
+
+```r
+par(mfrow = c(3, 2))
+
+for (k in gene_index){
+  
+grna_indices <- seq(1, by = 10, length.out = (n_permute+1))
+
+
+subset_grna_assignment_matrix <- grna_assignment_matrix_combined[grna_indices, ]
+
+coefficients_list <- vector("list", n_permute + 1)
+
+# Loop through the permutations
+for (i in 1:(n_permute + 1)) {
+  # Fit the GLM model
+  model <- glm(
+    ranked_response<-round(response_matrix[1:6,])[k, ] ~ subset_grna_assignment_matrix[i, ] + covariate$response_n_umis,
+    family = "poisson"
+  )
+
+```
+
+
+
+```{r,echo=F}
+knitr::include_graphics("images/glm_hist.png", error = FALSE)
+knitr::include_graphics("images/glm_hist_2.png", error = FALSE)
 
 ```
 
@@ -958,3 +1297,183 @@ gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-ACAT")
 gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-ACAT")
 
 ```
+
+
+# After solving Section 3.3
+```{r}
+gene_modules <- readRDS("data/gene_modules_id.rds")
+
+gene_wise_p  <- read.csv("output/newest/try/gene_wise_p.csv", nrows = 208)
+gene_wise_p[gene_wise_p == 0] <- 1 / 10000
+gene_wise_p[gene_wise_p == 1] <- 1- 1/10000
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-15
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+# Display the reformatted data frame
+# rownames(gene_wise_p) <- gene_wise_p$X1
+
+# Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
+sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+# Reorder columns of sceptre_wide to match gene_wise_p
+sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
+library(ACAT)
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id <- rownames(gene_wise_p)[i]
+  p_values_row <- gene_wise_p[i,-1]  # Exclude grna_id column
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        acat_pval <- ACAT(module_p_values)
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t <- do.call(rbind, module_results)
+
+module_results_t$bh_pval <- p.adjust(module_results_t$acat_pval, method = "BH")
+module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$module, sep = "_")
+
+```
+
+
+
+```{r}
+library(tibble)
+
+minp <- read.csv("output/newest/try/minp.csv")
+
+minp_long <- minp%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+minp_long <- minp_long %>% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+minp_long <- minp_long %>%
+  mutate(bh_pval = p.adjust(p_value, method = "BH"))
+
+our_method <-  read.csv("output/newest/try/our_method.csv")
+our_method_long <- our_method %>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values (if any)
+our_method_long <- our_method_long %>% filter(!is.na(p_value))
+
+# Apply global BH correction to all p-values
+our_method_long <- our_method_long %>%
+  mutate(bh_pval = p.adjust(p_value, method = "BH"))
+```
+
+
+```{r}
+library(eulerr)
+
+significant_levels <- c(0.01, 0.05, 0.1, 0.15, 0.2, 0.25)
+
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < significant_level]
+  significant_ids_gene_wise_p_t <- module_results_t$identifier[
+    module_results_t$bh_pval < significant_level]
+  
+  significant_pairs <- minp_long %>%
+    filter(bh_pval < significant_level) %>%
+    mutate(identifier = paste(grna_id, module, sep = "_"))
+  significant_identifiers_minp <- significant_pairs$identifier
+  
+  significant_pairs_ours <- our_method_long %>%
+    filter(bh_pval < significant_level) %>%
+    mutate(identifier = paste(grna_id, module, sep = "_"))
+  significant_identifiers_ours <- significant_pairs_ours$identifier
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+ACAT` = significant_ids_gene_wise_p,
+    `t+ACAT` = significant_ids_gene_wise_p_t,
+    `minp method` = significant_identifiers_minp,
+    `Our method` = significant_identifiers_ours
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot <- plot(euler(venn_data),
+                     fills = list(fill = c("red", "blue", "green", "yellow"), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste("Significant Gene Modules Overlap at level", significant_level, "(20000 null)")
+  )
+  
+  print(euler_plot)  # Display the plot in the R plotting window
+}
+```
+```{r}
+ntc_our <- our_method_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+ select(grna_id, p_value)
+
+ntc_minp <- minp_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, p_value)
+
+ntc_t <- module_results_t %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+gg_qqplot(as.vector(ntc_our$p_value), title="Negative control our method")
+gg_qqplot(as.vector(ntc_minp$p_value), title="Negative control minp")
+gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-ACAT")
+gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-ACAT")
+```
+
