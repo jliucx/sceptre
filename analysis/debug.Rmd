@@ -593,10 +593,10 @@ sceptre_wide <- sceptre_wide[, -1]
 # rownames(gene_wise_p) <- gene_wise_p$X1
 
 # Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
-sceptre_wide_new <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+sceptre_wide_new <- sceptre_wide[rownames(gene_wise_p_new)[rownames(gene_wise_p_new) %in% rownames(sceptre_wide)], ]
 
 # Reorder columns of sceptre_wide to match gene_wise_p
-sceptre_wide_new <- sceptre_wide_new[, colnames(gene_wise_p)[-1], drop = FALSE]
+sceptre_wide_new <- sceptre_wide_new[, colnames(gene_wise_p_new)[-1], drop = FALSE]
 par(mfrow = c(2, 2))
 
 
