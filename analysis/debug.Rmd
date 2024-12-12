@@ -453,8 +453,11 @@ knitr::include_graphics("images/propensity_histogram.png", error = FALSE)
 ```{r}
 library(tidyr)
 gene_modules <- readRDS("data/gene_modules_id.rds")
-
 gene_wise_p <- read.csv("output/startover/test/gene_wise_p.csv")
+gene_wise_p[gene_wise_p == 0] <- 1 / 10000
+gene_wise_p[gene_wise_p == 1] <- 1- 1/10000
+rownames(gene_wise_p) <- gene_wise_p$X
+
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")[,c(1,2,7)],
                  readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")[,c(1,2,7)])
 
@@ -463,17 +466,10 @@ sceptre <- sceptre[!is.na(sceptre$p_value), ]
 sceptre_wide <- sceptre %>%
   pivot_wider(names_from = response_id, values_from = p_value) %>%
   as.data.frame()
-```
 
-```{r}
 # Set the row names to be the grna_id and remove the grna_id column
 rownames(sceptre_wide) <- sceptre_wide$grna_id
 sceptre_wide <- sceptre_wide[, -1]
-
-# Display the reformatted data frame
-rownames(gene_wise_p) <- gene_wise_p$X
-
-# Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
 sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
 
 # Reorder columns of sceptre_wide to match gene_wise_p
@@ -481,13 +477,14 @@ sceptre_wide <- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
 
 ```
 
+
 ## Scatter plots to compare gene wise P values of sceptre glm and our t test
 
 ```{r}
 # Define indices
-indices <- c(10, 20, 124)
+indices <- c(10, 20,120, 130)
 
-par(mfrow = c(3, 2))
+par(mfrow = c(2, 2))
 
 # Loop through indices for scatter and QQ plots
 for (index in indices) {
@@ -511,20 +508,7 @@ for (index in indices) {
     cex = 0.7
   )
   
-  # Pause for user input to display the next plot
-  # readline(prompt = "Press [Enter] to view the QQ plot for this index...")
 
-  # QQ Plot
-  qqplot(
-    filtered_vector1, filtered_vector2,
-    xlab = "Gene Wise P Values",
-    ylab = "Sceptre Wide P Values",
-    main = paste0("QQ Plot for ", index, " th perturbation"),
-    pch = 16,
-    col = "blue",
-    cex = 0.7
-  )
-  abline(0, 1, col = "red", lwd = 2)
   
   # Pause again before moving to the next index
   # readline(prompt = "Press [Enter] to move to the next index...")
@@ -583,21 +567,50 @@ knitr::include_graphics("images/SNP10_2.png", error = FALSE)
 ## Fixing it by normalizing the null statistics before finding p values:
 
 
-```{r}
-indices <- c(10, 20, 124)
+
+```{r,echo=F}
+indices <- c(10, 20, 120,130)
+
+gene_modules <- readRDS("data/gene_modules_id.rds")
+
+gene_wise_p_new  <- read.csv("output/newest/try/gene_wise_p.csv", nrows = 208)
+gene_wise_p_new[gene_wise_p_new == 0] <- 1 / 10000
+gene_wise_p_new[gene_wise_p_new == 1] <- 1- 1/10000
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-15
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+# Display the reformatted data frame
+# rownames(gene_wise_p) <- gene_wise_p$X1
+
+# Reorder rows of sceptre_wide to match gene_wise_p (subset rows by intersection)
+sceptre_wide_new <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+# Reorder columns of sceptre_wide to match gene_wise_p
+sceptre_wide_new <- sceptre_wide_new[, colnames(gene_wise_p)[-1], drop = FALSE]
+par(mfrow = c(2, 2))
 
 
 # Loop through indices for scatter and QQ plots
 for (index in indices) {
   # Extract vectors for the current index
-  vector1 <- as.vector(as.matrix( read.csv("output/newest/try/gene_wise_p.csv", nrows = 208)[index, -1]))
-  vector2 <- as.vector(as.matrix(sceptre_wide[index, ]))
-
+  vector1 <- as.vector(as.matrix(gene_wise_p_new[index, -1]))
+  vector2 <- as.vector(as.matrix(sceptre_wide_new[index, ]))
+  
   # Filter out NA values
   valid_indices <- !is.na(vector1) & !is.na(vector2)
   filtered_vector1 <- vector1[valid_indices]
   filtered_vector2 <- vector2[valid_indices]
-
+  
   # Scatter Plot
   plot(
     filtered_vector1, filtered_vector2,
@@ -608,25 +621,14 @@ for (index in indices) {
     col = "blue",
     cex = 0.7
   )
-
+  
   # Pause for user input to display the next plot
   # readline(prompt = "Press [Enter] to view the QQ plot for this index...")
-
-  # QQ Plot
-  qqplot(
-    filtered_vector1, filtered_vector2,
-    xlab = "Gene Wise P Values",
-    ylab = "Sceptre Wide P Values",
-    main = paste0("QQ Plot for ", index, " th perturbation"),
-    pch = 16,
-    col = "blue",
-    cex = 0.7
-  )
-  abline(0, 1, col = "red", lwd = 2)
-
+  
   # Pause again before moving to the next index
   # readline(prompt = "Press [Enter] to move to the next index...")
 }
+par(mfrow = c(1, 1))
 ```
 
 ## Biased histogram of test statistics
@@ -726,7 +728,7 @@ propensity <- estimate_propensity(grna_assignment_matrix,covariate)
 
 **After propensity score weighting**
 
-```{r,echo=F}
+```{r,echo=F,cache=F}
 weighted_response1 <-covariate$response_n_umis * propensity[1,]
 weighted_response2 <-covariate$response_n_umis * propensity[2,]
 weighted_response3 <-covariate$response_n_umis * propensity[3,]
