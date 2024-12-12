@@ -802,7 +802,7 @@ for (i in 1:(n_permute + 1)) {
 
 
 
-```{r,echo=F}
+```{r,echo=F,cache=F}
 knitr::include_graphics("images/glm_hist.png", error = FALSE)
 knitr::include_graphics("images/glm_hist_2.png", error = FALSE)
 
