@@ -588,16 +588,16 @@ output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed6aaca8d948dbf8f323bd3586c7fe4de0d2f7c9btargetblankd6aaca8a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/d6aaca8d948dbf8f323bd3586c7fe4de0d2f7c9b" target="_blank">d6aaca8</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreefce4734f9e1f64a6a16b6bd80b36c254acd9dce0targetblankfce4734a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/fce4734f9e1f64a6a16b6bd80b36c254acd9dce0" target="_blank">fce4734</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed6aaca8d948dbf8f323bd3586c7fe4de0d2f7c9btargetblankd6aaca8a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreefce4734f9e1f64a6a16b6bd80b36c254acd9dce0targetblankfce4734a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/d6aaca8d948dbf8f323bd3586c7fe4de0d2f7c9b" target="_blank">d6aaca8</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/fce4734f9e1f64a6a16b6bd80b36c254acd9dce0" target="_blank">fce4734</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -707,6 +707,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/fce4734f9e1f64a6a16b6bd80b36c254acd9dce0/analysis/debug.Rmd" target="_blank">fce4734</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-12
+</td>
+<td>
+make code concise
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/9df1da25ccea43b1e2d030abebaa4a071c79c0e0/docs/debug.html" target="_blank">9df1da2</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -5586,7 +5620,7 @@ gene_wise_p[gene_wise_p == 1] &lt;- 1- 1/10000
 sceptre &lt;- rbind(readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds&quot;)[,c(1,2,7)],
                  readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds&quot;)[,c(1,2,7)])
 
-sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-15
+sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-4
 sceptre &lt;- sceptre[!is.na(sceptre$p_value), ]
 sceptre_wide &lt;- sceptre %&gt;%
   pivot_wider(names_from = response_id, values_from = p_value) %&gt;%
@@ -5603,14 +5637,14 @@ sceptre_wide &lt;- sceptre_wide[, -1]
 sceptre_wide &lt;- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
 
 # Reorder columns of sceptre_wide to match gene_wise_p
-sceptre_wide &lt;- sceptre_wide[, colnames(gene_wise_p)[-1], drop = FALSE]
-library(ACAT)
+sceptre_wide &lt;- sceptre_wide[, colnames(gene_wise_p), drop = FALSE]</code></pre>
+<pre class="r"><code>library(ACAT)
 module_results &lt;- list()
 
 # Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
 for (i in seq_len(nrow(gene_wise_p))) {
   grna_id &lt;- rownames(gene_wise_p)[i]
-  p_values_row &lt;- gene_wise_p[i,-1]  # Exclude grna_id column
+  p_values_row &lt;- gene_wise_p[i,] 
   
   # Initialize an empty list to store ACAT p-values and module names for each module
   module_acat_pvals &lt;- c()
@@ -5651,10 +5685,54 @@ for (i in seq_len(nrow(gene_wise_p))) {
 
 
 # Combine all results into a single data frame
-module_results_t &lt;- do.call(rbind, module_results)
+module_results_t &lt;- do.call(rbind, module_results)</code></pre>
+<pre class="r"><code>module_results &lt;- list()
 
-module_results_t$bh_pval &lt;- p.adjust(module_results_t$acat_pval, method = &quot;BH&quot;)
-module_results_t$identifier &lt;- paste(module_results_t$grna_id, module_results_t$module, sep = &quot;_&quot;)</code></pre>
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id &lt;- rownames(sceptre_wide)[i]
+  p_values_row &lt;- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        acat_pval &lt;- ACAT(module_p_values)
+        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre &lt;- do.call(rbind, module_results)</code></pre>
 <pre class="r"><code>library(tibble)
 
 minp &lt;- read.csv(&quot;output/newest/try/minp.csv&quot;)
@@ -5666,21 +5744,32 @@ minp_long &lt;- minp%&gt;%
 # Remove rows with NA p-values
 minp_long &lt;- minp_long %&gt;% filter(!is.na(p_value))
 
-# Apply global BH correction to all p-values
-minp_long &lt;- minp_long %&gt;%
-  mutate(bh_pval = p.adjust(p_value, method = &quot;BH&quot;))
-
 our_method &lt;-  read.csv(&quot;output/newest/try/our_method.csv&quot;)
 our_method_long &lt;- our_method %&gt;%
   rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
   pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
 
 # Remove rows with NA p-values (if any)
-our_method_long &lt;- our_method_long %&gt;% filter(!is.na(p_value))
+our_method_long &lt;- our_method_long %&gt;% filter(!is.na(p_value))</code></pre>
+<pre class="r"><code>module_results_t &lt;- module_results_t %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
 
-# Apply global BH correction to all p-values
+# Filter rows in minp_long
+minp_long &lt;- minp_long %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+# Filter rows in our_method_long
 our_method_long &lt;- our_method_long %&gt;%
-  mutate(bh_pval = p.adjust(p_value, method = &quot;BH&quot;))</code></pre>
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))</code></pre>
+<pre class="r"><code>module_results_t$bh_pval &lt;- p.adjust(module_results_t$acat_pval, method = &quot;BH&quot;)
+module_results_t$identifier &lt;- paste(module_results_t$grna_id, module_results_t$module, sep = &quot;_&quot;)
+module_results_sceptre$bh_pval &lt;- p.adjust(module_results_sceptre$acat_pval, method = &quot;BH&quot;)
+module_results_sceptre$identifier &lt;- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = &quot;_&quot;)
+
+minp_long$bh_pval &lt;-  p.adjust(minp_long$p_value, method = &quot;BH&quot;)
+minp_long$identifier &lt;- paste(minp_long$grna_id, minp_long$module, sep = &quot;_&quot;)
+our_method_long$bh_pval &lt;-  p.adjust(our_method_long$p_value, method = &quot;BH&quot;)
+our_method_long$identifier &lt;- paste(our_method_long$grna_id, our_method_long$module, sep = &quot;_&quot;)</code></pre>
 <pre class="r"><code>library(eulerr)
 
 significant_levels &lt;- c(0.01, 0.05, 0.1, 0.15, 0.2, 0.25)
@@ -5691,32 +5780,30 @@ for (significant_level in significant_levels) {
   # Filter significant IDs for each method
   significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
     module_results_sceptre$bh_pval &lt; significant_level]
+  
+  
   significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
     module_results_t$bh_pval &lt; significant_level]
   
-  significant_pairs &lt;- minp_long %&gt;%
-    filter(bh_pval &lt; significant_level) %&gt;%
-    mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
-  significant_identifiers_minp &lt;- significant_pairs$identifier
+ significant_ids_minp &lt;- minp_long$identifier[
+    minp_long$bh_pval &lt; significant_level]
   
-  significant_pairs_ours &lt;- our_method_long %&gt;%
-    filter(bh_pval &lt; significant_level) %&gt;%
-    mutate(identifier = paste(grna_id, module, sep = &quot;_&quot;))
-  significant_identifiers_ours &lt;- significant_pairs_ours$identifier
+  significant_ids_ours &lt;- our_method_long$identifier[
+    our_method_long$bh_pval &lt; significant_level]
   
   # Prepare the sets
   venn_data &lt;- list(
     `Sceptre+ACAT` = significant_ids_gene_wise_p,
     `t+ACAT` = significant_ids_gene_wise_p_t,
-    `minp method` = significant_identifiers_minp,
-    `Our method` = significant_identifiers_ours
+    `minp method` = significant_ids_minp,
+    `Our method` = significant_ids_ours
   )
   
   # Generate the Euler diagram and display it
   euler_plot &lt;- plot(euler(venn_data),
                      fills = list(fill = c(&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, &quot;yellow&quot;), alpha = 0.5),
                      edges = TRUE, quantities = TRUE,
-                     main = paste(&quot;Significant Gene Modules Overlap at level&quot;, significant_level, &quot;(20000 null)&quot;)
+                     main = paste(&quot;Significant Gene Modules Overlap at level&quot;, significant_level, &quot;(10000 null)&quot;)
   )
   
   print(euler_plot)  # Display the plot in the R plotting window
@@ -5725,238 +5812,13 @@ for (significant_level in significant_levels) {
 a multiple of shorter object length
 Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-61-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-61-1">
-Past versions of unnamed-chunk-61-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-61-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-61-1.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-65-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-61-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-61-2">
-Past versions of unnamed-chunk-61-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-61-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-61-2.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-65-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>Warning in colSums(id &amp; !empty) == 0 | merged_sets: longer object length is not
 a multiple of shorter object length</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-61-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-61-3">
-Past versions of unnamed-chunk-61-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-61-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-61-3.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-61-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-61-4">
-Past versions of unnamed-chunk-61-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-61-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-61-4.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-61-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-61-5">
-Past versions of unnamed-chunk-61-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-61-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-61-5.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/debug.Rmd/unnamed-chunk-61-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-61-6">
-Past versions of unnamed-chunk-61-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-61-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-61-6.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-65-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-65-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-65-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/debug.Rmd/unnamed-chunk-65-6.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ntc_our &lt;- our_method_long %&gt;%
   filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
  select(grna_id, p_value)
@@ -5973,205 +5835,13 @@ ntc_sceptre &lt;- module_results_sceptre %&gt;%
   filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
   select(grna_id, acat_pval)
 gg_qqplot(as.vector(ntc_our$p_value), title=&quot;Negative control our method&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-62-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-62-1">
-Past versions of unnamed-chunk-62-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-62-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-62-1.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/41ecfc53a2391c1b8e851860cfa9c632c5dd0977/docs/figure/debug.Rmd/unnamed-chunk-62-1.png" target="_blank">41ecfc5</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-66-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_minp$p_value), title=&quot;Negative control minp&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-62-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-62-2">
-Past versions of unnamed-chunk-62-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-62-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-62-2.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/41ecfc53a2391c1b8e851860cfa9c632c5dd0977/docs/figure/debug.Rmd/unnamed-chunk-62-2.png" target="_blank">41ecfc5</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-66-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_t$acat_pval), title=&quot;Negative control t-ACAT&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-62-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-62-3">
-Past versions of unnamed-chunk-62-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-62-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-62-3.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/41ecfc53a2391c1b8e851860cfa9c632c5dd0977/docs/figure/debug.Rmd/unnamed-chunk-62-3.png" target="_blank">41ecfc5</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-66-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Negative control sceptre-ACAT&quot;)</code></pre>
-<p><img src="figure/debug.Rmd/unnamed-chunk-62-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-62-4">
-Past versions of unnamed-chunk-62-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-62-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/d2cb0b32c5ab86c3563e941904d379a68db76681/docs/figure/debug.Rmd/unnamed-chunk-62-4.png" target="_blank">d2cb0b3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/41ecfc53a2391c1b8e851860cfa9c632c5dd0977/docs/figure/debug.Rmd/unnamed-chunk-62-4.png" target="_blank">41ecfc5</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/debug.Rmd/unnamed-chunk-66-4.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
