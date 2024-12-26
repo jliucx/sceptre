@@ -167,13 +167,18 @@ abline(v=1300,col="red")
 
 
   response_matrix <- response_matrix_normalized
+  rank<-T
+if (rank) {
+  response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
+  rownames(response_matrix)<- readLines("docs/row_names.txt")
+}
 
   gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
   
 ```
 
 
-## Consider perturbations that affects >500 cells
+## Consider perturbations that affects >150 cells
 
 ```{r}
 library(ggplot2)
@@ -182,12 +187,13 @@ library(readr)
 library(tibble)
 library(tidyr)
 
+infect_cell_threshold <- 150
 
 gene_modules <- readRDS("data/gene_modules_id.rds")
 
 gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
-)[-208,])>500,]
+)[-208,])>infect_cell_threshold,]
 
 
 gene_wise_p[gene_wise_p == 0] <- 1 / 10000
@@ -418,7 +424,7 @@ library(tibble)
 
 minp <- read.csv("output/newest/filter_cell/minp.csv")[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
-)[-208,])>500,]
+)[-208,])>infect_cell_threshold,]
 
 
 
@@ -432,7 +438,7 @@ minp_long <- minp_long %>% filter(!is.na(p_value))
 
 our_method <-  read.csv("output/newest/filter_cell/our_method.csv")[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
-)[-208,])>500,]
+)[-208,])>infect_cell_threshold,]
 
 
 
@@ -933,7 +939,7 @@ par(mfrow = c(1, 1))
 ## Bonferonni vs Cauchy combination
 
 ```{r,fig.width=8,fig.height=8,warning=F}
-significant_levels <- c(0.01, 0.05, 0.1, 0.25)
+significant_levels <- c(0.01, 0.05, 0.1, 0.35)
 # significant_levels <- 0.01
 plot_list <- list()
 
@@ -1098,7 +1104,7 @@ for (index in indices) {
   # Scatter Plot
   plot(
     filtered_vector1, filtered_vector2,
-    xlab = "Gene Wise P Values",
+    xlab = "Gene Wise P Values from t test",
     ylab = "Sceptre Wide P Values",
     main = paste0("Scatter plot for ",index, " th perturbation"),
     pch = 16,
@@ -1117,7 +1123,7 @@ for (index in indices) {
 for (index in indices) {  # Randomly pick 6 indices
   plot(
     sort(filtered_vector1), sort(filtered_vector2),
-    xlab = "Gene Wise P Values",
+    xlab = "Gene Wise P Values from t test",
     ylab = "Sceptre Wide P Values",
     main = paste("QQ plot for ",index, "th perturbation"),
     asp = 1,  # Ensure aspect ratio is 1:1
@@ -1133,8 +1139,10 @@ for (index in indices) {  # Randomly pick 6 indices
 par(mfrow = c(1, 1))
 
 ```
+**Notes:**
 
-*We calculate the p values for two-sided t-test by*
+*1. In the above plot, the perturbations are randomly chosen*
+*2. We calculate the p values for two-sided t-test by*
 
 $min(2 \times\frac{min(\#left,\#right)}{\#permutation},1)$
 
@@ -1154,7 +1162,7 @@ test statistics are always non-centered.
 ```{r,include=F}
 use_resample <- T
 use_approximation <- F
-rank <- T
+
 test_type="t_test"
 n_permute <- 3000
 chunk_size <- 50
@@ -1163,10 +1171,6 @@ chunk_size <- 50
     sceptre_object = sceptre_object
   )[c(189:191,160,167,168,169),-cell_to_filter]
 
-if (rank) {
-  response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
-  rownames(response_matrix)<- readLines("docs/row_names.txt")
-}
  
 source("code/functions.R")
  set.seed(0)
@@ -1200,6 +1204,8 @@ text(value, par("usr")[4] * 0.9, paste("Observed:", round(value, 2)), col = "red
 par(mfrow = c(1, 1))
 
 ```
+*The genes are randomly chosen*
+
 
 ### Compute the glm test statistics using the glm function in R
 
@@ -1259,7 +1265,8 @@ par(mfrow=c(3,2))
 for (i in suspicious_gene_id){
 hist(gene_wise_test_tensor[, i, 5], breaks = 3000, main=paste0("Null t test statistics: ",rownames(grna_assignment_matrix)[5],"-",rownames(response_matrix)[i]),
      xlab = "Values", col = "lightblue")
-abline(v = gene_wise_test_tensor[1, i, 5], col = "red", lwd = 2)
+abline(v = gene_wise_test_tensor[1, i, 5], col = "red", lwd = 1)
+text(gene_wise_test_tensor[1, i, 5], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
 
 }
 ```
@@ -1268,7 +1275,8 @@ par(mfrow=c(3,2))
 for (i in suspicious_gene_id){
 hist(gene_wise_test_tensor[, i, 4], breaks = 3000, main=paste0("Null t test statistics: ",rownames(grna_assignment_matrix)[4],"-",rownames(response_matrix)[i]),
      xlab = "Values", col = "lightblue", xlim = c(min(gene_wise_test_tensor[, i, 4]), max(gene_wise_test_tensor[, i, 4])))
-  abline(v = gene_wise_test_tensor[1, i, 4], col = "red", lwd = 2)
+  abline(v = gene_wise_test_tensor[1, i, 4], col = "red", lwd = 0.5)
+  text(gene_wise_test_tensor[1, i, 4], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
 }
 ```
 
@@ -1282,6 +1290,100 @@ hist(highlighted_values,
      border = "black")
 
 ```
+
+**Those spikes indicate an unstable resampled null test statistics, revealing problems in resampling. We want to check whether it is a lack of cells infected by gRNA that leads to a bad logistic regression, and therefore an unstable resample**
+
+
+```r
+n_permute <-3000
+n_rows <-nrow(get_grna_assignments(
+    sceptre_object = sceptre_object
+  )[-208,-cell_to_filter])
+
+chunk_size <- 15
+
+chunks <- split(1:n_rows, rep(1:ceiling(n_rows / chunk_size), each = chunk_size, length.out = n_rows))
+
+combined_num_spike <- NULL
+combined_cell_infected <- NULL
+combined_proportion <- NULL
+
+for (rows in chunks){
+  
+ grna_assignment_matrix <-get_grna_assignments(
+    sceptre_object = sceptre_object
+  )[rows,-cell_to_filter]
+
+source("code/functions.R")
+ set.seed(0)
+  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+
+  test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
+
+  gene_wise_test_tensor <-  convert_matrix_to_tensor(test_result, n_permute, grna_assignment_matrix)
+  
+  
+num_spike <- numeric(length(rows))
+proportion<- numeric(length(rows))
+
+for (i in 1:length(rows)) {
+  num_spike[i] <- sum(abs(gene_wise_test_tensor[,,i]) > 30, na.rm = TRUE)
+  proportion[i] <- sum(apply(abs(gene_wise_test_tensor[,,i]), 2, function(col) any(col > 30, na.rm = TRUE)))
+
+}
+
+cell_infected <- rowSums(grna_assignment_matrix)
+
+
+  combined_num_spike <- c(combined_num_spike, num_spike)
+  combined_cell_infected <- c(combined_cell_infected, cell_infected)
+  combined_proportion <- c(combined_proportion,proportion)
+}
+```
+
+```r
+df <- data.frame(
+  combined_cell_infected = combined_cell_infected,
+  combined_num_spike = combined_num_spike,
+  combined_proportion=combined_proportion
+)
+
+df <- df %>% arrange(combined_cell_infected)
+
+
+barplot(
+  height = df$combined_proportion,
+  names.arg = df$combined_cell_infected,
+  xlab = "Num Cell Infected",
+  ylab = "Num werid spikes",
+  main = "Number of genes that have weird histogram",
+  col = "skyblue",
+  border = "black",
+  las = 2 # Rotate x-axis labels for readability
+)
+
+
+barplot(
+  height = df$combined_num_spike,
+  names.arg = df$combined_cell_infected,
+  xlab = "Num Cell Infected",
+  ylab = "Num werid spikes",
+  main = "Sum of weird spikes in histograms among all genes",
+  col = "skyblue",
+  border = "black",
+  las = 2 # Rotate x-axis labels for readability
+)
+```
+
+```{r,echo=F}
+knitr::include_graphics("images/n_genes_weird_spike.png", error = FALSE)
+knitr::include_graphics("images/total_weird_spike.png", error = FALSE)
+```
+
+*Explanation: 1. The first plot shows the number of genes that have the weird histogram, for each perturbations.*
+
+*The second plot measures the weirdness of the histogram by the number of null test statistics that >30 or <-30. And the value shown on the graph is summed over all histograms (i.e. sum over all genes)*
+
 
 # Compare gene module discoveries
 
@@ -1411,6 +1513,9 @@ plot(-log10(our_method_long$p_value),-log10(minp_long$p_value),main="p values of
 ```
 
 
+```{r}
+
+```
 
 
 
