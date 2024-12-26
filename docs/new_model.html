@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="jliucx" />
+
+
+<title>Debug</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sceptre application and power increasing techniques</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jliucx/sceptre">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Debug</h1>
+<h4 class="author">jliucx</h4>
+<h4 class="date">2024-12-5</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-12-26
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Getting_started/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240712code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20240712)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240712code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240712)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_discovery_analysis.rds
+</td>
+<td style="text-align:left;">
+output/both_trans_author_filtered_cell/results_run_discovery_analysis.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_calibration_check.rds
+</td>
+<td style="text-align:left;">
+output/both_trans_author_filtered_cell/results_run_calibration_check.rds
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0aab02a8e1edfb8500870d5198aa4be90a935ecctargetblank0aab02aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/0aab02a8e1edfb8500870d5198aa4be90a935ecc" target="_blank">0aab02a</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0aab02a8e1edfb8500870d5198aa4be90a935ecctargetblank0aab02aa" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/0aab02a8e1edfb8500870d5198aa4be90a935ecc" target="_blank">0aab02a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/job-info.err
+    Ignored:    analysis/job-info.out
+    Ignored:    analysis/run.sh
+    Ignored:    analysis/run_R.sh
+
+Untracked files:
+    Untracked:  analysis/sceptre_singleton.R
+    Untracked:  analysis/sceptre_singleton.Rmd
+    Untracked:  analysis/sceptre_threshold.Rmd
+    Untracked:  code/debug.Rmd
+    Untracked:  code/fit_skew_normal.cpp
+    Untracked:  code/minp.R
+    Untracked:  code/newest.R
+    Untracked:  code/newest.err
+    Untracked:  code/newest.out
+    Untracked:  code/permutation.err
+    Untracked:  code/permutation.out
+    Untracked:  code/t_test.cpp
+    Untracked:  code/test.err
+    Untracked:  code/test.out
+    Untracked:  code/test_gene_module_reduced.R
+    Untracked:  code/test_gene_module_reduced.Rmd
+    Untracked:  code/test_gene_p.R
+    Untracked:  code/test_gene_p.Rmd
+    Untracked:  data/
+    Untracked:  gene_wise_p_test_10000.csv
+    Untracked:  output/SNP_gene_statistics_sceptre_approximation.csv
+    Untracked:  output/SNP_gene_statistics_sceptre_no_approximation.csv
+    Untracked:  output/SNP_p_no_approximation.csv
+    Untracked:  output/SNP_p_t_statistics_approximation.csv
+    Untracked:  output/both_trans_author_filtered_cell/
+    Untracked:  output/both_trans_author_permutation/
+    Untracked:  output/debug/
+    Untracked:  output/newest/filter_cell/
+    Untracked:  output/newest/try2/
+    Untracked:  output/try_sceptre_skew_fit_normalized_threshold_quantile_transform.csv
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/TATES.Rmd
+    Modified:   analysis/_site.yml
+    Deleted:    analysis/create_grna_target_data_frame.Rmd
+    Modified:   analysis/debug.Rmd
+    Modified:   analysis/qqplot.Rmd
+    Modified:   analysis/sceptre.Rmd
+    Modified:   analysis/sceptre_example.Rmd
+    Deleted:    analysis/seurat_example.Rmd
+    Modified:   analysis/summary.Rmd
+    Deleted:    analysis/try_Knit.Rmd
+    Deleted:    analysis/try_rcc.Rmd
+    Modified:   code/functions.R
+    Deleted:    code/job-info.err
+    Deleted:    code/job-info.out
+    Modified:   code/plot.Rmd
+    Deleted:    code/results.csv
+    Deleted:    code/results_wilcox_pval.csv
+    Modified:   code/run_R.sh
+    Modified:   code/startover.R
+    Modified:   code/test_gene_module.R
+    Modified:   code/test_gene_module.Rmd
+    Deleted:    code/try.R
+    Deleted:    code/try.Rmd
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_assign_grnas.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_grna_count_distributions.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_calibration_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_discovery_analysis.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_power_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_qc.png
+    Modified:   output/startover/test/gene_wise_p.csv
+    Modified:   output/startover/test/minp.csv
+    Modified:   output/startover/test/our_method.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/new_model.Rmd</code>) and HTML (<code>docs/new_model.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/0aab02a8e1edfb8500870d5198aa4be90a935ecc/analysis/new_model.Rmd" target="_blank">0aab02a</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+<td>
+upload newest results
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<p>We tried different settings: 1. Data containing whole gene or subset data containing gene of interest 2. Whether or not to normalize the gene expression using cell library size 3. Whether or not to rank the gene expression 4. Whether or not to use approximation to obtain p value</p>
+<p>Data setting: The whole data containing all the gene, the propensity in estimated using logistics regression considering the cell specific information. (library size, etc.)</p>
+<div id="our-modeluse-power-sum-to-combine-gene-wise-test-statistics" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Our model：use power sum to combine gene-wise test statistics</h1>
+<p>Besides using power sum to combine gene-wise test statistics, I also consider the maximum test statistics as one of the combinations.</p>
+<p>The dataset we are using now is a</p>
+<ol style="list-style-type: decimal">
+<li><p>A subset of genes, consider only genes contained in the gene module</p></li>
+<li><p>Filtered (removing analyzing genes that have low expression among all cells)</p></li>
+<li><p>Normalized (divide expression by the library size)</p></li>
+<li><p>Ranked (ranking the gene-expression level)</p></li>
+<li><p>Filtered (removing cells that have low library size &lt;1300 total UMI counts)</p></li>
+</ol>
+<pre class="r"><code>hist(colSums(sceptre_object@response_matrix[[1]]),breaks=2000, main=&quot;histogram of library size&quot;,xlab=&quot;UMI count&quot;)
+abline(v=1300,col=&quot;red&quot;)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>  cell_to_filter &lt;- which(covariate$response_n_umis &lt; 1300)
+
+  response_matrix_raw &lt;- response_matrix_raw[,-cell_to_filter]
+  covariate &lt;- covariate[-cell_to_filter,]
+
+  response_matrix_normalized&lt;-t(t(response_matrix_raw)/covariate$response_n_umis)
+  # response_matrix_normalized &lt;- response_matrix_raw
+
+
+  response_matrix &lt;- response_matrix_normalized
+
+  gene_module_index_matrix &lt;- convert_gene_list_to_matrix(response_matrix, gene_modules)</code></pre>
+<div id="consider-perturbations-that-affects-500-cells" class="section level2" number="1.1">
+<h2 number="1.1"><span class="header-section-number">1.1</span> Consider perturbations that affects &gt;500 cells</h2>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)</code></pre>
+<pre><code>
+Attaching package: &#39;tidyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:Matrix&#39;:
+
+    expand, pack, unpack</code></pre>
+<pre class="r"><code>gene_modules &lt;- readRDS(&quot;data/gene_modules_id.rds&quot;)
+
+gene_wise_p  &lt;- read.csv(&quot;output/newest/filter_cell/gene_wise_p.csv&quot;, nrows = 207)[rowSums(get_grna_assignments(
+  sceptre_object = sceptre_object
+)[-208,])&gt;500,]
+
+
+gene_wise_p[gene_wise_p == 0] &lt;- 1 / 10000
+gene_wise_p[gene_wise_p &gt;= 1] &lt;- 1- 1/10000
+sceptre &lt;- rbind(readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_discovery_analysis.rds&quot;)[,c(1,2,7)],
+                 readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_calibration_check.rds&quot;)[,c(1,2,7)])
+
+sceptre &lt;- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-6
+
+sceptre_wide &lt;- sceptre %&gt;%
+  pivot_wider(names_from = response_id, values_from = p_value) %&gt;%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) &lt;- sceptre_wide$grna_id
+sceptre_wide &lt;- sceptre_wide[, -1]
+
+sceptre_wide &lt;- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide &lt;- sceptre_wide[, colnames(gene_wise_p), drop = FALSE]
+
+
+
+library(ACAT)
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id &lt;- rownames(gene_wise_p)[i]
+  p_values_row &lt;- gene_wise_p[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # acat_pval &lt;- ACAT(module_p_values)
+        acat_pval&lt;-combination.test(module_p_values,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)
+        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t &lt;- do.call(rbind, module_results)
+
+
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id &lt;- rownames(gene_wise_p)[i]
+  p_values_row &lt;- gene_wise_p[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval &lt;- min(module_p_values) * length(module_p_values)
+        bonferroni_pval &lt;- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals &lt;- c(module_acat_pvals, bonferroni_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_t_bonforroni &lt;- do.call(rbind, module_results)
+
+
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id &lt;- rownames(sceptre_wide)[i]
+  p_values_row &lt;- sceptre_wide[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval &lt;- min(module_p_values) * length(module_p_values)
+        bonferroni_pval &lt;- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals &lt;- c(module_acat_pvals, bonferroni_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_sceptre_bonforroni &lt;- do.call(rbind, module_results)
+
+
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id &lt;- rownames(sceptre_wide)[i]
+  p_values_row &lt;- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # acat_pval &lt;- ACAT(module_p_values)
+        
+        acat_pval&lt;- combination.test(module_p_values,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)
+
+        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre &lt;- do.call(rbind, module_results)
+
+library(tibble)
+
+minp &lt;- read.csv(&quot;output/newest/filter_cell/minp.csv&quot;)[rowSums(get_grna_assignments(
+  sceptre_object = sceptre_object
+)[-208,])&gt;500,]
+
+
+
+
+minp_long &lt;- minp%&gt;%
+  rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
+
+# Remove rows with NA p-values
+minp_long &lt;- minp_long %&gt;% filter(!is.na(p_value))
+
+our_method &lt;-  read.csv(&quot;output/newest/filter_cell/our_method.csv&quot;)[rowSums(get_grna_assignments(
+  sceptre_object = sceptre_object
+)[-208,])&gt;500,]
+
+
+
+our_method_long &lt;- our_method %&gt;%
+  rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
+
+# Remove rows with NA p-values (if any)
+our_method_long &lt;- our_method_long %&gt;% filter(!is.na(p_value))
+
+
+module_results_t &lt;- module_results_t %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+module_results_t_bonforroni &lt;- module_results_t_bonforroni %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+# Filter rows in minp_long
+minp_long &lt;- minp_long %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+# Filter rows in our_method_long
+our_method_long &lt;- our_method_long %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+module_results_t$bh_pval &lt;- p.adjust(module_results_t$acat_pval, method = &quot;BH&quot;)
+module_results_t$identifier &lt;- paste(module_results_t$grna_id, module_results_t$module, sep = &quot;_&quot;)
+module_results_sceptre$bh_pval &lt;- p.adjust(module_results_sceptre$acat_pval, method = &quot;BH&quot;)
+module_results_sceptre$identifier &lt;- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = &quot;_&quot;)
+module_results_sceptre_bonforroni$bh_pval &lt;- p.adjust(module_results_sceptre_bonforroni$bonferroni_pval, method = &quot;BH&quot;)
+module_results_sceptre_bonforroni$identifier &lt;- paste(module_results_sceptre_bonforroni$grna_id, module_results_sceptre_bonforroni$module, sep = &quot;_&quot;)
+
+module_results_t_bonforroni$bh_pval &lt;- p.adjust(module_results_t_bonforroni$bonferroni_pval, method = &quot;BH&quot;)
+module_results_t_bonforroni$identifier &lt;- paste(module_results_t_bonforroni$grna_id, module_results_t_bonforroni$module, sep = &quot;_&quot;)
+
+
+
+minp_long$bh_pval &lt;-  p.adjust(minp_long$p_value, method = &quot;BH&quot;)
+minp_long$identifier &lt;- paste(minp_long$grna_id, minp_long$module, sep = &quot;_&quot;)
+our_method_long$bh_pval &lt;-  p.adjust(our_method_long$p_value, method = &quot;BH&quot;)
+our_method_long$identifier &lt;- paste(our_method_long$grna_id, our_method_long$module, sep = &quot;_&quot;)
+library(eulerr)</code></pre>
+<pre class="r"><code>significant_levels &lt;- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels &lt;- 0.01
+plot_list &lt;- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_bonfer &lt;- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval &lt; significant_level]
+    
+    
+  significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
+    module_results_t$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer &lt;- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval &lt; significant_level]
+  
+ significant_ids_minp &lt;- minp_long$identifier[
+    minp_long$bh_pval &lt; significant_level]
+  
+  significant_ids_ours &lt;- our_method_long$identifier[
+    our_method_long$bh_pval &lt; significant_level]
+  
+  # Prepare the sets
+  venn_data &lt;- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `minp` = significant_ids_minp,
+    `Our method` = significant_ids_ours
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot &lt;- plot(euler(venn_data),
+                     fills = list(fill = c(&quot;red&quot;, &quot;purple&quot;, &quot;green&quot;, &quot;yellow&quot;,&quot;purple&quot;), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste(&quot;Significant level&quot;, significant_level)
+  )
+  
+  
+  
+plot_list[[length(plot_list) + 1]] &lt;- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p><strong>Test on non-targeting gRNAs</strong></p>
+<pre class="r"><code>ntc_our &lt;- our_method_long %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+ select(grna_id, p_value)
+
+ntc_minp &lt;- minp_long %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, p_value)
+
+ntc_t &lt;- module_results_t %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, acat_pval)
+
+ntc_sceptre &lt;- module_results_sceptre %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, acat_pval)
+
+plot_list &lt;- list()
+
+plot_list[[1]] &lt;- gg_qqplot(as.vector(ntc_our$p_value), title=&quot;Negative control our method&quot;)
+plot_list[[2]] &lt;- gg_qqplot(as.vector(ntc_minp$p_value), title=&quot;Negative control minp&quot;)
+
+plot_list[[3]] &lt;- gg_qqplot(as.vector(ntc_t$acat_pval), title=&quot;Negative control t-Cauchy&quot;)
+
+plot_list[[4]] &lt;- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Negative control sceptre-Cauchy&quot;)
+
+
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="consider-all-perturbation-module-pairs" class="section level2" number="1.2">
+<h2 number="1.2"><span class="header-section-number">1.2</span> Consider all perturbation-module pairs</h2>
+<pre class="r"><code>significant_levels &lt;- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels &lt;- 0.01
+plot_list &lt;- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_bonfer &lt;- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval &lt; significant_level]
+    
+    
+  significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
+    module_results_t$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer &lt;- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval &lt; significant_level]
+  
+ significant_ids_minp &lt;- minp_long$identifier[
+    minp_long$bh_pval &lt; significant_level]
+  
+  significant_ids_ours &lt;- our_method_long$identifier[
+    our_method_long$bh_pval &lt; significant_level]
+  
+  # Prepare the sets
+  venn_data &lt;- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `minp` = significant_ids_minp,
+    `Our method` = significant_ids_ours
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot &lt;- plot(euler(venn_data),
+                     fills = list(fill = c(&quot;red&quot;, &quot;purple&quot;, &quot;green&quot;, &quot;yellow&quot;,&quot;purple&quot;), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste(&quot;Significant level&quot;, significant_level)
+  )
+  
+plot_list[[length(plot_list) + 1]] &lt;- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-7-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+</div>
+<div id="bonferonni-vs-cauchy-combination" class="section level2" number="1.3">
+<h2 number="1.3"><span class="header-section-number">1.3</span> Bonferonni vs Cauchy combination</h2>
+<pre class="r"><code>significant_levels &lt;- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels &lt;- 0.01
+plot_list &lt;- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_bonfer &lt;- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval &lt; significant_level]
+    
+    
+  significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
+    module_results_t$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer &lt;- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval &lt; significant_level]
+  
+ significant_ids_minp &lt;- minp_long$identifier[
+    minp_long$bh_pval &lt; significant_level]
+  
+  significant_ids_ours &lt;- our_method_long$identifier[
+    our_method_long$bh_pval &lt; significant_level]
+  
+  # Prepare the sets
+  venn_data &lt;- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+
+    # `minp` = significant_ids_minp,
+    # `Our method` = significant_ids_ours,
+ 
+    `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot &lt;- plot(euler(venn_data),
+                     fills = list(fill = c(&quot;green&quot;, &quot;yellow&quot;, &quot;red&quot;, &quot;purple&quot;), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste(&quot;Significant level&quot;, significant_level)
+  )
+  
+plot_list[[length(plot_list) + 1]] &lt;- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<pre class="r"><code>gene_wise_p_subset &lt;- gene_wise_p[rownames(gene_wise_p) %in% rownames(sceptre_wide), ]
+
+# Flatten sceptre_wide and gene_wise_p_subset into vectors
+sceptre_pvals &lt;- as.numeric(as.matrix(sceptre_wide))
+gene_wise_pvals &lt;- as.numeric(as.matrix(gene_wise_p_subset))
+
+# Remove pairs with NAs in either dataset
+valid_indices &lt;- !is.na(sceptre_pvals) &amp; !is.na(gene_wise_pvals)
+sceptre_pvals &lt;- sceptre_pvals[valid_indices]
+gene_wise_pvals &lt;- gene_wise_pvals[valid_indices]
+# Apply BH correction
+sceptre_bh &lt;- p.adjust(sceptre_pvals, method = &quot;BH&quot;)
+gene_wise_bh &lt;- p.adjust(gene_wise_pvals, method = &quot;BH&quot;)
+
+# Set rejection threshold
+alpha &lt;- 0.15
+sceptre_rejections &lt;- which(sceptre_bh &lt; alpha)
+gene_wise_rejections &lt;- which(gene_wise_bh &lt; alpha)
+
+# Create sets for Euler diagram
+euler_data &lt;- list(
+  `Sceptre glm` = sceptre_rejections,
+  `T test` = gene_wise_rejections
+)
+
+# Fit and plot Euler diagram with counts
+fit &lt;- euler(euler_data)
+plot(
+  fit,
+  fills = list(fill=c(&quot;red&quot;, &quot;yellow&quot;),alpha=0.5),
+  edges = TRUE,
+  labels = list(font = 2, cex = 1.5),
+  quantities = TRUE,  # Add numbers directly on the diagram
+  main = &quot;Significant perturb-gene pairs&quot;
+)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ACAT)</code></pre>
+<p><strong>Test on non-targeting gRNAs</strong></p>
+<pre class="r"><code>ntc_our &lt;- our_method_long %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+ select(grna_id, p_value)
+
+ntc_minp &lt;- minp_long %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, p_value)
+
+ntc_t &lt;- module_results_t %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, acat_pval)
+
+ntc_sceptre &lt;- module_results_sceptre %&gt;%
+  filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
+  select(grna_id, acat_pval)
+
+plot_list &lt;- list()
+
+plot_list[[1]] &lt;- gg_qqplot(as.vector(ntc_our$p_value), title=&quot;Negative control our method&quot;)
+plot_list[[2]] &lt;- gg_qqplot(as.vector(ntc_minp$p_value), title=&quot;Negative control minp&quot;)
+
+plot_list[[3]] &lt;- gg_qqplot(as.vector(ntc_t$acat_pval), title=&quot;Negative control t-Cauchy&quot;)
+
+plot_list[[4]] &lt;- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Negative control sceptre-Cauchy&quot;)
+
+
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pvals_1&lt;-c(0.0001,0.1,0.2,0.5,0.7)
+pvals_2&lt;-c(0.1,0.2,0.5,0.7,0.9)
+pvals_3&lt;-c(0.0001,0.1,0.2,0.3,0.999999)
+
+combined_p&lt;- data.frame(&quot;pval1&quot;=c(ACAT(pvals_1),combination.test(pvals_1,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)),&quot;pval2&quot;=c(ACAT(pvals_2),combination.test(pvals_2,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)),&quot;pval3&quot;=c(ACAT(pvals_3),combination.test(pvals_3,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)))
+rownames(combined_p) &lt;-c(&quot;ACAT&quot;,&quot;Lin Gui&#39;s&quot;)
+combined_p</code></pre>
+<pre><code>                 pval1     pval2        pval3
+ACAT      0.0004994148 0.4588605 0.9999949494
+Lin Gui&#39;s 0.0004993300 0.3506147 0.0004996011</code></pre>
+</div>
+</div>
+<div id="test-on-gene-p-value" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Test on gene p value</h1>
+<div id="scatter-plots-to-compare-gene-wise-p-values-of-sceptre-glm-and-our-t-test" class="section level2" number="2.1">
+<h2 number="2.1"><span class="header-section-number">2.1</span> Scatter plots to compare gene wise P values of sceptre glm and our t test</h2>
+<pre class="r"><code># Define indices
+set.seed(0)
+
+indices &lt;- sample(1:nrow(sceptre_wide),4,replace=F)
+
+par(mfrow = c(2, 2),pty = &quot;s&quot;)
+
+# Loop through indices for scatter and QQ plots
+for (index in indices) {
+  # Extract vectors for the current index
+  vector1 &lt;- as.vector(as.matrix(gene_wise_p[index, ]))
+  vector2 &lt;- as.vector(as.matrix(sceptre_wide[index, ]))
+  
+  # Filter out NA values
+  valid_indices &lt;- !is.na(vector1) &amp; !is.na(vector2)
+  filtered_vector1 &lt;- vector1[valid_indices]
+  filtered_vector2 &lt;- vector2[valid_indices]
+  
+  # Scatter Plot
+  plot(
+    filtered_vector1, filtered_vector2,
+    xlab = &quot;Gene Wise P Values&quot;,
+    ylab = &quot;Sceptre Wide P Values&quot;,
+    main = paste0(&quot;Scatter plot for &quot;,index, &quot; th perturbation&quot;),
+    pch = 16,
+    asp = 1,
+    xlim=c(0,1),
+    ylim=c(0,1),
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+  
+
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Example loop for scatter plots
+for (index in indices) {  # Randomly pick 6 indices
+  plot(
+    sort(filtered_vector1), sort(filtered_vector2),
+    xlab = &quot;Gene Wise P Values&quot;,
+    ylab = &quot;Sceptre Wide P Values&quot;,
+    main = paste(&quot;QQ plot for &quot;,index, &quot;th perturbation&quot;),
+    asp = 1,  # Ensure aspect ratio is 1:1
+    xlim = c(0, 1),
+    ylim = c(0, 1),
+    pch = 16,
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-12-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Reset layout to single plot
+par(mfrow = c(1, 1))</code></pre>
+<p><em>We calculate the p values for two-sided t-test by</em></p>
+<p><span class="math inline">\(min(2 \times\frac{min(\#left,\#right)}{\#permutation},1)\)</span></p>
+<p><span class="math inline">\(\#left\)</span> <em>means how many null test statistics are smaller than observed test statistics.</em></p>
+</div>
+<div id="biased-histogram-of-test-statistics" class="section level2" number="2.2">
+<h2 number="2.2"><span class="header-section-number">2.2</span> Biased histogram of test statistics</h2>
+<p><strong>Select Non-targeting gRNA:</strong></p>
+<div id="check-the-null-distribution-of-the-test-statistics-for-each-gene-and-see-if-the" class="section level3" number="2.2.1">
+<h3 number="2.2.1"><span class="header-section-number">2.2.1</span> Check the null distribution of the test statistics for each gene and see if the</h3>
+<p>test statistics are always non-centered.</p>
+<pre class="r"><code>par(mfrow = c(3, 2))
+set.seed(0)
+gene_idx &lt;- sample(1:dim(gene_wise_test_tensor)[2],6)
+for (i in gene_idx){
+value &lt;- gene_wise_test_tensor[1, i, 1]
+
+# Plot the histogram
+hist(gene_wise_test_tensor[, i,1], main = paste0(&quot;Test statistics of &quot; ,dimnames(gene_wise_test_tensor)[[3]][1], &quot;-&quot;, dimnames(gene_wise_test_tensor)[[2]][i]), xlab=&quot;null test statistics&quot;, breaks=1000)
+
+# Add a vertical line to indicate the value
+abline(v = value, col = &quot;red&quot;, lwd = 2)
+
+# Optionally, add a label for the value
+text(value, par(&quot;usr&quot;)[4] * 0.9, paste(&quot;Observed:&quot;, round(value, 2)), col = &quot;red&quot;, pos = 4)
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+</div>
+<div id="compute-the-glm-test-statistics-using-the-glm-function-in-r" class="section level3" number="2.2.2">
+<h3 number="2.2.2"><span class="header-section-number">2.2.2</span> Compute the glm test statistics using the glm function in R</h3>
+<pre class="r"><code>ranked_response&lt;-round(response_matrix[gene_idx,])
+par(mfrow = c(3, 2))
+
+grna_indices &lt;- seq(1, by = nrow(grna_assignment_matrix), length.out = (n_permute+1))
+
+
+subset_grna_assignment_matrix &lt;- grna_assignment_matrix_combined[grna_indices, ]
+
+
+for (k in 1:nrow(ranked_response)){
+  
+z_values &lt;- vector(&quot;list&quot;, 800)
+
+# Loop through the permutations
+for (i in 1:800) {
+  # Fit the GLM model
+  model &lt;- glm(
+    ranked_response[k,] ~ subset_grna_assignment_matrix[i, ] + log(covariate$response_n_umis),
+    family = &quot;poisson&quot;
+  )
+  
+    coef &lt;- coef(summary(model))  # Summary of the model
+  
+  # Calculate the z-value for the predictor variable
+  z_values[i] &lt;- coef[2, &quot;Estimate&quot;] / coef[2, &quot;Std. Error&quot;]
+}
+
+
+hist(
+  as.numeric(z_values),
+  main = paste0(&quot;Test statistics of &quot;, rownames(grna_assignment_matrix)[grna_indices[1]],&quot;-&quot;, rownames(ranked_response)[k]), xlab=&quot;null test statistics&quot;, breaks=800
+)
+
+abline(v = z_values[[1]], col = &quot;red&quot;, lwd = 2)
+
+# Optionally, add a label for the value
+text(z_values[[1]], par(&quot;usr&quot;)[4] * 0.9, &quot;Observed&quot;, col = &quot;red&quot;, pos = 4)
+
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="weird-spikes-found-in-histograms-of-some-purturbation-gene-test-statistics" class="section level2" number="2.3">
+<h2 number="2.3"><span class="header-section-number">2.3</span> Weird spikes found in histograms of some purturbation-gene test statistics</h2>
+<pre class="r"><code>max(gene_wise_test_tensor[, 560, 5])</code></pre>
+<pre><code>[1] NaN</code></pre>
+<pre class="r"><code>suspicious_gene_id &lt;-c(560,1417,1455,1562,1910,2010)
+par(mfrow=c(3,2))
+for (i in suspicious_gene_id){
+hist(gene_wise_test_tensor[, i, 5], breaks = 3000, main=paste0(&quot;Null t test statistics: &quot;,rownames(grna_assignment_matrix)[5],&quot;-&quot;,rownames(response_matrix)[i]),
+     xlab = &quot;Values&quot;, col = &quot;lightblue&quot;)
+abline(v = gene_wise_test_tensor[1, i, 5], col = &quot;red&quot;, lwd = 2)
+
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(3,2))
+for (i in suspicious_gene_id){
+hist(gene_wise_test_tensor[, i, 4], breaks = 3000, main=paste0(&quot;Null t test statistics: &quot;,rownames(grna_assignment_matrix)[4],&quot;-&quot;,rownames(response_matrix)[i]),
+     xlab = &quot;Values&quot;, col = &quot;lightblue&quot;, xlim = c(min(gene_wise_test_tensor[, i, 4]), max(gene_wise_test_tensor[, i, 4])))
+  abline(v = gene_wise_test_tensor[1, i, 4], col = &quot;red&quot;, lwd = 2)
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>highlighted_values &lt;- gene_wise_test_tensor[, 560, 4][gene_wise_test_tensor[, 560, 4] &lt; -50]
+
+hist(highlighted_values, 
+     breaks = 15, 
+     main = &quot;Histogram of Problematic Region (Values &lt; -50)&quot;, 
+     xlab = &quot;Values&quot;, 
+     border = &quot;black&quot;)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="compare-gene-module-discoveries" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Compare gene module discoveries</h1>
+<div id="comparison-of-module-p-values-t-cauchy-vs-sceptre-cauchy" class="section level2" number="3.1">
+<h2 number="3.1"><span class="header-section-number">3.1</span> Comparison of Module p values (t-Cauchy vs Sceptre-Cauchy)</h2>
+<pre class="r"><code>set.seed(0)
+
+indices &lt;- sample(1:nrow(gene_wise_p),3)
+
+par(mfrow = c(3, 2))
+
+# Loop through indices
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    module_results_t$acat_pval[(50 * (k-1) + 1):(50 * k)],
+    module_results_sceptre$acat_pval[(50 * (k-1) + 1):(50 * k)],
+    xlab = &quot;T-ACAT P-Value&quot;,
+    ylab = &quot;Sceptre ACAT P-Value&quot;,
+    main = paste0(&quot;Scatter Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,  # Point style
+    col = &quot;blue&quot;,  # Point color
+    cex = 0.7,  # Point size
+
+
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = &quot;Press [Enter] to view the QQ plot...&quot;)
+
+  # QQ Plot
+  qqplot(
+    module_results_t$acat_pval[(50 * (k-1) + 1):(50 * k )],
+    module_results_sceptre$acat_pval[(50 * (k-1) + 1):(50 * k)],
+    xlab = &quot;T-ACAT P-Value&quot;,
+    ylab = &quot;Sceptre ACAT P-Value&quot;,
+    main = paste0(&quot;QQ Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-20-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<pre class="r"><code>plot(module_results_t$acat_pval,module_results_sceptre$acat_pval,xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs&quot;,cex=0.5)
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(-log10(module_results_t$acat_pval),-log10(module_results_sceptre$acat_pval),xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs (-log10)&quot;,cex=0.5)
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-21-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session</strong></p>
+</div>
+<div id="comparison-of-module-p-values-minp-vs-our-method" class="section level2" number="3.2">
+<h2 number="3.2"><span class="header-section-number">3.2</span> Comparison of Module p values (minp vs our method)</h2>
+<p>Minp: This gene-module p value is obtained by : 1. Obtain gene-wise test statistics and their corresponding p value 2. Take minimum p value within a gene module, as the test statistics 3. Use null distribution to find final p value</p>
+<p><strong>We want to investigate in which case minp has a significance difference from us</strong></p>
+<pre class="r"><code># Loop through indices
+par(mfrow = c(3, 2))
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    our_method_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    minp_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    xlab = &quot;Our P-Value&quot;,
+    ylab = &quot;Minp P-Value&quot;,
+    main = paste0(&quot;Scatter Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,  # Point style
+    col = &quot;blue&quot;,  # Point color
+    cex = 0.7,  # Point size
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = &quot;Press [Enter] to view the QQ plot...&quot;)
+
+  # QQ Plot
+  qqplot(
+    our_method_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    minp_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    xlab = &quot;Our P-Value&quot;,
+    ylab = &quot;Minp P-Value&quot;,
+    main = paste0(&quot;QQ Plot for Module P-Values of &quot;, k, &quot;th perturbation&quot;),
+    pch = 16,
+    col = &quot;blue&quot;,
+    cex = 0.7
+  )
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-22-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(our_method_long$p_value,minp_long$p_value, main=&quot;p values of all perturbation-gene module pairs&quot;,xlab=&quot;our method&quot;,ylab=&quot;minp&quot;,cex=0.5)
+  abline(0, 1, col = &quot;red&quot;, lwd = 2,cex=0.5)  # Add reference line</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(-log10(our_method_long$p_value),-log10(minp_long$p_value),main=&quot;p values of all perturbation-gene module pairs (-log transformed)&quot;,xlab=&quot;our method&quot;,ylab=&quot;minp&quot;,cex=0.5)
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-23-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el8-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
+ [4] LC_COLLATE=C         LC_MONETARY=C        LC_MESSAGES=C       
+ [7] LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C        
+[10] LC_TELEPHONE=C       LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] eulerr_7.0.2            ACAT_0.91               tidyr_1.3.0            
+ [4] tibble_3.2.1            ggplot2_3.5.1           gridExtra_2.3          
+ [7] heavytailcombtest_1.0.0 sgt_2.0                 numDeriv_2016.8-1.1    
+[10] optimx_2023-10.21       peakRAM_1.0.2           BH_1.84.0-0            
+[13] Matrix_1.6-3            dplyr_1.1.4             readr_1.4.0            
+[16] sceptredata_0.99.0      sceptre_0.10.0          presto_1.0.0           
+[19] data.table_1.14.8       Rcpp_1.0.12             workflowr_1.7.1        
+
+loaded via a namespace (and not attached):
+ [1] httr_1.4.2        sass_0.4.9        jsonlite_1.8.7    R.utils_2.10.1   
+ [5] bslib_0.7.0       getPass_0.2-2     highr_0.11        yaml_2.2.1       
+ [9] pillar_1.9.0      lattice_0.22-5    glue_1.6.2        rmutil_1.1.10    
+[13] digest_0.6.33     promises_1.2.0.1  polyclip_1.10-6   colorspace_2.1-0 
+[17] htmltools_0.5.8.1 httpuv_1.6.1      R.oo_1.24.0       pkgconfig_2.0.3  
+[21] invgamma_1.1      purrr_1.0.2       mvtnorm_1.3-2     scales_1.3.0     
+[25] processx_3.8.4    whisker_0.4.1     later_1.2.0       pracma_2.4.4     
+[29] git2r_0.32.0      farver_2.1.1      generics_0.1.3    ellipsis_0.3.2   
+[33] cachem_1.0.8      withr_2.5.2       cli_3.6.1         magrittr_2.0.3   
+[37] crayon_1.5.2      evaluate_0.23     ps_1.7.5          R.methodsS3_1.8.2
+[41] fs_1.6.3          fansi_1.0.5       tools_4.1.0       hms_1.1.0        
+[45] lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0     callr_3.7.6      
+[49] compiler_4.1.0    jquerylib_0.1.4   rlang_1.1.2       grid_4.1.0       
+[53] nloptr_1.2.2.2    rstudioapi_0.15.0 labeling_0.4.3    rmarkdown_2.27   
+[57] gtable_0.3.0      R6_2.5.1          knitr_1.48        fastmap_1.1.1    
+[61] utf8_1.2.1        rprojroot_2.0.4   polylabelr_0.2.0  stringi_1.6.2    
+[65] vctrs_0.6.4       tidyselect_1.2.0  xfun_0.45        </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
