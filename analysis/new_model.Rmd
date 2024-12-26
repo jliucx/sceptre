@@ -1251,9 +1251,7 @@ text(z_values[[1]], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
 
 
 
-```{r}
-max(gene_wise_test_tensor[, 560, 5])
-```
+
 
 ```{r}
 suspicious_gene_id <-c(560,1417,1455,1562,1910,2010)
