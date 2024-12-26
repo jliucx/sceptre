@@ -26,4 +26,4 @@ Results:
 
 [Calibration and power check of t test and wilcoxon test](plot.html)
 
-[Debug](debug.html)
+[Newest results](new_model.html)

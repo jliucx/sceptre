@@ -1,0 +1,1418 @@
+---
+title: "Debug"
+author: "jliucx"
+date: "2024-12-5"
+output: 
+  workflowr::wflow_html:
+    number_sections: true
+editor_options:
+  chunk_output_type: inline
+  markdown: 
+    wrap: 72
+---
+
+```{r,include=F}
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+library(presto)
+library(sceptre)
+library(sceptredata)
+library(readr)
+library(dplyr)
+library(Matrix)
+library(parallel)
+library(BH)
+library(Rcpp)
+library(peakRAM)
+library(sgt)
+library(heavytailcombtest)
+library(gridExtra)
+
+
+
+sourceCpp("code/fit_skew_normal.cpp")
+source("code/functions.R")
+
+author_threshold <- T
+
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+if (author_threshold) {
+  #directories <- "data/STINGseq-v1_GDO"
+  directories <- "data/gene_module_author_threshold"
+  grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
+  grna_target_data_frame_omit  <- grna_target_data_frame %>%
+    filter(!(grna_id %in% c("NTC-3", "NTC-12")))
+
+  sceptre_object <- import_data_from_cellranger(
+    directories = directories,
+    moi = "high",
+    grna_target_data_frame = grna_target_data_frame_omit
+  )
+
+  positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
+
+  discovery_pairs_cis <- construct_cis_pairs(
+    sceptre_object = sceptre_object,
+    positive_control_pairs = positive_control_pairs,
+    response_position_data_frame=gene_position_data_frame_grch37,
+    distance_threshold = 5e5
+  )
+
+  discovery_pairs_trans <- construct_trans_pairs(
+    sceptre_object = sceptre_object,
+    positive_control_pairs = positive_control_pairs,
+    pairs_to_exclude = "pairs_containing_pc_targets"
+  )
+
+  sceptre_object <- sceptre_object |>  # |> is R's base pipe, similar to %>%
+    set_analysis_parameters(
+      discovery_pairs = discovery_pairs_trans,
+      positive_control_pairs = positive_control_pairs,
+      side = "both",
+      grna_integration_strategy="singleton"
+    ) |>
+    assign_grnas(
+      method = "thresholding",
+      threshold = 1
+    )
+
+}
+
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+
+gene_modules <- readRDS("data/gene_modules_id.rds")
+covariate <- sceptre_object@covariate_data_frame
+
+
+response_matrix_raw<-sceptre_object@response_matrix[[1]]
+umis_quantiles <- quantile(covariate$response_n_umis, probs = c(0.01, 0.99))
+nonzero_quantiles <- quantile(covariate$response_n_nonzero, probs = c(0.01, 0.99))
+
+out_of_range_indices <- which(
+  covariate$response_n_umis < umis_quantiles[1] |
+    covariate$response_n_umis > umis_quantiles[2] |
+    covariate$response_n_nonzero < nonzero_quantiles[1] |
+    covariate$response_n_nonzero > nonzero_quantiles[2]
+)
+
+# response_matrix_raw <- response_matrix_raw[,-out_of_range_indices]
+# covariate <- covariate[-out_of_range_indices,]
+
+gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
+  n <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color = "red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po) +
+    ggtitle(title)  # Add title
+}
+  
+```
+
+
+We tried different settings: 1. Data containing whole gene or subset
+data containing gene of interest 2. Whether or not to normalize the gene
+expression using cell library size 3. Whether or not to rank the gene
+expression 4. Whether or not to use approximation to obtain p value
+
+Data setting: The whole data containing all the gene, the propensity in
+estimated using logistics regression considering the cell specific
+information. (library size, etc.)
+
+# Our model：use power sum to combine gene-wise test statistics
+
+Besides using power sum to combine gene-wise test statistics, I also
+consider the maximum test statistics as one of the combinations.
+
+The dataset we are using now is a
+
+1.  A subset of genes, consider only genes contained in the gene module
+
+2.  Filtered (removing analyzing genes that have low expression among
+    all cells)
+
+3.  Normalized (divide expression by the library size)
+
+4.  Ranked (ranking the gene-expression level)
+
+5.  Filtered (removing cells that have low library size \<1300 total UMI
+    counts)
+    
+    
+```{r}
+hist(colSums(sceptre_object@response_matrix[[1]]),breaks=2000, main="histogram of library size",xlab="UMI count")
+abline(v=1300,col="red")
+
+
+  cell_to_filter <- which(covariate$response_n_umis < 1300)
+
+  response_matrix_raw <- response_matrix_raw[,-cell_to_filter]
+  covariate <- covariate[-cell_to_filter,]
+
+  response_matrix_normalized<-t(t(response_matrix_raw)/covariate$response_n_umis)
+  # response_matrix_normalized <- response_matrix_raw
+
+
+  response_matrix <- response_matrix_normalized
+
+  gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
+  
+```
+
+
+## Consider perturbations that affects >500 cells
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)
+
+
+gene_modules <- readRDS("data/gene_modules_id.rds")
+
+gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
+  sceptre_object = sceptre_object
+)[-208,])>500,]
+
+
+gene_wise_p[gene_wise_p == 0] <- 1 / 10000
+gene_wise_p[gene_wise_p >= 1] <- 1- 1/10000
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, colnames(gene_wise_p), drop = FALSE]
+
+
+
+library(ACAT)
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id <- rownames(gene_wise_p)[i]
+  p_values_row <- gene_wise_p[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        acat_pval<-combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t <- do.call(rbind, module_results)
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id <- rownames(gene_wise_p)[i]
+  p_values_row <- gene_wise_p[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval <- min(module_p_values) * length(module_p_values)
+        bonferroni_pval <- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals <- c(module_acat_pvals, bonferroni_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_t_bonforroni <- do.call(rbind, module_results)
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval <- min(module_p_values) * length(module_p_values)
+        bonferroni_pval <- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals <- c(module_acat_pvals, bonferroni_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_sceptre_bonforroni <- do.call(rbind, module_results)
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+        acat_pval<- combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+
+library(tibble)
+
+minp <- read.csv("output/newest/filter_cell/minp.csv")[rowSums(get_grna_assignments(
+  sceptre_object = sceptre_object
+)[-208,])>500,]
+
+
+
+
+minp_long <- minp%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+minp_long <- minp_long %>% filter(!is.na(p_value))
+
+our_method <-  read.csv("output/newest/filter_cell/our_method.csv")[rowSums(get_grna_assignments(
+  sceptre_object = sceptre_object
+)[-208,])>500,]
+
+
+
+our_method_long <- our_method %>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values (if any)
+our_method_long <- our_method_long %>% filter(!is.na(p_value))
+
+
+module_results_t <- module_results_t %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_t_bonforroni <- module_results_t_bonforroni %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+# Filter rows in minp_long
+minp_long <- minp_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+# Filter rows in our_method_long
+our_method_long <- our_method_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_t$bh_pval <- p.adjust(module_results_t$acat_pval, method = "BH")
+module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$module, sep = "_")
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+module_results_sceptre_bonforroni$bh_pval <- p.adjust(module_results_sceptre_bonforroni$bonferroni_pval, method = "BH")
+module_results_sceptre_bonforroni$identifier <- paste(module_results_sceptre_bonforroni$grna_id, module_results_sceptre_bonforroni$module, sep = "_")
+
+module_results_t_bonforroni$bh_pval <- p.adjust(module_results_t_bonforroni$bonferroni_pval, method = "BH")
+module_results_t_bonforroni$identifier <- paste(module_results_t_bonforroni$grna_id, module_results_t_bonforroni$module, sep = "_")
+
+
+
+minp_long$bh_pval <-  p.adjust(minp_long$p_value, method = "BH")
+minp_long$identifier <- paste(minp_long$grna_id, minp_long$module, sep = "_")
+our_method_long$bh_pval <-  p.adjust(our_method_long$p_value, method = "BH")
+our_method_long$identifier <- paste(our_method_long$grna_id, our_method_long$module, sep = "_")
+library(eulerr)
+
+
+```
+```{r,fig.width=8,fig.height=8,warning=F}
+significant_levels <- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < significant_level]
+  
+    significant_ids_gene_wise_p_bonfer <- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval < significant_level]
+    
+    
+  significant_ids_gene_wise_p_t <- module_results_t$identifier[
+    module_results_t$bh_pval < significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer <- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval < significant_level]
+  
+ significant_ids_minp <- minp_long$identifier[
+    minp_long$bh_pval < significant_level]
+  
+  significant_ids_ours <- our_method_long$identifier[
+    our_method_long$bh_pval < significant_level]
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `minp` = significant_ids_minp,
+    `Our method` = significant_ids_ours
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot <- plot(euler(venn_data),
+                     fills = list(fill = c("red", "purple", "green", "yellow","purple"), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste("Significant level", significant_level)
+  )
+  
+  
+  
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)
+
+par(mfrow = c(1, 1))
+```
+
+**Test on non-targeting gRNAs**
+```{r}
+ntc_our <- our_method_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+ select(grna_id, p_value)
+
+ntc_minp <- minp_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, p_value)
+
+ntc_t <- module_results_t %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+plot_list <- list()
+
+plot_list[[1]] <- gg_qqplot(as.vector(ntc_our$p_value), title="Negative control our method")
+plot_list[[2]] <- gg_qqplot(as.vector(ntc_minp$p_value), title="Negative control minp")
+
+plot_list[[3]] <- gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-Cauchy")
+
+plot_list[[4]] <- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-Cauchy")
+
+
+grid.arrange(grobs = plot_list, ncol = 2)
+```
+
+
+## Consider all perturbation-module pairs
+
+
+
+```{r,echo=F,fig.width=8, fig.height=8}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)
+
+
+gene_modules <- readRDS("data/gene_modules_id.rds")
+
+# gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[-208,])>500,]
+gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)
+
+
+gene_wise_p[gene_wise_p == 0] <- 1 / 10000
+gene_wise_p[gene_wise_p >= 1] <- 1- 1/10000
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, colnames(gene_wise_p), drop = FALSE]
+
+
+library(eulerr)
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id <- rownames(gene_wise_p)[i]
+  p_values_row <- gene_wise_p[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        acat_pval<-combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t <- do.call(rbind, module_results)
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id <- rownames(gene_wise_p)[i]
+  p_values_row <- gene_wise_p[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval <- min(module_p_values) * length(module_p_values)
+        bonferroni_pval <- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals <- c(module_acat_pvals, bonferroni_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_t_bonforroni <- do.call(rbind, module_results)
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval <- min(module_p_values) * length(module_p_values)
+        bonferroni_pval <- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals <- c(module_acat_pvals, bonferroni_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_sceptre_bonforroni <- do.call(rbind, module_results)
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name <- names(gene_modules)[j]  # Get the module name
+    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+        acat_pval<- combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+
+library(tibble)
+
+# minp <- read.csv("output/newest/filter_cell/minp.csv")[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[-208,])>500,]
+
+
+minp <- read.csv("output/newest/filter_cell/minp.csv")
+
+
+minp_long <- minp%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+minp_long <- minp_long %>% filter(!is.na(p_value))
+
+# our_method <-  read.csv("output/newest/filter_cell/our_method.csv")[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[-208,])>500,]
+our_method <-  read.csv("output/newest/filter_cell/our_method.csv")
+
+
+
+our_method_long <- our_method %>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values (if any)
+our_method_long <- our_method_long %>% filter(!is.na(p_value))
+
+
+module_results_t <- module_results_t %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_t_bonforroni <- module_results_t_bonforroni %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+# Filter rows in minp_long
+minp_long <- minp_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+# Filter rows in our_method_long
+our_method_long <- our_method_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_t$bh_pval <- p.adjust(module_results_t$acat_pval, method = "BH")
+module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$module, sep = "_")
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+module_results_sceptre_bonforroni$bh_pval <- p.adjust(module_results_sceptre_bonforroni$bonferroni_pval, method = "BH")
+module_results_sceptre_bonforroni$identifier <- paste(module_results_sceptre_bonforroni$grna_id, module_results_sceptre_bonforroni$module, sep = "_")
+
+module_results_t_bonforroni$bh_pval <- p.adjust(module_results_t_bonforroni$bonferroni_pval, method = "BH")
+module_results_t_bonforroni$identifier <- paste(module_results_t_bonforroni$grna_id, module_results_t_bonforroni$module, sep = "_")
+
+
+
+minp_long$bh_pval <-  p.adjust(minp_long$p_value, method = "BH")
+minp_long$identifier <- paste(minp_long$grna_id, minp_long$module, sep = "_")
+our_method_long$bh_pval <-  p.adjust(our_method_long$p_value, method = "BH")
+our_method_long$identifier <- paste(our_method_long$grna_id, our_method_long$module, sep = "_")
+library(eulerr)
+
+
+
+```
+
+
+
+```{r,fig.width=8,fig.height=8,warning=F}
+significant_levels <- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < significant_level]
+  
+    significant_ids_gene_wise_p_bonfer <- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval < significant_level]
+    
+    
+  significant_ids_gene_wise_p_t <- module_results_t$identifier[
+    module_results_t$bh_pval < significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer <- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval < significant_level]
+  
+ significant_ids_minp <- minp_long$identifier[
+    minp_long$bh_pval < significant_level]
+  
+  significant_ids_ours <- our_method_long$identifier[
+    our_method_long$bh_pval < significant_level]
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `minp` = significant_ids_minp,
+    `Our method` = significant_ids_ours
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot <- plot(euler(venn_data),
+                     fills = list(fill = c("red", "purple", "green", "yellow","purple"), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste("Significant level", significant_level)
+  )
+  
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)
+
+par(mfrow = c(1, 1))
+
+```
+
+## Bonferonni vs Cauchy combination
+
+```{r,fig.width=8,fig.height=8,warning=F}
+significant_levels <- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < significant_level]
+  
+    significant_ids_gene_wise_p_bonfer <- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval < significant_level]
+    
+    
+  significant_ids_gene_wise_p_t <- module_results_t$identifier[
+    module_results_t$bh_pval < significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer <- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval < significant_level]
+  
+ significant_ids_minp <- minp_long$identifier[
+    minp_long$bh_pval < significant_level]
+  
+  significant_ids_ours <- our_method_long$identifier[
+    our_method_long$bh_pval < significant_level]
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+
+    # `minp` = significant_ids_minp,
+    # `Our method` = significant_ids_ours,
+ 
+    `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot <- plot(euler(venn_data),
+                     fills = list(fill = c("green", "yellow", "red", "purple"), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste("Significant level", significant_level)
+  )
+  
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)
+
+par(mfrow = c(1, 1))
+
+```
+```{r}
+gene_wise_p_subset <- gene_wise_p[rownames(gene_wise_p) %in% rownames(sceptre_wide), ]
+
+# Flatten sceptre_wide and gene_wise_p_subset into vectors
+sceptre_pvals <- as.numeric(as.matrix(sceptre_wide))
+gene_wise_pvals <- as.numeric(as.matrix(gene_wise_p_subset))
+
+# Remove pairs with NAs in either dataset
+valid_indices <- !is.na(sceptre_pvals) & !is.na(gene_wise_pvals)
+sceptre_pvals <- sceptre_pvals[valid_indices]
+gene_wise_pvals <- gene_wise_pvals[valid_indices]
+# Apply BH correction
+sceptre_bh <- p.adjust(sceptre_pvals, method = "BH")
+gene_wise_bh <- p.adjust(gene_wise_pvals, method = "BH")
+
+# Set rejection threshold
+alpha <- 0.15
+sceptre_rejections <- which(sceptre_bh < alpha)
+gene_wise_rejections <- which(gene_wise_bh < alpha)
+
+# Create sets for Euler diagram
+euler_data <- list(
+  `Sceptre glm` = sceptre_rejections,
+  `T test` = gene_wise_rejections
+)
+
+# Fit and plot Euler diagram with counts
+fit <- euler(euler_data)
+plot(
+  fit,
+  fills = list(fill=c("red", "yellow"),alpha=0.5),
+  edges = TRUE,
+  labels = list(font = 2, cex = 1.5),
+  quantities = TRUE,  # Add numbers directly on the diagram
+  main = "Significant perturb-gene pairs"
+)
+
+library(ACAT)
+```
+
+
+**Test on non-targeting gRNAs**
+```{r}
+ntc_our <- our_method_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+ select(grna_id, p_value)
+
+ntc_minp <- minp_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, p_value)
+
+ntc_t <- module_results_t %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+plot_list <- list()
+
+plot_list[[1]] <- gg_qqplot(as.vector(ntc_our$p_value), title="Negative control our method")
+plot_list[[2]] <- gg_qqplot(as.vector(ntc_minp$p_value), title="Negative control minp")
+
+plot_list[[3]] <- gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-Cauchy")
+
+plot_list[[4]] <- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-Cauchy")
+
+
+grid.arrange(grobs = plot_list, ncol = 2)
+```
+
+
+
+```{r}
+pvals_1<-c(0.0001,0.1,0.2,0.5,0.7)
+pvals_2<-c(0.1,0.2,0.5,0.7,0.9)
+pvals_3<-c(0.0001,0.1,0.2,0.3,0.999999)
+
+combined_p<- data.frame("pval1"=c(ACAT(pvals_1),combination.test(pvals_1,weights = NA,method = "Cauchy",tail.idx = 1)),"pval2"=c(ACAT(pvals_2),combination.test(pvals_2,weights = NA,method = "Cauchy",tail.idx = 1)),"pval3"=c(ACAT(pvals_3),combination.test(pvals_3,weights = NA,method = "Cauchy",tail.idx = 1)))
+rownames(combined_p) <-c("ACAT","Lin Gui's")
+combined_p
+```
+
+
+
+# Test on gene p value
+
+
+## Scatter plots to compare gene wise P values of sceptre glm and our t test
+
+```{r,fig.width=8, fig.height=8}
+# Define indices
+set.seed(0)
+
+indices <- sample(1:nrow(sceptre_wide),4,replace=F)
+
+par(mfrow = c(2, 2),pty = "s")
+
+# Loop through indices for scatter and QQ plots
+for (index in indices) {
+  # Extract vectors for the current index
+  vector1 <- as.vector(as.matrix(gene_wise_p[index, ]))
+  vector2 <- as.vector(as.matrix(sceptre_wide[index, ]))
+  
+  # Filter out NA values
+  valid_indices <- !is.na(vector1) & !is.na(vector2)
+  filtered_vector1 <- vector1[valid_indices]
+  filtered_vector2 <- vector2[valid_indices]
+  
+  # Scatter Plot
+  plot(
+    filtered_vector1, filtered_vector2,
+    xlab = "Gene Wise P Values",
+    ylab = "Sceptre Wide P Values",
+    main = paste0("Scatter plot for ",index, " th perturbation"),
+    pch = 16,
+    asp = 1,
+    xlim=c(0,1),
+    ylim=c(0,1),
+    col = "blue",
+    cex = 0.7
+  )
+  
+
+}
+
+
+# Example loop for scatter plots
+for (index in indices) {  # Randomly pick 6 indices
+  plot(
+    sort(filtered_vector1), sort(filtered_vector2),
+    xlab = "Gene Wise P Values",
+    ylab = "Sceptre Wide P Values",
+    main = paste("QQ plot for ",index, "th perturbation"),
+    asp = 1,  # Ensure aspect ratio is 1:1
+    xlim = c(0, 1),
+    ylim = c(0, 1),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+}
+
+# Reset layout to single plot
+par(mfrow = c(1, 1))
+
+```
+
+*We calculate the p values for two-sided t-test by*
+
+$min(2 \times\frac{min(\#left,\#right)}{\#permutation},1)$
+
+$\#left$ *means how many null test statistics are smaller than observed
+test statistics.*
+
+## Biased histogram of test statistics
+
+**Select Non-targeting gRNA:**
+
+### Check the null distribution of the test statistics for each gene and see if the
+
+test statistics are always non-centered.
+
+
+
+```{r,include=F}
+use_resample <- T
+use_approximation <- F
+rank <- T
+test_type="t_test"
+n_permute <- 3000
+chunk_size <- 50
+
+ grna_assignment_matrix <-get_grna_assignments(
+    sceptre_object = sceptre_object
+  )[c(189:191,160,167,168,169),-cell_to_filter]
+
+if (rank) {
+  response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
+  rownames(response_matrix)<- readLines("docs/row_names.txt")
+}
+ 
+source("code/functions.R")
+ set.seed(0)
+  grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
+
+  test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
+
+  gene_wise_test_tensor <-  convert_matrix_to_tensor(test_result, n_permute, grna_assignment_matrix)
+
+  normalized_test_tensor <- test_normalizer(gene_wise_test_tensor)
+```
+
+
+```{r}
+
+par(mfrow = c(3, 2))
+set.seed(0)
+gene_idx <- sample(1:dim(gene_wise_test_tensor)[2],6)
+for (i in gene_idx){
+value <- gene_wise_test_tensor[1, i, 1]
+
+# Plot the histogram
+hist(gene_wise_test_tensor[, i,1], main = paste0("Test statistics of " ,dimnames(gene_wise_test_tensor)[[3]][1], "-", dimnames(gene_wise_test_tensor)[[2]][i]), xlab="null test statistics", breaks=1000)
+
+# Add a vertical line to indicate the value
+abline(v = value, col = "red", lwd = 2)
+
+# Optionally, add a label for the value
+text(value, par("usr")[4] * 0.9, paste("Observed:", round(value, 2)), col = "red", pos = 4)
+}
+par(mfrow = c(1, 1))
+
+```
+
+### Compute the glm test statistics using the glm function in R
+
+
+``` {r}
+ranked_response<-round(response_matrix[gene_idx,])
+par(mfrow = c(3, 2))
+
+grna_indices <- seq(1, by = nrow(grna_assignment_matrix), length.out = (n_permute+1))
+
+
+subset_grna_assignment_matrix <- grna_assignment_matrix_combined[grna_indices, ]
+
+
+for (k in 1:nrow(ranked_response)){
+  
+z_values <- vector("list", 800)
+
+# Loop through the permutations
+for (i in 1:800) {
+  # Fit the GLM model
+  model <- glm(
+    ranked_response[k,] ~ subset_grna_assignment_matrix[i, ] + log(covariate$response_n_umis),
+    family = "poisson"
+  )
+  
+    coef <- coef(summary(model))  # Summary of the model
+  
+  # Calculate the z-value for the predictor variable
+  z_values[i] <- coef[2, "Estimate"] / coef[2, "Std. Error"]
+}
+
+
+hist(
+  as.numeric(z_values),
+  main = paste0("Test statistics of ", rownames(grna_assignment_matrix)[grna_indices[1]],"-", rownames(ranked_response)[k]), xlab="null test statistics", breaks=800
+)
+
+abline(v = z_values[[1]], col = "red", lwd = 2)
+
+# Optionally, add a label for the value
+text(z_values[[1]], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
+
+}
+```
+
+
+## Weird spikes found in histograms of some purturbation-gene test statistics
+
+
+
+```{r}
+max(gene_wise_test_tensor[, 560, 5])
+```
+
+```{r}
+suspicious_gene_id <-c(560,1417,1455,1562,1910,2010)
+par(mfrow=c(3,2))
+for (i in suspicious_gene_id){
+hist(gene_wise_test_tensor[, i, 5], breaks = 3000, main=paste0("Null t test statistics: ",rownames(grna_assignment_matrix)[5],"-",rownames(response_matrix)[i]),
+     xlab = "Values", col = "lightblue")
+abline(v = gene_wise_test_tensor[1, i, 5], col = "red", lwd = 2)
+
+}
+```
+```{r}
+par(mfrow=c(3,2))
+for (i in suspicious_gene_id){
+hist(gene_wise_test_tensor[, i, 4], breaks = 3000, main=paste0("Null t test statistics: ",rownames(grna_assignment_matrix)[4],"-",rownames(response_matrix)[i]),
+     xlab = "Values", col = "lightblue", xlim = c(min(gene_wise_test_tensor[, i, 4]), max(gene_wise_test_tensor[, i, 4])))
+  abline(v = gene_wise_test_tensor[1, i, 4], col = "red", lwd = 2)
+}
+```
+
+```{r}
+highlighted_values <- gene_wise_test_tensor[, 560, 4][gene_wise_test_tensor[, 560, 4] < -50]
+
+hist(highlighted_values, 
+     breaks = 15, 
+     main = "Histogram of Problematic Region (Values < -50)", 
+     xlab = "Values", 
+     border = "black")
+
+```
+
+# Compare gene module discoveries
+
+
+## Comparison of Module p values (t-Cauchy vs Sceptre-Cauchy)
+
+```{r,fig.width=8, fig.height=8}
+set.seed(0)
+
+indices <- sample(1:nrow(gene_wise_p),3)
+
+par(mfrow = c(3, 2))
+
+# Loop through indices
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    module_results_t$acat_pval[(50 * (k-1) + 1):(50 * k)],
+    module_results_sceptre$acat_pval[(50 * (k-1) + 1):(50 * k)],
+    xlab = "T-ACAT P-Value",
+    ylab = "Sceptre ACAT P-Value",
+    main = paste0("Scatter Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,  # Point style
+    col = "blue",  # Point color
+    cex = 0.7,  # Point size
+
+
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = "Press [Enter] to view the QQ plot...")
+
+  # QQ Plot
+  qqplot(
+    module_results_t$acat_pval[(50 * (k-1) + 1):(50 * k )],
+    module_results_sceptre$acat_pval[(50 * (k-1) + 1):(50 * k)],
+    xlab = "T-ACAT P-Value",
+    ylab = "Sceptre ACAT P-Value",
+    main = paste0("QQ Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+  abline(0, 1, col = "red", lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = "Press [Enter] to move to the next index...")
+}
+
+par(mfrow = c(1, 1))
+
+```
+```{r}
+plot(module_results_t$acat_pval,module_results_sceptre$acat_pval,xlab="t+Cauchy",ylab="sceptre+Cauchy",main="p values of all perturbation-gene module pairs",cex=0.5)
+  abline(0, 1, col = "red", lwd = 2)  # Add reference line
+
+plot(-log10(module_results_t$acat_pval),-log10(module_results_sceptre$acat_pval),xlab="t+Cauchy",ylab="sceptre+Cauchy",main="p values of all perturbation-gene module pairs (-log10)",cex=0.5)
+  abline(0, 1, col = "red", lwd = 2)  # Add reference line
+
+```
+
+**The ACAT of gene-wise p values from Sceptre glm and t test differ a
+lot. The pattern is different for different perturbation. This can be
+explained by the disparity of gene-wise p value in the previous
+session**
+
+## Comparison of Module p values (minp vs our method)
+
+
+Minp:
+This gene-module p value is obtained by : 1. Obtain gene-wise test
+statistics and their corresponding p value 2. Take minimum p value
+within a gene module, as the test statistics 3. Use null distribution to
+find final p value
+
+
+**We want to investigate in which case minp has a significance
+difference from us**
+
+```{r,fig.width=8, fig.height=8}
+
+
+# Loop through indices
+par(mfrow = c(3, 2))
+for (k in indices) {
+  # Scatter Plot
+  plot(
+    our_method_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    minp_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    xlab = "Our P-Value",
+    ylab = "Minp P-Value",
+    main = paste0("Scatter Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,  # Point style
+    col = "blue",  # Point color
+    cex = 0.7,  # Point size
+  )
+  
+  # Pause to allow the user to view the scatter plot
+  # readline(prompt = "Press [Enter] to view the QQ plot...")
+
+  # QQ Plot
+  qqplot(
+    our_method_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    minp_long$p_value[(50 * (k-1) + 1):(50 * k)],
+    xlab = "Our P-Value",
+    ylab = "Minp P-Value",
+    main = paste0("QQ Plot for Module P-Values of ", k, "th perturbation"),
+    pch = 16,
+    col = "blue",
+    cex = 0.7
+  )
+  abline(0, 1, col = "red", lwd = 2)  # Add reference line
+  
+  # Pause before moving to the next index
+  # readline(prompt = "Press [Enter] to move to the next index...")
+}
+```
+
+
+```{r}
+plot(our_method_long$p_value,minp_long$p_value, main="p values of all perturbation-gene module pairs",xlab="our method",ylab="minp",cex=0.5)
+  abline(0, 1, col = "red", lwd = 2,cex=0.5)  # Add reference line
+
+plot(-log10(our_method_long$p_value),-log10(minp_long$p_value),main="p values of all perturbation-gene module pairs (-log transformed)",xlab="our method",ylab="minp",cex=0.5)
+  abline(0, 1, col = "red", lwd = 2)  # Add reference line
+
+```
+
+
+
+
+
