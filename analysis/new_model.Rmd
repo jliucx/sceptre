@@ -1377,7 +1377,7 @@ barplot(
 
 ```{r,echo=F}
 knitr::include_graphics("images/n_genes_weird_spike.png", error = FALSE)
-knitr::include_graphics("images/total_weird_spike.png", error = FALSE)
+knitr::include_graphics("images/total_weird_spikes.png", error = FALSE)
 ```
 
 *Explanation: 1. The first plot shows the number of genes that have the weird histogram, for each perturbations.*
