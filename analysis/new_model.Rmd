@@ -27,6 +27,7 @@ library(peakRAM)
 library(sgt)
 library(heavytailcombtest)
 library(gridExtra)
+library(eulerr)
 
 
 
@@ -480,7 +481,6 @@ minp_long$bh_pval <-  p.adjust(minp_long$p_value, method = "BH")
 minp_long$identifier <- paste(minp_long$grna_id, minp_long$module, sep = "_")
 our_method_long$bh_pval <-  p.adjust(our_method_long$p_value, method = "BH")
 our_method_long$identifier <- paste(our_method_long$grna_id, our_method_long$module, sep = "_")
-library(eulerr)
 
 
 ```
@@ -538,6 +538,8 @@ par(mfrow = c(1, 1))
 ```
 
 **Test on non-targeting gRNAs**
+
+
 ```{r}
 ntc_our <- our_method_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
@@ -938,6 +940,10 @@ par(mfrow = c(1, 1))
 
 ## Bonferonni vs Cauchy combination
 
+
+
+
+
 ```{r,fig.width=8,fig.height=8,warning=F}
 significant_levels <- c(0.01, 0.05, 0.1, 0.35)
 # significant_levels <- 0.01
@@ -992,6 +998,7 @@ par(mfrow = c(1, 1))
 
 ```
 ```{r}
+
 gene_wise_p_subset <- gene_wise_p[rownames(gene_wise_p) %in% rownames(sceptre_wide), ]
 
 # Flatten sceptre_wide and gene_wise_p_subset into vectors
@@ -1006,29 +1013,108 @@ gene_wise_pvals <- gene_wise_pvals[valid_indices]
 sceptre_bh <- p.adjust(sceptre_pvals, method = "BH")
 gene_wise_bh <- p.adjust(gene_wise_pvals, method = "BH")
 
-# Set rejection threshold
-alpha <- 0.15
-sceptre_rejections <- which(sceptre_bh < alpha)
-gene_wise_rejections <- which(gene_wise_bh < alpha)
+alpha_values <- c(0.05, 0.1, 0.15, 0.2)
 
-# Create sets for Euler diagram
-euler_data <- list(
-  `Sceptre glm` = sceptre_rejections,
-  `T test` = gene_wise_rejections
-)
+# Initialize a matrix to store counts for each alpha
+combined_counts <- matrix(0, nrow = 3, ncol = length(alpha_values))
 
-# Fit and plot Euler diagram with counts
-fit <- euler(euler_data)
-plot(
-  fit,
-  fills = list(fill=c("red", "yellow"),alpha=0.5),
-  edges = TRUE,
-  labels = list(font = 2, cex = 1.5),
-  quantities = TRUE,  # Add numbers directly on the diagram
-  main = "Significant perturb-gene pairs"
-)
+# Loop through each alpha
+for (i in seq_along(alpha_values)) {
+  alpha <- alpha_values[i]
+  
+  # Calculate rejections for the current alpha
+  sceptre_rejections <- which(sceptre_bh < alpha)
+  gene_wise_rejections <- which(gene_wise_bh < alpha)
+  
+  # Find common and unique rejections
+  common_rejections <- intersect(sceptre_rejections, gene_wise_rejections)
+  sceptre_unique <- setdiff(sceptre_rejections, common_rejections)
+  gene_wise_unique <- setdiff(gene_wise_rejections, common_rejections)
+  
+  # Store counts for the current alpha
+  combined_counts[, i] <- c(length(common_rejections), 
+                            length(sceptre_unique), 
+                            length(gene_wise_unique))
+}
 
-library(ACAT)
+# Create bar plot
+barplot(combined_counts,
+        beside = FALSE,  # Stacked bars
+        col = c(rgb(0.5, 0.5, 0.5, 0.5),   # Grey with 50% transparency
+                rgb(1, 0, 0, 0.5),         # Red with 50% transparency
+                rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
+        names.arg = paste("Alpha =", alpha_values),
+        main = "Genewise Rejections Comparison For All Perturbations",
+        xlab = NULL,
+        ylab = "Count",
+        legend.text = c("Common", "Sceptre Unique", "Gene-wise Unique"),
+        args.legend = list(x = "topleft"))
+```
+```{r}
+snp_labels <- c("rs524137", "rs73660574", "rs79755767", "rs35979828", 
+                "rs6592965", "rs12784232", "rs2834670", "rs2526377", 
+                "rs1109024", "rs35531439") 
+
+# Filter rows in the data corresponding to these SNPs
+trans_positive_control_rows <- which(grna_target_data_frame_omit$grna_target %in% snp_labels, )
+```
+
+
+
+
+```{r}
+gene_wise_p_subset <- gene_wise_p[rownames(gene_wise_p) %in% rownames(sceptre_wide), ]
+t_trans_positive<- gene_wise_p_subset[trans_positive_control_rows,]
+sceptre_trans_positive <- sceptre_wide[trans_positive_control_rows,]
+
+# Flatten sceptre_wide and gene_wise_p_subset into vectors
+sceptre_pvals <- as.numeric(as.matrix(sceptre_trans_positive))
+gene_wise_pvals <- as.numeric(as.matrix(t_trans_positive))
+
+# Remove pairs with NAs in either dataset
+valid_indices <- !is.na(sceptre_pvals) & !is.na(gene_wise_pvals)
+sceptre_pvals <- sceptre_pvals[valid_indices]
+gene_wise_pvals <- gene_wise_pvals[valid_indices]
+# Apply BH correction
+sceptre_bh <- p.adjust(sceptre_pvals, method = "BH")
+gene_wise_bh <- p.adjust(gene_wise_pvals, method = "BH")
+
+alpha_values <- c(0.05, 0.1, 0.2,0.5)
+
+# Initialize a matrix to store counts for each alpha
+combined_counts <- matrix(0, nrow = 3, ncol = length(alpha_values))
+
+# Loop through each alpha
+for (i in seq_along(alpha_values)) {
+  alpha <- alpha_values[i]
+  
+  # Calculate rejections for the current alpha
+  sceptre_rejections <- which(sceptre_bh < alpha)
+  gene_wise_rejections <- which(gene_wise_bh < alpha)
+  
+  # Find common and unique rejections
+  common_rejections <- intersect(sceptre_rejections, gene_wise_rejections)
+  sceptre_unique <- setdiff(sceptre_rejections, common_rejections)
+  gene_wise_unique <- setdiff(gene_wise_rejections, common_rejections)
+  
+  # Store counts for the current alpha
+  combined_counts[, i] <- c(length(common_rejections), 
+                            length(sceptre_unique), 
+                            length(gene_wise_unique))
+}
+
+# Create bar plot
+barplot(combined_counts,
+        beside = FALSE,  # Stacked bars
+        col = c(rgb(0.5, 0.5, 0.5, 0.5),   # Grey with 50% transparency
+                rgb(1, 0, 0, 0.5),         # Red with 50% transparency
+                rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
+        names.arg = paste("Alpha =", alpha_values),
+        main = "Genewise Rejections Comparison For Trans-positive SNPs",
+        xlab = NULL,
+        ylab = "Count",
+        legend.text = c("Common", "Sceptre Unique", "T test Unique"),
+        args.legend = list(x = "topleft"))
 ```
 
 
@@ -1514,8 +1600,70 @@ plot(-log10(our_method_long$p_value),-log10(minp_long$p_value),main="p values of
 
 
 ```{r}
-
+grna_assignment_matrix <-get_grna_assignments(
+  sceptre_object = sceptre_object
+)[-207,-cell_to_filter]
 ```
+```{r}
+assignment_to_analyze<-matrix(as.numeric(grna_assignment_matrix[1,]),nrow=1)
+
+
+prop<-estimate_propensity(assignment_to_analyze, covariate)
+weight<-prop
+weight[assignment_to_analyze==1] <- (1/prop[assignment_to_analyze==1])/sum(1/prop[assignment_to_analyze==1])
+weight[assignment_to_analyze==0] <- (1/(1-prop[assignment_to_analyze==0]))/sum(1/(1-prop[assignment_to_analyze==0]))
+balanced_covariate<-covariate$response_n_umis*weight
+
+
+
+hist(balanced_covariate[assignment_to_analyze == 1],
+     breaks = length(covariate$response_n_umis[assignment_to_analyze == 1])/5,
+     col = rgb(1, 0, 0), # Add transparency
+     xlim = range(balanced_covariate),
+     main = "Histogram of Balanced Covariate by Assignment",
+     xlab = "Balanced Covariate",
+     ylab = "Frequency")
+
+# Add the second histogram
+hist(balanced_covariate[assignment_to_analyze == 0],
+     breaks = 1000,
+     col = rgb(0, 0, 1, 0.001), # Add transparency
+     add = TRUE)
+
+# Add a legend
+legend("topright",
+       legend = c("Assignment = 1", "Assignment = 0"),
+       fill = c(rgb(1, 0, 0,0.5), rgb(0, 0, 1, 0.5)))
+
+
+hist(covariate$response_n_umis[assignment_to_analyze == 1],
+     breaks = length(balanced_covariate[assignment_to_analyze == 1]) /5,
+     col = rgb(1, 0, 0, 0.5), # Add transparency
+     xlim = range(covariate$response_n_umis),
+     ylim = c(1,100),
+     main = "Histogram of Original Covariate by Assignment",
+     xlab = "Balanced Covariate",
+     ylab = "Frequency")
+
+# Add the second histogram
+hist(covariate$response_n_umis[assignment_to_analyze == 0],
+     breaks = 100,
+     col = rgb(0, 0, 1, 0.5), # Add transparency
+     add = TRUE)
+
+# Add a legend
+legend("topright",
+       legend = c("Assignment = 1", "Assignment = 0"),
+       fill = c(rgb(1, 0, 0, 0.5), rgb(0, 0, 1, 0.5)))
+```
+
+
+
+
+
+
+
+
 
 
 
