@@ -1062,7 +1062,7 @@ trans_positive_control_rows <- which(grna_target_data_frame_omit$grna_target %in
 
 
 
-```{r}
+```{r,cache=F}
 gene_wise_p_subset <- gene_wise_p[rownames(gene_wise_p) %in% rownames(sceptre_wide), ]
 t_trans_positive<- gene_wise_p_subset[trans_positive_control_rows,]
 sceptre_trans_positive <- sceptre_wide[trans_positive_control_rows,]
@@ -1117,7 +1117,106 @@ barplot(combined_counts,
         args.legend = list(x = "topleft"))
 ```
 
+```{r,echo=F}
+t_cis_positive<-c(gene_wise_p_subset["CD46-1","ENSG00000117335"],
+                  gene_wise_p_subset["CD46-2","ENSG00000117335"],
+                  gene_wise_p_subset["CD52-1","ENSG00000169442"],
+                  gene_wise_p_subset["CD52-2","ENSG00000169442"],
+                  gene_wise_p_subset["HSPA8-1","ENSG00000109971"],
+                  gene_wise_p_subset["HSPA8-2","ENSG00000109971"],
+                  gene_wise_p_subset["NMU-1","ENSG00000109255"],
+                  gene_wise_p_subset["NMU-2","ENSG00000109255"],
+                  gene_wise_p_subset["PPIA-1","ENSG00000196262"],
+                  gene_wise_p_subset["PPIA-2","ENSG00000196262"],
+                  gene_wise_p_subset["RPL22-1","ENSG00000116251"],
+                  gene_wise_p_subset["RPL22-2","ENSG00000116251"]
+                  # ,
+                  # gene_wise_p_subset["CD55-1","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-2","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-3","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-4","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-5","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-6","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-7","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-8","ENSG00000196352"],
+                  # gene_wise_p_subset["CD55-9","ENSG00000196352"]
+                  )
 
+sceptre_cis_positive <- c(sceptre_wide["CD46-1","ENSG00000117335"],
+                  sceptre_wide["CD46-2","ENSG00000117335"],
+                  sceptre_wide["CD52-1","ENSG00000169442"],
+                  sceptre_wide["CD52-2","ENSG00000169442"],
+                  sceptre_wide["HSPA8-1","ENSG00000109971"],
+                  sceptre_wide["HSPA8-2","ENSG00000109971"],
+                  sceptre_wide["NMU-1","ENSG00000109255"],
+                  sceptre_wide["NMU-2","ENSG00000109255"],
+                  sceptre_wide["PPIA-1","ENSG00000196262"],
+                  sceptre_wide["PPIA-2","ENSG00000196262"],
+                  sceptre_wide["RPL22-1","ENSG00000116251"],
+                  sceptre_wide["RPL22-2","ENSG00000116251"]
+                  #,
+                  # sceptre_wide["CD55-1","ENSG00000196352"],
+                  # sceptre_wide["CD55-2","ENSG00000196352"],
+                  # sceptre_wide["CD55-3","ENSG00000196352"],
+                  # sceptre_wide["CD55-4","ENSG00000196352"],
+                  # sceptre_wide["CD55-5","ENSG00000196352"],
+                  # sceptre_wide["CD55-6","ENSG00000196352"],
+                  # sceptre_wide["CD55-7","ENSG00000196352"],
+                  # sceptre_wide["CD55-8","ENSG00000196352"],
+                  # sceptre_wide["CD55-9","ENSG00000196352"]
+                  )
+```
+
+
+```{r,cache=F}
+sceptre_pvals <- sceptre_cis_positive
+gene_wise_pvals <- t_cis_positive
+
+# Remove pairs with NAs in either dataset
+valid_indices <- !is.na(sceptre_pvals) & !is.na(gene_wise_pvals)
+sceptre_pvals <- sceptre_pvals[valid_indices]
+gene_wise_pvals <- gene_wise_pvals[valid_indices]
+# Apply BH correction
+sceptre_bh <- p.adjust(sceptre_pvals, method = "BH")
+gene_wise_bh <- p.adjust(gene_wise_pvals, method = "BH")
+
+alpha_values <- c(0.05, 0.1, 0.2,0.5)
+
+# Initialize a matrix to store counts for each alpha
+combined_counts <- matrix(0, nrow = 3, ncol = length(alpha_values))
+
+# Loop through each alpha
+for (i in seq_along(alpha_values)) {
+  alpha <- alpha_values[i]
+  
+  # Calculate rejections for the current alpha
+  sceptre_rejections <- which(sceptre_bh < alpha)
+  gene_wise_rejections <- which(gene_wise_bh < alpha)
+  
+  # Find common and unique rejections
+  common_rejections <- intersect(sceptre_rejections, gene_wise_rejections)
+  sceptre_unique <- setdiff(sceptre_rejections, common_rejections)
+  gene_wise_unique <- setdiff(gene_wise_rejections, common_rejections)
+  
+  # Store counts for the current alpha
+  combined_counts[, i] <- c(length(common_rejections), 
+                            length(sceptre_unique), 
+                            length(gene_wise_unique))
+}
+
+# Create bar plot
+barplot(combined_counts,
+        beside = FALSE,  # Stacked bars
+        col = c(rgb(0.5, 0.5, 0.5, 0.5),   # Grey with 50% transparency
+                rgb(1, 0, 0, 0.5),         # Red with 50% transparency
+                rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
+        names.arg = paste("Alpha =", alpha_values),
+        main = "Genewise Rejections Comparison For Cis-positive SNPs",
+        xlab = NULL,
+        ylab = "Count",
+        legend.text = c("Common", "Sceptre Unique", "T test Unique"),
+        args.legend = list(x = "topleft"))
+```
 **Test on non-targeting gRNAs**
 ```{r}
 ntc_our <- our_method_long %>%
