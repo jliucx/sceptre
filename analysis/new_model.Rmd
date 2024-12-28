@@ -1,5 +1,5 @@
 ---
-title: "Debug"
+title: "Newest Results"
 author: "jliucx"
 date: "2024-12-5"
 output: 
@@ -997,6 +997,56 @@ grid.arrange(grobs = plot_list, ncol = 2)
 par(mfrow = c(1, 1))
 
 ```
+
+**Test on non-targeting gRNAs**
+```{r}
+ntc_our <- our_method_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+ select(grna_id, p_value)
+
+ntc_minp <- minp_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, p_value)
+
+ntc_t <- module_results_t %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  select(grna_id, acat_pval)
+
+plot_list <- list()
+
+plot_list[[1]] <- gg_qqplot(as.vector(ntc_our$p_value), title="Negative control our method")
+plot_list[[2]] <- gg_qqplot(as.vector(ntc_minp$p_value), title="Negative control minp")
+
+plot_list[[3]] <- gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-Cauchy")
+
+plot_list[[4]] <- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-Cauchy")
+
+
+grid.arrange(grobs = plot_list, ncol = 2)
+```
+
+
+
+```{r}
+pvals_1<-c(0.0001,0.1,0.2,0.5,0.7)
+pvals_2<-c(0.1,0.2,0.5,0.7,0.9)
+pvals_3<-c(0.0001,0.1,0.2,0.3,0.999999)
+
+combined_p<- data.frame("pval1"=c(ACAT(pvals_1),combination.test(pvals_1,weights = NA,method = "Cauchy",tail.idx = 1)),"pval2"=c(ACAT(pvals_2),combination.test(pvals_2,weights = NA,method = "Cauchy",tail.idx = 1)),"pval3"=c(ACAT(pvals_3),combination.test(pvals_3,weights = NA,method = "Cauchy",tail.idx = 1)))
+rownames(combined_p) <-c("ACAT","Lin Gui's")
+combined_p
+```
+
+
+
+# Test on genewise p value
+
+## Number of gene-wise rejections
+
 ```{r}
 
 gene_wise_p_subset <- gene_wise_p[rownames(gene_wise_p) %in% rownames(sceptre_wide), ]
@@ -1079,7 +1129,7 @@ gene_wise_pvals <- gene_wise_pvals[valid_indices]
 sceptre_bh <- p.adjust(sceptre_pvals, method = "BH")
 gene_wise_bh <- p.adjust(gene_wise_pvals, method = "BH")
 
-alpha_values <- c(0.05, 0.1, 0.2,0.5)
+alpha_values <- c(0.05, 0.1, 0.15, 0.2)
 
 # Initialize a matrix to store counts for each alpha
 combined_counts <- matrix(0, nrow = 3, ncol = length(alpha_values))
@@ -1217,54 +1267,6 @@ barplot(combined_counts,
         legend.text = c("Common", "Sceptre Unique", "T test Unique"),
         args.legend = list(x = "topleft"))
 ```
-**Test on non-targeting gRNAs**
-```{r}
-ntc_our <- our_method_long %>%
-  filter(startsWith(grna_id, "NTC")) %>%
- select(grna_id, p_value)
-
-ntc_minp <- minp_long %>%
-  filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, p_value)
-
-ntc_t <- module_results_t %>%
-  filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, acat_pval)
-
-ntc_sceptre <- module_results_sceptre %>%
-  filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, acat_pval)
-
-plot_list <- list()
-
-plot_list[[1]] <- gg_qqplot(as.vector(ntc_our$p_value), title="Negative control our method")
-plot_list[[2]] <- gg_qqplot(as.vector(ntc_minp$p_value), title="Negative control minp")
-
-plot_list[[3]] <- gg_qqplot(as.vector(ntc_t$acat_pval), title="Negative control t-Cauchy")
-
-plot_list[[4]] <- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative control sceptre-Cauchy")
-
-
-grid.arrange(grobs = plot_list, ncol = 2)
-```
-
-
-
-```{r}
-pvals_1<-c(0.0001,0.1,0.2,0.5,0.7)
-pvals_2<-c(0.1,0.2,0.5,0.7,0.9)
-pvals_3<-c(0.0001,0.1,0.2,0.3,0.999999)
-
-combined_p<- data.frame("pval1"=c(ACAT(pvals_1),combination.test(pvals_1,weights = NA,method = "Cauchy",tail.idx = 1)),"pval2"=c(ACAT(pvals_2),combination.test(pvals_2,weights = NA,method = "Cauchy",tail.idx = 1)),"pval3"=c(ACAT(pvals_3),combination.test(pvals_3,weights = NA,method = "Cauchy",tail.idx = 1)))
-rownames(combined_p) <-c("ACAT","Lin Gui's")
-combined_p
-```
-
-
-
-# Test on gene p value
-
-
 ## Scatter plots to compare gene wise P values of sceptre glm and our t test
 
 ```{r,fig.width=8, fig.height=8}
