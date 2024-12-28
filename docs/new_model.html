@@ -516,16 +516,16 @@ output/both_trans_author_filtered_cell/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree47bacfa8b164a5709f7fa3e8d1f1801bc3991c3dtargetblank47bacfaa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/47bacfa8b164a5709f7fa3e8d1f1801bc3991c3d" target="_blank">47bacfa</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree2719fcad397f53cb27043b577136ad8cbd51076btargetblank2719fcaa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/2719fcad397f53cb27043b577136ad8cbd51076b" target="_blank">2719fca</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree47bacfa8b164a5709f7fa3e8d1f1801bc3991c3dtargetblank47bacfaa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree2719fcad397f53cb27043b577136ad8cbd51076btargetblank2719fcaa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/47bacfa8b164a5709f7fa3e8d1f1801bc3991c3d" target="_blank">47bacfa</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/2719fcad397f53cb27043b577136ad8cbd51076b" target="_blank">2719fca</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -644,6 +644,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2719fcad397f53cb27043b577136ad8cbd51076b/analysis/new_model.Rmd" target="_blank">2719fca</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+<td>
+add covariate balancing check
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/new_model.html" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1607,6 +1641,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-9-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-9-1.png" target="_blank">4f7d3da</a>
 </td>
 <td>
@@ -1690,7 +1735,91 @@ barplot(combined_counts,
         legend.text = c(&quot;Common&quot;, &quot;Sceptre Unique&quot;, &quot;T test Unique&quot;),
         args.legend = list(x = &quot;topleft&quot;))</code></pre>
 <p><img src="figure/new_model.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p><strong>Test on non-targeting gRNAs</strong></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-11-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>sceptre_pvals &lt;- sceptre_cis_positive
+gene_wise_pvals &lt;- t_cis_positive
+
+# Remove pairs with NAs in either dataset
+valid_indices &lt;- !is.na(sceptre_pvals) &amp; !is.na(gene_wise_pvals)
+sceptre_pvals &lt;- sceptre_pvals[valid_indices]
+gene_wise_pvals &lt;- gene_wise_pvals[valid_indices]
+# Apply BH correction
+sceptre_bh &lt;- p.adjust(sceptre_pvals, method = &quot;BH&quot;)
+gene_wise_bh &lt;- p.adjust(gene_wise_pvals, method = &quot;BH&quot;)
+
+alpha_values &lt;- c(0.05, 0.1, 0.2,0.5)
+
+# Initialize a matrix to store counts for each alpha
+combined_counts &lt;- matrix(0, nrow = 3, ncol = length(alpha_values))
+
+# Loop through each alpha
+for (i in seq_along(alpha_values)) {
+  alpha &lt;- alpha_values[i]
+  
+  # Calculate rejections for the current alpha
+  sceptre_rejections &lt;- which(sceptre_bh &lt; alpha)
+  gene_wise_rejections &lt;- which(gene_wise_bh &lt; alpha)
+  
+  # Find common and unique rejections
+  common_rejections &lt;- intersect(sceptre_rejections, gene_wise_rejections)
+  sceptre_unique &lt;- setdiff(sceptre_rejections, common_rejections)
+  gene_wise_unique &lt;- setdiff(gene_wise_rejections, common_rejections)
+  
+  # Store counts for the current alpha
+  combined_counts[, i] &lt;- c(length(common_rejections), 
+                            length(sceptre_unique), 
+                            length(gene_wise_unique))
+}
+
+# Create bar plot
+barplot(combined_counts,
+        beside = FALSE,  # Stacked bars
+        col = c(rgb(0.5, 0.5, 0.5, 0.5),   # Grey with 50% transparency
+                rgb(1, 0, 0, 0.5),         # Red with 50% transparency
+                rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
+        names.arg = paste(&quot;Alpha =&quot;, alpha_values),
+        main = &quot;Genewise Rejections Comparison For Cis-positive SNPs&quot;,
+        xlab = NULL,
+        ylab = &quot;Count&quot;,
+        legend.text = c(&quot;Common&quot;, &quot;Sceptre Unique&quot;, &quot;T test Unique&quot;),
+        args.legend = list(x = &quot;topleft&quot;))</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /> <strong>Test on non-targeting gRNAs</strong></p>
 <pre class="r"><code>ntc_our &lt;- our_method_long %&gt;%
   filter(startsWith(grna_id, &quot;NTC&quot;)) %&gt;%
  select(grna_id, p_value)
@@ -1718,13 +1847,13 @@ plot_list[[4]] &lt;- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title=&quot;Neg
 
 
 grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
-Past versions of unnamed-chunk-12-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div id="fig-unnamed-chunk-14-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1743,18 +1872,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-12-1.png" target="_blank">4f7d3da</a>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-14-1.png" target="_blank">2412094</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-12-26
+2024-12-28
 </td>
 </tr>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-12-1.png" target="_blank">2b3c456</a>
+<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-14-1.png" target="_blank">2b3c456</a>
 </td>
 <td>
 jliucx
@@ -1817,13 +1946,13 @@ for (index in indices) {
   
 
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-14-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-16-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
-Past versions of unnamed-chunk-14-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div id="fig-unnamed-chunk-16-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1842,7 +1971,29 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-14-1.png" target="_blank">2b3c456</a>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-16-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-16-1.png" target="_blank">4f7d3da</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-16-1.png" target="_blank">2134663</a>
 </td>
 <td>
 jliucx
@@ -1870,7 +2021,7 @@ for (index in indices) {  # Randomly pick 6 indices
     cex = 0.7
   )
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-14-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-16-2.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># Reset layout to single plot
 par(mfrow = c(1, 1))</code></pre>
 <p><strong>Notes:</strong></p>
@@ -1899,13 +2050,13 @@ abline(v = value, col = &quot;red&quot;, lwd = 2)
 # Optionally, add a label for the value
 text(value, par(&quot;usr&quot;)[4] * 0.9, paste(&quot;Observed:&quot;, round(value, 2)), col = &quot;red&quot;, pos = 4)
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
-Past versions of unnamed-chunk-16-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+Past versions of unnamed-chunk-18-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div id="fig-unnamed-chunk-18-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1924,7 +2075,18 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-16-1.png" target="_blank">4f7d3da</a>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-18-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-18-1.png" target="_blank">2134663</a>
 </td>
 <td>
 jliucx
@@ -1935,7 +2097,7 @@ jliucx
 </tr>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-16-1.png" target="_blank">2134663</a>
+<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-18-1.png" target="_blank">2b3c456</a>
 </td>
 <td>
 jliucx
@@ -1992,135 +2154,6 @@ abline(v = z_values[[1]], col = &quot;red&quot;, lwd = 2)
 text(z_values[[1]], par(&quot;usr&quot;)[4] * 0.9, &quot;Observed&quot;, col = &quot;red&quot;, pos = 4)
 
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
-Past versions of unnamed-chunk-17-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-17-1.png" target="_blank">4f7d3da</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-17-1.png" target="_blank">2134663</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-17-1.png" target="_blank">2b3c456</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div id="weird-spikes-found-in-histograms-of-some-purturbation-gene-test-statistics" class="section level2" number="2.3">
-<h2 number="2.3"><span class="header-section-number">2.3</span> Weird spikes found in histograms of some purturbation-gene test statistics</h2>
-<pre class="r"><code>suspicious_gene_id &lt;-c(560,1417,1455,1562,1910,2010)
-par(mfrow=c(3,2))
-for (i in suspicious_gene_id){
-hist(gene_wise_test_tensor[, i, 5], breaks = 3000, main=paste0(&quot;Null t test statistics: &quot;,rownames(grna_assignment_matrix)[5],&quot;-&quot;,rownames(response_matrix)[i]),
-     xlab = &quot;Values&quot;, col = &quot;lightblue&quot;)
-abline(v = gene_wise_test_tensor[1, i, 5], col = &quot;red&quot;, lwd = 1)
-text(gene_wise_test_tensor[1, i, 5], par(&quot;usr&quot;)[4] * 0.9, &quot;Observed&quot;, col = &quot;red&quot;, pos = 4)
-
-}</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
-Past versions of unnamed-chunk-18-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-18-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-18-1.png" target="_blank">2134663</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-18-1.png" target="_blank">2b3c456</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>par(mfrow=c(3,2))
-for (i in suspicious_gene_id){
-hist(gene_wise_test_tensor[, i, 4], breaks = 3000, main=paste0(&quot;Null t test statistics: &quot;,rownames(grna_assignment_matrix)[4],&quot;-&quot;,rownames(response_matrix)[i]),
-     xlab = &quot;Values&quot;, col = &quot;lightblue&quot;, xlim = c(min(gene_wise_test_tensor[, i, 4]), max(gene_wise_test_tensor[, i, 4])))
-  abline(v = gene_wise_test_tensor[1, i, 4], col = &quot;red&quot;, lwd = 0.5)
-  text(gene_wise_test_tensor[1, i, 4], par(&quot;usr&quot;)[4] * 0.9, &quot;Observed&quot;, col = &quot;red&quot;, pos = 4)
-}</code></pre>
 <p><img src="figure/new_model.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-19-1">
@@ -2144,6 +2177,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-19-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-19-1.png" target="_blank">4f7d3da</a>
@@ -2181,13 +2225,19 @@ jliucx
 </table>
 </div>
 </div>
-<pre class="r"><code>highlighted_values &lt;- gene_wise_test_tensor[, 560, 4][gene_wise_test_tensor[, 560, 4] &lt; -50]
+</div>
+</div>
+<div id="weird-spikes-found-in-histograms-of-some-purturbation-gene-test-statistics" class="section level2" number="2.3">
+<h2 number="2.3"><span class="header-section-number">2.3</span> Weird spikes found in histograms of some purturbation-gene test statistics</h2>
+<pre class="r"><code>suspicious_gene_id &lt;-c(560,1417,1455,1562,1910,2010)
+par(mfrow=c(3,2))
+for (i in suspicious_gene_id){
+hist(gene_wise_test_tensor[, i, 5], breaks = 3000, main=paste0(&quot;Null t test statistics: &quot;,rownames(grna_assignment_matrix)[5],&quot;-&quot;,rownames(response_matrix)[i]),
+     xlab = &quot;Values&quot;, col = &quot;lightblue&quot;)
+abline(v = gene_wise_test_tensor[1, i, 5], col = &quot;red&quot;, lwd = 1)
+text(gene_wise_test_tensor[1, i, 5], par(&quot;usr&quot;)[4] * 0.9, &quot;Observed&quot;, col = &quot;red&quot;, pos = 4)
 
-hist(highlighted_values, 
-     breaks = 15, 
-     main = &quot;Histogram of Problematic Region (Values &lt; -50)&quot;, 
-     xlab = &quot;Values&quot;, 
-     border = &quot;black&quot;)</code></pre>
+}</code></pre>
 <p><img src="figure/new_model.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
@@ -2213,6 +2263,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-20-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-20-1.png" target="_blank">4f7d3da</a>
 </td>
 <td>
@@ -2236,6 +2297,162 @@ jliucx
 <tr>
 <td>
 <a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-20-1.png" target="_blank">2b3c456</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>par(mfrow=c(3,2))
+for (i in suspicious_gene_id){
+hist(gene_wise_test_tensor[, i, 4], breaks = 3000, main=paste0(&quot;Null t test statistics: &quot;,rownames(grna_assignment_matrix)[4],&quot;-&quot;,rownames(response_matrix)[i]),
+     xlab = &quot;Values&quot;, col = &quot;lightblue&quot;, xlim = c(min(gene_wise_test_tensor[, i, 4]), max(gene_wise_test_tensor[, i, 4])))
+  abline(v = gene_wise_test_tensor[1, i, 4], col = &quot;red&quot;, lwd = 0.5)
+  text(gene_wise_test_tensor[1, i, 4], par(&quot;usr&quot;)[4] * 0.9, &quot;Observed&quot;, col = &quot;red&quot;, pos = 4)
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-21-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-21-1.png" target="_blank">4f7d3da</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-21-1.png" target="_blank">2134663</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-21-1.png" target="_blank">2b3c456</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>highlighted_values &lt;- gene_wise_test_tensor[, 560, 4][gene_wise_test_tensor[, 560, 4] &lt; -50]
+
+hist(highlighted_values, 
+     breaks = 15, 
+     main = &quot;Histogram of Problematic Region (Values &lt; -50)&quot;, 
+     xlab = &quot;Values&quot;, 
+     border = &quot;black&quot;)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-22-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-22-1.png" target="_blank">4f7d3da</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-22-1.png" target="_blank">2134663</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-26
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-22-1.png" target="_blank">2b3c456</a>
 </td>
 <td>
 jliucx
@@ -2449,13 +2666,13 @@ for (k in indices) {
   # Pause before moving to the next index
   # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-22-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-24-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
-Past versions of unnamed-chunk-22-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
+Past versions of unnamed-chunk-24-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div id="fig-unnamed-chunk-24-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -2474,35 +2691,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-22-1.png" target="_blank">4f7d3da</a>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-24-1.png" target="_blank">2412094</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-22-1.png" target="_blank">2134663</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-22-1.png" target="_blank">2b3c456</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
+2024-12-28
 </td>
 </tr>
 </tbody>
@@ -2512,13 +2707,13 @@ jliucx
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <pre class="r"><code>plot(module_results_t$acat_pval,module_results_sceptre$acat_pval,xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs&quot;,cex=0.5)
   abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-23-1">
-Past versions of unnamed-chunk-23-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-25-1">
+Past versions of unnamed-chunk-25-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-23-1" class="collapse">
+<div id="fig-unnamed-chunk-25-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -2537,35 +2732,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-23-1.png" target="_blank">4f7d3da</a>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-25-1.png" target="_blank">2412094</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-23-1.png" target="_blank">2134663</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-23-1.png" target="_blank">2b3c456</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
+2024-12-28
 </td>
 </tr>
 </tbody>
@@ -2574,13 +2747,13 @@ jliucx
 </div>
 <pre class="r"><code>plot(-log10(module_results_t$acat_pval),-log10(module_results_sceptre$acat_pval),xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs (-log10)&quot;,cex=0.5)
   abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-23-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-25-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-23-2">
-Past versions of unnamed-chunk-23-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-25-2">
+Past versions of unnamed-chunk-25-2.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-23-2" class="collapse">
+<div id="fig-unnamed-chunk-25-2" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -2599,35 +2772,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/4f7d3da6e2bf6d7f93a967b7b6d59131dab8ba97/docs/figure/new_model.Rmd/unnamed-chunk-23-2.png" target="_blank">4f7d3da</a>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-25-2.png" target="_blank">2412094</a>
 </td>
 <td>
 jliucx
 </td>
 <td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/21346639b53da2f39ec010d951d2784b06e599f8/docs/figure/new_model.Rmd/unnamed-chunk-23-2.png" target="_blank">2134663</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/2b3c45629825aa799e44038d2c33fbc704865dc1/docs/figure/new_model.Rmd/unnamed-chunk-23-2.png" target="_blank">2b3c456</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2024-12-26
+2024-12-28
 </td>
 </tr>
 </tbody>
@@ -2674,13 +2825,87 @@ for (k in indices) {
   # Pause before moving to the next index
   # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-24-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-26-1.png" width="768" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(our_method_long$p_value,minp_long$p_value, main=&quot;p values of all perturbation-gene module pairs&quot;,xlab=&quot;our method&quot;,ylab=&quot;minp&quot;,cex=0.5)
   abline(0, 1, col = &quot;red&quot;, lwd = 2,cex=0.5)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-27-1">
+Past versions of unnamed-chunk-27-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-27-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-27-1.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(-log10(our_method_long$p_value),-log10(minp_long$p_value),main=&quot;p values of all perturbation-gene module pairs (-log transformed)&quot;,xlab=&quot;our method&quot;,ylab=&quot;minp&quot;,cex=0.5)
   abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-25-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-27-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-27-2">
+Past versions of unnamed-chunk-27-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-27-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/2412094d98c97e1c6f10b0ec256cedd0ac2c5e12/docs/figure/new_model.Rmd/unnamed-chunk-27-2.png" target="_blank">2412094</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2024-12-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>grna_assignment_matrix &lt;-get_grna_assignments(
   sceptre_object = sceptre_object
 )[-207,-cell_to_filter]</code></pre>
@@ -2713,7 +2938,7 @@ hist(balanced_covariate[assignment_to_analyze == 0],
 legend(&quot;topright&quot;,
        legend = c(&quot;Assignment = 1&quot;, &quot;Assignment = 0&quot;),
        fill = c(rgb(1, 0, 0,0.5), rgb(0, 0, 1, 0.5)))</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>hist(covariate$response_n_umis[assignment_to_analyze == 1],
      breaks = length(balanced_covariate[assignment_to_analyze == 1]) /5,
      col = rgb(1, 0, 0, 0.5), # Add transparency
@@ -2733,7 +2958,7 @@ hist(covariate$response_n_umis[assignment_to_analyze == 0],
 legend(&quot;topright&quot;,
        legend = c(&quot;Assignment = 1&quot;, &quot;Assignment = 0&quot;),
        fill = c(rgb(1, 0, 0, 0.5), rgb(0, 0, 1, 0.5)))</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-27-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-29-2.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
