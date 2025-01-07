@@ -10,6 +10,9 @@ editor_options:
   markdown: 
     wrap: 72
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=FALSE)
+```
 
 ```{r,include=F}
 setwd("/project/xuanyao/jiaming/Getting_started")
@@ -1027,6 +1030,7 @@ plot_list[[4]] <- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative co
 grid.arrange(grobs = plot_list, ncol = 2)
 ```
 **Test on positive control set**
+
 The positive control set is composed of two parts:
 
 1. Trans-regulartary elements: (rs12784232, rs35531439, rs524137, rs73660574, rs79755767) paired with all gene modules.
@@ -1131,7 +1135,7 @@ barplot(combined_counts,
                 rgb(1, 0, 0, 0.5),         # Red with 50% transparency
                 rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
         names.arg = paste("Alpha =", alpha_values),
-        main = "Genewise Rejections Comparison for Positive Control Set",
+        main = "Gene Module Rejections Comparison for Positive Control Set",
         xlab = NULL,
         ylab = "Count",
         legend.text = c("Common", "Sceptre-Cauchy Unique", "Our Unique"),
@@ -1173,7 +1177,7 @@ barplot(combined_counts,
                 rgb(1, 0, 0, 0.5),         # Red with 50% transparency
                 rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
         names.arg = paste("Alpha =", alpha_values),
-        main = "Genewise Rejections Comparison for Cis-Positive Control Set",
+        main = "Gene Module Rejections Comparison for Cis-Positive Control Set",
         xlab = NULL,
         ylab = "Count",
         legend.text = c("Common", "Sceptre-Cauchy Unique", "Our Unique"),
@@ -1410,7 +1414,7 @@ barplot(combined_counts,
 ```
 ## Scatter plots to compare gene wise P values of sceptre glm and our t test
 
-```{r,fig.width=8, fig.height=8}
+```{r,fig.width=8, fig.height=8,echo=F}
 # Define indices
 set.seed(0)
 
@@ -1512,7 +1516,7 @@ source("code/functions.R")
 ```
 
 
-```{r}
+```{r,echo=F}
 
 par(mfrow = c(3, 2))
 set.seed(0)
@@ -1529,10 +1533,9 @@ abline(v = value, col = "red", lwd = 2)
 # Optionally, add a label for the value
 text(value, par("usr")[4] * 0.9, paste("Observed:", round(value, 2)), col = "red", pos = 4)
 }
-par(mfrow = c(1, 1))
 
 ```
-*The genes are randomly chosen*
+**The genes above are randomly chosen**
 
 
 ### Compute the glm test statistics using the glm function in R
