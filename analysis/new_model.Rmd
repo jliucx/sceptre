@@ -998,7 +998,7 @@ grid.arrange(grobs = plot_list, ncol = 2)
 par(mfrow = c(1, 1))
 
 ```
-
+## Test on Control Sets
 **Test on non-targeting gRNAs**
 ```{r}
 ntc_our <- our_method_long %>%
@@ -1103,7 +1103,7 @@ our_positive_bh <- p.adjust(our_positive_control$p_value,method = "BH")
 
 ```
 
-```{r}
+```{r,cache=F}
 alpha_values <- c(0.05, 0.1, 0.15, 0.2)
 
 # Initialize a matrix to store counts for each alpha
@@ -1142,7 +1142,7 @@ barplot(combined_counts,
         args.legend = list(x = "topleft", cex = 0.8))
 ```
 
-```{r}
+```{r,cache=F}
 sceptre_positive_bh <- p.adjust(sceptre_cis_positive$acat_pval,method = "BH")
 our_positive_bh <- p.adjust(our_cis_positive$p_value,method = "BH")
 
