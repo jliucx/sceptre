@@ -516,16 +516,16 @@ output/both_trans_author_filtered_cell/results_run_calibration_check.rds
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea9120fc8b5c280a95a6f5d4e8275a9596d2b35c4targetblanka9120fca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/a9120fc8b5c280a95a6f5d4e8275a9596d2b35c4" target="_blank">a9120fc</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreee9e8971257edc2a780574abc6467c4793818cfc7targetblanke9e8971a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/e9e8971257edc2a780574abc6467c4793818cfc7" target="_blank">e9e8971</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea9120fc8b5c280a95a6f5d4e8275a9596d2b35c4targetblanka9120fca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreee9e8971257edc2a780574abc6467c4793818cfc7targetblanke9e8971a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/a9120fc8b5c280a95a6f5d4e8275a9596d2b35c4" target="_blank">a9120fc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/e9e8971257edc2a780574abc6467c4793818cfc7" target="_blank">e9e8971</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -644,6 +644,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e9e8971257edc2a780574abc6467c4793818cfc7/analysis/new_model.Rmd" target="_blank">e9e8971</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-01-07
+</td>
+<td>
+add skew normal approximation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/d8d04addff6e4fa172198e078fd1eba6cb67f01a/docs/new_model.html" target="_blank">d8d04ad</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-01-07
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1767,7 +1801,8 @@ jliucx
 </table>
 </div>
 </div>
-<p><strong>Test on positive control set</strong> The positive control set is composed of two parts:</p>
+<p><strong>Test on positive control set</strong></p>
+<p>The positive control set is composed of two parts:</p>
 <ol style="list-style-type: decimal">
 <li>Trans-regulartary elements: (rs12784232, rs35531439, rs524137, rs73660574, rs79755767) paired with all gene modules.</li>
 <li>Cis-regulartary elements paired with gene modules that contains the target.</li>
@@ -1854,7 +1889,7 @@ barplot(combined_counts,
                 rgb(1, 0, 0, 0.5),         # Red with 50% transparency
                 rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
         names.arg = paste(&quot;Alpha =&quot;, alpha_values),
-        main = &quot;Genewise Rejections Comparison for Positive Control Set&quot;,
+        main = &quot;Gene Module Rejections Comparison for Positive Control Set&quot;,
         xlab = NULL,
         ylab = &quot;Count&quot;,
         legend.text = c(&quot;Common&quot;, &quot;Sceptre-Cauchy Unique&quot;, &quot;Our Unique&quot;),
@@ -1953,7 +1988,7 @@ barplot(combined_counts,
                 rgb(1, 0, 0, 0.5),         # Red with 50% transparency
                 rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
         names.arg = paste(&quot;Alpha =&quot;, alpha_values),
-        main = &quot;Genewise Rejections Comparison for Cis-Positive Control Set&quot;,
+        main = &quot;Gene Module Rejections Comparison for Cis-Positive Control Set&quot;,
         xlab = NULL,
         ylab = &quot;Count&quot;,
         legend.text = c(&quot;Common&quot;, &quot;Sceptre-Cauchy Unique&quot;, &quot;Our Unique&quot;),
@@ -2476,40 +2511,6 @@ jliucx
 </div>
 <div id="scatter-plots-to-compare-gene-wise-p-values-of-sceptre-glm-and-our-t-test" class="section level2" number="2.2">
 <h2 number="2.2"><span class="header-section-number">2.2</span> Scatter plots to compare gene wise P values of sceptre glm and our t test</h2>
-<pre class="r"><code># Define indices
-set.seed(0)
-
-indices &lt;- sample(1:nrow(sceptre_wide),4,replace=F)
-
-par(mfrow = c(2, 2),pty = &quot;s&quot;)
-
-# Loop through indices for scatter and QQ plots
-for (index in indices) {
-  # Extract vectors for the current index
-  vector1 &lt;- as.vector(as.matrix(gene_wise_p[index, ]))
-  vector2 &lt;- as.vector(as.matrix(sceptre_wide[index, ]))
-  
-  # Filter out NA values
-  valid_indices &lt;- !is.na(vector1) &amp; !is.na(vector2)
-  filtered_vector1 &lt;- vector1[valid_indices]
-  filtered_vector2 &lt;- vector2[valid_indices]
-  
-  # Scatter Plot
-  plot(
-    filtered_vector1, filtered_vector2,
-    xlab = &quot;Gene Wise P Values from t test&quot;,
-    ylab = &quot;Sceptre Wide P Values&quot;,
-    main = paste0(&quot;Scatter plot for &quot;,index, &quot; th perturbation&quot;),
-    pch = 16,
-    asp = 1,
-    xlim=c(0,1),
-    ylim=c(0,1),
-    col = &quot;blue&quot;,
-    cex = 0.7
-  )
-  
-
-}</code></pre>
 <p><img src="figure/new_model.Rmd/unnamed-chunk-20-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
@@ -2603,21 +2604,6 @@ jliucx
 </table>
 </div>
 </div>
-<pre class="r"><code># Example loop for scatter plots
-for (index in indices) {  # Randomly pick 6 indices
-  plot(
-    sort(filtered_vector1), sort(filtered_vector2),
-    xlab = &quot;Gene Wise P Values from t test&quot;,
-    ylab = &quot;Sceptre Wide P Values&quot;,
-    main = paste(&quot;QQ plot for &quot;,index, &quot;th perturbation&quot;),
-    asp = 1,  # Ensure aspect ratio is 1:1
-    xlim = c(0, 1),
-    ylim = c(0, 1),
-    pch = 16,
-    col = &quot;blue&quot;,
-    cex = 0.7
-  )
-}</code></pre>
 <p><img src="figure/new_model.Rmd/unnamed-chunk-20-2.png" width="768" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-2">
@@ -2678,8 +2664,6 @@ jliucx
 </table>
 </div>
 </div>
-<pre class="r"><code># Reset layout to single plot
-par(mfrow = c(1, 1))</code></pre>
 <p><strong>Notes:</strong></p>
 <p><em>1. In the above plot, the perturbations are randomly chosen</em> <em>2. We calculate the p values for two-sided t-test by</em></p>
 <p><span class="math inline">\(min(2 \times\frac{min(\#left,\#right)}{\#permutation},1)\)</span></p>
@@ -2691,21 +2675,6 @@ par(mfrow = c(1, 1))</code></pre>
 <div id="check-the-null-distribution-of-the-test-statistics-for-each-gene-and-see-if-the" class="section level3" number="2.3.1">
 <h3 number="2.3.1"><span class="header-section-number">2.3.1</span> Check the null distribution of the test statistics for each gene and see if the</h3>
 <p>test statistics are always non-centered.</p>
-<pre class="r"><code>par(mfrow = c(3, 2))
-set.seed(0)
-gene_idx &lt;- sample(1:dim(gene_wise_test_tensor)[2],6)
-for (i in gene_idx){
-value &lt;- gene_wise_test_tensor[1, i, 1]
-
-# Plot the histogram
-hist(gene_wise_test_tensor[, i,1], main = paste0(&quot;Test statistics of &quot; ,dimnames(gene_wise_test_tensor)[[3]][1], &quot;-&quot;, dimnames(gene_wise_test_tensor)[[2]][i]), xlab=&quot;null test statistics&quot;, breaks=1000)
-
-# Add a vertical line to indicate the value
-abline(v = value, col = &quot;red&quot;, lwd = 2)
-
-# Optionally, add a label for the value
-text(value, par(&quot;usr&quot;)[4] * 0.9, paste(&quot;Observed:&quot;, round(value, 2)), col = &quot;red&quot;, pos = 4)
-}</code></pre>
 <p><img src="figure/new_model.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
@@ -2799,8 +2768,7 @@ jliucx
 </table>
 </div>
 </div>
-<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
-<p><em>The genes are randomly chosen</em></p>
+<p><strong>The genes above are randomly chosen</strong></p>
 </div>
 <div id="compute-the-glm-test-statistics-using-the-glm-function-in-r" class="section level3" number="2.3.2">
 <h3 number="2.3.2"><span class="header-section-number">2.3.2</span> Compute the glm test statistics using the glm function in R</h3>
