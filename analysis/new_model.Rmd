@@ -1764,7 +1764,7 @@ for (k in indices) {
 par(mfrow = c(1, 1))
 
 ```
-```{r}
+```{r,cache=F}
 plot(module_results_t$acat_pval,module_results_sceptre$acat_pval,xlab="t+Cauchy",ylab="sceptre+Cauchy",main="p values of all perturbation-gene module pairs",cex=0.5)
   abline(0, 1, col = "red", lwd = 2)  # Add reference line
 
@@ -1791,7 +1791,7 @@ find final p value
 **We want to investigate in which case minp has a significance
 difference from us**
 
-```{r,fig.width=8, fig.height=8}
+```{r,fig.width=8, fig.height=8,cache=F}
 
 
 # Loop through indices
@@ -1831,7 +1831,7 @@ for (k in indices) {
 ```
 
 
-```{r}
+```{r,cache=F}
 plot(our_method_long$p_value,minp_long$p_value, main="p values of all perturbation-gene module pairs",xlab="our method",ylab="minp",cex=0.5)
   abline(0, 1, col = "red", lwd = 2,cex=0.5)  # Add reference line
 
