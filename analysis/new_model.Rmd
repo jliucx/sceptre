@@ -942,8 +942,6 @@ par(mfrow = c(1, 1))
 
 
 
-
-
 ```{r,fig.width=8,fig.height=8,warning=F}
 significant_levels <- c(0.01, 0.05, 0.1, 0.35)
 # significant_levels <- 0.01
@@ -1028,6 +1026,159 @@ plot_list[[4]] <- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative co
 
 grid.arrange(grobs = plot_list, ncol = 2)
 ```
+**Test on positive control set**
+The positive control set is composed of two parts:
+
+1. Trans-regulartary elements: (rs12784232, rs35531439, rs524137, rs73660574, rs79755767) paired with all gene modules.
+2. Cis-regulartary elements paired with gene modules that contains the target. 
+
+```{r}
+snp_labels <- c("rs524137", "rs73660574", "rs79755767", "rs35979828", 
+                "rs6592965", "rs12784232", "rs2834670", "rs2526377", 
+                "rs1109024", "rs35531439") 
+
+
+trans_positive_control_ids<- c("SNP-44_1", "SNP-44_2", "SNP-59_1", "SNP-59_2", "SNP-63_1", "SNP-63_2", "SNP-76_1", "SNP-76_2", "SNP-83_1", "SNP-83_2")
+# Filter rows in the data corresponding to these SNPs
+
+trans_positive_control_rows <- which(grna_target_data_frame_omit$grna_target %in% snp_labels, )
+
+```
+
+
+
+```{r}
+
+sceptre_trans_positive <- module_results_sceptre %>% 
+  filter(grna_id %in% trans_positive_control_ids)
+
+our_trans_positive <- our_method_long %>%
+    filter(grna_id %in% trans_positive_control_ids)
+
+sceptre_cis_positive <- module_results_sceptre %>%
+  filter((grna_id == "CD46-1" & module == "HALLMARK_COMPLEMENT") |
+         (grna_id == "CD46-2" & module == "HALLMARK_COMPLEMENT") |
+          (grna_id == "HSPA8-1" & module == "HALLMARK_G2M_CHECKPOINT") |
+          (grna_id == "HSPA8-2" & module == "HALLMARK_G2M_CHECKPOINT") | 
+         (grna_id == "NMU-1" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+           (grna_id == "NMU-2" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MYC_TARGETS_V1") |
+            (grna_id == "PPIA-1" & module == "HALLMARK_GLYCOLYSIS") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_GLYCOLYSIS") |
+            (grna_id == "RPL22-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "RPL22-2" & module == "HALLMARK_MYC_TARGETS_V1") )
+
+our_cis_positive <- our_method_long %>%
+  filter((grna_id == "CD46-1" & module == "HALLMARK_COMPLEMENT") |
+         (grna_id == "CD46-2" & module == "HALLMARK_COMPLEMENT") |
+          (grna_id == "HSPA8-1" & module == "HALLMARK_G2M_CHECKPOINT") |
+          (grna_id == "HSPA8-2" & module == "HALLMARK_G2M_CHECKPOINT") | 
+         (grna_id == "NMU-1" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+           (grna_id == "NMU-2" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MYC_TARGETS_V1") |
+            (grna_id == "PPIA-1" & module == "HALLMARK_GLYCOLYSIS") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_GLYCOLYSIS") |
+            (grna_id == "RPL22-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "RPL22-2" & module == "HALLMARK_MYC_TARGETS_V1") )
+
+sceptre_positive_control <- rbind(sceptre_trans_positive,sceptre_cis_positive)
+our_positive_control <- rbind(our_trans_positive,our_cis_positive)
+
+```
+
+```{r}
+sceptre_positive_bh <- p.adjust(sceptre_positive_control$acat_pval,method = "BH")
+our_positive_bh <- p.adjust(our_positive_control$p_value,method = "BH")
+
+
+```
+
+```{r}
+alpha_values <- c(0.05, 0.1, 0.15, 0.2)
+
+# Initialize a matrix to store counts for each alpha
+combined_counts <- matrix(0, nrow = 3, ncol = length(alpha_values))
+
+# Loop through each alpha
+for (i in seq_along(alpha_values)) {
+  alpha <- alpha_values[i]
+  
+  # Calculate rejections for the current alpha
+  sceptre_rejections <- which(sceptre_positive_bh < alpha)
+  gene_wise_rejections <- which(our_positive_bh < alpha)
+  
+  # Find common and unique rejections
+  common_rejections <- intersect(sceptre_rejections, gene_wise_rejections)
+  sceptre_unique <- setdiff(sceptre_rejections, common_rejections)
+  gene_wise_unique <- setdiff(gene_wise_rejections, common_rejections)
+  
+  # Store counts for the current alpha
+  combined_counts[, i] <- c(length(common_rejections), 
+                            length(sceptre_unique), 
+                            length(gene_wise_unique))
+}
+
+# Create bar plot
+barplot(combined_counts,
+        beside = FALSE,  # Stacked bars
+        col = c(rgb(0.5, 0.5, 0.5, 0.5),   # Grey with 50% transparency
+                rgb(1, 0, 0, 0.5),         # Red with 50% transparency
+                rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
+        names.arg = paste("Alpha =", alpha_values),
+        main = "Genewise Rejections Comparison for Positive Control Set",
+        xlab = NULL,
+        ylab = "Count",
+        legend.text = c("Common", "Sceptre-Cauchy Unique", "Our Unique"),
+        args.legend = list(x = "topleft", cex = 0.8))
+```
+
+```{r}
+sceptre_positive_bh <- p.adjust(sceptre_cis_positive$acat_pval,method = "BH")
+our_positive_bh <- p.adjust(our_cis_positive$p_value,method = "BH")
+
+alpha_values <- c(0.05, 0.1, 0.15, 0.2)
+
+# Initialize a matrix to store counts for each alpha
+combined_counts <- matrix(0, nrow = 3, ncol = length(alpha_values))
+
+# Loop through each alpha
+for (i in seq_along(alpha_values)) {
+  alpha <- alpha_values[i]
+  
+  # Calculate rejections for the current alpha
+  sceptre_rejections <- which(sceptre_positive_bh < alpha)
+  gene_wise_rejections <- which(our_positive_bh < alpha)
+  
+  # Find common and unique rejections
+  common_rejections <- intersect(sceptre_rejections, gene_wise_rejections)
+  sceptre_unique <- setdiff(sceptre_rejections, common_rejections)
+  gene_wise_unique <- setdiff(gene_wise_rejections, common_rejections)
+  
+  # Store counts for the current alpha
+  combined_counts[, i] <- c(length(common_rejections), 
+                            length(sceptre_unique), 
+                            length(gene_wise_unique))
+}
+
+# Create bar plot
+barplot(combined_counts,
+        beside = FALSE,  # Stacked bars
+        col = c(rgb(0.5, 0.5, 0.5, 0.5),   # Grey with 50% transparency
+                rgb(1, 0, 0, 0.5),         # Red with 50% transparency
+                rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
+        names.arg = paste("Alpha =", alpha_values),
+        main = "Genewise Rejections Comparison for Cis-Positive Control Set",
+        xlab = NULL,
+        ylab = "Count",
+        legend.text = c("Common", "Sceptre-Cauchy Unique", "Our Unique"),
+        args.legend = list(x = "topleft", cex = 0.8))
+```
 
 
 
@@ -1040,7 +1191,6 @@ combined_p<- data.frame("pval1"=c(ACAT(pvals_1),combination.test(pvals_1,weights
 rownames(combined_p) <-c("ACAT","Lin Gui's")
 combined_p
 ```
-
 
 
 # Test on genewise p value
@@ -1097,19 +1247,9 @@ barplot(combined_counts,
         main = "Genewise Rejections Comparison For All Perturbations",
         xlab = NULL,
         ylab = "Count",
-        legend.text = c("Common", "Sceptre Unique", "Gene-wise Unique"),
+        legend.text = c("Common", "Sceptre Unique", "T test Unique"),
         args.legend = list(x = "topleft"))
 ```
-```{r}
-snp_labels <- c("rs524137", "rs73660574", "rs79755767", "rs35979828", 
-                "rs6592965", "rs12784232", "rs2834670", "rs2526377", 
-                "rs1109024", "rs35531439") 
-
-# Filter rows in the data corresponding to these SNPs
-trans_positive_control_rows <- which(grna_target_data_frame_omit$grna_target %in% snp_labels, )
-```
-
-
 
 
 ```{r,cache=F}
@@ -1216,6 +1356,7 @@ sceptre_cis_positive <- c(sceptre_wide["CD46-1","ENSG00000117335"],
                   # sceptre_wide["CD55-9","ENSG00000196352"]
                   )
 ```
+
 
 
 ```{r,cache=F}
@@ -1758,6 +1899,12 @@ legend("topright",
        fill = c(rgb(1, 0, 0, 0.5), rgb(0, 0, 1, 0.5)))
 ```
 
+
+# Skewed normal approximation
+```{r}
+plot(-log10(as.numeric(as.matrix(read.csv("output/newest/filter_cell_approximation_3000/our_method.csv")))),-log10(as.numeric(as.matrix(read.csv("output/newest/filter_cell/our_method.csv")))),xlab="Skew normal approximation (3000 null test statistics)",ylab="No approximation (10000 null test statistics)",main="Scatter plot of -log transformed p values")
+abline(0, 1, col = "red", lwd = 2)
+```
 
 
 
