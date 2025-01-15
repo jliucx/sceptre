@@ -31,7 +31,38 @@ library(sgt)
 library(heavytailcombtest)
 library(gridExtra)
 library(eulerr)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)
+library(ACAT)
+library(MASS)
+```
 
+
+```{r,include=F}
+gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
+  n <- length(ps)
+  df <- data.frame(
+    observed = pmin(-log10(sort(ps)), 4), # Cap observed values at 4
+    expected = -log10(ppoints(n)),
+    clower = pmin(-log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)), 4), # Cap clower values at 4
+    cupper = pmin(-log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1)), 4)  # Cap cupper values at 4
+  )
+
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color = "red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + 
+    ylab(log10Po) +
+    ylim(0, 4) + # Limit y-axis to 0-5
+    ggtitle(title) # Add title
+}
 
 
 sourceCpp("code/fit_skew_normal.cpp")
@@ -82,12 +113,57 @@ if (author_threshold) {
     )
 
 }
+```
 
+```{r}
+  directories <- "data/GDO_threshold"
+  # directories <- "data/gene_module_author_threshold"
+  grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
+  grna_target_data_frame_omit  <- grna_target_data_frame %>%
+    filter(!(grna_id %in% c("NTC-3", "NTC-12")))
+
+  sceptre_object_complete <- import_data_from_cellranger(
+    directories = directories,
+    moi = "high",
+    grna_target_data_frame = grna_target_data_frame_omit
+  )
+
+  positive_control_pairs <- construct_positive_control_pairs(sceptre_object_complete)
+
+  discovery_pairs_cis <- construct_cis_pairs(
+    sceptre_object = sceptre_object_complete,
+    positive_control_pairs = positive_control_pairs,
+    response_position_data_frame=gene_position_data_frame_grch37,
+    distance_threshold = 5e5
+  )
+
+  discovery_pairs_trans <- construct_trans_pairs(
+    sceptre_object = sceptre_object_complete,
+    positive_control_pairs = positive_control_pairs,
+    pairs_to_exclude = "pairs_containing_pc_targets"
+  )
+
+  sceptre_object_complete <- sceptre_object_complete |>  # |> is R's base pipe, similar to %>%
+    set_analysis_parameters(
+      discovery_pairs = discovery_pairs_trans,
+      positive_control_pairs = positive_control_pairs,
+      side = "both",
+      grna_integration_strategy="singleton"
+    ) |>
+    assign_grnas(
+      method = "thresholding",
+      threshold = 1
+    )
+
+```
+
+
+```{r,include=F}
 setwd("/project/xuanyao/jiaming/Getting_started")
 
 
 gene_modules <- readRDS("data/gene_modules_id.rds")
-covariate <- sceptre_object@covariate_data_frame
+covariate <- sceptre_object_complete@covariate_data_frame
 
 
 response_matrix_raw<-sceptre_object@response_matrix[[1]]
@@ -104,27 +180,80 @@ out_of_range_indices <- which(
 # response_matrix_raw <- response_matrix_raw[,-out_of_range_indices]
 # covariate <- covariate[-out_of_range_indices,]
 
-gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
-  n <- length(ps)
-  df <- data.frame(
-    observed = -log10(sort(ps)),
-    expected = -log10(ppoints(n)),
-    clower = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
-    cupper = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
-  )
-  
-  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
-  log10Po <- expression(paste("Observed -log"[10], plain(P)))
-  
-  ggplot(df) +
-    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
-    geom_point(aes(expected, observed), size = 1.5, color = "red") +
-    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
-    xlab(log10Pe) + ylab(log10Po) +
-    ggtitle(title)  # Add title
-}
+
+```
+
+```{r}
+hist(sceptre_object@covariate_data_frame$response_n_umis,breaks=2000, main="Histogram of library size (2106 Genes)",xlab="UMI count")
+abline(v=1300,col="red")
+text(x=1300, y=20, labels="1300", col="red", pos=4) 
+
+hist(sceptre_object_complete@covariate_data_frame$response_n_umis,breaks=2000, main="histogram of complete library size (36601 genes)",xlab="UMI count")
+abline(v=5000,col="red")
+
+text(x=5000, y=25, labels="5000", col="red", pos=4) 
+
+plot(sceptre_object_complete@covariate_data_frame$response_n_umis,sceptre_object@covariate_data_frame$response_n_umis,xlab="Complete library", ylab="2106 gene library",main="Total UMI counts")
+
+```
+
+    
+```{r}
+filter1<-which(sceptre_object@covariate_data_frame$response_n_umis < 1300)
+filter2<-which(sceptre_object_complete@covariate_data_frame$response_n_umis<5000)
+
+venn_data <- list(
+  `2106 gene library` = filter1,
+  `complete library` = filter2
+)
+
+# Generate the Euler diagram and display it
+euler_plot <- plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "blue")),
+  alpha = 0.5,
+  edges = TRUE,
+  quantities = TRUE,
+  main = "Overlap of Filter1 and Filter2"
+)
+euler_plot
+```
+
+    
+```{r}
+cell_to_filter <- which(covariate$response_n_umis < 5000)
+
+  response_matrix_raw <- response_matrix_raw[,-cell_to_filter]
+  covariate <- covariate[-cell_to_filter,]
+
+  response_matrix_normalized<-t(t(response_matrix_raw)/covariate$response_n_umis)
+  # response_matrix_normalized <- response_matrix_raw
+
+
+  response_matrix <- response_matrix_normalized
+  rank<-T
+```
+
+### Cells that are filtered out
+```{r}
+table(colSums(get_grna_assignments(
+    sceptre_object = sceptre_object
+  )[,cell_to_filter]))
   
 ```
+
+
+
+```{r}
+if (rank) {
+  response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
+  rownames(response_matrix)<- readLines("docs/row_names.txt")
+}
+
+
+  gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
+```
+
 
 
 We tried different settings: 1. Data containing whole gene or subset
@@ -154,56 +283,25 @@ The dataset we are using now is a
 
 5.  Filtered (removing cells that have low library size \<1300 total UMI
     counts)
-    
-    
-```{r}
-hist(colSums(sceptre_object@response_matrix[[1]]),breaks=2000, main="histogram of library size",xlab="UMI count")
-abline(v=1300,col="red")
-
-
-  cell_to_filter <- which(covariate$response_n_umis < 1300)
-
-  response_matrix_raw <- response_matrix_raw[,-cell_to_filter]
-  covariate <- covariate[-cell_to_filter,]
-
-  response_matrix_normalized<-t(t(response_matrix_raw)/covariate$response_n_umis)
-  # response_matrix_normalized <- response_matrix_raw
-
-
-  response_matrix <- response_matrix_normalized
-  rank<-T
-if (rank) {
-  response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
-  rownames(response_matrix)<- readLines("docs/row_names.txt")
-}
-
-  gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
-  
-```
-
 
 ## Consider perturbations that affects >150 cells
 
 ```{r}
-library(ggplot2)
-library(dplyr)
-library(readr)
-library(tibble)
-library(tidyr)
+
 
 infect_cell_threshold <- 150
 
 gene_modules <- readRDS("data/gene_modules_id.rds")
 
-gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
+gene_wise_p  <- read.csv("output/newest/pooled_variance_median/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,])>infect_cell_threshold,]
 
 
 gene_wise_p[gene_wise_p == 0] <- 1 / 10000
 gene_wise_p[gene_wise_p >= 1] <- 1- 1/10000
-sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_discovery_analysis.rds")[,c(1,2,7)],
-                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_calibration_check.rds")[,c(1,2,7)])
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_calibration_check.rds")[,c(1,2,7)])
 
 sceptre <- sceptre[!is.na(sceptre$p_value), ]
 sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
@@ -396,6 +494,7 @@ for (i in seq_len(nrow(sceptre_wide))) {
       
       # Check if module_p_values still has values after removing NAs
       if (length(module_p_values) > 0) {
+        
         # acat_pval <- ACAT(module_p_values)
         
         acat_pval<- combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
@@ -426,7 +525,7 @@ module_results_sceptre <- do.call(rbind, module_results)
 
 library(tibble)
 
-minp <- read.csv("output/newest/filter_cell/minp.csv")[rowSums(get_grna_assignments(
+minp <- read.csv("output/newest/pooled_variance_median/minp.csv")[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,])>infect_cell_threshold,]
 
@@ -440,7 +539,7 @@ minp_long <- minp%>%
 # Remove rows with NA p-values
 minp_long <- minp_long %>% filter(!is.na(p_value))
 
-our_method <-  read.csv("output/newest/filter_cell/our_method.csv")[rowSums(get_grna_assignments(
+our_method <-  read.csv("output/newest/pooled_variance_median/our_method.csv")[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,])>infect_cell_threshold,]
 
@@ -546,19 +645,19 @@ par(mfrow = c(1, 1))
 ```{r}
 ntc_our <- our_method_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
- select(grna_id, p_value)
+  dplyr::select(grna_id, p_value)
 
 ntc_minp <- minp_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, p_value)
+   dplyr::select(grna_id, p_value)
 
 ntc_t <- module_results_t %>%
   filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, acat_pval)
+   dplyr::select(grna_id, acat_pval)
 
 ntc_sceptre <- module_results_sceptre %>%
   filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, acat_pval)
+   dplyr::select(grna_id, acat_pval)
 
 plot_list <- list()
 
@@ -591,13 +690,13 @@ gene_modules <- readRDS("data/gene_modules_id.rds")
 # gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
 #   sceptre_object = sceptre_object
 # )[-208,])>500,]
-gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)
+gene_wise_p  <- read.csv("output/newest/pooled_variance_median/gene_wise_p.csv", nrows = 207)
 
 
 gene_wise_p[gene_wise_p == 0] <- 1 / 10000
 gene_wise_p[gene_wise_p >= 1] <- 1- 1/10000
-sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_discovery_analysis.rds")[,c(1,2,7)],
-                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell/results_run_calibration_check.rds")[,c(1,2,7)])
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_calibration_check.rds")[,c(1,2,7)])
 
 sceptre <- sceptre[!is.na(sceptre$p_value), ]
 sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
@@ -826,7 +925,7 @@ library(tibble)
 # )[-208,])>500,]
 
 
-minp <- read.csv("output/newest/filter_cell/minp.csv")
+minp <- read.csv("output/newest/pooled_variance_median/minp.csv")
 
 
 minp_long <- minp%>%
@@ -839,7 +938,7 @@ minp_long <- minp_long %>% filter(!is.na(p_value))
 # our_method <-  read.csv("output/newest/filter_cell/our_method.csv")[rowSums(get_grna_assignments(
 #   sceptre_object = sceptre_object
 # )[-208,])>500,]
-our_method <-  read.csv("output/newest/filter_cell/our_method.csv")
+our_method <-  read.csv("output/newest/pooled_variance_median/our_method.csv")
 
 
 
@@ -1003,19 +1102,19 @@ par(mfrow = c(1, 1))
 ```{r}
 ntc_our <- our_method_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
- select(grna_id, p_value)
+  dplyr::select(grna_id, p_value)
 
 ntc_minp <- minp_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, p_value)
+   dplyr::select(grna_id, p_value)
 
 ntc_t <- module_results_t %>%
   filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, acat_pval)
+   dplyr::select(grna_id, acat_pval)
 
 ntc_sceptre <- module_results_sceptre %>%
   filter(startsWith(grna_id, "NTC")) %>%
-  select(grna_id, acat_pval)
+   dplyr::select(grna_id, acat_pval)
 
 plot_list <- list()
 
@@ -1029,7 +1128,53 @@ plot_list[[4]] <- gg_qqplot(as.vector(ntc_sceptre$acat_pval), title="Negative co
 
 grid.arrange(grobs = plot_list, ncol = 2)
 ```
+
+
+```{r}
+gg_qqplot_two <- function(ps1, ps2, ci = 0.95, title = "QQ Plot", labels = c("Dataset 1", "Dataset 2")) {
+  n <- length(ps1)
+  df1 <- data.frame(
+    observed = pmin(-log10(sort(ps1)), 4), # Cap observed values at 4
+    expected = -log10(ppoints(n)),
+    dataset = labels[1]
+  )
+  
+  n2 <- length(ps2)
+  df2 <- data.frame(
+    observed = pmin(-log10(sort(ps2)), 4), # Cap observed values at 4
+    expected = -log10(ppoints(n2)),
+    dataset = labels[2]
+  )
+  
+  # Combine datasets
+  df <- rbind(df1, df2)
+  
+  # Compute confidence intervals
+  clower <- pmin(-log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)), 4)
+  cupper <- pmin(-log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1)), 4)
+  ci_df <- data.frame(expected = -log10(ppoints(n)), clower = clower, cupper = cupper)
+
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+
+  ggplot() +
+    geom_ribbon(data = ci_df, aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.4, fill = "grey") +
+    geom_point(data = df, aes(x = expected, y = observed, color = dataset), size = 1.5) +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) +
+    ylab(log10Po) +
+    ylim(0, 4) + # Limit y-axis to 0-4
+    ggtitle(title) +
+    scale_color_manual(values = c("red", "blue")) +
+    theme_minimal(base_size = 14) +
+    theme(legend.title = element_blank(), panel.grid = element_blank())
+}
+
+gg_qqplot_two(as.vector(ntc_our$p_value), as.vector(ntc_sceptre$acat_pval), title="Negative control p values", labels = c("Our Method", "Sceptre+Cauchy"))
+```
+
 **Test on positive control set**
+
 
 The positive control set is composed of two parts:
 
@@ -1139,7 +1284,7 @@ barplot(combined_counts,
         xlab = NULL,
         ylab = "Count",
         legend.text = c("Common", "Sceptre-Cauchy Unique", "Our Unique"),
-        args.legend = list(x = "topleft", cex = 0.8))
+        args.legend = list(x = "topleft", cex = 0.6))
 ```
 
 ```{r,cache=F}
@@ -1187,11 +1332,12 @@ barplot(combined_counts,
 
 
 ```{r}
+library(ACAT)
 pvals_1<-c(0.0001,0.1,0.2,0.5,0.7)
 pvals_2<-c(0.1,0.2,0.5,0.7,0.9)
 pvals_3<-c(0.0001,0.1,0.2,0.3,0.999999)
 
-combined_p<- data.frame("pval1"=c(ACAT(pvals_1),combination.test(pvals_1,weights = NA,method = "Cauchy",tail.idx = 1)),"pval2"=c(ACAT(pvals_2),combination.test(pvals_2,weights = NA,method = "Cauchy",tail.idx = 1)),"pval3"=c(ACAT(pvals_3),combination.test(pvals_3,weights = NA,method = "Cauchy",tail.idx = 1)))
+combined_p<- data.frame("pval1"=c(ACAT(pvals_1),combination.test(pvals_1,weights = NA,method = "Cauchy",tail.idx = 1,truncate=F)),"pval2"=c(ACAT(pvals_2),combination.test(pvals_2,weights = NA,method = "Cauchy",tail.idx = 1,truncate=F)),"pval3"=c(ACAT(pvals_3),combination.test(pvals_3,weights = NA,method = "Cauchy",tail.idx = 1,truncate = F)))
 rownames(combined_p) <-c("ACAT","Lin Gui's")
 combined_p
 ```
@@ -1541,8 +1687,8 @@ text(value, par("usr")[4] * 0.9, paste("Observed:", round(value, 2)), col = "red
 ### Compute the glm test statistics using the glm function in R
 
 
-``` {r}
-ranked_response<-round(response_matrix[gene_idx,])
+```r
+round_response<-round(response_matrix_raw[gene_idx,])
 par(mfrow = c(3, 2))
 
 grna_indices <- seq(1, by = nrow(grna_assignment_matrix), length.out = (n_permute+1))
@@ -1551,17 +1697,16 @@ grna_indices <- seq(1, by = nrow(grna_assignment_matrix), length.out = (n_permut
 subset_grna_assignment_matrix <- grna_assignment_matrix_combined[grna_indices, ]
 
 
-for (k in 1:nrow(ranked_response)){
+for (k in 1:nrow(round_response)){
   
 z_values <- vector("list", 800)
 
 # Loop through the permutations
 for (i in 1:800) {
   # Fit the GLM model
-  model <- glm(
-    ranked_response[k,] ~ subset_grna_assignment_matrix[i, ] + log(covariate$response_n_umis),
-    family = "poisson"
-  )
+model <- glm.nb(
+  round_response[k, ] ~ subset_grna_assignment_matrix[i, ] + log(covariate$response_n_umis)
+)
   
     coef <- coef(summary(model))  # Summary of the model
   
@@ -1572,7 +1717,7 @@ for (i in 1:800) {
 
 hist(
   as.numeric(z_values),
-  main = paste0("Test statistics of ", rownames(grna_assignment_matrix)[grna_indices[1]],"-", rownames(ranked_response)[k]), xlab="null test statistics", breaks=800
+  main = paste0("Test statistics of ", rownames(grna_assignment_matrix)[grna_indices[1]],"-", rownames(round_response)[k]), xlab="null test statistics", breaks=800
 )
 
 abline(v = z_values[[1]], col = "red", lwd = 2)
@@ -1581,6 +1726,9 @@ abline(v = z_values[[1]], col = "red", lwd = 2)
 text(z_values[[1]], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
 
 }
+```
+```{r,echo=F,cache-F}
+knitr::include_graphics("images/NB_test.png", error = FALSE)
 ```
 
 
@@ -1598,7 +1746,6 @@ hist(gene_wise_test_tensor[, i, 5], breaks = 3000, main=paste0("Null t test stat
      xlab = "Values", col = "lightblue")
 abline(v = gene_wise_test_tensor[1, i, 5], col = "red", lwd = 1)
 text(gene_wise_test_tensor[1, i, 5], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
-
 }
 ```
 ```{r}
@@ -1610,17 +1757,63 @@ hist(gene_wise_test_tensor[, i, 4], breaks = 3000, main=paste0("Null t test stat
   text(gene_wise_test_tensor[1, i, 4], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
 }
 ```
-
 ```{r}
-highlighted_values <- gene_wise_test_tensor[, 560, 4][gene_wise_test_tensor[, 560, 4] < -50]
+wierd_indx<-which(gene_wise_test_tensor[, 560, 4]==min(gene_wise_test_tensor[, 560, 4]))
+wierd_indx
+```
+```{r}
+rowSums(grna_assignment_matrix_combined[wierd_indx*7-3
+,])
+which(grna_assignment_matrix_combined[(wierd_indx*7-3)[1]
+,] !=0)
+which(grna_assignment_matrix_combined[(wierd_indx*7-3)[2]
+,] !=0)
+which(grna_assignment_matrix_combined[(wierd_indx*7-3)[3]
+,] !=0)
+weird_assignment<-grna_assignment_matrix_combined[(wierd_indx*7-3)[1:2]
+,]
+```
+```{r}
+response_matrix <- as.matrix(response_matrix)
+  grna_assignment_matrix <- as.matrix(weird_assignment)
 
-hist(highlighted_values, 
-     breaks = 15, 
-     main = "Histogram of Problematic Region (Values < -50)", 
-     xlab = "Values", 
-     border = "black")
+  n_cells <- ncol(response_matrix)
+  n_genes <- nrow(response_matrix)
+  all_cells <- seq_len(n_cells)
+  n_rows <- nrow(grna_assignment_matrix)
+
+  response_matrix_t <- t(response_matrix)
+  response_matrix_t_squared <-response_matrix_t^2
+
+  grna_infected_cell_count <- rowSums(grna_assignment_matrix)
+
+  mean_expression_trt <- grna_assignment_matrix %*% response_matrix_t / grna_infected_cell_count
+  mean_expression_squared_trt <- grna_assignment_matrix %*% response_matrix_t_squared / grna_infected_cell_count
+  var_expression_trt <- mean_expression_squared_trt - mean_expression_trt^2
+
+  grna_control_cell_count <- n_cells - grna_infected_cell_count
+  mean_expression_control <- (1 - grna_assignment_matrix) %*% response_matrix_t / grna_control_cell_count
+  mean_expression_squared_control <- (1 - grna_assignment_matrix) %*% response_matrix_t_squared / grna_control_cell_count
+  var_expression_control <- mean_expression_squared_control - mean_expression_control^2
+
+  t_statistics <- (mean_expression_trt - mean_expression_control) / sqrt(var_expression_trt / grna_infected_cell_count + var_expression_control / grna_control_cell_count)
 
 ```
+```{r}
+grna_infected_cell_count
+mean_expression_trt[,560]
+(mean_expression_trt^2)[,560]
+
+mean_expression_squared_trt[,560]
+
+var_expression_trt[,560]
+mean_expression_control[,560]
+mean_expression_squared_control[,560]
+var_expression_control[,560]
+
+```
+
+
 
 **Those spikes indicate an unstable resampled null test statistics, revealing problems in resampling. We want to check whether it is a lack of cells infected by gRNA that leads to a bad logistic regression, and therefore an unstable resample**
 
@@ -1847,14 +2040,16 @@ plot(-log10(our_method_long$p_value),-log10(minp_long$p_value),main="p values of
 ```{r}
 grna_assignment_matrix <-get_grna_assignments(
   sceptre_object = sceptre_object
-)[-207,-cell_to_filter]
+)[-208,-cell_to_filter]
 ```
 ```{r}
-assignment_to_analyze<-matrix(as.numeric(grna_assignment_matrix[1,]),nrow=1)
+assignment_to_analyze<-matrix(as.numeric(grna_assignment_matrix[40,]),nrow=1)
 
 
 prop<-estimate_propensity(assignment_to_analyze, covariate)
 weight<-prop
+
+
 weight[assignment_to_analyze==1] <- (1/prop[assignment_to_analyze==1])/sum(1/prop[assignment_to_analyze==1])
 weight[assignment_to_analyze==0] <- (1/(1-prop[assignment_to_analyze==0]))/sum(1/(1-prop[assignment_to_analyze==0]))
 balanced_covariate<-covariate$response_n_umis*weight
@@ -1882,7 +2077,7 @@ legend("topright",
 
 
 hist(covariate$response_n_umis[assignment_to_analyze == 1],
-     breaks = length(balanced_covariate[assignment_to_analyze == 1]) /5,
+     breaks = length(covariate[assignment_to_analyze == 1]) /5,
      col = rgb(1, 0, 0, 0.5), # Add transparency
      xlim = range(covariate$response_n_umis),
      ylim = c(1,100),
@@ -1901,6 +2096,13 @@ legend("topright",
        legend = c("Assignment = 1", "Assignment = 0"),
        fill = c(rgb(1, 0, 0, 0.5), rgb(0, 0, 1, 0.5)))
 ```
+```{r}
+sum(balanced_covariate[assignment_to_analyze == 1])
+sum(balanced_covariate[assignment_to_analyze == 0])
+
+```
+
+
 
 
 # Skewed normal approximation
@@ -1915,6 +2117,9 @@ abline(0, 1, col = "red", lwd = 2)
 
 
 
+```{r}
+
+```
 
 
 
