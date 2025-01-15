@@ -183,7 +183,7 @@ out_of_range_indices <- which(
 
 ```
 
-```{r}
+```{r,cache=F}
 hist(sceptre_object@covariate_data_frame$response_n_umis,breaks=2000, main="Histogram of library size (2106 Genes)",xlab="UMI count")
 abline(v=1300,col="red")
 text(x=1300, y=20, labels="1300", col="red", pos=4) 
@@ -198,7 +198,7 @@ plot(sceptre_object_complete@covariate_data_frame$response_n_umis,sceptre_object
 ```
 
     
-```{r}
+```{r,cache=F}
 filter1<-which(sceptre_object@covariate_data_frame$response_n_umis < 1300)
 filter2<-which(sceptre_object_complete@covariate_data_frame$response_n_umis<5000)
 
@@ -586,7 +586,7 @@ our_method_long$identifier <- paste(our_method_long$grna_id, our_method_long$mod
 
 
 ```
-```{r,fig.width=8,fig.height=8,warning=F}
+```{r,fig.width=8,fig.height=8,warning=F,cache=F}
 significant_levels <- c(0.01, 0.05, 0.1, 0.25)
 # significant_levels <- 0.01
 plot_list <- list()
@@ -642,7 +642,7 @@ par(mfrow = c(1, 1))
 **Test on non-targeting gRNAs**
 
 
-```{r}
+```{r,cache=F}
 ntc_our <- our_method_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
   dplyr::select(grna_id, p_value)
@@ -677,7 +677,7 @@ grid.arrange(grobs = plot_list, ncol = 2)
 
 
 
-```{r,echo=F,fig.width=8, fig.height=8}
+```{r,echo=F,fig.width=8, fig.height=8,cache=F}
 library(ggplot2)
 library(dplyr)
 library(readr)
@@ -988,7 +988,7 @@ library(eulerr)
 
 
 
-```{r,fig.width=8,fig.height=8,warning=F}
+```{r,fig.width=8,fig.height=8,warning=F,cache=F}
 significant_levels <- c(0.01, 0.05, 0.1, 0.25)
 # significant_levels <- 0.01
 plot_list <- list()
@@ -1044,7 +1044,7 @@ par(mfrow = c(1, 1))
 
 
 
-```{r,fig.width=8,fig.height=8,warning=F}
+```{r,fig.width=8,fig.height=8,warning=F,cache=F}
 significant_levels <- c(0.01, 0.05, 0.1, 0.35)
 # significant_levels <- 0.01
 plot_list <- list()
@@ -1099,7 +1099,7 @@ par(mfrow = c(1, 1))
 ```
 ## Test on Control Sets
 **Test on non-targeting gRNAs**
-```{r}
+```{r,cache=F}
 ntc_our <- our_method_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
   dplyr::select(grna_id, p_value)
@@ -1130,7 +1130,7 @@ grid.arrange(grobs = plot_list, ncol = 2)
 ```
 
 
-```{r}
+```{r,cache=F}
 gg_qqplot_two <- function(ps1, ps2, ci = 0.95, title = "QQ Plot", labels = c("Dataset 1", "Dataset 2")) {
   n <- length(ps1)
   df1 <- data.frame(
@@ -1347,7 +1347,7 @@ combined_p
 
 ## Number of gene-wise rejections
 
-```{r}
+```{r,cache=F}
 
 gene_wise_p_subset <- gene_wise_p[rownames(gene_wise_p) %in% rownames(sceptre_wide), ]
 
@@ -1560,7 +1560,7 @@ barplot(combined_counts,
 ```
 ## Scatter plots to compare gene wise P values of sceptre glm and our t test
 
-```{r,fig.width=8, fig.height=8,echo=F}
+```{r,fig.width=8, fig.height=8,echo=F,cache=F}
 # Define indices
 set.seed(0)
 
@@ -1662,7 +1662,7 @@ source("code/functions.R")
 ```
 
 
-```{r,echo=F}
+```{r,echo=F,cache=F}
 
 par(mfrow = c(3, 2))
 set.seed(0)
@@ -1738,7 +1738,7 @@ knitr::include_graphics("images/NB_test.png", error = FALSE)
 
 
 
-```{r}
+```{r,cache=F}
 suspicious_gene_id <-c(560,1417,1455,1562,1910,2010)
 par(mfrow=c(3,2))
 for (i in suspicious_gene_id){
@@ -1748,7 +1748,7 @@ abline(v = gene_wise_test_tensor[1, i, 5], col = "red", lwd = 1)
 text(gene_wise_test_tensor[1, i, 5], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
 }
 ```
-```{r}
+```{r,cache=F}
 par(mfrow=c(3,2))
 for (i in suspicious_gene_id){
 hist(gene_wise_test_tensor[, i, 4], breaks = 3000, main=paste0("Null t test statistics: ",rownames(grna_assignment_matrix)[4],"-",rownames(response_matrix)[i]),
@@ -2042,7 +2042,7 @@ grna_assignment_matrix <-get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,-cell_to_filter]
 ```
-```{r}
+```{r,cache=F}
 assignment_to_analyze<-matrix(as.numeric(grna_assignment_matrix[40,]),nrow=1)
 
 
@@ -2106,7 +2106,7 @@ sum(balanced_covariate[assignment_to_analyze == 0])
 
 
 # Skewed normal approximation
-```{r}
+```{r,cache=F}
 plot(-log10(as.numeric(as.matrix(read.csv("output/newest/filter_cell_approximation_3000/our_method.csv")))),-log10(as.numeric(as.matrix(read.csv("output/newest/filter_cell/our_method.csv")))),xlab="Skew normal approximation (3000 null test statistics)",ylab="No approximation (10000 null test statistics)",main="Scatter plot of -log transformed p values")
 abline(0, 1, col = "red", lwd = 2)
 ```
