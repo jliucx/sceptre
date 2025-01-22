@@ -385,7 +385,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-01-15
+<strong>Last updated:</strong> 2025-01-22
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -516,16 +516,16 @@ output/both_trans_author_filtered_cell_complete/results_run_calibration_check.rd
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea0340753a87b051ecd13c2a8f9877c9c622cbc5atargetblanka034075a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/a0340753a87b051ecd13c2a8f9877c9c622cbc5a" target="_blank">a034075</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreef59bee91ee57d14778bad81f68384919f4f583fetargetblankf59bee9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/f59bee91ee57d14778bad81f68384919f4f583fe" target="_blank">f59bee9</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea0340753a87b051ecd13c2a8f9877c9c622cbc5atargetblanka034075a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreef59bee91ee57d14778bad81f68384919f4f583fetargetblankf59bee9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/a0340753a87b051ecd13c2a8f9877c9c622cbc5a" target="_blank">a034075</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/f59bee91ee57d14778bad81f68384919f4f583fe" target="_blank">f59bee9</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -534,6 +534,7 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    analysis/job-info.err
     Ignored:    analysis/job-info.out
     Ignored:    analysis/run.sh
@@ -543,18 +544,20 @@ Untracked files:
     Untracked:  analysis/sceptre_singleton.R
     Untracked:  analysis/sceptre_singleton.Rmd
     Untracked:  analysis/sceptre_threshold.Rmd
+    Untracked:  code/advanced.err
+    Untracked:  code/advanced.out
     Untracked:  code/debug.Rmd
     Untracked:  code/fit_skew_normal.cpp
     Untracked:  code/minp.R
     Untracked:  code/newest.R
     Untracked:  code/newest.err
     Untracked:  code/newest.out
-    Untracked:  code/permutation.err
-    Untracked:  code/permutation.out
     Untracked:  code/plots_generator.Rmd
+    Untracked:  code/pooled_var.err
+    Untracked:  code/pooled_var.out
+    Untracked:  code/remove_cis.R
+    Untracked:  code/run_R_caslake.sh
     Untracked:  code/t_test.cpp
-    Untracked:  code/test.err
-    Untracked:  code/test.out
     Untracked:  code/test_gene_module_reduced.R
     Untracked:  code/test_gene_module_reduced.Rmd
     Untracked:  code/test_gene_p.R
@@ -569,13 +572,17 @@ Untracked files:
     Untracked:  output/both_trans_author_filtered_cell_complete/
     Untracked:  output/both_trans_author_permutation/
     Untracked:  output/debug/
+    Untracked:  output/newest/advanced/
+    Untracked:  output/newest/advanced_confirm/
     Untracked:  output/newest/filter_cell/
     Untracked:  output/newest/filter_cell_approximation_3000/
     Untracked:  output/newest/filter_cell_complete/
     Untracked:  output/newest/filter_cell_complete_power8/
-    Untracked:  output/newest/pooled_variance_median/
+    Untracked:  output/newest/pool_variance_confirm/
+    Untracked:  output/newest/remove_cis/
+    Untracked:  output/newest/remove_cis_10Mb/
+    Untracked:  output/newest/test_remove_cis/
     Untracked:  output/newest/thesis/
-    Untracked:  output/newest/try2/
     Untracked:  output/thesis/
     Untracked:  output/try_sceptre_skew_fit_normalized_threshold_quantile_transform.csv
 
@@ -610,6 +617,9 @@ Unstaged changes:
     Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_discovery_analysis.png
     Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_power_check.png
     Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_qc.png
+    Deleted:    output/newest/try/gene_wise_p.csv
+    Deleted:    output/newest/try/minp.csv
+    Deleted:    output/newest/try/our_method.csv
     Modified:   output/startover/test/gene_wise_p.csv
     Modified:   output/startover/test/minp.csv
     Modified:   output/startover/test/our_method.csv
@@ -651,6 +661,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/f59bee91ee57d14778bad81f68384919f4f583fe/analysis/new_model.Rmd" target="_blank">f59bee9</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-01-22
+</td>
+<td>
+remove cis
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/91ea23f603a20a600147f1d2f6fa9096778b7b56/docs/new_model.html" target="_blank">91ea23f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-01-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1108,12 +1152,7 @@ Combining matrices across directories. ✓
 Creating the sceptre object. ✓</code></pre>
 <pre class="r"><code>  positive_control_pairs &lt;- construct_positive_control_pairs(sceptre_object_complete)
 
-  discovery_pairs_cis &lt;- construct_cis_pairs(
-    sceptre_object = sceptre_object_complete,
-    positive_control_pairs = positive_control_pairs,
-    response_position_data_frame=gene_position_data_frame_grch37,
-    distance_threshold = 5e5
-  )
+
 
   discovery_pairs_trans &lt;- construct_trans_pairs(
     sceptre_object = sceptre_object_complete,
@@ -1371,7 +1410,7 @@ jliucx
 
 gene_modules &lt;- readRDS(&quot;data/gene_modules_id.rds&quot;)
 
-gene_wise_p  &lt;- read.csv(&quot;output/newest/pooled_variance_median/gene_wise_p.csv&quot;, nrows = 207)[rowSums(get_grna_assignments(
+gene_wise_p  &lt;- read.csv(&quot;output/newest/filter_cell_complete_power8/gene_wise_p.csv&quot;, nrows = 207)[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,])&gt;infect_cell_threshold,]
 
@@ -1603,7 +1642,7 @@ module_results_sceptre &lt;- do.call(rbind, module_results)
 
 library(tibble)
 
-minp &lt;- read.csv(&quot;output/newest/pooled_variance_median/minp.csv&quot;)[rowSums(get_grna_assignments(
+minp &lt;- read.csv(&quot;output/newest/filter_cell_complete_power8/minp.csv&quot;)[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,])&gt;infect_cell_threshold,]
 
@@ -1617,7 +1656,7 @@ minp_long &lt;- minp%&gt;%
 # Remove rows with NA p-values
 minp_long &lt;- minp_long %&gt;% filter(!is.na(p_value))
 
-our_method &lt;-  read.csv(&quot;output/newest/pooled_variance_median/our_method.csv&quot;)[rowSums(get_grna_assignments(
+our_method &lt;-  read.csv(&quot;output/newest/filter_cell_complete_power8/our_method.csv&quot;)[rowSums(get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,])&gt;infect_cell_threshold,]
 
@@ -1920,19 +1959,22 @@ for (significant_level in significant_levels) {
   significant_ids_ours &lt;- our_method_long$identifier[
     our_method_long$bh_pval &lt; significant_level]
   
+
+  
   # Prepare the sets
   venn_data &lt;- list(
     `Sceptre+Cauchy` = significant_ids_gene_wise_p,
-    `t+Cauchy` = significant_ids_gene_wise_p_t,
+    # `t+Cauchy` = significant_ids_gene_wise_p_t,
     `minp` = significant_ids_minp,
     `Our method` = significant_ids_ours
+    # `max stat` = significant_ids_max_stat
     # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
     # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
   )
   
   # Generate the Euler diagram and display it
   euler_plot &lt;- plot(euler(venn_data),
-                     fills = list(fill = c(&quot;red&quot;, &quot;purple&quot;, &quot;green&quot;, &quot;yellow&quot;,&quot;purple&quot;), alpha = 0.5),
+                     fills = list(fill = c(&quot;red&quot;, &quot;green&quot;, &quot;yellow&quot;,&quot;orange&quot;), alpha = 0.5),
                      edges = TRUE, quantities = TRUE,
                      main = paste(&quot;Significant level&quot;, significant_level)
   )
@@ -3502,6 +3544,63 @@ jliucx
 </table>
 </div>
 </div>
+<p><strong>After normalizing</strong></p>
+<pre class="r"><code>par(mfrow=c(3,2))
+for (i in suspicious_gene_id){
+hist(normalized_test_tensor[, i, 4], breaks = 3000, main=paste0(&quot;Null t test statistics: &quot;,rownames(grna_assignment_matrix)[4],&quot;-&quot;,rownames(response_matrix)[i]),
+     xlab = &quot;Values&quot;, col = &quot;lightblue&quot;, xlim = c(min(normalized_test_tensor[, i, 4]), max(normalized_test_tensor[, i, 4])))
+  abline(v = gene_wise_test_tensor[1, i, 4], col = &quot;red&quot;, lwd = 0.5)
+  text(normalized_test_tensor[1, i, 4], par(&quot;usr&quot;)[4] * 0.9, &quot;Observed&quot;, col = &quot;red&quot;, pos = 4)
+}</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-33-1">
+Past versions of unnamed-chunk-33-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-33-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-33-1.png" target="_blank">0eb9dac</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-01-15
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/d35cfcafbcf01b36f6aa4a3bd129bb795727c359/docs/figure/new_model.Rmd/unnamed-chunk-33-1.png" target="_blank">d35cfca</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>wierd_indx&lt;-which(gene_wise_test_tensor[, 560, 4]==min(gene_wise_test_tensor[, 560, 4]))
 wierd_indx</code></pre>
 <pre><code>  Permutation36  Permutation119  Permutation213  Permutation217  Permutation251 
@@ -3560,25 +3659,25 @@ SNP-80_2 SNP-80_2 SNP-80_2 SNP-80_2 SNP-80_2 SNP-80_2
 <pre class="r"><code>weird_assignment&lt;-grna_assignment_matrix_combined[(wierd_indx*7-3)[1:2]
 ,]</code></pre>
 <pre class="r"><code>response_matrix &lt;- as.matrix(response_matrix)
-  grna_assignment_matrix &lt;- as.matrix(weird_assignment)
+  grna_assignment_matrix_weird &lt;- as.matrix(weird_assignment)
 
   n_cells &lt;- ncol(response_matrix)
   n_genes &lt;- nrow(response_matrix)
   all_cells &lt;- seq_len(n_cells)
-  n_rows &lt;- nrow(grna_assignment_matrix)
+  n_rows_weird &lt;- nrow(grna_assignment_matrix_weird)
 
   response_matrix_t &lt;- t(response_matrix)
   response_matrix_t_squared &lt;-response_matrix_t^2
 
-  grna_infected_cell_count &lt;- rowSums(grna_assignment_matrix)
+  grna_infected_cell_count &lt;- rowSums(grna_assignment_matrix_weird)
 
-  mean_expression_trt &lt;- grna_assignment_matrix %*% response_matrix_t / grna_infected_cell_count
-  mean_expression_squared_trt &lt;- grna_assignment_matrix %*% response_matrix_t_squared / grna_infected_cell_count
+  mean_expression_trt &lt;- grna_assignment_matrix_weird %*% response_matrix_t / grna_infected_cell_count
+  mean_expression_squared_trt &lt;- grna_assignment_matrix_weird %*% response_matrix_t_squared / grna_infected_cell_count
   var_expression_trt &lt;- mean_expression_squared_trt - mean_expression_trt^2
 
   grna_control_cell_count &lt;- n_cells - grna_infected_cell_count
-  mean_expression_control &lt;- (1 - grna_assignment_matrix) %*% response_matrix_t / grna_control_cell_count
-  mean_expression_squared_control &lt;- (1 - grna_assignment_matrix) %*% response_matrix_t_squared / grna_control_cell_count
+  mean_expression_control &lt;- (1 - grna_assignment_matrix_weird) %*% response_matrix_t / grna_control_cell_count
+  mean_expression_squared_control &lt;- (1 - grna_assignment_matrix_weird) %*% response_matrix_t_squared / grna_control_cell_count
   var_expression_control &lt;- mean_expression_squared_control - mean_expression_control^2
 
   t_statistics &lt;- (mean_expression_trt - mean_expression_control) / sqrt(var_expression_trt / grna_infected_cell_count + var_expression_control / grna_control_cell_count)</code></pre>
@@ -3807,48 +3906,7 @@ for (k in indices) {
   # Pause before moving to the next index
   # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-38-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-1">
-Past versions of unnamed-chunk-38-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-38-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-38-1.png" target="_blank">0eb9dac</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
-<pre class="r"><code>plot(module_results_t$acat_pval,module_results_sceptre$acat_pval,xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs&quot;,cex=0.5)
-  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-39-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-1">
 Past versions of unnamed-chunk-39-1.png
@@ -3886,15 +3944,16 @@ jliucx
 </table>
 </div>
 </div>
-<pre class="r"><code>plot(-log10(module_results_t$acat_pval),-log10(module_results_sceptre$acat_pval),xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs (-log10)&quot;,cex=0.5)
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<pre class="r"><code>plot(module_results_t$acat_pval,module_results_sceptre$acat_pval,xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs&quot;,cex=0.5)
   abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-39-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-2">
-Past versions of unnamed-chunk-39-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-40-1">
+Past versions of unnamed-chunk-40-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-39-2" class="collapse">
+<div id="fig-unnamed-chunk-40-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -3913,7 +3972,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-39-2.png" target="_blank">0eb9dac</a>
+<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-40-1.png" target="_blank">0eb9dac</a>
 </td>
 <td>
 jliucx
@@ -3926,6 +3985,9 @@ jliucx
 </table>
 </div>
 </div>
+<pre class="r"><code>plot(-log10(module_results_t$acat_pval),-log10(module_results_sceptre$acat_pval),xlab=&quot;t+Cauchy&quot;,ylab=&quot;sceptre+Cauchy&quot;,main=&quot;p values of all perturbation-gene module pairs (-log10)&quot;,cex=0.5)
+  abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-40-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p><strong>The ACAT of gene-wise p values from Sceptre glm and t test differ a lot. The pattern is different for different perturbation. This can be explained by the disparity of gene-wise p value in the previous session</strong></p>
 </div>
 <div id="comparison-of-module-p-values-minp-vs-our-method" class="section level2" number="3.2">
@@ -3966,47 +4028,7 @@ for (k in indices) {
   # Pause before moving to the next index
   # readline(prompt = &quot;Press [Enter] to move to the next index...&quot;)
 }</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-40-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-40-1">
-Past versions of unnamed-chunk-40-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-40-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-40-1.png" target="_blank">0eb9dac</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>plot(our_method_long$p_value,minp_long$p_value, main=&quot;p values of all perturbation-gene module pairs&quot;,xlab=&quot;our method&quot;,ylab=&quot;minp&quot;,cex=0.5)
-  abline(0, 1, col = &quot;red&quot;, lwd = 2,cex=0.5)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-41-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-1">
 Past versions of unnamed-chunk-41-1.png
@@ -4044,46 +4066,12 @@ jliucx
 </table>
 </div>
 </div>
+<pre class="r"><code>plot(our_method_long$p_value,minp_long$p_value, main=&quot;p values of all perturbation-gene module pairs&quot;,xlab=&quot;our method&quot;,ylab=&quot;minp&quot;,cex=0.5)
+  abline(0, 1, col = &quot;red&quot;, lwd = 2,cex=0.5)  # Add reference line</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>plot(-log10(our_method_long$p_value),-log10(minp_long$p_value),main=&quot;p values of all perturbation-gene module pairs (-log transformed)&quot;,xlab=&quot;our method&quot;,ylab=&quot;minp&quot;,cex=0.5)
   abline(0, 1, col = &quot;red&quot;, lwd = 2)  # Add reference line</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-41-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-41-2">
-Past versions of unnamed-chunk-41-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-41-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-41-2.png" target="_blank">0eb9dac</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-42-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>grna_assignment_matrix &lt;-get_grna_assignments(
   sceptre_object = sceptre_object
 )[-208,-cell_to_filter]</code></pre>
@@ -4118,44 +4106,7 @@ hist(balanced_covariate[assignment_to_analyze == 0],
 legend(&quot;topright&quot;,
        legend = c(&quot;Assignment = 1&quot;, &quot;Assignment = 0&quot;),
        fill = c(rgb(1, 0, 0,0.5), rgb(0, 0, 1, 0.5)))</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-43-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-1">
-Past versions of unnamed-chunk-43-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-43-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-43-1.png" target="_blank">0eb9dac</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-44-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>hist(covariate$response_n_umis[assignment_to_analyze == 1],
      breaks = length(covariate[assignment_to_analyze == 1]) /5,
      col = rgb(1, 0, 0, 0.5), # Add transparency
@@ -4175,44 +4126,7 @@ hist(covariate$response_n_umis[assignment_to_analyze == 0],
 legend(&quot;topright&quot;,
        legend = c(&quot;Assignment = 1&quot;, &quot;Assignment = 0&quot;),
        fill = c(rgb(1, 0, 0, 0.5), rgb(0, 0, 1, 0.5)))</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-43-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-43-2">
-Past versions of unnamed-chunk-43-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-43-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-43-2.png" target="_blank">0eb9dac</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-01-15
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-44-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>sum(balanced_covariate[assignment_to_analyze == 1])</code></pre>
 <pre><code>[1] 24479.38</code></pre>
 <pre class="r"><code>sum(balanced_covariate[assignment_to_analyze == 0])</code></pre>
@@ -4223,44 +4137,806 @@ jliucx
 <h1 number="4"><span class="header-section-number">4</span> Skewed normal approximation</h1>
 <pre class="r"><code>plot(-log10(as.numeric(as.matrix(read.csv(&quot;output/newest/filter_cell_approximation_3000/our_method.csv&quot;)))),-log10(as.numeric(as.matrix(read.csv(&quot;output/newest/filter_cell/our_method.csv&quot;)))),xlab=&quot;Skew normal approximation (3000 null test statistics)&quot;,ylab=&quot;No approximation (10000 null test statistics)&quot;,main=&quot;Scatter plot of -log transformed p values&quot;)
 abline(0, 1, col = &quot;red&quot;, lwd = 2)</code></pre>
-<p><img src="figure/new_model.Rmd/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-45-1">
-Past versions of unnamed-chunk-45-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-45-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/0eb9dac2e9db4df6d68c19a4d41d570bedd1e60e/docs/figure/new_model.Rmd/unnamed-chunk-45-1.png" target="_blank">0eb9dac</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-01-15
-</td>
-</tr>
-</tbody>
-</table>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
+<div id="include-gene-test-statistics-in-the-module" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Include gene test statistics in the module</h1>
+<pre class="r"><code>combined_test_tensor &lt;- combine_test_statistics_tensor(normalized_test_tensor,gene_module_index_matrix)
+
+hist(test_normalizer(combined_test_tensor)[,1,1],breaks=1000, main=&quot;power 1 combination&quot;)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(test_normalizer(combined_test_tensor)[,8,1],breaks=1000, main=&quot;power 8 combination&quot;)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-47-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)
+
+
+gene_modules &lt;- readRDS(&quot;data/gene_modules_id.rds&quot;)
+
+# gene_wise_p  &lt;- read.csv(&quot;output/newest/filter_cell/gene_wise_p.csv&quot;, nrows = 207)[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[-208,])&gt;500,]
+gene_wise_p  &lt;- read.csv(&quot;output/newest/advanced_confirm/gene_wise_p.csv&quot;, nrows = 207)
+
+
+gene_wise_p[gene_wise_p == 0] &lt;- 1 / 10000
+gene_wise_p[gene_wise_p &gt;= 1] &lt;- 1- 1/10000
+sceptre &lt;- rbind(readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_discovery_analysis.rds&quot;)[,c(1,2,7)],
+                 readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_calibration_check.rds&quot;)[,c(1,2,7)])
+
+sceptre &lt;- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-6
+
+sceptre_wide &lt;- sceptre %&gt;%
+  pivot_wider(names_from = response_id, values_from = p_value) %&gt;%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) &lt;- sceptre_wide$grna_id
+sceptre_wide &lt;- sceptre_wide[, -1]
+
+sceptre_wide &lt;- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide &lt;- sceptre_wide[, colnames(gene_wise_p), drop = FALSE]
+
+
+library(eulerr)
+
+
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id &lt;- rownames(gene_wise_p)[i]
+  p_values_row &lt;- gene_wise_p[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # acat_pval &lt;- ACAT(module_p_values)
+        acat_pval&lt;-combination.test(module_p_values,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)
+        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t &lt;- do.call(rbind, module_results)
+
+
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(gene_wise_p))) {
+  grna_id &lt;- rownames(gene_wise_p)[i]
+  p_values_row &lt;- gene_wise_p[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval &lt;- min(module_p_values) * length(module_p_values)
+        bonferroni_pval &lt;- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals &lt;- c(module_acat_pvals, bonferroni_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_t_bonforroni &lt;- do.call(rbind, module_results)
+
+
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id &lt;- rownames(sceptre_wide)[i]
+  p_values_row &lt;- sceptre_wide[i, ]
+  
+  # Initialize an empty list to store Bonferroni p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+
+  # Iterate over each module in gene_modules to combine p-values using Bonferroni
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply Bonferroni if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # Bonferroni adjustment: multiply smallest p-value by number of tests
+        bonferroni_pval &lt;- min(module_p_values) * length(module_p_values)
+        bonferroni_pval &lt;- min(bonferroni_pval, 1)  # Cap p-values at 1
+        module_acat_pvals &lt;- c(module_acat_pvals, bonferroni_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    bonferroni_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_sceptre_bonforroni &lt;- do.call(rbind, module_results)
+
+
+module_results &lt;- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id &lt;- rownames(sceptre_wide)[i]
+  p_values_row &lt;- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals &lt;- c()
+  module_names &lt;- c()
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in seq_along(gene_modules)) {
+    module_name &lt;- names(gene_modules)[j]  # Get the module name
+    module_genes &lt;- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) &gt; 0) {
+      module_p_values &lt;- as.numeric(p_values_row[module_genes])
+      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) &gt; 0) {
+        # acat_pval &lt;- ACAT(module_p_values)
+        
+        acat_pval&lt;- combination.test(module_p_values,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)
+
+        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
+        module_names &lt;- c(module_names, module_name)
+      } else {
+        module_acat_pvals &lt;- c(module_acat_pvals, NA)
+        module_names &lt;- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals &lt;- c(module_acat_pvals, NA)
+      module_names &lt;- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] &lt;- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre &lt;- do.call(rbind, module_results)
+
+library(tibble)
+
+# minp &lt;- read.csv(&quot;output/newest/filter_cell/minp.csv&quot;)[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[-208,])&gt;500,]
+
+
+minp &lt;- read.csv(&quot;output/newest/advanced_confirm/minp.csv&quot;)
+
+
+minp_long &lt;- minp%&gt;%
+  rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
+
+# Remove rows with NA p-values
+minp_long &lt;- minp_long %&gt;% filter(!is.na(p_value))
+
+# our_method &lt;-  read.csv(&quot;output/newest/filter_cell/our_method.csv&quot;)[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[-208,])&gt;500,]
+our_method &lt;-  read.csv(&quot;output/newest/advanced_confirm/our_method.csv&quot;)
+
+
+
+our_method_long &lt;- our_method %&gt;%
+  rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
+
+# Remove rows with NA p-values (if any)
+our_method_long &lt;- our_method_long %&gt;% filter(!is.na(p_value))
+
+
+
+
+max_stat &lt;- read.csv(&quot;output/newest/advanced_confirm/max_normalized_statistics.csv&quot;)
+
+
+max_stat_long &lt;- max_stat%&gt;%
+  rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
+
+# Remove rows with NA p-values
+max_stat_long &lt;- max_stat_long %&gt;% filter(!is.na(p_value))
+
+
+
+
+module_results_t &lt;- module_results_t %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+module_results_t_bonforroni &lt;- module_results_t_bonforroni %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+# Filter rows in minp_long
+minp_long &lt;- minp_long %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+# Filter rows in our_method_long
+our_method_long &lt;- our_method_long %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+max_stat_long &lt;- max_stat_long %&gt;%
+  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
+
+
+
+module_results_t$bh_pval &lt;- p.adjust(module_results_t$acat_pval, method = &quot;BH&quot;)
+module_results_t$identifier &lt;- paste(module_results_t$grna_id, module_results_t$module, sep = &quot;_&quot;)
+module_results_sceptre$bh_pval &lt;- p.adjust(module_results_sceptre$acat_pval, method = &quot;BH&quot;)
+module_results_sceptre$identifier &lt;- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = &quot;_&quot;)
+module_results_sceptre_bonforroni$bh_pval &lt;- p.adjust(module_results_sceptre_bonforroni$bonferroni_pval, method = &quot;BH&quot;)
+module_results_sceptre_bonforroni$identifier &lt;- paste(module_results_sceptre_bonforroni$grna_id, module_results_sceptre_bonforroni$module, sep = &quot;_&quot;)
+
+module_results_t_bonforroni$bh_pval &lt;- p.adjust(module_results_t_bonforroni$bonferroni_pval, method = &quot;BH&quot;)
+module_results_t_bonforroni$identifier &lt;- paste(module_results_t_bonforroni$grna_id, module_results_t_bonforroni$module, sep = &quot;_&quot;)
+
+
+
+minp_long$bh_pval &lt;-  p.adjust(minp_long$p_value, method = &quot;BH&quot;)
+minp_long$identifier &lt;- paste(minp_long$grna_id, minp_long$module, sep = &quot;_&quot;)
+our_method_long$bh_pval &lt;-  p.adjust(our_method_long$p_value, method = &quot;BH&quot;)
+our_method_long$identifier &lt;- paste(our_method_long$grna_id, our_method_long$module, sep = &quot;_&quot;)
+
+max_stat_long$bh_pval &lt;-  p.adjust(max_stat_long$p_value, method = &quot;BH&quot;)
+max_stat_long$identifier &lt;- paste(max_stat_long$grna_id, our_method_long$module, sep = &quot;_&quot;)</code></pre>
+<pre class="r"><code>library(eulerr)
+
+significant_levels &lt;- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels &lt;- 0.01
+plot_list &lt;- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_bonfer &lt;- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval &lt; significant_level]
+    
+    
+  significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
+    module_results_t$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer &lt;- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval &lt; significant_level]
+  
+ significant_ids_minp &lt;- minp_long$identifier[
+    minp_long$bh_pval &lt; significant_level]
+  
+  significant_ids_ours &lt;- our_method_long$identifier[
+    our_method_long$bh_pval &lt; significant_level]
+  
+    significant_ids_max_stat &lt;- max_stat_long$identifier[
+    max_stat_long$bh_pval &lt; significant_level]
+  
+  # Prepare the sets
+  venn_data &lt;- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    # `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `minp` = significant_ids_minp,
+    `Our method` = significant_ids_ours,
+    `max stat` = significant_ids_max_stat
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot &lt;- plot(euler(venn_data),
+                     fills = list(fill = c(&quot;red&quot;, &quot;green&quot;, &quot;yellow&quot;,&quot;blue&quot;), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste(&quot;Significant level&quot;, significant_level)
+  )
+  
+plot_list[[length(plot_list) + 1]] &lt;- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-49-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 </div>
+<div id="removing-cis-element" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> Removing Cis element</h1>
+<pre class="r"><code>library(eulerr)
+
+significant_levels &lt;- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels &lt;- 0.01
+plot_list &lt;- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_bonfer &lt;- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval &lt; significant_level]
+    
+    
+  significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
+    module_results_t$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer &lt;- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval &lt; significant_level]
+  
+ significant_ids_minp &lt;- minp_long$identifier[
+    minp_long$bh_pval &lt; significant_level]
+  
+  significant_ids_ours &lt;- our_method_long$identifier[
+    our_method_long$bh_pval &lt; significant_level]
+  
+    significant_ids_max_stat &lt;- max_stat_long$identifier[
+    max_stat_long$bh_pval &lt; significant_level]
+  
+  # Prepare the sets
+  venn_data &lt;- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    # `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `remove cis` = significant_ids_minp,
+    `Our method` = significant_ids_ours,
+    `pooled variance` = significant_ids_max_stat
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot &lt;- plot(euler(venn_data),
+                     fills = list(fill = c(&quot;red&quot;, &quot;green&quot;, &quot;yellow&quot;,&quot;blue&quot;), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste(&quot;Significant level&quot;, significant_level)
+  )
+  
+plot_list[[length(plot_list) + 1]] &lt;- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-51-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<pre class="r"><code>library(eulerr)
+
+significant_levels &lt;- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels &lt;- 0.01
+plot_list &lt;- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p &lt;- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_bonfer &lt;- module_results_sceptre_bonforroni$identifier[
+    module_results_sceptre_bonforroni$bh_pval &lt; significant_level]
+    
+    
+  significant_ids_gene_wise_p_t &lt;- module_results_t$identifier[
+    module_results_t$bh_pval &lt; significant_level]
+  
+    significant_ids_gene_wise_p_t_bonfer &lt;- module_results_t_bonforroni$identifier[
+    module_results_t_bonforroni$bh_pval &lt; significant_level]
+  
+ significant_ids_minp &lt;- minp_long$identifier[
+    minp_long$bh_pval &lt; significant_level]
+  
+  significant_ids_ours &lt;- our_method_long$identifier[
+    our_method_long$bh_pval &lt; significant_level]
+  
+    significant_ids_max_stat &lt;- max_stat_long$identifier[
+    max_stat_long$bh_pval &lt; significant_level]
+  
+  # Prepare the sets
+  venn_data &lt;- list(
+    # `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    # `t+Cauchy` = significant_ids_gene_wise_p_t,
+    `remove cis` = significant_ids_minp,
+    `Our method` = significant_ids_ours
+    # `pooled variance` = significant_ids_max_stat
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot &lt;- plot(euler(venn_data),
+                     fills = list(fill = c(&quot;red&quot;, &quot;green&quot;, &quot;yellow&quot;,&quot;blue&quot;), alpha = 0.5),
+                     edges = TRUE, quantities = TRUE,
+                     main = paste(&quot;Significant level&quot;, significant_level)
+  )
+  
+plot_list[[length(plot_list) + 1]] &lt;- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-52-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<pre class="r"><code>analyze_chunk &lt;- function(chunk_matrix, response_matrix) {
+  chunk_rownames &lt;- rownames(chunk_matrix)
+  
+  # Match row names with the grna_target_data_frame_omit to find the target
+  matched_targets &lt;- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% chunk_rownames, ]
+  
+  # Ensure there is only one unique target
+  unique_targets &lt;- unique(matched_targets$grna_target)
+  if (length(unique_targets) != 1) {
+    stop(&quot;The rows of the chunk_matrix do not refer to exactly one unique target.&quot;)
+  }
+  
+  unique_target &lt;- unique_targets[1]  # Get the single unique target
+  
+  # Step 2: Extract all the genes paired with the target
+  cis_genes &lt;- discovery_pairs_cis[discovery_pairs_cis$grna_target == unique_target, ]$response_id
+
+  
+  gene_module_index_matrix_remove_cis &lt;- gene_module_index_matrix
+  rows_to_zero &lt;- rownames(gene_module_index_matrix_remove_cis) %in% cis_genes
+  n_cis_genes &lt;- sum(rows_to_zero==T)  # Record the number of cis genes
+  
+  # Record the unique(chunk_rownames) and sum(gene_module_index_matrix_remove_cis[rows_to_zero, ] == 1)
+  unique_chunk_rownames &lt;- unique(chunk_rownames)
+  sum_rows_to_zero &lt;- sum(gene_module_index_matrix_remove_cis[rows_to_zero, ] == 1)
+  
+  return(list(
+    unique_chunk_rownames = unique_chunk_rownames,
+    sum_rows_to_zero = sum_rows_to_zero,
+    n_cis_genes = n_cis_genes
+  ))
+}
+
+
+chunks &lt;- split(1:n_rows, rep(1:ceiling(n_rows / chunk_size), each = chunk_size, length.out = n_rows))
+
+# Initialize a list to store the results
+results &lt;- list()
+
+# Process each chunk
+for (i in seq_along(chunks)) {
+  rows &lt;- chunks[[i]]
+  chunk_matrix &lt;- grna_assignment_matrix[rows, , drop = FALSE]
+  
+  # Call the analyze_chunk function
+  chunk_result &lt;- analyze_chunk(chunk_matrix, response_matrix)
+  
+  # Pair each unique_chunk_rownames with sum_rows_to_zero and n_cis_genes and store in results
+  for (rowname in chunk_result$unique_chunk_rownames) {
+    results[[rowname]] &lt;- list(
+      sum_rows_to_zero = chunk_result$sum_rows_to_zero,
+      n_cis_genes = chunk_result$n_cis_genes
+    )
+  }
+}
+
+# Convert results to a data frame for easier handling
+results_df &lt;- data.frame(
+  unique_chunk_rownames = names(results),
+  sum_rows_to_zero = sapply(results, function(x) x$sum_rows_to_zero),
+  n_cis_genes = sapply(results, function(x) x$n_cis_genes)
+)
+
+# Print or save results as required
+print(results_df)</code></pre>
+<pre><code>         unique_chunk_rownames sum_rows_to_zero n_cis_genes
+SNP-1_1                SNP-1_1                2           2
+SNP-1_2                SNP-1_2                2           2
+SNP-2_1                SNP-2_1                1           1
+SNP-2_2                SNP-2_2                1           1
+SNP-3_1                SNP-3_1                1           1
+SNP-3_2                SNP-3_2                1           1
+SNP-4_1                SNP-4_1                1           1
+SNP-4_2                SNP-4_2                1           1
+SNP-5_1                SNP-5_1                1           1
+SNP-5_2                SNP-5_2                1           1
+SNP-6_1                SNP-6_1                1           1
+SNP-6_2                SNP-6_2                1           1
+SNP-7_1                SNP-7_1                1           1
+SNP-7_2                SNP-7_2                1           1
+SNP-8_1                SNP-8_1                7           3
+SNP-8_2                SNP-8_2                7           3
+SNP-9_1                SNP-9_1               18           9
+SNP-9_2                SNP-9_2               18           9
+SNP-10_1              SNP-10_1               10           4
+SNP-10_2              SNP-10_2               10           4
+SNP-11_1              SNP-11_1                0           0
+SNP-11_2              SNP-11_2                0           0
+SNP-12_1              SNP-12_1                2           1
+SNP-12_2              SNP-12_2                2           1
+SNP-13_1              SNP-13_1                0           0
+SNP-13_2              SNP-13_2                0           0
+SNP-14_1              SNP-14_1                2           1
+SNP-14_2              SNP-14_2                2           1
+SNP-15_1              SNP-15_1                0           0
+SNP-15_2              SNP-15_2                0           0
+SNP-16_1              SNP-16_1                0           0
+SNP-16_2              SNP-16_2                0           0
+SNP-17_1              SNP-17_1                0           0
+SNP-17_2              SNP-17_2                0           0
+SNP-18_1              SNP-18_1                2           1
+SNP-18_2              SNP-18_2                2           1
+SNP-19_1              SNP-19_1                0           0
+SNP-19_2              SNP-19_2                0           0
+SNP-20_1              SNP-20_1                3           2
+SNP-20_2              SNP-20_2                3           2
+SNP-21_1              SNP-21_1                5           3
+SNP-21_2              SNP-21_2                5           3
+SNP-22_1              SNP-22_1                0           0
+SNP-22_2              SNP-22_2                0           0
+SNP-23_1              SNP-23_1                1           1
+SNP-23_2              SNP-23_2                1           1
+SNP-24_1              SNP-24_1                0           0
+SNP-24_2              SNP-24_2                0           0
+SNP-25_1              SNP-25_1                0           0
+SNP-25_2              SNP-25_2                0           0
+SNP-26_1              SNP-26_1                0           0
+SNP-26_2              SNP-26_2                0           0
+SNP-27_1              SNP-27_1               11           5
+SNP-27_2              SNP-27_2               11           5
+SNP-28_1              SNP-28_1               14           6
+SNP-28_2              SNP-28_2               14           6
+SNP-29_1              SNP-29_1                4           3
+SNP-29_2              SNP-29_2                4           3
+SNP-30_1              SNP-30_1                3           2
+SNP-30_2              SNP-30_2                3           2
+SNP-31_1              SNP-31_1                3           1
+SNP-31_2              SNP-31_2                3           1
+SNP-32_1              SNP-32_1                0           0
+SNP-32_2              SNP-32_2                0           0
+SNP-33_1              SNP-33_1                0           0
+SNP-33_2              SNP-33_2                0           0
+SNP-34_1              SNP-34_1               11           4
+SNP-34_2              SNP-34_2               11           4
+SNP-35_1              SNP-35_1                4           3
+SNP-35_2              SNP-35_2                4           3
+SNP-36_1              SNP-36_1                8           5
+SNP-36_2              SNP-36_2                8           5
+SNP-37_1              SNP-37_1                2           1
+SNP-37_2              SNP-37_2                2           1
+SNP-38_1              SNP-38_1                2           2
+SNP-38_2              SNP-38_2                2           2
+SNP-39_1              SNP-39_1                7           3
+SNP-39_2              SNP-39_2                7           3
+SNP-40_1              SNP-40_1                0           0
+SNP-40_2              SNP-40_2                0           0
+SNP-41_1              SNP-41_1                0           0
+SNP-41_2              SNP-41_2                0           0
+SNP-42_1              SNP-42_1                5           3
+SNP-42_2              SNP-42_2                5           3
+SNP-43_1              SNP-43_1                1           1
+SNP-43_2              SNP-43_2                1           1
+SNP-44_1              SNP-44_1                3           2
+SNP-44_2              SNP-44_2                3           2
+SNP-45_1              SNP-45_1                6           2
+SNP-45_2              SNP-45_2                6           2
+SNP-46_1              SNP-46_1                0           0
+SNP-46_2              SNP-46_2                0           0
+SNP-47_1              SNP-47_1                2           2
+SNP-47_2              SNP-47_2                2           2
+SNP-48_1              SNP-48_1                5           5
+SNP-48_2              SNP-48_2                5           5
+SNP-49_1              SNP-49_1                5           3
+SNP-49_2              SNP-49_2                5           3
+SNP-50_1              SNP-50_1                7           3
+SNP-50_2              SNP-50_2                7           3
+SNP-51_1              SNP-51_1                0           0
+SNP-51_2              SNP-51_2                0           0
+SNP-52_1              SNP-52_1               15           5
+SNP-52_2              SNP-52_2               15           5
+SNP-53_1              SNP-53_1                9           5
+SNP-53_2              SNP-53_2                9           5
+SNP-54_1              SNP-54_1                6           2
+SNP-54_2              SNP-54_2                6           2
+SNP-55_1              SNP-55_1                1           1
+SNP-55_2              SNP-55_2                1           1
+SNP-56_1              SNP-56_1               10           6
+SNP-56_2              SNP-56_2               10           6
+SNP-57_1              SNP-57_1                2           2
+SNP-57_2              SNP-57_2                2           2
+SNP-58_1              SNP-58_1                0           0
+SNP-58_2              SNP-58_2                0           0
+SNP-59_1              SNP-59_1                0           0
+SNP-59_2              SNP-59_2                0           0
+SNP-60_1              SNP-60_1                5           4
+SNP-60_2              SNP-60_2                5           4
+SNP-61_1              SNP-61_1                3           3
+SNP-61_2              SNP-61_2                3           3
+SNP-62_1              SNP-62_1                4           3
+SNP-62_2              SNP-62_2                4           3
+SNP-63_1              SNP-63_1                5           3
+SNP-63_2              SNP-63_2                5           3
+SNP-64_1              SNP-64_1                2           2
+SNP-64_2              SNP-64_2                2           2
+SNP-65_1              SNP-65_1                5           3
+SNP-65_2              SNP-65_2                5           3
+SNP-66_1              SNP-66_1                2           1
+SNP-66_2              SNP-66_2                2           1
+SNP-67_1              SNP-67_1                0           0
+SNP-67_2              SNP-67_2                0           0
+SNP-68_1              SNP-68_1                0           0
+SNP-68_2              SNP-68_2                0           0
+SNP-69_1              SNP-69_1                4           2
+SNP-69_2              SNP-69_2                4           2
+SNP-70_1              SNP-70_1                1           1
+SNP-70_2              SNP-70_2                1           1
+SNP-71_1              SNP-71_1                7           2
+SNP-71_2              SNP-71_2                7           2
+SNP-72_1              SNP-72_1                9           3
+SNP-72_2              SNP-72_2                9           3
+SNP-73_1              SNP-73_1                4           3
+SNP-73_2              SNP-73_2                4           3
+SNP-74_1              SNP-74_1                0           0
+SNP-74_2              SNP-74_2                0           0
+SNP-75_1              SNP-75_1                5           4
+SNP-75_2              SNP-75_2                5           4
+SNP-76_1              SNP-76_1                5           3
+SNP-76_2              SNP-76_2                5           3
+SNP-77_1              SNP-77_1                4           3
+SNP-77_2              SNP-77_2                4           3
+SNP-78_1              SNP-78_1                0           0
+SNP-78_2              SNP-78_2                0           0
+SNP-79_1              SNP-79_1                7           5
+SNP-79_2              SNP-79_2                7           5
+SNP-80_1              SNP-80_1                0           0
+SNP-80_2              SNP-80_2                0           0
+SNP-81_1              SNP-81_1                6           5
+SNP-81_2              SNP-81_2                6           5
+SNP-82_1              SNP-82_1                7           3
+SNP-82_2              SNP-82_2                7           3
+SNP-83_1              SNP-83_1                3           3
+SNP-83_2              SNP-83_2                3           3
+SNP-84_1              SNP-84_1                8           5
+SNP-84_2              SNP-84_2                8           5
+SNP-85_1              SNP-85_1                5           3
+SNP-85_2              SNP-85_2                5           3
+SNP-86_1              SNP-86_1                4           3
+SNP-86_2              SNP-86_2                4           3
+SNP-87_1              SNP-87_1                6           4
+SNP-87_2              SNP-87_2                6           4
+SNP-88_1              SNP-88_1                0           0
+SNP-88_2              SNP-88_2                0           0
+CD46-1                  CD46-1                0           0
+CD46-2                  CD46-2                0           0
+CD52-1                  CD52-1                0           0
+CD52-2                  CD52-2                0           0
+HSPA8-1                HSPA8-1                0           0
+HSPA8-2                HSPA8-2                0           0
+NMU-1                    NMU-1                0           0
+NMU-2                    NMU-2                0           0
+PPIA-1                  PPIA-1                0           0
+PPIA-2                  PPIA-2                0           0
+RPL22-1                RPL22-1                0           0
+RPL22-2                RPL22-2                0           0
+NTC-1                    NTC-1                0           0
+NTC-2                    NTC-2                0           0
+NTC-4                    NTC-4                0           0
+NTC-5                    NTC-5                0           0
+NTC-6                    NTC-6                0           0
+NTC-7                    NTC-7                0           0
+NTC-8                    NTC-8                0           0
+NTC-9                    NTC-9                0           0
+NTC-10                  NTC-10                0           0
+NTC-11                  NTC-11                0           0
+CD55-1                  CD55-1                0           0
+CD55-2                  CD55-2                0           0
+CD55-3                  CD55-3                0           0
+CD55-4                  CD55-4                0           0
+CD55-5                  CD55-5                0           0
+CD55-6                  CD55-6                0           0
+CD55-7                  CD55-7                0           0
+CD55-8                  CD55-8                0           0</code></pre>
+<pre class="r"><code>bar_values &lt;- results_df$sum_rows_to_zero
+names(bar_values) &lt;- results_df$unique_chunk_rownames
+
+# Plot the barplot with smaller x-axis text
+barplot(
+  bar_values,
+  las = 2,            # Rotate axis labels for readability
+  col = &quot;lightblue&quot;,  # Bar color
+  main = &quot;Number of gene modules that remove cis genes&quot;,
+  xlab = &quot;Perturbation&quot;,
+  ylab = &quot;# Gene modules&quot;,
+  cex.names = 0.6     # Reduce the size of x-axis labels
+)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-55-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>bar_values &lt;- results_df$n_cis_genes
+names(bar_values) &lt;- results_df$unique_chunk_rownames
+
+# Plot the barplot with smaller x-axis text
+barplot(
+  bar_values,
+  las = 2,            # Rotate axis labels for readability
+  col = &quot;lightblue&quot;,  # Bar color
+  main = &quot;Number of genes in cis&quot;,
+  xlab = &quot;Perturbation&quot;,
+  ylab = &quot;# Genes&quot;,
+  cex.names = 0.6     # Reduce the size of x-axis labels
+)</code></pre>
+<p><img src="figure/new_model.Rmd/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -4274,7 +4950,7 @@ Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: CentOS Linux 8
 
 Matrix products: default
-BLAS/LAPACK: /software/openblas-0.2.19-el8-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+BLAS/LAPACK: /software/openblas-0.3.13-el8-x86_64/lib/libopenblas_skylakexp-r0.3.13.so
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
