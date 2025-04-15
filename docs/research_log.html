@@ -676,16 +676,16 @@ output/Morris/system_comparison/cutoff4/cNMF/resample_normal_test_statistics.csv
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree20338c1ae66072154693bf076159ecb3f016668dtargetblank20338c1a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/20338c1ae66072154693bf076159ecb3f016668d" target="_blank">20338c1</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed83e26e26a43d8847a4d0ae04016469de2219e96targetblankd83e26ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/d83e26e26a43d8847a4d0ae04016469de2219e96" target="_blank">d83e26e</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree20338c1ae66072154693bf076159ecb3f016668dtargetblank20338c1a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreed83e26e26a43d8847a4d0ae04016469de2219e96targetblankd83e26ea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/20338c1ae66072154693bf076159ecb3f016668d" target="_blank">20338c1</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/d83e26e26a43d8847a4d0ae04016469de2219e96" target="_blank">d83e26e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -989,6 +989,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/d83e26e26a43d8847a4d0ae04016469de2219e96/analysis/research_log.Rmd" target="_blank">d83e26e</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+<td>
+complete
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/research_log.html" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/20338c1ae66072154693bf076159ecb3f016668d/analysis/research_log.Rmd" target="_blank">20338c1</a>
 </td>
 <td>
@@ -1113,150 +1147,6 @@ upload research log
 <div id="mar-2025---xie---50-hallmark-gene-sets" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Mar 2025 - Xie - 50 Hallmark gene sets:</h1>
 <p><span style="color:red">Apart from t test, we also implemented wilcoxon test in a computational efficient manner: </span></p>
-<pre class="r"><code>resample_normal_rank &lt;-  read.csv(&quot;output/Xie/our_method/remove_cis_normal_rank_pooled_batch/resample_normal_test_statistics.csv&quot;, row.names = 1, header = TRUE, check.names = FALSE)
-
-resample_normal_not_rank &lt;-  read.csv(&quot;output/Xie/our_method/remove_cis_normal_not_rank_pooled_batch/resample_normal_test_statistics.csv&quot;, row.names = 1, header = TRUE, check.names = FALSE)
-
-resample_normal_wilcoxon &lt;-  read.csv(&quot;output/Xie/our_method/remove_cis_normal_pooled_batch_wilcoxon/resample_normal_test_statistics.csv&quot;, row.names = 1, header = TRUE, check.names = FALSE)
-
-gene_module_index_matrix_essential &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/data/Xie/program_data/gene_module_index_matrix.rds&quot;)
-
-gene_names &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/data/Xie/program_data/gene_to_analyze.rds&quot;)
-
-
-sceptre &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Xie/sceptre/adj_crt_union_batch_threshold_4/results_run_discovery_analysis.rds&quot;)[,c(1,2,6)]
-
-
-
-sceptre &lt;- sceptre[!is.na(sceptre$p_value), ]
-sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-6
-
-sceptre_wide &lt;- sceptre %&gt;%
-  pivot_wider(names_from = response_id, values_from = p_value) %&gt;%
-  as.data.frame()
-
-# Set the row names to be the grna_id and remove the grna_id column
-rownames(sceptre_wide) &lt;- sceptre_wide$grna_target
-sceptre_wide &lt;- sceptre_wide[, -1]
-
-sceptre_wide &lt;- sceptre_wide[rownames(resample_normal_not_rank)[rownames(resample_normal_not_rank) %in% rownames(sceptre_wide)], ]
-sceptre_wide &lt;- sceptre_wide[, gene_names, drop = FALSE]
-
-library(heavytailcombtest)
-library(ACAT)
-module_results &lt;- list()
-
-discovery_pairs_cis &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/data/Xie/program_data/discovery_pairs_cis.rds&quot;)
-
-
-# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
-for (i in seq_len(nrow(sceptre_wide))) {
-  grna_id &lt;- rownames(sceptre_wide)[i]
-  p_values_row &lt;- sceptre_wide[i,] 
-  
-  # Initialize an empty list to store ACAT p-values and module names for each module
-  module_acat_pvals &lt;- c()
-  module_names &lt;- c()
-  
-  
-  
-  matched_targets &lt;- grna_id
-  
-  cis_genes &lt;- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id
-
-  
-  # Iterate over each module in gene_modules to combine p-values using ACAT
-# Iterate over each module (column) in gene_module_index_matrix_essential
-for (j in seq_len(ncol(gene_module_index_matrix_essential))) {
-  
-  # Get the module name from column names
-  module_name &lt;- colnames(gene_module_index_matrix_essential)[j] 
-  
-  # Get the gene names corresponding to nonzero entries in the column
-  module_genes &lt;- gene_names[gene_module_index_matrix_essential[, j] != 0]
-  module_genes &lt;- setdiff(module_genes, cis_genes)
-    
-    # Only apply ACAT if there are genes to combine and they are not NA
-    if (length(module_genes) &gt; 0) {
-      module_p_values &lt;- as.numeric(p_values_row[module_genes])
-      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
-      
-      # Check if module_p_values still has values after removing NAs
-      if (length(module_p_values) &gt; 0) {
-        
-        # acat_pval &lt;- ACAT(module_p_values)
-
-         acat_pval&lt;- combination.test(module_p_values,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)
-       # acat_pval &lt;- combination.test(module_p_values,truncate = T)
-
-        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
-
-      
-        # bonferroni_pval &lt;- min(module_p_values) * length(module_p_values)
-        # bonferroni_pval &lt;- min(bonferroni_pval, 1) 
-        # module_acat_pvals &lt;- c(module_acat_pvals, bonferroni_pval)
-        
-        
-        module_names &lt;- c(module_names, module_name)
-      } else {
-        module_acat_pvals &lt;- c(module_acat_pvals, NA)
-        module_names &lt;- c(module_names, module_name)
-      }
-    } else {
-      module_acat_pvals &lt;- c(module_acat_pvals, NA)
-      module_names &lt;- c(module_names, module_name)
-    }
-  }
-  
-    # Store results as a data frame in the list
-  module_results[[i]] &lt;- data.frame(
-    grna_id = grna_id,
-    module = module_names,
-    acat_pval = module_acat_pvals
-  )
-}
-
-
-# Combine all results into a single data frame
-module_results_t &lt;- do.call(rbind, module_results)
-
-library(dplyr)
-library(tidyr)
-library(tibble)
-
-# Convert datasets to long format
-
-
-resample_normal_rank_long &lt;- resample_normal_rank %&gt;%
-  rownames_to_column(var = &quot;grna_id&quot;) %&gt;%
-  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)%&gt;%
-  semi_join(module_results_t, by = c(&quot;grna_id&quot;, &quot;module&quot;))
-
-resample_normal_not_rank_long &lt;- resample_normal_not_rank %&gt;%
-  rownames_to_column(var = &quot;grna_id&quot;) %&gt;%
-  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)%&gt;%
-  semi_join(module_results_t, by = c(&quot;grna_id&quot;, &quot;module&quot;))
-
-
-resample_normal_wilcoxon_long &lt;- resample_normal_wilcoxon %&gt;%
-  rownames_to_column(var = &quot;grna_id&quot;) %&gt;%
-  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)%&gt;%
-  semi_join(module_results_t, by = c(&quot;grna_id&quot;, &quot;module&quot;))
-
-
-
-resample_normal_rank_long$bh_pval &lt;- p.adjust(resample_normal_rank_long$p_value, method = &quot;BH&quot;)
-resample_normal_rank_long$identifier &lt;- paste(resample_normal_rank_long$grna_id, resample_normal_rank_long$module, sep = &quot;_&quot;)
-
-resample_normal_not_rank_long$bh_pval &lt;- p.adjust(resample_normal_not_rank_long$p_value, method = &quot;BH&quot;)
-resample_normal_not_rank_long$identifier &lt;- paste(resample_normal_not_rank_long$grna_id, resample_normal_not_rank_long$module, sep = &quot;_&quot;)
-
-resample_normal_wilcoxon_long$bh_pval &lt;- p.adjust(resample_normal_wilcoxon_long$p_value, method = &quot;BH&quot;)
-resample_normal_wilcoxon_long$identifier &lt;- paste(resample_normal_wilcoxon_long$grna_id, resample_normal_wilcoxon_long$module, sep = &quot;_&quot;)
-
-
-module_results_t$bh_pval &lt;- p.adjust(module_results_t$acat_pval, method = &quot;BH&quot;)
-module_results_t$identifier &lt;- paste(module_results_t$grna_id, module_results_t$module, sep = &quot;_&quot;)</code></pre>
 <pre class="r"><code>library(eulerr)
 library(gridExtra)
 
@@ -1319,6 +1209,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-3-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/00bfdd0fef72ce9c47d4b04872e06f1f2025de48/docs/figure/research_log.Rmd/unnamed-chunk-3-1.png" target="_blank">00bfdd0</a>
 </td>
 <td>
@@ -1358,6 +1259,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-4-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/00bfdd0fef72ce9c47d4b04872e06f1f2025de48/docs/figure/research_log.Rmd/unnamed-chunk-4-1.png" target="_blank">00bfdd0</a>
 </td>
 <td>
@@ -1388,8 +1300,8 @@ jliucx
 <p><img src="images/author_adjusted.png" style="display: block; margin: auto;" /></p>
 <p><strong>Author threshold (for cell covariates grna_n_umis &amp; grna_n_nonzero, consider all UMIs and guides)</strong></p>
 <p><img src="images/author_corrected.png" style="display: block; margin: auto;" /></p>
-<p><strong>EM</strong> <img src="images/EM.png" style="display: block; margin: auto;" /></p>
-<p><strong>cutoff4</strong> <img src="images/cutoff4.png" style="display: block; margin: auto;" /></p>
+<p><strong>EM (consider all UMIs and guides)</strong> <img src="images/EM.png" style="display: block; margin: auto;" /></p>
+<p><strong>cutoff4 (consider all UMIs and guides)</strong> <img src="images/cutoff4.png" style="display: block; margin: auto;" /></p>
 <p>We found that for Morris data, Author threshold with covariates that consider gRNA UMI counts that above threshold gives best calibration.</p>
 </div>
 <div id="author-threshold" class="section level2" number="2.2">
@@ -1398,37 +1310,491 @@ jliucx
 <p>In terms of gRNA covariates, there are two options:</p>
 <p><span style="color:red"> 1. The total UMI &amp; gRNA counts in the cell (including those gRNA where UMI are below threshold) 2. The UMI &amp; gRNA counts that are above threshold only </span></p>
 <p>We compare the performance of the two options here.</p>
-<p>###Covariate: UMI &amp; gRNA counts that above the threshold</p>
+<div id="covariate-umi-grna-counts-that-above-the-threshold" class="section level3" number="2.2.1">
+<h3 number="2.2.1"><span class="header-section-number">2.2.1</span> Covariate: UMI &amp; gRNA counts that above the threshold</h3>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-10-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-10-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Author_threshold; using all gRNA UMI counts&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-11-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT&quot;)</code></pre>
-<p><img src="figure/research_log.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /> ###Covariate: All UMI &amp; gRNA counts</p>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-2">
+Past versions of unnamed-chunk-11-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-11-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="covariate-all-umi-grna-counts" class="section level3" number="2.2.2">
+<h3 number="2.2.2"><span class="header-section-number">2.2.2</span> Covariate: All UMI &amp; gRNA counts</h3>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-13-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-13-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Author_threshold; using gRNA UMI counts above threshold&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-14-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-2">
+Past versions of unnamed-chunk-14-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-14-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 <div id="em" class="section level2" number="2.3">
 <h2 number="2.3"><span class="header-section-number">2.3</span> EM</h2>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-16-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-16-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Wilcoxon(EM)&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
+Past versions of unnamed-chunk-17-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-17-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT (Morris data)&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-2">
+Past versions of unnamed-chunk-17-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-17-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="cutoff4" class="section level2" number="2.4">
 <h2 number="2.4"><span class="header-section-number">2.4</span> Cutoff4</h2>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-19-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-19-1">
+Past versions of unnamed-chunk-19-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-19-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-19-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Wilcoxon (cutoff4)&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-20-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT (Morris data)&quot;)</code></pre>
-<p><img src="figure/research_log.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /> ## Horizontal comparison of 3 assignments ### Wilcoxon test</p>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-2">
+Past versions of unnamed-chunk-20-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-20-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="horizontal-comparison-of-3-assignments" class="section level2" number="2.5">
+<h2 number="2.5"><span class="header-section-number">2.5</span> Horizontal comparison of 3 assignments</h2>
+<div id="wilcoxon-test" class="section level3" number="2.5.1">
+<h3 number="2.5.1"><span class="header-section-number">2.5.1</span> Wilcoxon test</h3>
 <pre class="r"><code>max_stat &lt;- read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/50HALLMARK/resample_normal_test_statistics.csv&quot;,row.names = 1)
 max_stat_long &lt;- max_stat%&gt;%
   rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
@@ -1526,9 +1892,47 @@ plot_list[[length(plot_list) + 1]] &lt;- euler_plot
 }
 grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-22-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-22-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
-<div id="sceptre" class="section level3" number="2.4.1">
-<h3 number="2.4.1"><span class="header-section-number">2.4.1</span> Sceptre</h3>
+</div>
+<div id="sceptre" class="section level3" number="2.5.2">
+<h3 number="2.5.2"><span class="header-section-number">2.5.2</span> Sceptre</h3>
 <pre class="r"><code>library(eulerr)
 
 significant_levels &lt;- c(0.01, 0.05,0.1,0.2)
@@ -1578,6 +1982,43 @@ plot_list[[length(plot_list) + 1]] &lt;- euler_plot
 }
 grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-26-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-1">
+Past versions of unnamed-chunk-26-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-26-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 </div>
 </div>
@@ -1587,41 +2028,491 @@ grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
 <p>We compare 3 configurations: EM Algorithm; cutoff=4; author threshold.</p>
 <div id="author-threshold-1" class="section level2" number="3.1">
 <h2 number="3.1"><span class="header-section-number">3.1</span> Author threshold</h2>
-<p><span style="color:red">NEED TO BE DISCUSSED: </span></p>
-<p>In terms of gRNA covariates, there are two options:</p>
-<p><span style="color:red"> 1. The total UMI &amp; gRNA counts in the cell (including those gRNA where UMI are below threshold) 2. The UMI &amp; gRNA counts that are above threshold only </span></p>
-<p>We compare the performance of the two options here.</p>
-<p>###Covariate: UMI &amp; gRNA counts that above the threshold</p>
+<div id="covariate-umi-grna-counts-that-above-the-threshold-1" class="section level3" number="3.1.1">
+<h3 number="3.1.1"><span class="header-section-number">3.1.1</span> Covariate: UMI &amp; gRNA counts that above the threshold</h3>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-28-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-1">
+Past versions of unnamed-chunk-28-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-28-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-28-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Author_threshold; using gRNA UMI counts above threshold&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-29-1">
+Past versions of unnamed-chunk-29-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-29-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-29-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT&quot;)</code></pre>
-<p><img src="figure/research_log.Rmd/unnamed-chunk-29-2.png" width="672" style="display: block; margin: auto;" /> ###Covariate: ALL UMI &amp; gRNA counts</p>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-29-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-29-2">
+Past versions of unnamed-chunk-29-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-29-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-29-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="covariate-all-umi-grna-counts-1" class="section level3" number="3.1.2">
+<h3 number="3.1.2"><span class="header-section-number">3.1.2</span> Covariate: ALL UMI &amp; gRNA counts</h3>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-31-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-31-1">
+Past versions of unnamed-chunk-31-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-31-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-31-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Author_threshold; using all gRNA UMI&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-32-1">
+Past versions of unnamed-chunk-32-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-32-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-32-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-32-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-32-2">
+Past versions of unnamed-chunk-32-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-32-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-32-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 <div id="em-1" class="section level2" number="3.2">
 <h2 number="3.2"><span class="header-section-number">3.2</span> EM</h2>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-34-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-1">
+Past versions of unnamed-chunk-34-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-34-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Wilcoxon(EM)&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-35-1">
+Past versions of unnamed-chunk-35-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-35-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-35-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT (Morris data)&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-35-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-35-2">
+Past versions of unnamed-chunk-35-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-35-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-35-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="cutoff4-1" class="section level2" number="3.3">
 <h2 number="3.3"><span class="header-section-number">3.3</span> Cutoff4</h2>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-37-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-1">
+Past versions of unnamed-chunk-37-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-37-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-37-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Wilcoxon (cutoff4)&quot;)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-1">
+Past versions of unnamed-chunk-38-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-38-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-38-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT (Morris data)&quot;)</code></pre>
-<p><img src="figure/research_log.Rmd/unnamed-chunk-38-2.png" width="672" style="display: block; margin: auto;" /> ## Horizontal comparison of 3 assignments ### Wilcoxon test</p>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-38-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-2">
+Past versions of unnamed-chunk-38-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-38-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-38-2.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="horizontal-comparison-of-3-assignments-1" class="section level2" number="3.4">
+<h2 number="3.4"><span class="header-section-number">3.4</span> Horizontal comparison of 3 assignments</h2>
+<div id="wilcoxon-test-1" class="section level3" number="3.4.1">
+<h3 number="3.4.1"><span class="header-section-number">3.4.1</span> Wilcoxon test</h3>
 <pre class="r"><code>max_stat &lt;- read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/cNMF/resample_normal_test_statistics.csv&quot;,row.names = 1)
 max_stat_long &lt;- max_stat%&gt;%
   rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
@@ -1719,9 +2610,47 @@ plot_list[[length(plot_list) + 1]] &lt;- euler_plot
 }
 grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-40-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-40-1">
+Past versions of unnamed-chunk-40-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-40-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-40-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
-<div id="sceptre-1" class="section level3" number="3.3.1">
-<h3 number="3.3.1"><span class="header-section-number">3.3.1</span> Sceptre</h3>
+</div>
+<div id="sceptre-1" class="section level3" number="3.4.2">
+<h3 number="3.4.2"><span class="header-section-number">3.4.2</span> Sceptre</h3>
 <pre class="r"><code>library(eulerr)
 
 significant_levels &lt;- c(0.01, 0.05,0.1,0.2)
@@ -1771,6 +2700,43 @@ plot_list[[length(plot_list) + 1]] &lt;- euler_plot
 }
 grid.arrange(grobs = plot_list, ncol = 2)</code></pre>
 <p><img src="figure/research_log.Rmd/unnamed-chunk-44-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-44-1">
+Past versions of unnamed-chunk-44-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-44-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/6a5bee82b6d4a9f709093bfb97702d12f8c84d38/docs/figure/research_log.Rmd/unnamed-chunk-44-1.png" target="_blank">6a5bee8</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <br>
 <p>
