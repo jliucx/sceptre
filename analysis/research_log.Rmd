@@ -25,12 +25,13 @@ We compare 3 configurations: EM Algorithm; cutoff=4; author threshold.
 ## 50 Hallmark gene sets
 
 ### Author threshold
-\textcolor{red}{这是红色文字}
+
+$\textcolor{red}{xx}$
 
 
 ### EM algorithm
 
-```{r,echo=F}
+```{r,include=F}
 library(ggplot2)
 library(dplyr)
 library(readr)
@@ -84,7 +85,7 @@ gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
 
 
 ```{r,echo=F}
-infect_cell_threshold <- 30
+
 
 gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/gene_module_index_matrix.rds")
 grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
