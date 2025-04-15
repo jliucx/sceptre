@@ -66,6 +66,19 @@ gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
     ggtitle(title) # Add title
 }
 ```
+# Outline
+
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/outline_4_15.png", error = FALSE)
+```
+
+Our Method (Wilcoxon test) uniformly observes more discoveries than sceptre + Cauchy in any one of the gRNA assignment (Author threshold; EM; Cutoff 4)
+
+Only author threshold, and <span style="color:red"> cell covariate ignoring those gRNA for which UMI are below threshold</span>
+ gives a good NTC calibration. All other configurations have inflation.
+ 
+I havn't tested EM/cutoff 4, covariates ignoring those gRNA for which UMI are below threshold yet. It needs to be discussed whether this adjustment makes sense.
+
 # Mar 2025 - Xie - 50 Hallmark gene sets:
 
 <span style="color:red">Apart from t test, we also implemented wilcoxon test in a computational efficient manner: </span>
