@@ -27,3 +27,5 @@ Results:
 [Calibration and power check of t test and wilcoxon test](plot.html)
 
 [Newest results](new_model.html)
+
+[Research log](research_log.html)
