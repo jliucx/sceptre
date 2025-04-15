@@ -72,7 +72,7 @@ gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
 
 
 
-```{r}
+```{r,echo=F}
 resample_normal_rank <-  read.csv("output/Xie/our_method/remove_cis_normal_rank_pooled_batch/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
 
 resample_normal_not_rank <-  read.csv("output/Xie/our_method/remove_cis_normal_not_rank_pooled_batch/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
@@ -295,13 +295,13 @@ knitr::include_graphics("images/author_corrected.png", error = FALSE)
 ```
 
 
-**EM**
+**EM (consider all UMIs and guides)**
 ```{r,echo=F,cache=F}
 knitr::include_graphics("images/EM.png", error = FALSE)
 
 ```
 
-**cutoff4**
+**cutoff4 (consider all UMIs and guides)**
 ```{r,echo=F,cache=F}
 knitr::include_graphics("images/cutoff4.png", error = FALSE)
 
@@ -323,7 +323,7 @@ In terms of gRNA covariates, there are two options:
 
 We compare the performance of the two options here. 
 
-###Covariate: UMI & gRNA counts that above the threshold
+### Covariate: UMI & gRNA counts that above the threshold
 
 ```{r,echo=F}
 
@@ -507,7 +507,7 @@ gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Author_threshold;
 ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title="NTC-ACAT")
 ```
-###Covariate: All UMI & gRNA counts
+### Covariate: All UMI & gRNA counts
 
 ```{r,echo=F}
 
@@ -1070,6 +1070,7 @@ ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_scept
 gg_qqplot(ntc_pvals, title="NTC-ACAT (Morris data)")
 ```
 ## Horizontal comparison of 3 assignments
+
 ### Wilcoxon test
 ```{r}
 max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
@@ -1532,18 +1533,9 @@ We compare 3 configurations: EM Algorithm; cutoff=4; author threshold.
 
 ## Author threshold
 
-<span style="color:red">NEED TO BE DISCUSSED: </span>
 
-In terms of gRNA covariates, there are two options:
 
-<span style="color:red">
-1. The total UMI & gRNA counts in the cell (including those gRNA where UMI are below threshold)
-2. The UMI & gRNA counts that are above threshold only
-</span>
-
-We compare the performance of the two options here. 
-
-###Covariate: UMI & gRNA counts that above the threshold
+### Covariate: UMI & gRNA counts that above the threshold
 
 ```{r,echo=F}
 
@@ -1727,7 +1719,7 @@ gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Author_threshold;
 ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
 gg_qqplot(ntc_pvals, title="NTC-ACAT")
 ```
-###Covariate: ALL UMI & gRNA counts
+### Covariate: ALL UMI & gRNA counts
 
 ```{r,echo=F}
 
@@ -2290,7 +2282,9 @@ ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_scept
 gg_qqplot(ntc_pvals, title="NTC-ACAT (Morris data)")
 ```
 ## Horizontal comparison of 3 assignments
+
 ### Wilcoxon test
+
 ```{r}
 max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/cNMF/resample_normal_test_statistics.csv",row.names = 1)
 max_stat_long <- max_stat%>%
