@@ -9,8 +9,7 @@ editor_options:
   chunk_output_type: inline
   markdown: 
     wrap: 72
-header-includes:
-  - \usepackage{xcolor}
+
 ---
 
 ```{r setup, include=FALSE}
@@ -26,7 +25,7 @@ We compare 3 configurations: EM Algorithm; cutoff=4; author threshold.
 
 ### Author threshold
 
-$\textcolor{red}{xx}$
+<span style="color:red">ss</span>
 
 
 ### EM algorithm
