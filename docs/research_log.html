@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="jliucx" />
+
+
+<title>Research log</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sceptre application and power increasing techniques</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jliucx/sceptre">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Research log</h1>
+<h4 class="author">jliucx</h4>
+<h4 class="date">2024-12-5</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-04-14
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Getting_started/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240712code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20240712)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240712code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240712)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/gene_module_index_matrix.rds
+</td>
+<td style="text-align:left;">
+data/Morris/program_data_hallmark/gene_module_index_matrix.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds
+</td>
+<td style="text-align:left;">
+data/Morris_adjusted/program_data/discovery_pairs_cis.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/50HALLMARK/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/system_comparison/em/50HALLMARK/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/em_corrected_cov/results_run_discovery_analysis.rds
+</td>
+<td style="text-align:left;">
+output/Morris/sceptre_all_pairs/em_corrected_cov/results_run_discovery_analysis.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/em_corrected_cov/results_run_calibration_check.rds
+</td>
+<td style="text-align:left;">
+output/Morris/sceptre_all_pairs/em_corrected_cov/results_run_calibration_check.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/cutoff4/50HALLMARK/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/system_comparison/cutoff4/50HALLMARK/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/cutoff4_corrected_cov/results_run_discovery_analysis.rds
+</td>
+<td style="text-align:left;">
+output/Morris/sceptre_all_pairs/cutoff4_corrected_cov/results_run_discovery_analysis.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/cutoff4_corrected_cov/results_run_calibration_check.rds
+</td>
+<td style="text-align:left;">
+output/Morris/sceptre_all_pairs/cutoff4_corrected_cov/results_run_calibration_check.rds
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree8778e714ed6b3b6ee47b973e370a94f7f3be31a7targetblank8778e71a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/8778e714ed6b3b6ee47b973e370a94f7f3be31a7" target="_blank">8778e71</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree8778e714ed6b3b6ee47b973e370a94f7f3be31a7targetblank8778e71a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/8778e714ed6b3b6ee47b973e370a94f7f3be31a7" target="_blank">8778e71</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
+    Ignored:    analysis/run.sh
+    Ignored:    analysis/run_R.sh
+
+Untracked files:
+    Untracked:  analysis/sceptre_singleton.R
+    Untracked:  analysis/sceptre_singleton.Rmd
+    Untracked:  analysis/sceptre_threshold.Rmd
+    Untracked:  code/debug.Rmd
+    Untracked:  code/draft.Rmd
+    Untracked:  code/find_gene_set.Rmd
+    Untracked:  code/fit_skew_normal.cpp
+    Untracked:  code/functions_optimized.R
+    Untracked:  code/general_data_optimized.R
+    Untracked:  code/minp.R
+    Untracked:  code/nature_data_edit.Rmd
+    Untracked:  code/negative_control.Rmd
+    Untracked:  code/newest.R
+    Untracked:  code/parallel/
+    Untracked:  code/plots_generator.Rmd
+    Untracked:  code/rcc_err/
+    Untracked:  code/rcc_jobs/
+    Untracked:  code/rcc_out/
+    Untracked:  code/remove_cis.R
+    Untracked:  code/remove_cis_optimize.R
+    Untracked:  code/run_R_caslake.sh
+    Untracked:  code/sceptre/
+    Untracked:  code/t_test.cpp
+    Untracked:  code/utilizer/
+    Untracked:  data/
+    Untracked:  output/Morris/
+    Untracked:  output/Xie/
+    Untracked:  output/debug/
+    Untracked:  output/nature/
+    Untracked:  output/newest/thesis/
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/TATES.Rmd
+    Modified:   analysis/_site.yml
+    Deleted:    analysis/create_grna_target_data_frame.Rmd
+    Modified:   analysis/debug.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/new_model.Rmd
+    Modified:   analysis/qqplot.Rmd
+    Modified:   analysis/sceptre.Rmd
+    Modified:   analysis/sceptre_example.Rmd
+    Deleted:    analysis/seurat_example.Rmd
+    Deleted:    analysis/summary.Rmd
+    Deleted:    analysis/try_Knit.Rmd
+    Deleted:    analysis/try_rcc.Rmd
+    Modified:   code/functions.R
+    Deleted:    code/job-info.err
+    Deleted:    code/job-info.out
+    Modified:   code/plot.Rmd
+    Deleted:    code/results.csv
+    Deleted:    code/results_wilcox_pval.csv
+    Modified:   code/run_R.sh
+    Modified:   code/startover.R
+    Deleted:    code/test_gene_module.R
+    Deleted:    code/test_gene_module.Rmd
+    Deleted:    code/try.R
+    Deleted:    code/try.Rmd
+    Deleted:    output/SNP62_SNP60_for_all_genes.csv
+    Deleted:    output/both_trans/analysis_summary.txt
+    Deleted:    output/both_trans/grna_assignment_matrix.rds
+    Deleted:    output/both_trans/plot_assign_grnas.png
+    Deleted:    output/both_trans/plot_grna_count_distributions.png
+    Deleted:    output/both_trans/plot_run_calibration_check.png
+    Deleted:    output/both_trans/plot_run_discovery_analysis.png
+    Deleted:    output/both_trans/plot_run_power_check.png
+    Deleted:    output/both_trans/plot_run_qc.png
+    Deleted:    output/both_trans/results_run_calibration_check.rds
+    Deleted:    output/both_trans/results_run_discovery_analysis.rds
+    Deleted:    output/both_trans/results_run_power_check.rds
+    Deleted:    output/both_trans_author_threshold/analysis_summary.txt
+    Deleted:    output/both_trans_author_threshold/grna_assignment_matrix.rds
+    Deleted:    output/both_trans_author_threshold/plot_assign_grnas.png
+    Deleted:    output/both_trans_author_threshold/plot_grna_count_distributions.png
+    Deleted:    output/both_trans_author_threshold/plot_run_calibration_check.png
+    Deleted:    output/both_trans_author_threshold/plot_run_discovery_analysis.png
+    Deleted:    output/both_trans_author_threshold/plot_run_power_check.png
+    Deleted:    output/both_trans_author_threshold/plot_run_qc.png
+    Deleted:    output/both_trans_author_threshold/results_run_calibration_check.rds
+    Deleted:    output/both_trans_author_threshold/results_run_discovery_analysis.rds
+    Deleted:    output/both_trans_author_threshold/results_run_power_check.rds
+    Deleted:    output/both_trans_author_threshold_0.05/analysis_summary.txt
+    Deleted:    output/both_trans_author_threshold_0.05/grna_assignment_matrix.rds
+    Deleted:    output/both_trans_author_threshold_0.05/plot_assign_grnas.png
+    Deleted:    output/both_trans_author_threshold_0.05/plot_grna_count_distributions.png
+    Deleted:    output/both_trans_author_threshold_0.05/plot_run_calibration_check.png
+    Deleted:    output/both_trans_author_threshold_0.05/plot_run_discovery_analysis.png
+    Deleted:    output/both_trans_author_threshold_0.05/plot_run_power_check.png
+    Deleted:    output/both_trans_author_threshold_0.05/plot_run_qc.png
+    Deleted:    output/both_trans_author_threshold_0.05/results_run_calibration_check.rds
+    Deleted:    output/both_trans_author_threshold_0.05/results_run_discovery_analysis.rds
+    Deleted:    output/both_trans_author_threshold_0.05/results_run_power_check.rds
+    Deleted:    output/both_trans_author_threshold_0.05_2/analysis_summary.txt
+    Deleted:    output/both_trans_author_threshold_0.05_2/grna_assignment_matrix.rds
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_assign_grnas.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_grna_count_distributions.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_calibration_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_discovery_analysis.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_power_check.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/plot_run_qc.png
+    Deleted:    output/both_trans_author_threshold_0.05_2/results_run_calibration_check.rds
+    Deleted:    output/both_trans_author_threshold_0.05_2/results_run_discovery_analysis.rds
+    Deleted:    output/both_trans_author_threshold_0.05_2/results_run_power_check.rds
+    Deleted:    output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation.csv
+    Deleted:    output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation_left.csv
+    Deleted:    output/calibration_power_include_trans_t_2000_use_approximation_log.csv
+    Deleted:    output/calibration_power_include_trans_t_2000_use_approximation_rank.csv
+    Deleted:    output/calibration_power_include_trans_t_2000_use_approximation_rank_normalized.csv
+    Deleted:    output/calibration_power_include_trans_t_2000_use_approximation_twoside.csv
+    Deleted:    output/calibration_power_t_10000_no_approximation.csv
+    Deleted:    output/calibration_power_t_10000_no_approximation_2.csv
+    Deleted:    output/calibration_power_t_2000_use_approximation.csv
+    Deleted:    output/calibration_power_t_2000_use_approximation_2.csv
+    Deleted:    output/calibration_wilcoxon_10000_no_approximation.csv
+    Deleted:    output/calibration_wilcoxon_10000_no_approximation_normalized.csv
+    Deleted:    output/newest/try/gene_wise_p.csv
+    Deleted:    output/newest/try/minp.csv
+    Deleted:    output/newest/try/our_method.csv
+    Deleted:    output/power_include_trans_t_2000_use_approximation.csv
+    Deleted:    output/result.csv
+    Deleted:    output/result_calibration.csv
+    Deleted:    output/result_calibration_2.csv
+    Deleted:    output/result_calibration_use_approximation_10000.csv
+    Deleted:    output/result_calibration_use_approximation_2000.csv
+    Deleted:    output/result_calibration_use_approximation_5000.csv
+    Deleted:    output/result_calibration_use_rank.csv
+    Deleted:    output/result_calibration_use_rank_parallel.csv
+    Deleted:    output/result_remove_na_gene.csv
+    Deleted:    output/sceptre_outputs/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs/plot_run_calibration_check.png
+    Deleted:    output/sceptre_outputs/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs/plot_run_qc.png
+    Deleted:    output/sceptre_outputs/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs/trans_mixture.txt
+    Deleted:    output/sceptre_outputs_cis/cis_mixture.txt
+    Deleted:    output/sceptre_outputs_cis/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs_cis/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs_cis/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs_cis/plot_run_calibration_check.png
+    Deleted:    output/sceptre_outputs_cis/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs_cis/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs_cis/plot_run_qc.png
+    Deleted:    output/sceptre_outputs_cis/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs_cis/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs_cis/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs_cis_singleton/analysis_summary.txt
+    Deleted:    output/sceptre_outputs_cis_singleton/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs_cis_singleton/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs_cis_singleton/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs_cis_singleton/plot_run_calibration_check.png
+    Deleted:    output/sceptre_outputs_cis_singleton/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs_cis_singleton/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs_cis_singleton/plot_run_qc.png
+    Deleted:    output/sceptre_outputs_cis_singleton/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs_cis_singleton/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs_cis_singleton/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs_cis_threshold/cis_threshold.txt
+    Deleted:    output/sceptre_outputs_cis_threshold/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs_cis_threshold/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs_cis_threshold/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs_cis_threshold/plot_run_calibration_check_author_threshold.png
+    Deleted:    output/sceptre_outputs_cis_threshold/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs_cis_threshold/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs_cis_threshold/plot_run_qc.png
+    Deleted:    output/sceptre_outputs_cis_threshold/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs_cis_threshold/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs_cis_threshold/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs_cis_threshold5/calibration_cis_threshold5.png
+    Deleted:    output/sceptre_outputs_cis_threshold5/cis_threshold5.txt
+    Deleted:    output/sceptre_outputs_cis_threshold5/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs_cis_threshold5/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs_cis_threshold5/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs_cis_threshold5/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs_cis_threshold5/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs_cis_threshold5/plot_run_qc.png
+    Deleted:    output/sceptre_outputs_cis_threshold5/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs_cis_threshold5/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs_cis_threshold5/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/plot_run_qc.png
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/trans_mixture_omit.png
+    Deleted:    output/sceptre_outputs_trans_omit_NTC3_12/trans_mixture_omit.txt
+    Deleted:    output/sceptre_outputs_trans_threshold/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs_trans_threshold/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs_trans_threshold/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs_trans_threshold/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs_trans_threshold/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs_trans_threshold/plot_run_qc.png
+    Deleted:    output/sceptre_outputs_trans_threshold/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs_trans_threshold/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs_trans_threshold/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs_trans_threshold/tr_threshold.png
+    Deleted:    output/sceptre_outputs_trans_threshold/tr_threshold.txt
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/calibration_trans_threshold_omit.png
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/grna_assignment_matrix.rds
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/plot_assign_grnas.png
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/plot_grna_count_distributions.png
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/plot_run_discovery_analysis.png
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/plot_run_power_check.png
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/plot_run_qc.png
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/results_run_calibration_check.rds
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/results_run_discovery_analysis.rds
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/results_run_power_check.rds
+    Deleted:    output/sceptre_outputs_trans_threshold_omit_NTC3_12/trans_threshold_omit.txt
+    Modified:   output/startover/test/gene_wise_p.csv
+    Modified:   output/startover/test/minp.csv
+    Modified:   output/startover/test/our_method.csv
+    Deleted:    output/t_test_on_whole_dataset_author_threshold.csv
+    Deleted:    output/t_test_on_whole_dataset_gene_wise.csv
+    Deleted:    output/t_test_on_whole_reduced_dataset.csv
+    Deleted:    output/t_test_on_whole_reduced_dataset_normalized.csv
+    Deleted:    output/t_test_on_whole_reduced_dataset_normalized_threshold.csv
+    Deleted:    output/test_rank_wilcox.csv
+    Deleted:    output/trans_singleton_threshold5/analysis_summary.txt
+    Deleted:    output/trans_singleton_threshold5/grna_assignment_matrix.rds
+    Deleted:    output/trans_singleton_threshold5/plot_assign_grnas.png
+    Deleted:    output/trans_singleton_threshold5/plot_grna_count_distributions.png
+    Deleted:    output/trans_singleton_threshold5/plot_run_calibration_check.png
+    Deleted:    output/trans_singleton_threshold5/plot_run_discovery_analysis.png
+    Deleted:    output/trans_singleton_threshold5/plot_run_power_check.png
+    Deleted:    output/trans_singleton_threshold5/plot_run_qc.png
+    Deleted:    output/trans_singleton_threshold5/results_run_calibration_check.rds
+    Deleted:    output/trans_singleton_threshold5/results_run_discovery_analysis.rds
+    Deleted:    output/trans_singleton_threshold5/results_run_power_check.rds
+    Deleted:    output/trans_singleton_threshold_author_omit/analysis_summary.txt
+    Deleted:    output/trans_singleton_threshold_author_omit/grna_assignment_matrix.rds
+    Deleted:    output/trans_singleton_threshold_author_omit/plot_assign_grnas.png
+    Deleted:    output/trans_singleton_threshold_author_omit/plot_grna_count_distributions.png
+    Deleted:    output/trans_singleton_threshold_author_omit/plot_run_calibration_check.png
+    Deleted:    output/trans_singleton_threshold_author_omit/plot_run_discovery_analysis.png
+    Deleted:    output/trans_singleton_threshold_author_omit/plot_run_power_check.png
+    Deleted:    output/trans_singleton_threshold_author_omit/plot_run_qc.png
+    Deleted:    output/trans_singleton_threshold_author_omit/results_run_calibration_check.rds
+    Deleted:    output/trans_singleton_threshold_author_omit/results_run_discovery_analysis.rds
+    Deleted:    output/trans_singleton_threshold_author_omit/results_run_power_check.rds
+    Deleted:    output/try_sceptre_skew_fit_normalized_threshold.csv
+    Deleted:    output/try_sceptre_skew_fit_normalized_threshold_filter_cell.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/research_log.Rmd</code>) and HTML (<code>docs/research_log.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/8778e714ed6b3b6ee47b973e370a94f7f3be31a7/analysis/research_log.Rmd" target="_blank">8778e71</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-04-15
+</td>
+<td>
+upload research log
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="apr-2025---morris-different-grna-assignment-strategies-affects-the-morris-results." class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Apr 2025 - Morris: Different grna assignment strategies affects the Morris results.</h1>
+<p>We compare 3 configurations: EM Algorithm; cutoff=4; author threshold.</p>
+<div id="hallmark-gene-sets" class="section level2" number="1.1">
+<h2 number="1.1"><span class="header-section-number">1.1</span> 50 Hallmark gene sets</h2>
+<div id="author-threshold" class="section level3" number="1.1.1">
+<h3 number="1.1.1"><span class="header-section-number">1.1.1</span> Author threshold</h3>
+<p></p>
+</div>
+<div id="em-algorithm" class="section level3" number="1.1.2">
+<h3 number="1.1.2"><span class="header-section-number">1.1.2</span> EM algorithm</h3>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre><code>Loading required package: Rcpp</code></pre>
+<pre><code>Loading required package: data.table</code></pre>
+<pre><code>
+Attaching package: &#39;data.table&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:dplyr&#39;:
+
+    between, first, last</code></pre>
+<pre><code>
+Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:tidyr&#39;:
+
+    expand, pack, unpack</code></pre>
+<pre><code>Loading required package: optimx</code></pre>
+<pre><code>Loading required package: numDeriv</code></pre>
+<pre><code>Registered S3 method overwritten by &#39;rmutil&#39;:
+  method         from
+  print.response httr</code></pre>
+<pre><code>
+Attaching package: &#39;gridExtra&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    combine</code></pre>
+<pre><code>
+Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    select</code></pre>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-3-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Wilcoxon (Morris data)&quot;)</code></pre>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
+gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT (Morris data)&quot;)</code></pre>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cutoff4" class="section level3" number="1.1.3">
+<h3 number="1.1.3"><span class="header-section-number">1.1.3</span> Cutoff4</h3>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-6-1.png" width="844.8" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title=&quot;NTC-Wilcoxon (Morris data)&quot;)</code></pre>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ntc_pvals &lt;- module_results_sceptre$acat_pval[grepl(&quot;^NTC&quot;, module_results_sceptre$grna_id)]
+gg_qqplot(ntc_pvals, title=&quot;NTC-ACAT (Morris data)&quot;)</code></pre>
+<p><img src="figure/research_log.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.3.13-el8-x86_64/lib/libopenblas_skylakexp-r0.3.13.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
+ [4] LC_COLLATE=C         LC_MONETARY=C        LC_MESSAGES=C       
+ [7] LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C        
+[10] LC_TELEPHONE=C       LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] MASS_7.3-60             ACAT_0.91               eulerr_7.0.2           
+ [4] gridExtra_2.3           heavytailcombtest_1.0.0 sgt_2.0                
+ [7] numDeriv_2016.8-1.1     optimx_2024-12.2        peakRAM_1.0.2          
+[10] BH_1.84.0-0             Matrix_1.6-3            sceptredata_0.99.0     
+[13] sceptre_0.10.0          presto_1.0.0            data.table_1.14.8      
+[16] Rcpp_1.0.12             tidyr_1.3.0             tibble_3.2.1           
+[19] readr_1.4.0             dplyr_1.1.4             ggplot2_3.5.1          
+[22] workflowr_1.7.1        
+
+loaded via a namespace (and not attached):
+ [1] mvtnorm_1.3-3     invgamma_1.1      lattice_0.22-5    getPass_0.2-2    
+ [5] ps_1.7.5          rprojroot_2.0.4   digest_0.6.33     utf8_1.2.1       
+ [9] R6_2.5.1          evaluate_0.23     pracma_2.4.4      httr_1.4.2       
+[13] highr_0.11        pillar_1.9.0      rlang_1.1.2       rstudioapi_0.15.0
+[17] whisker_0.4.1     callr_3.7.6       jquerylib_0.1.4   nloptr_1.2.2.2   
+[21] rmarkdown_2.27    labeling_0.4.3    stringr_1.5.1     polyclip_1.10-6  
+[25] munsell_0.5.0     polylabelr_0.3.0  compiler_4.1.0    httpuv_1.6.1     
+[29] xfun_0.51         pkgconfig_2.0.3   htmltools_0.5.8.1 tidyselect_1.2.0 
+[33] fansi_1.0.5       withr_2.5.2       later_1.2.0       grid_4.1.0       
+[37] jsonlite_1.8.7    gtable_0.3.0      lifecycle_1.0.4   git2r_0.32.0     
+[41] magrittr_2.0.3    scales_1.3.0      cli_3.6.1         stringi_1.6.2    
+[45] cachem_1.0.8      farver_2.1.1      fs_1.6.3          promises_1.2.0.1 
+[49] rmutil_1.1.10     bslib_0.7.0       ellipsis_0.3.2    generics_0.1.3   
+[53] vctrs_0.6.4       tools_4.1.0       glue_1.6.2        purrr_1.0.2      
+[57] hms_1.1.0         processx_3.8.4    fastmap_1.1.1     yaml_2.2.1       
+[61] colorspace_2.1-0  knitr_1.48        sass_0.4.9       </code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
