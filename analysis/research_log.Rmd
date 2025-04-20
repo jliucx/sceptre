@@ -69,7 +69,7 @@ gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
 # Outline
 
 ```{r,echo=F,cache=F}
-knitr::include_graphics("images/outline_4_15.png", error = FALSE)
+knitr::include_graphics("images/outline_4.20.png", error = FALSE)
 ```
 
 Our Method (Wilcoxon test) uniformly observes more discoveries than sceptre + Cauchy in any one of the gRNA assignment (Author threshold; EM; Cutoff 4)
@@ -79,23 +79,401 @@ Only author threshold, and <span style="color:red"> cell covariate ignoring thos
  
 I havn't tested EM/cutoff 4, covariates ignoring those gRNA for which UMI are below threshold yet. It needs to be discussed whether this adjustment makes sense.
 
+# Feb 2025 - Morris - 50 Hallmark gene sets: A wrong labeling of gRNA assignments:
+
+For the presentation in Feb, there is a one-row-mismatch of the gRNA assignments from the raw dataset (SNP1-1 is actually SNP1-2, SNP1-2 is actually SNP 2-1 .., etc). Both Sceptre and our results use the wrong but unified labeling. The folder containing this wrong information is 
+```r
+"/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted"
+```
+This will only be used as a horizontal comparison of Sceptre+ACAT and our method. 
+
+## Parameter setting
+Raw data folder: 
+```r
+"/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre/both_trans_author_filtered_cell_complete/"
+"/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre/both_trans_author_filtered_cell_complete/"
+MinP<-  read.csv("output/Morris/remove_cis/remove_cis_10Mb/our_method.csv")
+max_stat <- read.csv("output/Morris/remove_cis/remove_cis_10Mb_approximation_3000/max_normalized_statistics.csv")
+```
+gRNA assignment : Author threshold
+
+Test : Ranked t
+
+Skew curve : Skewed normal (for Max Stat)/ Null (for MinP)
+
+## Results
+```{r,echo=F,fig.width=8, fig.height=8,cache=F,include=F}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)
+
+infect_cell_threshold <- 30
+
+
+gene_modules <- readRDS("data/gene_module_50/gene_modules_id.rds")
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/gene_module_index_matrix.rds")
+
+  
+  
+  
+# gene_wise_p  <- read.csv("output/newest/remove_cis_10Mb/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[1:206,])>infect_cell_threshold,]
+
+
+gene_wise_p  <- read.csv("output/Morris/remove_cis/remove_cis_10Mb_approximation_3000/gene_wise_p.csv", nrows = 207)
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/discovery_pairs_cis.rds")
+
+
+gene_wise_p[gene_wise_p == 0] <- 1 / 10000
+gene_wise_p[gene_wise_p >= 1] <- 1- 1/10000
+
+
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre/both_trans_author_filtered_cell_complete/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre/both_trans_author_filtered_cell_complete/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(gene_wise_p)[rownames(gene_wise_p) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, colnames(gene_wise_p), drop = FALSE]
+
+
+library(eulerr)
+
+
+grna_target_data_frame_omit <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/grna_target_data_frame_omit.rds")
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+        acat_pval<- combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+
+library(tibble)
+
+# minp <- read.csv("output/newest/filter_cell/minp.csv")[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[-208,])>500,]
+# 
+# 
+# minp <- read.csv("output/newest/remove_cis_10Mb_approximation_3000/max_normalized_statistics.csv")
+
+
+# minp_long <- minp%>%
+#   rownames_to_column(var = "grna_id") %>% # Add row names as a column
+#   pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+
+# minp_long <- minp_long %>% filter(!is.na(p_value))
+
+# our_method <-  read.csv("output/newest/remove_cis_10Mb/our_method.csv")[rowSums(get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[1:206,])>infect_cell_threshold,]
+
+
+our_method <-  read.csv("output/Morris/remove_cis/remove_cis_10Mb/our_method.csv")
+
+
+
+our_method_long <- our_method %>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values (if any)
+our_method_long <- our_method_long %>% filter(!is.na(p_value))
+
+
+
+
+max_stat <- read.csv("output/Morris/remove_cis/remove_cis_10Mb_approximation_3000/max_normalized_statistics.csv")
+
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+
+
+
+
+
+# module_results_t_bonforroni <- module_results_t_bonforroni %>%
+#   semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+# Filter rows in minp_long
+# minp_long <- minp_long %>%
+#   semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+# Filter rows in our_method_long
+our_method_long <- our_method_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long <- max_stat_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+
+
+
+
+our_method_long$bh_pval <-  p.adjust(our_method_long$p_value, method = "BH")
+our_method_long$identifier <- paste(our_method_long$grna_id, our_method_long$module, sep = "_")
+
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+```
+
+
+
+```{r,cache=F,fig.width=8.8,fig.height=6}
+library(eulerr)
+
+significant_levels <- c(0.01, 0.05, 0.1, 0.25)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < significant_level]
+  
+
+  
+  significant_ids_ours <- our_method_long$identifier[
+    our_method_long$bh_pval < significant_level]
+  
+    significant_ids_max_stat <- max_stat_long$identifier[
+    max_stat_long$bh_pval < significant_level]
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    # `t+Cauchy` = significant_ids_gene_wise_p_t,
+    # `max stat` = significant_ids_minp,
+    `MinP` = significant_ids_ours,
+    `max stat` = significant_ids_max_stat
+    # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
+    # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
+  )
+  
+  # Generate the Euler diagram and display it
+euler_plot <- plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "green", "yellow", "orange"), alpha = 0.5),
+  edges = TRUE,
+  quantities = TRUE,
+  labels = list(font = 2, cex = 1.2, pos = 3), # 调整字体和位置
+  main = paste("Significant level", significant_level)
+)
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)
+
+par(mfrow = c(1, 1))
+```
+
+
+Here we compare two choices: MinP and Max stat
+
+MinP: use the minimum P value as test statistics, and instead of using skew curve, we used 10000 resample
+Max stat: use the maximum of standardized z values, and fit skew normal curve, we used 3000 resample
+
+```{r,echo=F}
+ntc_our <- our_method_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  filter(!startsWith(grna_id, "NTC-2")) %>%
+  dplyr::select(grna_id, p_value)
+
+
+ntc_max_stat <- max_stat_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+    filter(!startsWith(grna_id, "NTC-2")) %>%
+   dplyr::select(grna_id, p_value)
+
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+    filter(!startsWith(grna_id, "NTC-2")) %>%
+   dplyr::select(grna_id, acat_pval)
+
+gg_qqplot_compare <- function(ps1, ps2, ps3, ci = 0.95, title = "QQ Plot Comparison") {
+  n1 <- length(ps1)
+  n2 <- length(ps2)
+  n3 <- length(ps3)
+  
+  # Create data frames for all three datasets
+  df1 <- data.frame(
+    observed = pmin(-log10(sort(ps1)), 4),
+    expected = -log10(ppoints(n1)),
+    group = "Max Comb"
+  )
+  
+  df2 <- data.frame(
+    observed = pmin(-log10(sort(ps2)), 4),
+    expected = -log10(ppoints(n2)),
+    group = "Sceptre + Cauchy"
+  )
+  
+  df3 <- data.frame(
+    observed = pmin(-log10(sort(ps3)), 4),
+    expected = -log10(ppoints(n3)),
+    group = "MinP"
+  )
+  
+  # Combine data frames
+  df <- rbind(df1, df2, df3)
+  
+  # Confidence intervals for Dataset 1
+  clower <- pmin(-log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n1, shape2 = n1:1)), 4)
+  cupper <- pmin(-log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n1, shape2 = n1:1)), 4)
+  
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+
+  # Plot
+  ggplot(df, aes(x = expected, y = observed, color = group)) +
+    geom_ribbon(data = data.frame(x = -log10(ppoints(n1)), ymin = clower, ymax = cupper),
+                aes(x = x, ymin = ymin, ymax = ymax),
+                fill = "gray", alpha = 0.2, inherit.aes = FALSE) +
+    geom_point(size = 1.5) +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    scale_color_manual(values = c("skyblue",  "dodgerblue","red")) +
+    xlab(log10Pe) +
+    ylab(log10Po) +
+    ylim(0, 4) +
+    ggtitle(title) +
+    theme_minimal()
+}
+
+
+gg_qqplot_compare(
+  ps1 = as.vector(ntc_max_stat$p_value),
+  ps2 = as.vector(ntc_sceptre$acat_pval),
+  ps3 = as.vector(ntc_our$p_value),
+  title = "Negative control p-values"
+)
+```
+## A wrong labeling of gRNA
+
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/wrong_label.png", error = FALSE)
+```
+
+In April, when I tried other grna assignment methods, I observed a significant difference between the previous result (v1) and author threshold(v2), EM(v3), cutoff4(v4)
+To see whether the wrong label is the main cause of disparity, I manually correct the labeling of v1.
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/relabel_v1.png", error = FALSE)
+```
+
+
 # Mar 2025 - Xie - 50 Hallmark gene sets:
 
 <span style="color:red">Apart from t test, we also implemented wilcoxon test in a computational efficient manner: </span>
+## Parameter setting
+
+Raw data folder: 
+```r
+"/project/xuanyao/jiaming/Getting_started/output/Xie/sceptre/adj_crt_union_batch_threshold_4/results_run_discovery_analysis.rds"
+"output/Xie/our_method/remove_cis_normal_not_rank_pooled_batch/resample_normal_test_statistics.csv"
+"output/Xie/our_method/50HALLMARK/log_covariate/resample_normal_test_statistics.csv"
+```
+gRNA assignment : Cutoff4
+
+Test : Wilcoxon
+
+Skew curve : Skewed normal
+
+## Results
+
+```{r,echo=F}
+resample_normal_rank <- read.csv(
+  "output/Xie/our_method/remove_cis_normal_rank_pooled_batch/resample_normal_test_statistics.csv",
+  row.names = 1,
+  header = TRUE,
+  check.names = FALSE
+)
+
+resample_normal_not_rank <-  read.csv("output/Xie/our_method/remove_cis_normal_not_rank_pooled_batch/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
+
+resample_normal_wilcoxon <-  read.csv("output/Xie/our_method/50HALLMARK/log_covariate/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
+resample_normal_wilcoxon_v0 <-  read.csv("output/Xie/our_method/remove_cis_normal_pooled_batch_wilcoxon/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
+```
+
 
 
 
 ```{r,echo=F}
-resample_normal_rank <-  read.csv("output/Xie/our_method/remove_cis_normal_rank_pooled_batch/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
-
-resample_normal_not_rank <-  read.csv("output/Xie/our_method/remove_cis_normal_not_rank_pooled_batch/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
-
-resample_normal_wilcoxon <-  read.csv("output/Xie/our_method/remove_cis_normal_pooled_batch_wilcoxon/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
-
 gene_module_index_matrix_essential <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Xie/program_data/gene_module_index_matrix.rds")
 
-gene_names <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Xie/program_data/gene_to_analyze.rds")
-
+gene_names <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Xie/program_data/gene_to_analyze_filtered.rds")
 
 sceptre <- readRDS("/project/xuanyao/jiaming/Getting_started/output/Xie/sceptre/adj_crt_union_batch_threshold_4/results_run_discovery_analysis.rds")[,c(1,2,6)]
 
@@ -272,9 +650,272 @@ for (significant_level in significant_levels) {
 # Arrange the plots in a grid
 grid.arrange(grobs = plot_list, ncol = 2)
 ```
+## Negative control
+There are in total 4 NTC guides, and only 2 of them passed the qc: NTC-1 and NTC-3
+Based on our results, the p values of NTC-1 seems to be inflated, however, the NTC-3 seems to be reasonable.
+Based on sceptre gene wise results, both NTC-1 and NTC-3 are inflated.
 ```{r}
-plot(as.vector(as.matrix(resample_normal_wilcoxon)),as.vector(as.matrix(resample_normal_rank)), main="Wilcoxon vs Ranked t", xlab="wilcoxon", ylab="ranked t")
+gg_qqplot(as.vector(as.matrix(resample_normal_wilcoxon[519,])),title="Gene module p value NTC-1 (our method)")
+gg_qqplot(as.vector(as.matrix(resample_normal_wilcoxon[521,])),title="Gene module p value NTC-3 (our method)")
+```
+```{r,include=F}
+results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/Xie/sceptre/adj_crt_union_batch_threshold_4/results_run_calibration_check.rds")
 
+```
+```{r}
+subset_values <- results_run_calibration_check$p_value[
+  results_run_calibration_check$grna_target == "sgRNA_NTC_1" &
+  results_run_calibration_check$pass_qc == TRUE
+]
+gg_qqplot(subset_values,title="gene-wise sceptre p values NTC-1")
+subset_values <- results_run_calibration_check$p_value[
+  results_run_calibration_check$grna_target == "sgRNA_NTC_3" &
+  results_run_calibration_check$pass_qc == TRUE
+]
+gg_qqplot(subset_values,title="gene-wise sceptre p values NTC-3")
+```
+
+
+
+```{r}
+plot(as.vector(as.matrix(resample_normal_wilcoxon)),as.vector(as.matrix(resample_normal_wilcoxon_v0)), main="log cov vs count cov", xlab="log count", ylab="count")
+```
+
+## Comparison of wilcoxon test, ranked t test and t test
+
+```{r}
+
+# Convert to vectors
+wilcoxon_vec <- as.vector(as.matrix(resample_normal_wilcoxon))
+rankt_vec <- as.vector(as.matrix(resample_normal_rank))
+
+t_vec <- as.vector(as.matrix(resample_normal_not_rank))
+
+# Calculate correlation
+corr_val <- cor(wilcoxon_vec, t_vec, use = "complete.obs")
+corr_val_2 <- cor(wilcoxon_vec, rankt_vec, use = "complete.obs")
+corr_val_3 <- cor(t_vec, rankt_vec, use = "complete.obs")
+plot(wilcoxon_vec, rankt_vec,
+     main = "Wilcoxon vs ranked t",
+     xlab = "wilcoxon",
+     ylab = "ranked t")
+# Plot
+text(x = 0.55, y = 0.55, 
+     labels = paste0("cor = ", round(corr_val_2, 4)), 
+     col = "red", cex = 1.2)
+plot(wilcoxon_vec, t_vec,
+     main = "Wilcoxon vs t",
+     xlab = "wilcoxon",
+     ylab = "t")
+
+# Add correlation text in red
+text(x = 0.55, y = 0.35, 
+     labels = paste0("cor = ", round(corr_val, 4)), 
+     col = "red", cex = 1.2)
+
+plot(t_vec, rankt_vec,
+     main = "t vs ranked t",
+     xlab = "t",
+     ylab = "ranked t")
+# Plot
+text(x = 0.55, y = 0.55, 
+     labels = paste0("cor = ", round(corr_val_3, 4)), 
+     col = "red", cex = 1.2)
+```
+The wilcoxon test, in principle, is equivalent to ranked t test. However, in implementation, the way I rank the expression data is different (specifically, dealing with ties). For wilcoxon, I use standard wilcoxon ranking i.e. when ties occur, take the mean of the rank. However in ranked t I implemented, I take the minimum of the rank.
+But still they are highly correlated.
+
+
+# April 2025 - Xie - 300 cNMF sets:
+
+## Parameter setting
+
+Raw data folder: 
+```r
+"/project/xuanyao/jiaming/Getting_started/output/Xie/sceptre/cNMF_threshold4/results_run_discovery_analysis.rds"
+"output/Xie/our_method/cNMF/log_covariate_remove_cis/resample_normal_test_statistics.csv"
+
+```
+gRNA assignment : Cutoff4
+
+Test : Wilcoxon
+
+Skew curve : Skewed normal
+
+## Results
+```{r}
+
+resample_normal_wilcoxon <-  read.csv("output/Xie/our_method/cNMF/log_covariate_remove_cis/resample_normal_test_statistics.csv", row.names = 1, header = TRUE, check.names = FALSE)
+
+gene_module_index_matrix_essential <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Xie/program_data_cNMF/gene_module_index_matrix.rds")
+
+gene_names <- rownames(gene_module_index_matrix_essential)
+
+
+sceptre <- readRDS("/project/xuanyao/jiaming/Getting_started/output/Xie/sceptre/cNMF_threshold4/results_run_discovery_analysis.rds")[,c(1,2,6)]
+
+
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_target
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(resample_normal_wilcoxon)[rownames(resample_normal_wilcoxon) %in% rownames(sceptre_wide)], ]
+```
+
+
+
+```{r,echo=F}
+sceptre_wide <- sceptre_wide[, gene_names, drop = FALSE]
+
+library(heavytailcombtest)
+library(ACAT)
+module_results <- list()
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Xie/program_data_cNMF/discovery_pairs_cis.rds")
+
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  
+  
+  
+  matched_targets <- grna_id
+  
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id
+
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+# Iterate over each module (column) in gene_module_index_matrix_essential
+for (j in seq_len(ncol(gene_module_index_matrix_essential))) {
+  
+  # Get the module name from column names
+  module_name <- colnames(gene_module_index_matrix_essential)[j] 
+  
+  # Get the gene names corresponding to nonzero entries in the column
+  module_genes <- gene_names[gene_module_index_matrix_essential[, j] != 0]
+  module_genes <- setdiff(module_genes, cis_genes)
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        
+        # acat_pval <- ACAT(module_p_values)
+
+         acat_pval<- combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
+       # acat_pval <- combination.test(module_p_values,truncate = T)
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+
+      
+        # bonferroni_pval <- min(module_p_values) * length(module_p_values)
+        # bonferroni_pval <- min(bonferroni_pval, 1) 
+        # module_acat_pvals <- c(module_acat_pvals, bonferroni_pval)
+        
+        
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+    # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_t <- do.call(rbind, module_results)
+
+library(dplyr)
+library(tidyr)
+library(tibble)
+
+
+
+
+resample_normal_wilcoxon_long <- resample_normal_wilcoxon %>%
+  rownames_to_column(var = "grna_id") %>%
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")%>%
+  semi_join(module_results_t, by = c("grna_id", "module"))
+
+
+
+resample_normal_wilcoxon_long$bh_pval <- p.adjust(resample_normal_wilcoxon_long$p_value, method = "BH")
+resample_normal_wilcoxon_long$identifier <- paste(resample_normal_wilcoxon_long$grna_id, resample_normal_wilcoxon_long$module, sep = "_")
+
+
+module_results_t$bh_pval <- p.adjust(module_results_t$acat_pval, method = "BH")
+module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$module, sep = "_")
+```
+
+```{r,fig.width=20,fig.height=20,cache=F}
+
+library(eulerr)
+library(gridExtra)
+
+# Define significance levels
+significant_levels <- c(0.05, 0.1, 0.15,0.2)
+plot_list <- list()
+
+# Loop through significant levels and compare methods
+for (significant_level in significant_levels) {
+  
+
+   sig_resample_normal_wilcoxon <- resample_normal_wilcoxon_long$identifier[resample_normal_wilcoxon_long$bh_pval < significant_level]
+
+  
+  sig_sceptre <- module_results_t$identifier[module_results_t$bh_pval < significant_level]
+
+  venn_data <- list(
+
+    # "t not rank" = sig_resample_normal_not_rank,
+    "sceptre_resample" = sig_sceptre,
+    "Wilcoxon" =sig_resample_normal_wilcoxon
+  )
+  
+  # Generate the Euler diagram and display it
+  euler_plot <- plot(euler(venn_data),
+                      fills = list(fill = c("red", "yellow","orange"), alpha = 0.5),
+                      edges = TRUE, quantities = TRUE,
+                      main = paste("Significance Level", significant_level))
+  
+  # Store the plot
+  plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+
+# Arrange the plots in a grid
+grid.arrange(grobs = plot_list, ncol = 2)
+```
+```{r}
+gg_qqplot(as.vector(as.matrix(resample_normal_wilcoxon[519,])),title="NTC-1")
+gg_qqplot(as.vector(as.matrix(resample_normal_wilcoxon[521,])),title="NTC-3")
 ```
 
 
