@@ -347,7 +347,7 @@ Here we compare two choices: MinP and Max stat
 MinP: use the minimum P value as test statistics, and instead of using skew curve, we used 10000 resample
 Max stat: use the maximum of standardized z values, and fit skew normal curve, we used 3000 resample
 
-```{r,echo=F}
+```{r,echo=F,cache=F}
 ntc_our <- our_method_long %>%
   filter(startsWith(grna_id, "NTC")) %>%
   filter(!startsWith(grna_id, "NTC-2")) %>%
@@ -436,15 +436,19 @@ knitr::include_graphics("images/relabel_v1.png", error = FALSE)
 
 # Mar 2025 - Xie - 50 Hallmark gene sets:
 
-<span style="color:red">Apart from t test, we also implemented wilcoxon test in a computational efficient manner: </span>
+<span style="color:red">Apart from t test, we also implemented wilcoxon test in a computational efficient manner: </span> We will compare t, ranked t, wilcoxon test in this section.
+
+
 ## Parameter setting
 
 Raw data folder: 
+
 ```r
 "/project/xuanyao/jiaming/Getting_started/output/Xie/sceptre/adj_crt_union_batch_threshold_4/results_run_discovery_analysis.rds"
 "output/Xie/our_method/remove_cis_normal_not_rank_pooled_batch/resample_normal_test_statistics.csv"
 "output/Xie/our_method/50HALLMARK/log_covariate/resample_normal_test_statistics.csv"
 ```
+
 gRNA assignment : Cutoff4
 
 Test : Wilcoxon
@@ -913,7 +917,7 @@ for (significant_level in significant_levels) {
 # Arrange the plots in a grid
 grid.arrange(grobs = plot_list, ncol = 2)
 ```
-```{r}
+```{r,cache=F}
 gg_qqplot(as.vector(as.matrix(resample_normal_wilcoxon[519,])),title="NTC-1")
 gg_qqplot(as.vector(as.matrix(resample_normal_wilcoxon[521,])),title="NTC-3")
 ```
