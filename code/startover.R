@@ -263,9 +263,7 @@ analysis_gene_module <- function (grna_assignment_matrix, response_matrix, gene_
         module_genes <- which(module > 0)
 
         apply(gene_wise_p_tensor[,,slice_idx], 1, function(row) {
-          if (length(module_genes) == 0) {
-            return(NA)
-          }
+
           return(min(row[module_genes], na.rm = TRUE))
         })
       })
@@ -372,26 +370,33 @@ response_matrix <- response_matrix_normalized
 
 gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
 
+# grna_assignment_matrix <-get_grna_assignments(
+#   sceptre_object = sceptre_object
+# )[c(87,88,117,118,125,126,151,152,165,166,177:188,189:198),]
+
+
 grna_assignment_matrix <-get_grna_assignments(
   sceptre_object = sceptre_object
-)[151:208,]
+)[-207,]
+
 
 
 n_rows <- nrow(grna_assignment_matrix)
 
-key <- "no_approximation_20000"
+key <- "test"
 use_resample <- T
 use_approximation <- F
 rank <- T
 test_type="t_test"
-n_permute <- 20000
+n_permute <- 10000
 chunk_size <- 50
 
 
 if (rank) {
   response_matrix <-  t(rank_matrix(as.matrix(response_matrix))$X_ranked)
+  rownames(response_matrix)<- readLines("docs/row_names.txt")
 }
-rownames(response_matrix)<- readLines("docs/row_names.txt")
+
 
 # grna_assignment_matrix <-get_grna_assignments(
 #   sceptre_object = sceptre_object

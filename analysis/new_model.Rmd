@@ -39,6 +39,7 @@ library(tidyr)
 library(ACAT)
 library(MASS)
 
+
 gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
   n <- length(ps)
   df <- data.frame(
@@ -76,7 +77,7 @@ setwd("/project/xuanyao/jiaming/Getting_started")
 
 if (author_threshold) {
   #directories <- "data/STINGseq-v1_GDO"
-  directories <- "data/gene_module_author_threshold"
+  directories <- "data/Morris/gene_module_author_threshold"
   grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
   grna_target_data_frame_omit  <- grna_target_data_frame %>%
     filter(!(grna_id %in% c("NTC-3", "NTC-12")))
@@ -93,7 +94,7 @@ if (author_threshold) {
     sceptre_object = sceptre_object,
     positive_control_pairs = positive_control_pairs,
     response_position_data_frame=gene_position_data_frame_grch37,
-    distance_threshold = 10e5
+    distance_threshold = 10e6
   )
 
   discovery_pairs_trans <- construct_trans_pairs(
@@ -118,7 +119,7 @@ if (author_threshold) {
 ```
 
 ```{r}
-  directories <- "data/GDO_threshold"
+  directories <- "data/Morris/GDO_threshold"
   # directories <- "data/gene_module_author_threshold"
   grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
   grna_target_data_frame_omit  <- grna_target_data_frame %>%
@@ -159,7 +160,7 @@ if (author_threshold) {
 setwd("/project/xuanyao/jiaming/Getting_started")
 
 
-gene_modules <- readRDS("data/gene_modules_id.rds")
+gene_modules <- readRDS("data/gene_module_50/gene_modules_id.rds")
 covariate <- sceptre_object_complete@covariate_data_frame
 
 
@@ -236,7 +237,7 @@ cell_to_filter <- which(covariate$response_n_umis < 5000)
 table(colSums(get_grna_assignments(
     sceptre_object = sceptre_object
   )[,cell_to_filter]))
-  
+length(cell_to_filter)
 ```
 
 
@@ -281,12 +282,12 @@ The dataset we are using now is a
 5.  Filtered (removing cells that have low library size \<1300 total UMI
     counts)
 
-## Consider perturbations that affects >150 cells
+## Consider perturbations that affects >30 cells
 
 ```{r}
 
 
-infect_cell_threshold <- 150
+infect_cell_threshold <- 30
 
 gene_modules <- readRDS("data/gene_modules_id.rds")
 
@@ -635,6 +636,151 @@ grid.arrange(grobs = plot_list, ncol = 2)
 
 par(mfrow = c(1, 1))
 ```
+
+
+
+```{r}
+
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < 0.01]
+  significant_ids_ours <- our_method_long$identifier[
+    our_method_long$bh_pval < 0.01]
+
+unique_to_ours <- setdiff(significant_ids_ours, significant_ids_gene_wise_p)
+unique_to_ours
+result_acat_pval <- lapply(unique_to_ours, function(item) {
+  # Split the unique identifier into grna_id and module
+  parts <- strsplit(item, "_HALLMARK_")[[1]]
+  grna_id <- parts[1]
+  module <- paste0("HALLMARK_", parts[2])
+  
+  # Print the grna_id and module for debugging
+  print(c(grna_id, module))
+  
+  # Filter the data frame for matching grna_id and module
+  filtered1 <- module_results_sceptre[
+    module_results_sceptre$grna_id == grna_id &
+    module_results_sceptre$module == module, 
+  ]
+  
+  filtered2 <- our_method_long[
+    our_method_long$grna_id == grna_id &
+    our_method_long$module == module, 
+  ]
+  
+  # Filter for gene_module_index_matrix as a vector of p-values
+  filtered3 <- sceptre_wide[grna_id, gene_module_index_matrix[, module] == 1]
+  
+  # Return acat_pval, p_value, and filtered3 as a vector
+  if (nrow(filtered1) > 0 & nrow(filtered2) > 0) {
+    return(list(
+      acat_pval = filtered1$acat_pval,
+      our_pval = filtered2$p_value,
+      pval_vector = filtered3
+    ))
+  } else {
+    return(list(
+      acat_pval = NA,
+      our_pval = NA,
+      pval_vector = NA  # Return NA if no match is found
+    ))
+  }
+})
+
+# Combine results into a data frame
+result_acat_pval_df <- data.frame(
+  unique_id = unique_to_ours,
+  acat_pval = sapply(result_acat_pval, function(x) x$acat_pval),
+  our_pval = sapply(result_acat_pval, function(x) x$our_pval)
+)
+
+# Add the vector column as a list column
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval, function(x) x$pval_vector)
+
+
+```
+
+
+
+```{r}
+
+
+# 确保 pval_vector 是一个简单单列表
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval_df$pval_vector, unlist)
+
+# 过滤掉 min(pval_vector) <= 0.1 的行
+filtered_df <- result_acat_pval_df %>%
+  rowwise() %>%
+  filter(min(unlist(pval_vector)) > 0.003) %>%
+  ungroup()
+
+filtered_df <- filtered_df %>%
+  mutate(row_id = row_number()) # 添加行号作为 row_id
+
+# 将 pval_vector 列展平到长格式
+long_format <- filtered_df %>%
+  mutate(row_id = row_number()) %>% # 添加行号作为分组标识
+  unnest(pval_vector) # 展平 pval_vector 列
+
+# 添加随机抖动以模拟类似散点图效果
+set.seed(42) # 为随机抖动设置固定种子
+long_format <- long_format %>%
+  mutate(jittered_x = row_id + runif(n(), min = -0.2, max = 0.2)) # 添加随机抖动
+
+library(scales)
+
+reverse_log10 <- trans_new(
+  name = "reverse_log10",
+  transform = function(x) -log10(x),
+  inverse = function(x) 10^(-x),
+  breaks = log_breaks(base = 10),
+  format = label_log(base = 10)
+)
+
+# 应用到 ggplot
+ggplot(long_format, aes(x = jittered_x, y = pval_vector)) +
+  geom_point(alpha = 0.3, color = "black") +  # 散点图
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.2, xend = row_id + 0.2,
+      y = acat_pval, yend = acat_pval,
+      color = "ACAT p-value"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.2, xend = row_id + 0.2,
+      y = our_pval, yend = our_pval,
+      color = "Our p-value"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  scale_y_continuous(
+    trans = reverse_log10,  # 应用自定义反转对数变换
+    limits = c(1, 0.9*1e-4)
+  ) +
+  scale_color_manual(
+    values = c("ACAT p-value" = "red", "Our p-value" = "blue")  # 定义颜色
+  ) +
+  labs(
+    x = "Row ID (with jitter)",
+    y = "p-value",
+    title = "Scatter Plot of p-values with ACAT p-value (red) and Our p-value (blue)",
+    color = "Legend"  # 图例标题
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),  # 隐藏 x 轴文本
+    axis.ticks.x = element_blank()  # 隐藏 x 轴刻度
+  )
+```
+
+
+
+
 
 **Test on non-targeting gRNAs**
 
@@ -1201,6 +1347,7 @@ trans_positive_control_rows <- which(grna_target_data_frame_omit$grna_target %in
 
 
 
+
 ```{r}
 
 sceptre_trans_positive <- module_results_sceptre %>% 
@@ -1643,6 +1790,8 @@ test statistics are always non-centered.
 
 
 ```{r,include=F}
+source("code/functions.R")
+
 use_resample <- T
 use_approximation <- F
 
@@ -1659,7 +1808,7 @@ source("code/functions.R")
  set.seed(0)
   grna_assignment_matrix_combined <- permutation_or_resampling(grna_assignment_matrix, n_permute, use_resample)
 
-  test_result <- t_test_pooled_variance(response_matrix, grna_assignment_matrix_combined)
+  test_result <- t_test(response_matrix, grna_assignment_matrix_combined)
 
   gene_wise_test_tensor <-  convert_matrix_to_tensor(test_result, n_permute, grna_assignment_matrix)
 
@@ -1670,7 +1819,7 @@ source("code/functions.R")
 ```{r,echo=F,cache=F}
 
 par(mfrow = c(3, 2))
-set.seed(0)
+set.seed(3)
 gene_idx <- sample(1:dim(gene_wise_test_tensor)[2],6)
 for (i in gene_idx){
 value <- gene_wise_test_tensor[1, i, 1]
@@ -1692,7 +1841,7 @@ text(value, par("usr")[4] * 0.9, paste("Observed:", round(value, 2)), col = "red
 ### Compute the glm test statistics using the glm function in R
 
 
-```r
+```{r}
 round_response<-round(response_matrix_raw[gene_idx,])
 par(mfrow = c(3, 2))
 
@@ -1709,14 +1858,17 @@ z_values <- vector("list", 800)
 # Loop through the permutations
 for (i in 1:800) {
   # Fit the GLM model
-model <- glm.nb(
-  round_response[k, ] ~ subset_grna_assignment_matrix[i, ] + log(covariate$response_n_umis)
+model <- glm(
+  round_response[k, ] ~ subset_grna_assignment_matrix[i, ] + log(covariate$response_n_umis),
+  family = "poisson"
 )
-  
-    coef <- coef(summary(model))  # Summary of the model
-  
-  # Calculate the z-value for the predictor variable
-  z_values[i] <- coef[2, "Estimate"] / coef[2, "Std. Error"]
+
+# Extract model coefficients
+coef <- coef(summary(model))  # Summary of the model
+
+# Calculate the z-value for the predictor variable
+z_values[i] <- coef[2, "Estimate"] / coef[2, "Std. Error"]
+
 }
 
 
@@ -1732,6 +1884,22 @@ text(z_values[[1]], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
 
 }
 ```
+```{r}
+
+hist(
+  as.numeric(z_values),
+  main = paste0("Test statistics of ", rownames(grna_assignment_matrix)[grna_indices[1]],"-", rownames(round_response)[k]), xlab="null test statistics", breaks=800
+)
+
+abline(v = z_values[[1]], col = "red", lwd = 2)
+
+# Optionally, add a label for the value
+text(z_values[[1]], par("usr")[4] * 0.9, "Observed", col = "red", pos = 4)
+```
+
+
+
+
 ```{r,echo=F,cache-F}
 knitr::include_graphics("images/NB_test.png", error = FALSE)
 ```
@@ -2138,10 +2306,9 @@ abline(0, 1, col = "red", lwd = 2)
 combined_test_tensor <- combine_test_statistics_tensor(normalized_test_tensor,gene_module_index_matrix)
 
 hist(test_normalizer(combined_test_tensor)[,1,1],breaks=1000, main="power 1 combination")
+hist(test_normalizer(combined_test_tensor)[,4,1],breaks=1000, main="power 4 combination")
 hist(test_normalizer(combined_test_tensor)[,8,1],breaks=1000, main="power 8 combination")
 ```
-
-
 
 
 
@@ -2511,8 +2678,8 @@ for (significant_level in significant_levels) {
     `Sceptre+Cauchy` = significant_ids_gene_wise_p,
     # `t+Cauchy` = significant_ids_gene_wise_p_t,
     `minp` = significant_ids_minp,
-    `Our method` = significant_ids_ours,
-    `max stat` = significant_ids_max_stat
+    `Our method` = significant_ids_ours
+    # `max stat` = significant_ids_max_stat
     # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
     # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
   )
@@ -2533,6 +2700,7 @@ par(mfrow = c(1, 1))
 ```
 
 
+
 # Removing Cis element
 ```{r,echo=F,fig.width=8, fig.height=8,cache=F}
 library(ggplot2)
@@ -2541,19 +2709,30 @@ library(readr)
 library(tibble)
 library(tidyr)
 
+infect_cell_threshold <- 30
 
-gene_modules <- readRDS("data/gene_modules_id.rds")
 
-# gene_wise_p  <- read.csv("output/newest/filter_cell/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
+gene_modules <- readRDS("data/gene_module_50/gene_modules_id.rds")
+  gene_module_index_matrix <- convert_gene_list_to_matrix(response_matrix, gene_modules)
+   # gene_module_index_matrix <- resample_columns(gene_module_index_matrix, 15)
+  rownames(gene_module_index_matrix)<-rownames(response_matrix)
+  
+  
+  
+# gene_wise_p  <- read.csv("output/newest/remove_cis_10Mb/gene_wise_p.csv", nrows = 207)[rowSums(get_grna_assignments(
 #   sceptre_object = sceptre_object
-# )[-208,])>500,]
-gene_wise_p  <- read.csv("output/newest/advanced/gene_wise_p.csv", nrows = 207)
+# )[1:206,])>infect_cell_threshold,]
+
+
+gene_wise_p  <- read.csv("output/Morris/remove_cis/remove_cis_10Mb_approximation_3000/gene_wise_p.csv", nrows = 207)
 
 
 gene_wise_p[gene_wise_p == 0] <- 1 / 10000
 gene_wise_p[gene_wise_p >= 1] <- 1- 1/10000
-sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_discovery_analysis.rds")[,c(1,2,7)],
-                 readRDS("/project/xuanyao/jiaming/Getting_started/output/both_trans_author_filtered_cell_complete/results_run_calibration_check.rds")[,c(1,2,7)])
+
+
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre/both_trans_author_filtered_cell_complete/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre/both_trans_author_filtered_cell_complete/results_run_calibration_check.rds")[,c(1,2,7)])
 
 sceptre <- sceptre[!is.na(sceptre$p_value), ]
 sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
@@ -2574,154 +2753,6 @@ sceptre_wide <- sceptre_wide[, colnames(gene_wise_p), drop = FALSE]
 library(eulerr)
 
 
-module_results <- list()
-
-# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
-for (i in seq_len(nrow(gene_wise_p))) {
-  grna_id <- rownames(gene_wise_p)[i]
-  p_values_row <- gene_wise_p[i,] 
-  
-  # Initialize an empty list to store ACAT p-values and module names for each module
-  module_acat_pvals <- c()
-  module_names <- c()
-  
-  # Iterate over each module in gene_modules to combine p-values using ACAT
-  for (j in seq_along(gene_modules)) {
-    module_name <- names(gene_modules)[j]  # Get the module name
-    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
-    
-    # Only apply ACAT if there are genes to combine and they are not NA
-    if (length(module_genes) > 0) {
-      module_p_values <- as.numeric(p_values_row[module_genes])
-      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
-      
-      # Check if module_p_values still has values after removing NAs
-      if (length(module_p_values) > 0) {
-        # acat_pval <- ACAT(module_p_values)
-        acat_pval<-combination.test(module_p_values,weights = NA,method = "Cauchy",tail.idx = 1)
-        module_acat_pvals <- c(module_acat_pvals, acat_pval)
-        module_names <- c(module_names, module_name)
-      } else {
-        module_acat_pvals <- c(module_acat_pvals, NA)
-        module_names <- c(module_names, module_name)
-      }
-    } else {
-      module_acat_pvals <- c(module_acat_pvals, NA)
-      module_names <- c(module_names, module_name)
-    }
-  }
-  
-  # Store results as a data frame in the list
-  module_results[[i]] <- data.frame(
-    grna_id = grna_id,
-    module = module_names,
-    acat_pval = module_acat_pvals
-  )
-}
-
-
-# Combine all results into a single data frame
-module_results_t <- do.call(rbind, module_results)
-
-
-module_results <- list()
-
-# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
-for (i in seq_len(nrow(gene_wise_p))) {
-  grna_id <- rownames(gene_wise_p)[i]
-  p_values_row <- gene_wise_p[i, ]
-  
-  # Initialize an empty list to store Bonferroni p-values and module names for each module
-  module_acat_pvals <- c()
-  module_names <- c()
-
-  # Iterate over each module in gene_modules to combine p-values using Bonferroni
-  for (j in seq_along(gene_modules)) {
-    module_name <- names(gene_modules)[j]  # Get the module name
-    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
-    
-    # Only apply Bonferroni if there are genes to combine and they are not NA
-    if (length(module_genes) > 0) {
-      module_p_values <- as.numeric(p_values_row[module_genes])
-      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
-      
-      # Check if module_p_values still has values after removing NAs
-      if (length(module_p_values) > 0) {
-        # Bonferroni adjustment: multiply smallest p-value by number of tests
-        bonferroni_pval <- min(module_p_values) * length(module_p_values)
-        bonferroni_pval <- min(bonferroni_pval, 1)  # Cap p-values at 1
-        module_acat_pvals <- c(module_acat_pvals, bonferroni_pval)
-        module_names <- c(module_names, module_name)
-      } else {
-        module_acat_pvals <- c(module_acat_pvals, NA)
-        module_names <- c(module_names, module_name)
-      }
-    } else {
-      module_acat_pvals <- c(module_acat_pvals, NA)
-      module_names <- c(module_names, module_name)
-    }
-  }
-
-  # Store results as a data frame in the list
-  module_results[[i]] <- data.frame(
-    grna_id = grna_id,
-    module = module_names,
-    bonferroni_pval = module_acat_pvals
-  )
-}
-
-# Combine all results into a single data frame
-module_results_t_bonforroni <- do.call(rbind, module_results)
-
-
-module_results <- list()
-
-# Iterate over each row of t_gene_no_approximation to compute Bonferroni p-values for each module
-for (i in seq_len(nrow(sceptre_wide))) {
-  grna_id <- rownames(sceptre_wide)[i]
-  p_values_row <- sceptre_wide[i, ]
-  
-  # Initialize an empty list to store Bonferroni p-values and module names for each module
-  module_acat_pvals <- c()
-  module_names <- c()
-
-  # Iterate over each module in gene_modules to combine p-values using Bonferroni
-  for (j in seq_along(gene_modules)) {
-    module_name <- names(gene_modules)[j]  # Get the module name
-    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
-    
-    # Only apply Bonferroni if there are genes to combine and they are not NA
-    if (length(module_genes) > 0) {
-      module_p_values <- as.numeric(p_values_row[module_genes])
-      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
-      
-      # Check if module_p_values still has values after removing NAs
-      if (length(module_p_values) > 0) {
-        # Bonferroni adjustment: multiply smallest p-value by number of tests
-        bonferroni_pval <- min(module_p_values) * length(module_p_values)
-        bonferroni_pval <- min(bonferroni_pval, 1)  # Cap p-values at 1
-        module_acat_pvals <- c(module_acat_pvals, bonferroni_pval)
-        module_names <- c(module_names, module_name)
-      } else {
-        module_acat_pvals <- c(module_acat_pvals, NA)
-        module_names <- c(module_names, module_name)
-      }
-    } else {
-      module_acat_pvals <- c(module_acat_pvals, NA)
-      module_names <- c(module_names, module_name)
-    }
-  }
-
-  # Store results as a data frame in the list
-  module_results[[i]] <- data.frame(
-    grna_id = grna_id,
-    module = module_names,
-    bonferroni_pval = module_acat_pvals
-  )
-}
-
-# Combine all results into a single data frame
-module_results_sceptre_bonforroni <- do.call(rbind, module_results)
 
 
 module_results <- list()
@@ -2734,11 +2765,18 @@ for (i in seq_len(nrow(sceptre_wide))) {
   # Initialize an empty list to store ACAT p-values and module names for each module
   module_acat_pvals <- c()
   module_names <- c()
-  
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
   # Iterate over each module in gene_modules to combine p-values using ACAT
-  for (j in seq_along(gene_modules)) {
-    module_name <- names(gene_modules)[j]  # Get the module name
-    module_genes <- gene_modules[[j]][gene_modules[[j]] %in% colnames(p_values_row)]
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
     
     # Only apply ACAT if there are genes to combine and they are not NA
     if (length(module_genes) > 0) {
@@ -2780,22 +2818,24 @@ library(tibble)
 # minp <- read.csv("output/newest/filter_cell/minp.csv")[rowSums(get_grna_assignments(
 #   sceptre_object = sceptre_object
 # )[-208,])>500,]
+# 
+# 
+# minp <- read.csv("output/newest/remove_cis_10Mb_approximation_3000/max_normalized_statistics.csv")
 
 
-minp <- read.csv("output/newest/remove_cis/our_method.csv")
+# minp_long <- minp%>%
+#   rownames_to_column(var = "grna_id") %>% # Add row names as a column
+#   pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
 
 
-minp_long <- minp%>%
-  rownames_to_column(var = "grna_id") %>% # Add row names as a column
-  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+# minp_long <- minp_long %>% filter(!is.na(p_value))
 
-# Remove rows with NA p-values
-minp_long <- minp_long %>% filter(!is.na(p_value))
-
-# our_method <-  read.csv("output/newest/filter_cell/our_method.csv")[rowSums(get_grna_assignments(
+# our_method <-  read.csv("output/newest/remove_cis_10Mb/our_method.csv")[rowSums(get_grna_assignments(
 #   sceptre_object = sceptre_object
-# )[-208,])>500,]
-our_method <-  read.csv("output/newest/filter_cell_complete_power8/our_method.csv")
+# )[1:206,])>infect_cell_threshold,]
+
+
+our_method <-  read.csv("output/Morris/remove_cis/remove_cis_10Mb/our_method.csv")
 
 
 
@@ -2809,7 +2849,7 @@ our_method_long <- our_method_long %>% filter(!is.na(p_value))
 
 
 
-max_stat <- read.csv("output/newest/pool_variance_confirm/our_method.csv")
+max_stat <- read.csv("output/Morris/remove_cis/remove_cis_10Mb_approximation_3000/max_normalized_statistics.csv")
 
 
 max_stat_long <- max_stat%>%
@@ -2822,15 +2862,13 @@ max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
 
 
 
-module_results_t <- module_results_t %>%
-  semi_join(module_results_sceptre, by = c("grna_id", "module"))
 
-module_results_t_bonforroni <- module_results_t_bonforroni %>%
-  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+# module_results_t_bonforroni <- module_results_t_bonforroni %>%
+#   semi_join(module_results_sceptre, by = c("grna_id", "module"))
 
 # Filter rows in minp_long
-minp_long <- minp_long %>%
-  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+# minp_long <- minp_long %>%
+#   semi_join(module_results_sceptre, by = c("grna_id", "module"))
 
 # Filter rows in our_method_long
 our_method_long <- our_method_long %>%
@@ -2839,31 +2877,22 @@ our_method_long <- our_method_long %>%
 max_stat_long <- max_stat_long %>%
   semi_join(module_results_sceptre, by = c("grna_id", "module"))
 
-
-
-module_results_t$bh_pval <- p.adjust(module_results_t$acat_pval, method = "BH")
-module_results_t$identifier <- paste(module_results_t$grna_id, module_results_t$module, sep = "_")
 module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
 module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
-module_results_sceptre_bonforroni$bh_pval <- p.adjust(module_results_sceptre_bonforroni$bonferroni_pval, method = "BH")
-module_results_sceptre_bonforroni$identifier <- paste(module_results_sceptre_bonforroni$grna_id, module_results_sceptre_bonforroni$module, sep = "_")
-
-module_results_t_bonforroni$bh_pval <- p.adjust(module_results_t_bonforroni$bonferroni_pval, method = "BH")
-module_results_t_bonforroni$identifier <- paste(module_results_t_bonforroni$grna_id, module_results_t_bonforroni$module, sep = "_")
 
 
 
-minp_long$bh_pval <-  p.adjust(minp_long$p_value, method = "BH")
-minp_long$identifier <- paste(minp_long$grna_id, minp_long$module, sep = "_")
+
 our_method_long$bh_pval <-  p.adjust(our_method_long$p_value, method = "BH")
 our_method_long$identifier <- paste(our_method_long$grna_id, our_method_long$module, sep = "_")
 
 max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
-max_stat_long$identifier <- paste(max_stat_long$grna_id, our_method_long$module, sep = "_")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
 ```
 
 
-```{r,cache=F,fig.width=8,fig.height=8}
+
+```{r,cache=F,fig.width=8.8,fig.height=6}
 library(eulerr)
 
 significant_levels <- c(0.01, 0.05, 0.1, 0.25)
@@ -2876,18 +2905,7 @@ for (significant_level in significant_levels) {
   significant_ids_gene_wise_p <- module_results_sceptre$identifier[
     module_results_sceptre$bh_pval < significant_level]
   
-    significant_ids_gene_wise_p_bonfer <- module_results_sceptre_bonforroni$identifier[
-    module_results_sceptre_bonforroni$bh_pval < significant_level]
-    
-    
-  significant_ids_gene_wise_p_t <- module_results_t$identifier[
-    module_results_t$bh_pval < significant_level]
-  
-    significant_ids_gene_wise_p_t_bonfer <- module_results_t_bonforroni$identifier[
-    module_results_t_bonforroni$bh_pval < significant_level]
-  
- significant_ids_minp <- minp_long$identifier[
-    minp_long$bh_pval < significant_level]
+
   
   significant_ids_ours <- our_method_long$identifier[
     our_method_long$bh_pval < significant_level]
@@ -2899,26 +2917,826 @@ for (significant_level in significant_levels) {
   venn_data <- list(
     `Sceptre+Cauchy` = significant_ids_gene_wise_p,
     # `t+Cauchy` = significant_ids_gene_wise_p_t,
-    `remove cis` = significant_ids_minp,
-    `Our method` = significant_ids_ours,
-    `pooled variance` = significant_ids_max_stat
+    # `max stat` = significant_ids_minp,
+    `MinP` = significant_ids_ours,
+    `max stat` = significant_ids_max_stat
     # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
     # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
   )
   
   # Generate the Euler diagram and display it
-  euler_plot <- plot(euler(venn_data),
-                     fills = list(fill = c("red", "green", "yellow","blue"), alpha = 0.5),
-                     edges = TRUE, quantities = TRUE,
-                     main = paste("Significant level", significant_level)
-  )
-  
+euler_plot <- plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "green", "yellow", "orange"), alpha = 0.5),
+  edges = TRUE,
+  quantities = TRUE,
+  labels = list(font = 2, cex = 1.2, pos = 3), # 调整字体和位置
+  main = paste("Significant level", significant_level)
+)
 plot_list[[length(plot_list) + 1]] <- euler_plot
 }
 grid.arrange(grobs = plot_list, ncol = 2)
 
 par(mfrow = c(1, 1))
 ```
+### Test on control set
+
+```{r}
+
+sceptre_trans_positive <- module_results_sceptre %>% 
+  filter(grna_id %in% trans_positive_control_ids)
+
+our_trans_positive <- max_stat_long %>%
+    filter(grna_id %in% trans_positive_control_ids)
+
+sceptre_cis_positive <- module_results_sceptre %>%
+  filter((grna_id == "CD46-1" & module == "HALLMARK_COMPLEMENT") |
+         (grna_id == "CD46-2" & module == "HALLMARK_COMPLEMENT") |
+          (grna_id == "HSPA8-1" & module == "HALLMARK_G2M_CHECKPOINT") |
+          (grna_id == "HSPA8-2" & module == "HALLMARK_G2M_CHECKPOINT") | 
+         (grna_id == "NMU-1" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+           (grna_id == "NMU-2" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MYC_TARGETS_V1") |
+            (grna_id == "PPIA-1" & module == "HALLMARK_GLYCOLYSIS") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_GLYCOLYSIS") |
+            (grna_id == "RPL22-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "RPL22-2" & module == "HALLMARK_MYC_TARGETS_V1") )
+
+our_cis_positive <- max_stat_long %>%
+  filter((grna_id == "CD46-1" & module == "HALLMARK_COMPLEMENT") |
+         (grna_id == "CD46-2" & module == "HALLMARK_COMPLEMENT") |
+          (grna_id == "HSPA8-1" & module == "HALLMARK_G2M_CHECKPOINT") |
+          (grna_id == "HSPA8-2" & module == "HALLMARK_G2M_CHECKPOINT") | 
+         (grna_id == "NMU-1" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+           (grna_id == "NMU-2" & module == "HALLMARK_ESTROGEN_RESPONSE_LATE") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MTORC1_SIGNALING") | 
+            (grna_id == "PPIA-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_MYC_TARGETS_V1") |
+            (grna_id == "PPIA-1" & module == "HALLMARK_GLYCOLYSIS") | 
+            (grna_id == "PPIA-2" & module == "HALLMARK_GLYCOLYSIS") |
+            (grna_id == "RPL22-1" & module == "HALLMARK_MYC_TARGETS_V1") | 
+            (grna_id == "RPL22-2" & module == "HALLMARK_MYC_TARGETS_V1") )
+
+# sceptre_positive_control <- rbind(sceptre_trans_positive,sceptre_cis_positive)
+# our_positive_control <- rbind(our_trans_positive,our_cis_positive)
+sceptre_positive_control <- sceptre_trans_positive
+our_positive_control <- our_trans_positive
+
+```
+
+```{r}
+sceptre_positive_bh <- p.adjust(sceptre_positive_control$acat_pval,method = "BH")
+our_positive_bh <- p.adjust(our_positive_control$p_value,method = "BH")
+
+filtered_indices <- which(sceptre_positive_control$acat_pval < 0.1)
+
+# Subset the adjusted p-value vectors
+sceptre_positive_bh <- sceptre_positive_bh[filtered_indices]
+our_positive_bh <- our_positive_bh[filtered_indices]
+
+```
+
+```{r,cache=F}
+alpha_values <- c(0.05, 0.1, 0.15, 0.2)
+
+
+
+
+
+
+# Initialize a matrix to store counts for each alpha
+combined_counts <- matrix(0, nrow = 3, ncol = length(alpha_values))
+
+# Loop through each alpha
+for (i in seq_along(alpha_values)) {
+  alpha <- alpha_values[i]
+  
+  # Calculate rejections for the current alpha
+  sceptre_rejections <- which(sceptre_positive_bh < alpha)
+  gene_wise_rejections <- which(our_positive_bh < alpha)
+  
+  # Find common and unique rejections
+  common_rejections <- intersect(sceptre_rejections, gene_wise_rejections)
+  sceptre_unique <- setdiff(sceptre_rejections, common_rejections)
+  gene_wise_unique <- setdiff(gene_wise_rejections, common_rejections)
+  
+  # Store counts for the current alpha
+  combined_counts[, i] <- c(length(common_rejections), 
+                            length(sceptre_unique), 
+                            length(gene_wise_unique))
+}
+
+# Create bar plot
+barplot(combined_counts,
+        beside = FALSE,  # Stacked bars
+        col = c(rgb(0.5, 0.5, 0.5, 0.5),   # Grey with 50% transparency
+                rgb(1, 0, 0, 0.5),         # Red with 50% transparency
+                rgb(1, 1, 0, 0.5)), # Grey = Common, Red = Sceptre unique, Yellow = Gene-wise unique
+        names.arg = paste("Alpha =", alpha_values),
+        main = "Gene Module Rejections Comparison for Positive Control Set",
+        xlab = NULL,
+        ylab = "Count",
+        legend.text = c("Common", "Sceptre-Cauchy Unique", "Our Unique"),
+        args.legend = list(x = "topleft", cex = 0.6))
+```
+
+
+```{r}
+max_stat <- read.csv("output/newest/remove_cis_skewed_t/max_normalized_statistics.csv")
+
+
+
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+
+ntc_max_stat <- max_stat_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+      # filter(!startsWith(grna_id, "NTC-2")) %>%
+      #   filter(!startsWith(grna_id, "NTC-9")) %>% 
+      filter(!startsWith(grna_id, "NTC-12")) %>% 
+        filter(!startsWith(grna_id, "NTC-3")) %>% 
+   dplyr::select(grna_id, p_value)
+
+
+
+
+
+
+
+
+
+gg_qqplot_all_grna <- function(data, ci = 0.95, title = "Max stat skewed t") {
+  # Get unique grna_id values
+  grna_ids <- unique(data$grna_id)
+
+  # Create a list of p-value vectors, split by grna_id
+  p_list <- split(data$p_value, data$grna_id)
+
+  # Create data frames for each grna_id
+  df_list <- lapply(names(p_list), function(grna) {
+    p_vals <- p_list[[grna]]
+    n <- length(p_vals)
+
+    data.frame(
+      observed = pmin(-log10(sort(p_vals)), 4), 
+      expected = -log10(ppoints(n)), 
+      group = grna
+    )
+  })
+
+  # Combine all datasets into one data frame
+  df <- bind_rows(df_list)
+
+  # Confidence intervals (based on the first dataset)
+  n1 <- length(p_list[[1]])
+  clower <- pmin(-log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n1, shape2 = n1:1)), 4)
+  cupper <- pmin(-log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n1, shape2 = n1:1)), 4)
+
+  # Define axis labels
+  log10Pe <- expression(paste("Expected -log"["10"], plain(P)))
+  log10Po <- expression(paste("Observed -log"["10"], plain(P)))
+
+  # Plot
+  ggplot(df, aes(x = expected, y = observed, color = group)) +
+    geom_ribbon(data = data.frame(x = -log10(ppoints(n1)), ymin = clower, ymax = cupper),
+                aes(x = x, ymin = ymin, ymax = ymax),
+                fill = "gray", alpha = 0.2, inherit.aes = FALSE) +
+    geom_point(size = 1.5,alpha=0.4) +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    labs(title = title, x = log10Pe, y = log10Po) +
+    theme_minimal()
+}
+
+# Example Usage: Compare QQ plots for all unique grna_id groups
+gg_qqplot_all_grna(ntc_max_stat)
+```
+
+
+
+```{r}
+ntc_our <- our_method_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+  filter(!startsWith(grna_id, "NTC-2")) %>%
+  dplyr::select(grna_id, p_value)
+
+ntc_minp <- minp_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+    filter(!startsWith(grna_id, "NTC-2")) %>%
+   dplyr::select(grna_id, p_value)
+
+ntc_max_stat <- max_stat_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+    filter(!startsWith(grna_id, "NTC-2")) %>%
+   dplyr::select(grna_id, p_value)
+
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+    filter(!startsWith(grna_id, "NTC-2")) %>%
+   dplyr::select(grna_id, acat_pval)
+```
+
+
+```{r}
+max_stat <- read.csv("output/newest/enriched_negative_control_skewed_normal/max_normalized_statistics.csv")
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+
+ntc_max_stat <- max_stat_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+      filter(!startsWith(grna_id, "NTC-2")) %>%
+      #   filter(!startsWith(grna_id, "NTC-9")) %>%
+      filter(!startsWith(grna_id, "NTC-12")) %>%
+        filter(!startsWith(grna_id, "NTC-3")) %>%
+   dplyr::select(grna_id, p_value)
+
+
+gg_qqplot_compare <- function(ps1, ps2, ps3, ci = 0.95, title = "QQ Plot Comparison") {
+  n1 <- length(ps1)
+  n2 <- length(ps2)
+  n3 <- length(ps3)
+  
+  # Create data frames for all three datasets
+  df1 <- data.frame(
+    observed = pmin(-log10(sort(ps1)), 4),
+    expected = -log10(ppoints(n1)),
+    group = "Max Comb"
+  )
+  
+  df2 <- data.frame(
+    observed = pmin(-log10(sort(ps2)), 4),
+    expected = -log10(ppoints(n2)),
+    group = "Sceptre + Cauchy"
+  )
+  
+  df3 <- data.frame(
+    observed = pmin(-log10(sort(ps3)), 4),
+    expected = -log10(ppoints(n3)),
+    group = "MinP"
+  )
+  
+  # Combine data frames
+  df <- rbind(df1, df2, df3)
+  
+  # Confidence intervals for Dataset 1
+  clower <- pmin(-log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n1, shape2 = n1:1)), 4)
+  cupper <- pmin(-log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n1, shape2 = n1:1)), 4)
+  
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+
+  # Plot
+  ggplot(df, aes(x = expected, y = observed, color = group)) +
+    geom_ribbon(data = data.frame(x = -log10(ppoints(n1)), ymin = clower, ymax = cupper),
+                aes(x = x, ymin = ymin, ymax = ymax),
+                fill = "gray", alpha = 0.2, inherit.aes = FALSE) +
+    geom_point(size = 1.5) +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    scale_color_manual(values = c("skyblue",  "dodgerblue","red")) +
+    xlab(log10Pe) +
+    ylab(log10Po) +
+    ylim(0, 4) +
+    ggtitle(title) +
+    theme_minimal()
+}
+
+
+gg_qqplot_compare(
+  ps1 = as.vector(ntc_max_stat$p_value),
+  ps2 = as.vector(ntc_sceptre$acat_pval),
+  ps3 = as.vector(ntc_our$p_value),
+  title = "Negative control p-values"
+)
+
+```
+```{r}
+max_stat <- read.csv("output/newest/enriched_negative_control_skewed_normal/max_normalized_statistics.csv")
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+
+ntc_max_stat <- max_stat_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+      filter(!startsWith(grna_id, "NTC-2")) %>%
+      #   filter(!startsWith(grna_id, "NTC-9")) %>%
+      filter(!startsWith(grna_id, "NTC-12")) %>%
+        filter(!startsWith(grna_id, "NTC-3")) %>%
+   dplyr::select(grna_id, p_value)
+
+gg_qqplot(as.vector(ntc_max_stat$p_value),title="3000 skewed normal (remove NTC-2)")
+```
+
+
+
+```{r}
+max_stat <- read.csv("output/newest/remove_cis_skewed_t/max_normalized_statistics.csv")
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+
+ntc_max_stat <- max_stat_long %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+      filter(!startsWith(grna_id, "NTC-2")) %>%
+      #   filter(!startsWith(grna_id, "NTC-9")) %>%
+      filter(!startsWith(grna_id, "NTC-12")) %>%
+        filter(!startsWith(grna_id, "NTC-3")) %>%
+   dplyr::select(grna_id, p_value)
+
+gg_qqplot(as.vector(ntc_max_stat$p_value),title="3000 skewed t (remove NTC-2)")
+
+
+```
+
+
+
+```{r}
+ntc_sceptre <- module_results_sceptre %>%
+  filter(startsWith(grna_id, "NTC")) %>%
+      filter(!startsWith(grna_id, "NTC-2")) %>% 
+        filter(!startsWith(grna_id, "NTC-9")) %>% 
+   dplyr::select(grna_id, acat_pval)
+gg_qqplot(as.vector(ntc_sceptre$acat_pval),title="sceptre+cauchy test")
+
+gg_qqplot(as.vector(ntc_max_stat$p_value),title="3000 skewed normal (remove NTC-2)")
+
+ntc_max_stat
+ntc_sceptre
+```
+
+
+```{r}
+qqplot(-log10(qunif(ppoints(length(as.vector(ntc_max_stat$p_value))))), 
+       -log10(sort(as.vector(ntc_max_stat$p_value))),
+       main = "Our max stat test",
+       xlab = "Theoretical -log10(Uniform Quantiles)",
+       ylab = "Observed -log10(P-values)")
+
+# Add reference line
+abline(0, 1, col = "red")
+
+qqplot(-log10(qunif(ppoints(length(as.vector(ntc_sceptre$acat_pval))))), 
+       -log10(sort(as.vector(ntc_sceptre$acat_pval))),
+       main = "Sceptre+Cauchy",
+       xlab = "Theoretical -log10(Uniform Quantiles)",
+       ylab = "Observed -log10(P-values)")
+
+# Add reference line
+abline(0, 1, col = "red")
+
+```
+
+```{r}
+  significant_ids_gene_wise_p <- module_results_sceptre$identifier[
+    module_results_sceptre$bh_pval < 0.01]
+  significant_ids_ours <- max_stat_long$identifier[
+    max_stat_long$bh_pval < 0.01]
+
+unique_to_ours <- setdiff(significant_ids_ours, significant_ids_gene_wise_p)
+unique_to_ours
+result_acat_pval <- lapply(unique_to_ours, function(item) {
+  # Split the unique identifier into grna_id and module
+  parts <- strsplit(item, "_HALLMARK_")[[1]]
+  grna_id <- parts[1]
+  module <- paste0("HALLMARK_", parts[2])
+  
+
+  
+  # Filter the data frame for matching grna_id and module
+  filtered1 <- module_results_sceptre[
+    module_results_sceptre$grna_id == grna_id &
+    module_results_sceptre$module == module, 
+  ]
+  
+  filtered2 <- max_stat_long[
+    max_stat_long$grna_id == grna_id &
+    max_stat_long$module == module, 
+  ]
+  
+  # Filter for gene_module_index_matrix as a vector of p-values
+  filtered3 <- sceptre_wide[grna_id, gene_module_index_matrix[, module] == 1]
+  
+  # Return acat_pval, p_value, and filtered3 as a vector
+  if (nrow(filtered1) > 0 & nrow(filtered2) > 0) {
+    return(list(
+      acat_pval = filtered1$acat_pval,
+      our_pval = filtered2$p_value,
+      pval_vector = filtered3
+    ))
+  } else {
+    return(list(
+      acat_pval = NA,
+      our_pval = NA,
+      pval_vector = NA  # Return NA if no match is found
+    ))
+  }
+})
+
+# Combine results into a data frame
+result_acat_pval_df <- data.frame(
+  unique_id = unique_to_ours,
+  acat_pval = sapply(result_acat_pval, function(x) x$acat_pval),
+  our_pval = sapply(result_acat_pval, function(x) x$our_pval)
+)
+
+# Add the vector column as a list column
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval, function(x) x$pval_vector)
+
+# Print the result
+head(result_acat_pval_df)
+```
+```{r}
+# 确保 pval_vector 是一个简单单列表
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval_df$pval_vector, unlist)
+
+# 过滤掉 min(pval_vector) <= 0.1 的行
+filtered_df <- result_acat_pval_df %>%
+  rowwise() %>%
+  filter(min(unlist(pval_vector)) > 0.003) %>%
+  ungroup()
+
+filtered_df <- filtered_df %>%
+  mutate(row_id = row_number()) # 添加行号作为 row_id
+
+# 将 pval_vector 列展平到长格式
+long_format <- filtered_df %>%
+  mutate(row_id = row_number()) %>% # 添加行号作为分组标识
+  unnest(pval_vector) # 展平 pval_vector 列
+
+# 添加随机抖动以模拟类似散点图效果
+set.seed(42) # 为随机抖动设置固定种子
+long_format <- long_format %>%
+  mutate(jittered_x = row_id + runif(n(), min = -0.2, max = 0.2)) # 添加随机抖动
+
+library(scales)
+
+reverse_log10 <- trans_new(
+  name = "reverse_log10",
+  transform = function(x) -log10(x),
+  inverse = function(x) 10^(-x),
+  breaks = log_breaks(base = 10),
+  format = label_log(base = 10)
+)
+
+# 应用到 ggplot
+ggplot(long_format, aes(x = jittered_x, y = pval_vector)) +
+  geom_point(alpha = 0.2, color = "black") +  # 散点图
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.2, xend = row_id + 0.2,
+      y = acat_pval, yend = acat_pval,
+      color = "Cauchy combination"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.2, xend = row_id + 0.2,
+      y = our_pval, yend = our_pval,
+      color = "Our method"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  scale_y_continuous(
+    trans = reverse_log10,  # 应用自定义反转对数变换
+    limits = c(1, 0.8*1e-11)
+  ) +
+  scale_color_manual(
+    values = c("Cauchy combination" = "red", "Our method" = "blue")  # 定义颜色
+  ) +
+  labs(
+    x = "Perturbation-module pair",
+    y = "p-value",
+    title = "Combination of p values within gene modules (Discovery Set)",
+    color = "Legend"  # 图例标题
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),  # 隐藏 x 轴文本
+    axis.ticks.x = element_blank()  # 隐藏 x 轴刻度
+  )
+```
+
+
+
+
+
+```{r}
+# Filter for grna_id starting with "NTC" but NOT "NTC-2"
+max_stat_long_ntc <- max_stat_long[grepl("^NTC", max_stat_long$grna_id) & max_stat_long$grna_id != "NTC-2", ]
+
+module_results_sceptre_ntc <- module_results_sceptre[grepl("^NTC", module_results_sceptre$grna_id) & module_results_sceptre$grna_id != "NTC-2", ]
+
+sceptre_wide_ntc <- sceptre_wide[grepl("^NTC", rownames(sceptre_wide)) & rownames(sceptre_wide) != "NTC-2", ]
+
+```
+
+```{r}
+process_grna_module <- function(grna_id, module, max_stat_long, module_results_sceptre, sceptre_wide, gene_module_index_matrix) {
+  # Filter for matching grna_id and module in module_results_sceptre
+  filtered1 <- module_results_sceptre[
+    module_results_sceptre$grna_id == grna_id & 
+    module_results_sceptre$module == module, 
+  ]
+  
+  # Filter for matching grna_id and module in max_stat_long
+  filtered2 <- max_stat_long[
+    max_stat_long$grna_id == grna_id & 
+    max_stat_long$module == module, 
+  ]
+  
+  # Filter for gene_module_index_matrix as a vector of p-values
+  if (module %in% colnames(gene_module_index_matrix)) {
+    filtered3 <- sceptre_wide[grna_id, gene_module_index_matrix[, module] == 1, drop = FALSE]
+  } else {
+    filtered3 <- NULL
+  }
+  
+  # Return acat_pval, p_value, and filtered3 as a vector
+  if (nrow(filtered1) > 0 & nrow(filtered2) > 0 & !is.null(filtered3)) {
+    return(list(
+      acat_pval = filtered1$acat_pval,
+      our_pval = filtered2$p_value,
+      pval_vector = filtered3
+    ))
+  } else {
+    return(list(
+      acat_pval = NA,
+      our_pval = NA,
+      pval_vector = NA
+    ))
+  }
+}
+```
+
+
+```{r}
+
+
+# Initialize a results list
+result_acat_pval <- list()
+
+# Loop through each row of max_stat_long_ntc
+for (i in seq_len(nrow(max_stat_long_ntc))) {
+  grna_id <- max_stat_long_ntc$grna_id[i]
+  module <- max_stat_long_ntc$module[i]
+  
+  # Process each grna_id and module combination
+  result_acat_pval[[i]] <- process_grna_module(
+    grna_id = grna_id,
+    module = module,
+    max_stat_long = max_stat_long_ntc,
+    module_results_sceptre = module_results_sceptre_ntc,
+    sceptre_wide = sceptre_wide_ntc,
+    gene_module_index_matrix = gene_module_index_matrix
+  )
+}
+
+# Combine results into a data frame
+result_acat_pval_df <- data.frame(
+  grna_id = max_stat_long_ntc$grna_id,
+  module = max_stat_long_ntc$module,
+  acat_pval = sapply(result_acat_pval, function(x) x$acat_pval),
+  our_pval = sapply(result_acat_pval, function(x) x$our_pval)
+)
+
+# Add the vector column as a list column
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval, function(x) x$pval_vector)
+
+# Print the result
+head(result_acat_pval_df)
+```
+
+
+```{r}
+set.seed(40)
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval_df$pval_vector, unlist)
+
+# 过滤掉 min(pval_vector) <= 0.1 的行
+filtered_df <- result_acat_pval_df %>%
+  rowwise() %>%
+  filter(length(unlist(pval_vector)) > 30) %>% 
+  ungroup() %>% sample_n(15)
+
+filtered_df <- filtered_df %>%
+  mutate(row_id = row_number()) # 添加行号作为 row_id
+
+# 将 pval_vector 列展平到长格式
+long_format <- filtered_df %>%
+  mutate(row_id = row_number()) %>% # 添加行号作为分组标识
+  unnest(pval_vector) # 展平 pval_vector 列
+
+# 添加随机抖动以模拟类似散点图效果
+ # 为随机抖动设置固定种子
+long_format <- long_format %>% 
+  mutate(jittered_x = row_id + runif(n(), min = -0.2, max = 0.2)) # 添加随机抖动
+
+library(scales)
+
+reverse_log10 <- trans_new(
+  name = "reverse_log10",
+  transform = function(x) -log10(x),
+  inverse = function(x) 10^(-x),
+  breaks = log_breaks(base = 10),
+  format = label_log(base = 10)
+)
+
+# 应用到 ggplot
+ggplot(long_format, aes(x = jittered_x, y = pval_vector)) +
+  geom_point(alpha = 0.3, color = "black") +  # 散点图
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.25, xend = row_id + 0.25,
+      y = acat_pval, yend = acat_pval,
+      color = "Cauchy combination"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.25, xend = row_id + 0.25,
+      y = our_pval, yend = our_pval,
+      color = "Our method"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  scale_y_continuous(
+    trans = reverse_log10,  # 应用自定义反转对数变换
+    limits = c(1, 1e-2)
+  ) +
+  scale_color_manual(
+    values = c("Cauchy combination" = "red", "Our method" = "blue")  # 定义颜色
+  ) +
+  labs(
+    x = "Perturbation-module pair",
+    y = "p-value",
+    title = "Combination of p values within gene modules (Negative Control)",
+    color = "Legend"  # 图例标题
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),  # 隐藏 x 轴文本
+    axis.ticks.x = element_blank()  # 隐藏 x 轴刻度
+  )
+```
+```{r}
+max_stat_long_ptc <- max_stat_long %>% 
+  filter(grna_id %in% trans_positive_control_ids)
+
+module_results_sceptre_ptc <- module_results_sceptre%>% 
+  filter(grna_id %in% trans_positive_control_ids)
+
+sceptre_wide_ptc <- sceptre_wide%>% 
+  filter(rownames(sceptre_wide) %in% trans_positive_control_ids)
+```
+
+
+```{r}
+# Initialize a results list
+result_acat_pval <- list()
+
+# Loop through each row of max_stat_long_ntc
+for (i in seq_len(nrow(max_stat_long_ptc))) {
+  grna_id <- max_stat_long_ptc$grna_id[i]
+  module <- max_stat_long_ptc$module[i]
+  
+  # Process each grna_id and module combination
+  result_acat_pval[[i]] <- process_grna_module(
+    grna_id = grna_id,
+    module = module,
+    max_stat_long = max_stat_long_ptc,
+    module_results_sceptre = module_results_sceptre_ptc,
+    sceptre_wide = sceptre_wide_ptc,
+    gene_module_index_matrix = gene_module_index_matrix
+  )
+}
+
+# Combine results into a data frame
+result_acat_pval_df <- data.frame(
+  grna_id = max_stat_long_ptc$grna_id,
+  module = max_stat_long_ptc$module,
+  acat_pval = sapply(result_acat_pval, function(x) x$acat_pval),
+  our_pval = sapply(result_acat_pval, function(x) x$our_pval)
+)
+
+# Add the vector column as a list column
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval, function(x) x$pval_vector)
+
+# Print the result
+head(result_acat_pval_df)
+```
+
+
+
+
+```{r}
+set.seed(41)
+result_acat_pval_df$pval_vector <- lapply(result_acat_pval_df$pval_vector, unlist)
+
+# 过滤掉 min(pval_vector) <= 0.1 的行
+filtered_df <- result_acat_pval_df %>%
+  rowwise() %>%
+  filter(length(unlist(pval_vector)) > 30 & acat_pval < 1e-5 & our_pval>1e-70) %>% 
+  
+  ungroup() %>% sample_n(15)
+
+filtered_df <- filtered_df %>%
+  mutate(row_id = row_number()) # 添加行号作为 row_id
+
+# 将 pval_vector 列展平到长格式
+long_format <- filtered_df %>%
+  mutate(row_id = row_number()) %>% # 添加行号作为分组标识
+  unnest(pval_vector) # 展平 pval_vector 列
+
+# 添加随机抖动以模拟类似散点图效果
+ # 为随机抖动设置固定种子
+long_format <- long_format %>% 
+  mutate(jittered_x = row_id + runif(n(), min = -0.2, max = 0.2)) # 添加随机抖动
+
+library(scales)
+
+reverse_log10 <- trans_new(
+  name = "reverse_log10",
+  transform = function(x) -log10(x),
+  inverse = function(x) 10^(-x),
+  breaks = log_breaks(base = 10),
+  format = label_log(base = 10)
+)
+
+# 应用到 ggplot
+ggplot(long_format, aes(x = jittered_x, y = pval_vector)) +
+  geom_point(alpha = 0.3, color = "black") +  # 散点图
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.25, xend = row_id + 0.25,
+      y = acat_pval, yend = acat_pval,
+      color = "Cauchy combination"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = row_id - 0.25, xend = row_id + 0.25,
+      y = our_pval, yend = our_pval,
+      color = "Our method"
+    ),
+    linetype = "solid", size = 1
+  ) +
+  scale_y_continuous(
+    trans = reverse_log10,  # 应用自定义反转对数变换
+    limits = c(1, 1e-70)
+  ) +
+  scale_color_manual(
+    values = c("Cauchy combination" = "red", "Our method" = "blue")  # 定义颜色
+  ) +
+  labs(
+    x = "Perturbation-module pair",
+    y = "p-value",
+    title = "Combination of p values within gene modules (Positive Control)",
+    color = "Legend"  # 图例标题
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),  # 隐藏 x 轴文本
+    axis.ticks.x = element_blank()  # 隐藏 x 轴刻度
+  )
+```
+
+
 
 
 
@@ -2958,8 +3776,8 @@ for (significant_level in significant_levels) {
   venn_data <- list(
     # `Sceptre+Cauchy` = significant_ids_gene_wise_p,
     # `t+Cauchy` = significant_ids_gene_wise_p_t,
-    `remove cis` = significant_ids_minp,
-    `Our method` = significant_ids_ours
+    `minp remove cis` = significant_ids_minp,
+    `minp` = significant_ids_ours
     # `pooled variance` = significant_ids_max_stat
     # `Sceptre+Bonfer` = significant_ids_gene_wise_p_bonfer,
     # `t+Bonfer`=significant_ids_gene_wise_p_t_bonfer
@@ -3021,7 +3839,7 @@ if (author_threshold) {
     sceptre_object = sceptre_object,
     positive_control_pairs = positive_control_pairs,
     response_position_data_frame=gene_position_data_frame_grch37,
-    distance_threshold = 10e5
+    distance_threshold = 10e6
   )
 
   discovery_pairs_trans <- construct_trans_pairs(
@@ -3056,12 +3874,7 @@ if (author_threshold) {
 
   positive_control_pairs <- construct_positive_control_pairs(sceptre_object_complete)
 
-  discovery_pairs_cis <- construct_cis_pairs(
-    sceptre_object = sceptre_object_complete,
-    positive_control_pairs = positive_control_pairs,
-    response_position_data_frame=gene_position_data_frame_grch37,
-    distance_threshold = 5e5
-  )
+
 
   discovery_pairs_trans <- construct_trans_pairs(
     sceptre_object = sceptre_object_complete,
@@ -3082,37 +3895,7 @@ if (author_threshold) {
     )
 
 
-} else{
-
-  directories <- "data/gene_module"
-  grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
-  sceptre_object <- import_data_from_cellranger(
-    directories = directories,
-    moi = "high",
-    grna_target_data_frame = grna_target_data_frame
-  )
-  positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
-
-  discovery_pairs_cis <- construct_cis_pairs(
-    sceptre_object = sceptre_object,
-    positive_control_pairs = positive_control_pairs,
-    response_position_data_frame=gene_position_data_frame_grch37,
-    distance_threshold = 5e5
-  )
-
-  discovery_pairs_trans <- construct_trans_pairs(
-    sceptre_object = sceptre_object,
-    positive_control_pairs = positive_control_pairs,
-    pairs_to_exclude = "pairs_containing_pc_targets"
-  )
-  sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
-    set_analysis_parameters(
-      discovery_pairs=discovery_pairs_trans,
-      positive_control_pairs=positive_control_pairs,
-      side="both") |>
-    assign_grnas()
-
-}
+} 
 analyze_chunk <- function(chunk,response_matrix) {
 
 
@@ -3218,10 +4001,6 @@ if (cell_filter){
 
 
 
-
-
-
-
 n_rows <- nrow(grna_assignment_matrix)
 
 key <- "remove_cis"
@@ -3256,23 +4035,25 @@ analyze_chunk <- function(chunk_matrix, response_matrix) {
     stop("The rows of the chunk_matrix do not refer to exactly one unique target.")
   }
   
-  unique_target <- unique_targets[1]  # Get the single unique target
+  unique_target <- unique_targets[1]
   
   # Step 2: Extract all the genes paired with the target
   cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == unique_target, ]$response_id
-
+  n_cis_genes <- length(cis_genes)
   
   gene_module_index_matrix_remove_cis <- gene_module_index_matrix
   rows_to_zero <- rownames(gene_module_index_matrix_remove_cis) %in% cis_genes
-  n_cis_genes <- sum(rows_to_zero==T)  # Record the number of cis genes
+
+  # Ensure condition_matrix remains a matrix
+  condition_matrix <- gene_module_index_matrix_remove_cis[rows_to_zero, , drop = FALSE] == 1
   
-  # Record the unique(chunk_rownames) and sum(gene_module_index_matrix_remove_cis[rows_to_zero, ] == 1)
-  unique_chunk_rownames <- unique(chunk_rownames)
-  sum_rows_to_zero <- sum(gene_module_index_matrix_remove_cis[rows_to_zero, ] == 1)
+  # Get column indices
+  column_indices <- unique(which(condition_matrix, arr.ind = TRUE)[, "col"])
   
+  # Return results
   return(list(
-    unique_chunk_rownames = unique_chunk_rownames,
-    sum_rows_to_zero = sum_rows_to_zero,
+    unique_chunk_rownames = unique(chunk_rownames),
+    sum_rows_to_zero = length(column_indices),
     n_cis_genes = n_cis_genes
   ))
 }
@@ -3310,6 +4091,8 @@ results_df <- data.frame(
 # Print or save results as required
 print(results_df)
 ```
+
+
 ```{r}
 bar_values <- results_df$sum_rows_to_zero
 names(bar_values) <- results_df$unique_chunk_rownames
@@ -3319,9 +4102,9 @@ barplot(
   bar_values,
   las = 2,            # Rotate axis labels for readability
   col = "lightblue",  # Bar color
-  main = "Number of gene modules that remove cis genes",
+  main = "Number of gene sets that remove cis genes",
   xlab = "Perturbation",
-  ylab = "# Gene modules",
+  ylab = "Number of Gene modules",
   cex.names = 0.6     # Reduce the size of x-axis labels
 )
 ```
@@ -3340,5 +4123,10 @@ barplot(
   ylab = "# Genes",
   cex.names = 0.6     # Reduce the size of x-axis labels
 )
+```
+
+
+```{r}
+sceptre_object_complete@response_matrix[[1]]
 ```
 

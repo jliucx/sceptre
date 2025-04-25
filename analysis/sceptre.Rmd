@@ -17,7 +17,7 @@ library(readr)
 # load the data, creating a sceptre_object
 directories <- directories <- "data/STINGseq-v1_GDO"
 grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
-grna_target_data_frame
+grna_target_data_frame[c(1:4,176:180,189:195),]
 ```
 
 ```{r}
@@ -43,19 +43,21 @@ discovery_pairs <- construct_cis_pairs(
   sceptre_object = sceptre_object,
   positive_control_pairs = positive_control_pairs,
   response_position_data_frame=gene_position_data_frame_grch37,
-  distance_threshold = 5e6
+  distance_threshold = 5e5
 )
-discovery_pairs
+head(discovery_pairs)
 ```
 
 ```{r}
 # apply the pipeline functions to the sceptre_object in order
-sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
+sceptre_object <- sceptre_object |> 
   set_analysis_parameters(discovery_pairs=discovery_pairs, positive_control_pairs=positive_control_pairs, side="left") |>
-  run_calibration_check(parallel = T) |>
-  run_power_check(parallel = T) |>
-  run_discovery_analysis(parallel = T)
+  assign_grnas(method = "thresholding",threshold = 5) |>
+  run_calibration_check(parallel = F) |>
+  run_power_check(parallel = F) |>
+  run_discovery_analysis(parallel = F)
 
-# write the results to disk
-write_outputs_to_directory(sceptre_object, "output/sceptre_outputs_cis")
+# write the results to dis
+write_outputs_to_directory(sceptre_object, "output/sceptre_outputs_cis_threshold5")
 ```
+

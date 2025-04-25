@@ -9,3 +9,8 @@ analysis/*png
 analysis/*html
 analysis/*_cache
 analysis/site_libs
+analysis/create_grna_target_data_frame.Rmd
+analysis/seurat_example.Rmd
+analysis/*err
+analysis/*out
+analysis/*sh

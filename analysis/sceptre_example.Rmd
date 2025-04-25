@@ -11,30 +11,24 @@ editor_options:
 library(sceptre)
 library(sceptredata)
 library(readr)
+library(dplyr)
 ```
 
 ```{r}
 # load the data, creating a sceptre_object
 directories <- directories <- "data/STINGseq-v1_GDO"
 grna_target_data_frame <- data.frame(read_csv(paste0(directories,"/grna_target_data_frame.csv")))
-grna_target_data_frame
-```
+grna_target_data_frame_omit  <- grna_target_data_frame %>%
+  filter(!(grna_id %in% c("NTC-3", "NTC-12")))
 
-```{r}
-thresholds_file <- paste0(directories,"/GDO.umi_thresholds.csv.gz")
-
-# Read the thresholds file
-umi_thresholds <- read_csv(thresholds_file)
-
-# View the thresholds
-print(umi_thresholds)
+grna_target_data_frame_omit
 ```
 
 ```{r}
 sceptre_object <- import_data_from_cellranger(
   directories = directories,
   moi = "high",
-  grna_target_data_frame = grna_target_data_frame
+  grna_target_data_frame = grna_target_data_frame_omit
 )
 ```
 
@@ -49,7 +43,7 @@ positive_control_pairs
 ```
 
 ```{r}
-discovery_pairs <- construct_trans_pairs(
+discovery_pairs <- construct_cis_pairs(
   sceptre_object = sceptre_object,
   positive_control_pairs = positive_control_pairs,
   pairs_to_exclude = "pairs_containing_pc_targets"
@@ -59,17 +53,162 @@ head(discovery_pairs)
 
 ```{r}
 # apply the pipeline functions to the sceptre_object in order
-sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
-  set_analysis_parameters(discovery_pairs=discovery_pairs, positive_control_pairs=positive_control_pairs, side="left") |>
+sceptre_object <- sceptre_object |> 
+  set_analysis_parameters(discovery_pairs=discovery_pairs, positive_control_pairs=positive_control_pairs) |>
   run_calibration_check(parallel = T) |>
   run_power_check(parallel = T) |>
   run_discovery_analysis(parallel = T)
 
-# write the results to disk
-write_outputs_to_directory(sceptre_object, "output/sceptre_outputs")
+write_outputs_to_directory(sceptre_object, "output/sceptre_outputs_trans_omit_NTC3_12")
 ```
 
 ```{r}
+(cis_calibration <- readRDS("/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_cis_singleton/results_run_calibration_check.rds"))
+```
+
+```{r}
+```
+
+```{r}
+(trans_calibration <- readRDS("/project/xuanyao/jiaming/Getting_started/output/sceptre_outputs_trans_singleton/results_run_calibration_check.rds"))
+```
+
+```{r}
+matching_rows <- merge(cis_calibration[,c(1,2,7)], trans_calibration[,c(1,2,7)], by = c("response_id", "grna_id"))
+
+# The order of matching_rows will now follow cis_calibration
+matching_rows <- matching_rows[order(match(matching_rows$response_id, cis_calibration$response_id),
+                                     match(matching_rows$grna_id, cis_calibration$grna_id)), ]
+colnames(matching_rows)=c("gene_id","grna_id","cis","trans")
+matching_rows
+```
+
+```{r}
+p_val=trans_calibration$p_value
+
+```
+
+```{r}
+p_val <- sort(p_val)
+n <- length(p_val)
+expected <- ppoints(n)  
+
+# Calculate observed p-values
+observed <- p_val  # Reversing the scale
+
+# Create a data frame for plotting
+data <- data.frame(Expected = expected, Observed = observed)
+
+# Create the QQ plot with reversed axes
+ggplot(data, aes(x = Expected, y = Observed)) +
+  geom_point(size=0.9, color="red") +  # Plot the points
+  geom_abline(slope = 1, intercept = 0, color = "black") +  # Add reference line
+  scale_x_reverse(limits = c(1, 0)) +  # Reverse x-axis
+  scale_y_reverse(limits = c(1, 0)) +  # Reverse y-axis
+  coord_fixed() +
+  labs(title = "QQ plot (bulk)",
+       x = "Expected null p-value",
+       y = "Observed p-value") +
+  theme_minimal()
+
+gg_qqplot <- function(ps, ci = 0.95) {
+  n  <- length(ps)
+  df <- data.frame(
+    observed = -log10(sort(ps)),
+    expected = -log10(ppoints(n)),
+    clower   = -log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)),
+    cupper   = -log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1))
+  )
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper),
+                alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color="red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + ylab(log10Po)
+}
+
+gg_qqplot(p_val)
+```
+
+```{r}
+set.seed(2)
+
+# Randomly sample 1790 rows from trans_calibration
+random_sample <- trans_calibration[sample(nrow(trans_calibration), 1790), ]
+p_val=random_sample$p_value
+gg_qqplot(p_val)
+
+```
+
+```{r}
+alphas <- c(0.00001, 0.0001, 0.001, 0.01, 0.1)
+
+N <- nrow(cis_calibration)
+
+observed_counts <- numeric(length(alphas))
+expected_counts <- numeric(length(alphas))
+
+for (i in seq_along(alphas)) {
+  alpha <- alphas[i]
+  
+  
+  observed_counts[i] <- sum(cis_calibration$p_value <= alpha)
+  
+  expected_counts[i] <- alpha * N
+}
+
+plot_data <- data.frame(alpha = alphas, observed = observed_counts, expected = expected_counts)
+
+plot(plot_data$alpha, plot_data$observed, type = "b", col = "blue", pch = 19,
+     xlab = "Alpha", ylab = "Number of Pairs",
+     main = "Observed vs Expected Number of Pairs with p <= alpha")
+lines(plot_data$alpha, plot_data$expected, type = "b", col = "red", pch = 19)
+legend("topleft", legend = c("Observed", "Expected"), col = c("blue", "red"), pch = 19, lty = 1)
+```
+
+```{r}
+data.frame("observed_counts"=observed_counts, "expected_counts"=expected_counts)
+```
+
+```{r}
+results_run_calibration_check <- readRDS("/project/xuanyao/jiaming/Getting_started/output/trans_singleton_threshold_author/results_run_calibration_check.rds")
+filtered_data <- results_run_calibration_check %>% filter(significant == TRUE)
+filtered_data[,c(1,2,7)]
+```
+
+```{r}
+
+directories <- paste0(
+  system.file("extdata", package = "sceptredata"),
+  "/highmoi_example/gem_group_", 1:2
+)
 data(grna_target_data_frame_highmoi)
-grna_target_data_frame_highmoi
+sceptre_object <- import_data_from_cellranger(
+  directories = directories,
+  moi = "high",
+  grna_target_data_frame = grna_target_data_frame_highmoi
+)
+
+# construct the grna-gene pairs to analyze
+positive_control_pairs <- construct_positive_control_pairs(sceptre_object)
+discovery_pairs <- construct_cis_pairs(
+  sceptre_object, 
+  positive_control_pairs = positive_control_pairs
+)
+
+# apply the pipeline functions to the sceptre_object in order
+sceptre_object <- sceptre_object |> # |> is R's base pipe, similar to %>%
+  set_analysis_parameters(discovery_pairs, positive_control_pairs)
+```
+
+```{r}
+sceptre_object <- assign_grnas(
+  sceptre_object = sceptre_object,
+  method = "thresholding"
+)
+(grna_assignment_matrix <- get_grna_assignments(
+  sceptre_object = sceptre_object
+))
 ```

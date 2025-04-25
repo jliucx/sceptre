@@ -9,7 +9,7 @@ editor_options:
 
 [Link to the paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3554627/)
 
-## Background
+## Motivation
 
 As GWAS analyses are generally univariate in nature, multivariate phenotypic information is usually reduced to a single composite score. This means that researchers, prior to analyses, often reduce available, originally multivariate, phenotypic information (e.g., information on multiple questions from a diagnostic interview or questionnaire, or multiple items in a test) to a single phenotypic composite score, such as a continuous sum score or binary case-control status. This practice often results in loss of statistical power to detect causal variants.
 
@@ -40,6 +40,3 @@ The *m*×*m* correlation matrix *ρ* between the p-values is not observed in pra
 ## Other methods
 
 MultiPhen uses ordinal regression to regress 0/1/2-coded GVs on a collection of phenotypes of any measurement nature (i.e., continuous, dichotomous, ordinal), and applies one omnibus test to test whether all regression weights in the model are together significantly different from zero. MultiPhen has been shown to outperform MANOVA when minor allele frequency (MAF) is low and the phenotypes are case-control status or non-normally distributed continuous variables. Under most circumstances, however, MultiPhen and MANOVA yield very similar results in terms of power to detect causal GVs. A drawback of these multivariate methods is that their power depends on the specific configuration of phenotypic correlations and on the location of the GV effect (e.g., on the latent dimension, or specific to one of many correlated phenotypes). For instance, when the ideal model holds, MANOVA is decidedly less powerful than univariate analyses based on sum scores. MANOVA, however, easily outperforms the sum score approach when the GV affects only one of multiple strongly correlated variables.
-
-
-

@@ -26,6 +26,7 @@ p_t_10000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Get
 p_t_2000_skn_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[13:24,])
 p_t_10000_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_10000_no_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
 p_t_2000_skn_positive <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_t_2000_use_approximation_2.csv", header = TRUE, row.names = 1))[1:12,])
+p_wilcox_p_2000_negative <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/calibration_power_include_trans_pval_wilcoxon_2000_use_approximation.csv", header = TRUE, row.names = 1))[13:24,])
 ```
 
 ## Runtime and peakRAM comparison
@@ -89,6 +90,30 @@ plot(p_10000, p_skn_2000,
      col = "red"
 )
 
+```
+
+## Including SNPs that have trans effect as positive control
+
+**Original positive control (12\*50 pvals)**
+
+```{r}
+p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))[11:22,])
+gg_qqplot(p_t_10000_positive_include_trans)
+```
+
+**Positive control of SNPs that have trans effect** **only (10\*50 pvals)**
+
+```{r}
+p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1))[1:10,])
+gg_qqplot(p_t_10000_positive_include_trans)
+
+```
+
+**Positive control after including SNPs that have trans effect (22\*50 pvals)**
+
+```{r}
+p_t_10000_positive_include_trans <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/power_include_trans_t_2000_use_approximation.csv", header = TRUE, row.names = 1)))
+gg_qqplot(p_t_10000_positive_include_trans)
 ```
 
 ## Calibration check (wilcoxon-test)

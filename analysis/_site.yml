@@ -1,7 +1,7 @@
-name: first sceptre trial
+name: Sceptre application and power increasing techniques
 output_dir: ../docs
 navbar:
-  title: first sceptre trial
+  title: Sceptre application and power increasing techniques
   left:
   - text: Home
     href: index.html

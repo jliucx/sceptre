@@ -283,3 +283,55 @@ ggplot(grna_count, aes(x = "", y = count, fill = grna_id)) +
             position = position_stack(vjust = 0.5)) +
   labs(title = "Distribution of significant grna_id", fill = "grna_id")
 ```
+
+```{r}
+pval<-read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_2.csv", header = TRUE, row.names = 1)
+```
+
+```{r}
+pval_vector <- as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/result_calibration_2.csv", header = TRUE, row.names = 1)))
+```
+
+```{r}
+gg_qqplot(pval_vector)
+```
+
+```{r}
+pval_individual <- pval[1, ]
+vector_individual <- as.vector(as.matrix(pval_individual))
+gg_qqplot(vector_individual)
+```
+
+```{r}
+pval_flat <- as.vector(as.matrix(pval))  # Flatten the matrix
+rownames_flat <- rep(rownames(pval), each = ncol(pval))  # Corresponding row names
+
+# Step 2: Create a data frame to hold both p-values and corresponding rows
+pval_data <- data.frame(
+  row = rownames_flat,
+  pval = pval_flat
+)
+
+# Step 3: Apply the Benjamini-Hochberg (BH) correction
+pval_data$adjusted_pval <- p.adjust(pval_data$pval, method = "BH")
+
+# Step 4: Sort by the adjusted p-values (if necessary)
+smallest_adjusted_pvals <- pval_data[order(pval_data$adjusted_pval), ]
+
+# Step 5: Display the 20 smallest adjusted p-values
+smallest_adjusted_pvals[1:20, ]
+```
+
+## Sceptre
+
+```{r}
+pval_sceptre<-readRDS("/project/xuanyao/jiaming/Getting_started/docs/output/trans_union_singleton_both/results_run_calibration_check.rds")$p_value
+```
+
+```{r}
+gg_qqplot(pval_sceptre)
+```
+
+```{r}
+gg_qqplot(sample(pval_sceptre, size = 300, replace = FALSE))
+```
