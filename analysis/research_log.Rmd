@@ -112,7 +112,7 @@ library(tidyr)
 infect_cell_threshold <- 30
 
 
-gene_modules <- readRDS("data/gene_module_50/gene_modules_id.rds")
+gene_modules <- readRDS("data/gene_module/gene_module_50_hallmark/gene_modules_id.rds")
 gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/gene_module_index_matrix.rds")
 
   
@@ -636,14 +636,14 @@ for (significant_level in significant_levels) {
 
   venn_data <- list(
 
-    # "t not rank" = sig_resample_normal_not_rank,
+    "t not rank" = sig_resample_normal_not_rank,
     "sceptre_resample" = sig_sceptre,
     "Wilcoxon" =sig_resample_normal_wilcoxon
   )
   
   # Generate the Euler diagram and display it
   euler_plot <- plot(euler(venn_data),
-                      fills = list(fill = c("red", "yellow","orange"), alpha = 0.5),
+                      fills = list(fill = c("yellow", "red","orange"), alpha = 0.5),
                       edges = TRUE, quantities = TRUE,
                       main = paste("Significance Level", significant_level))
   
@@ -730,7 +730,7 @@ The wilcoxon test, in principle, is equivalent to ranked t test. However, in imp
 But still they are highly correlated.
 
 
-# April 2025 - Xie - 300 cNMF sets:
+# April 2025 - Xie - 60 cNMF sets:
 
 ## Parameter setting
 
@@ -993,7 +993,7 @@ grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_t
 discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
 
 
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_3000_normal_approximation/resample_normal_test_statistics.csv",row.names = 1)
 
 
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_discovery_analysis.rds")[,c(1,2,7)],
@@ -1160,10 +1160,11 @@ par(mfrow = c(1, 1))
 
 
 
-```{r,cache=F}
-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Author_threshold; using all gRNA UMI counts")
+```{r,cache=F,fig.width=15,fig.height=6}
+p1<-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Author_threshold; using gRNA UMI counts above threshold")
 ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
-gg_qqplot(ntc_pvals, title="NTC-ACAT")
+p2<-gg_qqplot(ntc_pvals, title="NTC-ACAT")
+grid.arrange(p1, p2,  ncol = 2)
 ```
 ### Covariate: All UMI & gRNA counts
 
@@ -1177,7 +1178,7 @@ grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_t
 discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
 
 
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/author_threshold/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/author_threshold/HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
 
 
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_corrected_cov/results_run_discovery_analysis.rds")[,c(1,2,7)],
@@ -1344,10 +1345,11 @@ par(mfrow = c(1, 1))
 
 
 
-```{r,cache=F}
-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Author_threshold; using gRNA UMI counts above threshold")
+```{r,cache=F,fig.height=6, fig.width=15}
+p1<-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Author_threshold; using all gRNA UMI counts")
 ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
-gg_qqplot(ntc_pvals, title="NTC-ACAT")
+p2<-gg_qqplot(ntc_pvals, title="NTC-ACAT")
+grid.arrange(p1, p2,  ncol = 2)
 ```
 
 ## EM
@@ -1364,7 +1366,7 @@ grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_t
 discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
 
 
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
 
 
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/em_corrected_cov/results_run_discovery_analysis.rds")[,c(1,2,7)],
@@ -1484,8 +1486,6 @@ max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, s
 
 
 
-
-
 ```{r,cache=F,fig.width=8.8,fig.height=6,echo=F}
 library(eulerr)
 
@@ -1531,10 +1531,11 @@ par(mfrow = c(1, 1))
 
 
 
-```{r,cache=F}
-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Wilcoxon(EM)")
+```{r,cache=F,fig.height=6, fig.width=15}
+  p1<-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-EM; using all gRNA UMI counts")
 ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
-gg_qqplot(ntc_pvals, title="NTC-ACAT (Morris data)")
+p2<-gg_qqplot(ntc_pvals, title="NTC-ACAT")
+grid.arrange(p1, p2,  ncol = 2)
 ```
 
 ## Cutoff4
@@ -1555,7 +1556,7 @@ grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_t
 discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
 
 
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/cutoff4/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/cutoff4/HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
 
 
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/cutoff4_corrected_cov/results_run_discovery_analysis.rds")[,c(1,2,7)],
@@ -1722,16 +1723,17 @@ par(mfrow = c(1, 1))
 
 
 
-```{r,cache=F}
-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-Wilcoxon (cutoff4)")
+```{r,cache=F, fig.width=15, fig.height=6}
+  p1<-gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-cutoff4; using all gRNA UMI counts")
 ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
-gg_qqplot(ntc_pvals, title="NTC-ACAT (Morris data)")
+p2<-gg_qqplot(ntc_pvals, title="NTC-ACAT")
+grid.arrange(p1, p2,  ncol = 2)
 ```
 ## Horizontal comparison of 3 assignments
 
 ### Wilcoxon test
 ```{r}
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/em/HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
 max_stat_long <- max_stat%>%
   rownames_to_column(var = "grna_id") %>% # Add row names as a column
   pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
@@ -1748,7 +1750,7 @@ max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, s
 
 
 
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/cutoff4/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/cutoff4/HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
 max_stat_long_2 <- max_stat%>%
   rownames_to_column(var = "grna_id") %>% # Add row names as a column
   pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
@@ -1764,7 +1766,7 @@ max_stat_long_2$bh_pval <-  p.adjust(max_stat_long_2$p_value, method = "BH")
 max_stat_long_2$identifier <- paste(max_stat_long_2$grna_id, max_stat_long_2$module, sep = "_")
 
 
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/author_threshold/50HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/system_comparison/author_threshold/HALLMARK/resample_normal_test_statistics.csv",row.names = 1)
 max_stat_long_3 <- max_stat%>%
   rownames_to_column(var = "grna_id") %>% # Add row names as a column
   pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
@@ -2184,7 +2186,7 @@ grid.arrange(grobs = plot_list, ncol = 2)
 
 par(mfrow = c(1, 1))
 ```
-# Apr 2025 - Morris - cNMF gene sets
+# Apr 2025 - Morris - 60 cNMF gene sets
 
 We compare 3 configurations: EM Algorithm; cutoff=4; author threshold.
 
@@ -3397,6 +3399,1163 @@ grid.arrange(grobs = plot_list, ncol = 2)
 
 par(mfrow = c(1, 1))
 ```
+
+# Apr 25 2025 - cell covariate adjustment
+
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/cov_adjustment_1.png", error = FALSE)
+knitr::include_graphics("images/cov_adjustment_2.png", error = FALSE)
+knitr::include_graphics("images/cov_adjustment_3.png", error = FALSE)
+```
+
+# Apr 27 2025 - inflation using Normal approximation
+```{r,echo=F}
+
+max_stat_3000_without_approximation <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_3000_no_approximation/resample_normal_test_statistics.csv",row.names = 1)
+
+max_stat_10000_without_approximation <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_10000_no_approximation_replace_previous/resample_normal_test_statistics.csv",row.names = 1)
+
+max_stat_3000_with_approximation <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF/resample_normal_test_statistics.csv",row.names = 1)
+```
+
+
+
+
+```{r,cache=F,fig.width=15,fig.height=5}
+
+library(gridExtra)
+
+p1 <- gg_qqplot(as.vector(as.matrix(max_stat_3000_without_approximation[189:198, ])), title = "3000 no approximation") +
+  ggtitle("3000 no approximation")
+p2 <- gg_qqplot(as.vector(as.matrix(max_stat_10000_without_approximation[189:198, ])), title = "10000 no approximation") +
+  ggtitle("10000 no approximation")
+p3 <- gg_qqplot(as.vector(as.matrix(max_stat_3000_with_approximation[189:198, ])), title = "3000 normal approximation") +
+  ggtitle("3000 normal approximation")
+
+# 拼接
+grid.arrange(p1, p2, p3, ncol = 3)
+
+```
+
+```{r,cache=F}
+plot(as.vector(as.matrix(max_stat_3000_without_approximation)),
+as.vector(as.matrix(max_stat_10000_without_approximation)),xlab="3000 no approximation",ylab="10000 no approximation", main="No approximation: 3000 vs 10000")
+```
+
+
+
+```{r,cache=F}
+plot(
+  -log(as.vector(as.matrix(max_stat_3000_with_approximation))),
+  -log(as.vector(as.matrix(max_stat_10000_without_approximation))),
+  xlab = "3000 normal approximation", 
+  ylab = "10000 without approximation", 
+  main = "3000 normal vs 10000 no approximation (-log transform)",
+  xlim = c(0, 10),
+  ylim = c(0, 10),
+  xaxs = "i",
+  yaxs = "i"
+)
+abline(a = 0, b = 1, col = "red", lwd = 2)
+
+```
+
+
+# May 4 Morris without using normal approximation
+
+## Morris -cNMF set
+
+```{r,echo=F}
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds")
+grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
+
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF/resample_normal_test_statistics.csv",row.names = 1)
+
+
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
+
+
+library(eulerr)
+
+
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+     acat_pval <- combination.test(
+  module_p_values[!is.na(module_p_values)],
+  weights = NA,
+  method = "Cauchy",
+  tail.idx = 1
+)
+
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+module_results_sceptre <- module_results_sceptre[!is.na(module_results_sceptre$acat_pval), ]
+
+library(tibble)
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+
+
+
+
+
+
+max_stat_long <- max_stat_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+
+
+
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+```
+
+```{r,echo=F}
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_10000_no_approximation_replace_previous/resample_normal_test_statistics.csv",row.names = 1)
+max_stat[max_stat==0]<- 1e-4
+max_stat_long_2 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_2 <- max_stat_long_2 %>% filter(!is.na(p_value))
+
+
+max_stat_long_2 <- max_stat_long_2 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_2$bh_pval <-  p.adjust(max_stat_long_2$p_value, method = "BH")
+max_stat_long_2$identifier <- paste(max_stat_long_2$grna_id, max_stat_long_2$module, sep = "_")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_50000_no_approximation_replace_previous/resample_normal_test_statistics.csv",row.names = 1)
+max_stat[max_stat==0]<- 1e-5
+max_stat_long_3 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_3 <- max_stat_long_3 %>% filter(!is.na(p_value))
+
+
+max_stat_long_3 <- max_stat_long_3 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_3$bh_pval <-  p.adjust(max_stat_long_3$p_value, method = "BH")
+max_stat_long_3$identifier <- paste(max_stat_long_3$grna_id, max_stat_long_3$module, sep = "_")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_50000_no_approximation_replace_previous/resample_normal_test_statistics.csv",row.names = 1)
+max_stat[max_stat==0]<- 1e-5
+max_stat_long_4 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_4 <- max_stat_long_4 %>% filter(!is.na(p_value))
+
+
+max_stat_long_4 <- max_stat_long_4 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_4$bh_pval <-  p.adjust(max_stat_long_4$p_value, method = "BH")
+max_stat_long_4$identifier <- paste(max_stat_long_4$grna_id, max_stat_long_4$module, sep = "_")
+max_stat_long_4 <- max_stat_long_4[match(max_stat_long_2$identifier, max_stat_long_4$identifier), ]
+
+```
+
+```{r,echo=F, fig.height=15, fig.width=15,cache=F}
+
+
+# Create ggplot versions of your plots
+p1 <- ggplot() +
+  geom_point(aes(x = module_results_sceptre$acat_pval,
+                 y = max_stat_long_2$p_value)) +
+  labs(title = "ACAT vs 10000 no approx",
+       x = "ACAT", y = "10000 no approx")
+# 构造分组标签
+
+x_pval <- module_results_sceptre$acat_pval
+y_pval <- max_stat_long_2$p_value
+color_group <- ifelse(x_pval < 0.05 & y_pval > 0.05, "Only ACAT significant",
+                      ifelse(x_pval > 0.05 & y_pval < 0.05, "Only 10000 no approx significant", "Not specified"))
+
+# 转为因子并设定顺序（可选）
+color_group <- factor(color_group, levels = c("Only ACAT significant", "Only 10000 no approx significant", "Not specified"))
+
+# 绘图
+p2 <- ggplot() +
+  geom_point(aes(x = -log10(x_pval),
+                 y = -log10(y_pval),
+                 color = color_group), size = 0.8, alpha = 1) +
+  scale_color_manual(values = c(
+    "Only ACAT significant" = "red",
+    "Only 10000 no approx significant" = "green",
+    "Not specified" = "black"
+  )) +
+  labs(
+    title = "ACAT vs 10000 no approx (-log)",
+    x = "-log10(ACAT)",
+    y = "-log10(10000 no approx)",
+    color = "Significance"
+  ) +
+  ylim(0, 4.1) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "bottom",
+    legend.box = "horizontal"
+  )
+
+
+
+p3 <- ggplot() +
+  geom_point(aes(x = max_stat_long_2$p_value,
+                 y = max_stat_long_4$p_value)) +
+  labs(title = "10000 no approx vs 50000 no approx",
+       x = "10000 no approx", y = "50000 no approx")
+
+p4 <- ggplot() +
+  geom_point(aes(x = -log10(max_stat_long_2$p_value),
+                 y = -log10(max_stat_long_4$p_value))) +
+  labs(title = "10000 no approx vs 50000 no approx (-log)",
+       x = "-log10(10000 no approx)", y = "-log10(50000 no approx)")
+
+# Arrange plots in a 2x2 grid
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+
+```
+**Here we find out that there is no significant difference between 10000 resample and 50000 resample; the p values are generally smaller (there are more significant pairs) for ACAT than our method without normal approximation**
+
+
+```{r,cache=F,fig.width=12,fig.height=6,echo=F}
+library(eulerr)
+
+significant_levels <- c(0.01,0.025)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+significant_ids_gene_wise_p <- na.omit(
+  module_results_sceptre$identifier[module_results_sceptre$bh_pval < significant_level]
+)
+
+significant_ids_max_stat <- na.omit(
+  max_stat_long$identifier[max_stat_long$bh_pval < significant_level]
+)
+
+significant_ids_max_stat_2 <- na.omit(
+  max_stat_long_2$identifier[max_stat_long_2$bh_pval < significant_level]
+)
+
+significant_ids_max_stat_3 <- na.omit(
+  max_stat_long_3$identifier[max_stat_long_3$bh_pval < significant_level]
+)
+
+significant_ids_max_stat_4 <- na.omit(
+  max_stat_long_4$identifier[max_stat_long_4$bh_pval < significant_level]
+)
+
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    `3000 t` = significant_ids_max_stat_4,
+    `10000 no approximation` = significant_ids_max_stat_2,
+    `3000 normal`=significant_ids_max_stat
+  )
+  
+  # Generate the Euler diagram and display it
+euler_plot <- plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "green", "yellow", "orange"), alpha = 0.5),
+  edges = TRUE,
+  quantities = TRUE,
+  labels = list(font = 2, cex = 1.2, pos = 3), # 调整字体和位置
+  main = paste("Significant level", significant_level)
+)
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)
+
+par(mfrow = c(1, 1))
+```
+
+```{r,fig.width=15,fig.height=15,cache=F}
+p1<-gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_10000_no_approximation_replace_previous/resample_normal_test_statistics.csv",row.names = 1)[c(189:198),])), title="10000 no approx")
+p2<-gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_3000_skew_t_approximation/resample_normal_test_statistics.csv",row.names = 1)[c(189:198),])), title="3000 t approx")
+p3<-gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF/resample_normal_test_statistics.csv",row.names = 1)[c(189:198),])), title="3000 normal approx")
+ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
+p4<-gg_qqplot(ntc_pvals, title="ACAT, 10*1000=10000 p values")
+
+
+grid.arrange(p1, p2, p3,p4, ncol = 2)
+```
+
+
+
+## Morris - HALLMARK set
+
+```{r,echo=F}
+
+
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/gene_module_index_matrix.rds")
+grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
+
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_10000_no_approximation/resample_normal_test_statistics.csv",row.names = 1)
+
+
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
+
+
+library(eulerr)
+
+
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+     acat_pval <- combination.test(
+  module_p_values[!is.na(module_p_values)],
+  weights = NA,
+  method = "Cauchy",
+  tail.idx = 1
+)
+
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+module_results_sceptre <- module_results_sceptre[!is.na(module_results_sceptre$acat_pval), ]
+
+library(tibble)
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+
+
+max_stat_long <- max_stat_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+
+
+
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+```
+
+```{r,echo=F}
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_3000_t_approximation/resample_normal_test_statistics.csv",row.names = 1)
+# max_stat <-read.csv("output/Morris/remove_cis/remove_cis_10Mb/our_method.csv")[1:206,]
+# rownames<-rownames(max_stat)[2:206]
+# max_stat<-max_stat[-206,]
+# rownames(max_stat)<-rownames
+
+max_stat_long_2 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_2 <- max_stat_long_2 %>% filter(!is.na(p_value))
+
+
+max_stat_long_2 <- max_stat_long_2 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_2$bh_pval <-  p.adjust(max_stat_long_2$p_value, method = "BH")
+max_stat_long_2$identifier <- paste(max_stat_long_2$grna_id, max_stat_long_2$module, sep = "_")
+```
+
+
+```{r,echo=F}
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_3000_normal_approximation/resample_normal_test_statistics.csv",row.names = 1)
+max_stat_long_3 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_3 <- max_stat_long_3 %>% filter(!is.na(p_value))
+
+
+max_stat_long_3 <- max_stat_long_3 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_3$bh_pval <-  p.adjust(max_stat_long_3$p_value, method = "BH")
+max_stat_long_3$identifier <- paste(max_stat_long_3$grna_id, max_stat_long_3$module, sep = "_")
+
+
+```
+
+
+```{r,cache=F,fig.width=15,fig.height=10,echo=F}
+library(eulerr)
+
+significant_levels <- c(0.01, 0.05)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+significant_ids_gene_wise_p <- na.omit(
+  module_results_sceptre$identifier[module_results_sceptre$bh_pval < significant_level]
+)
+
+significant_ids_max_stat <- na.omit(
+  max_stat_long$identifier[max_stat_long$bh_pval < significant_level]
+)
+
+ significant_ids_max_stat_2 <- na.omit(
+  max_stat_long_2$identifier[max_stat_long_2$bh_pval < significant_level]
+)
+
+  significant_ids_max_stat_3 <- na.omit(
+  max_stat_long_3$identifier[max_stat_long_3$bh_pval < significant_level]
+) 
+#   
+#     significant_ids_max_stat_4 <- na.omit(
+#   max_stat_long_4$identifier[max_stat_long_4$bh_pval < significant_level]
+# ) 
+
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+     `10000 maxstat` = significant_ids_max_stat,
+   `3000 normal` = significant_ids_max_stat_3,
+       `3000 t` = significant_ids_max_stat_2
+   # `10000 maxstat` = significant_ids_max_stat_2
+  )
+  
+  # Generate the Euler diagram and display it
+euler_plot <- plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "green", "yellow", "orange"), alpha = 0.5),
+  edges = TRUE,
+  quantities = TRUE,
+  labels = list(font = 2, cex = 1.2, pos = 3), # 调整字体和位置
+  main = paste("Significant level", significant_level)
+)
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)
+
+par(mfrow = c(1, 1))
+```
+
+
+```{r,echo=F,fig.width=15, fig.height=14}
+p1<-gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_10000_no_approximation/resample_normal_test_statistics.csv",row.names = 1)[c(189:198),])), title="10000 no approx")
+p2<-gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_3000_t_approximation/resample_normal_test_statistics.csv",row.names = 1)[c(189:198),])), title="3000 t approx")
+p3<-gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_3000_normal_approximation/resample_normal_test_statistics.csv",row.names = 1)[c(189:198),])), title="3000 normal approx")
+ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
+p4<-gg_qqplot(ntc_pvals, title="ACAT, 10*1000=10000 p values")
+
+
+grid.arrange(p1, p2, p3,p4, ncol = 2)
+```
+
+
+
+
+
+## Manually create gene set to obtain more NTC p values
+
+### NTC-HALLMARK
+
+```r
+set.seed(123)  # Optional for reproducibility
+
+# Original matrix
+original <- gene_module_index_matrix
+
+# Create 4 shuffled versions
+shuffled1 <- original[sample(nrow(original)), ]
+shuffled2 <- original[sample(nrow(original)), ]
+shuffled3 <- original[sample(nrow(original)), ]
+shuffled5 <- original[sample(nrow(original)), ]
+shuffled6 <- original[sample(nrow(original)), ]
+shuffled7 <- original[sample(nrow(original)), ]
+shuffled8 <- original[sample(nrow(original)), ]
+shuffled9 <- original[sample(nrow(original)), ]
+shuffled10 <- original[sample(nrow(original)), ]
+shuffled4 <- original[sample(nrow(original)), ]
+# Rename columns
+colnames(shuffled1) <- paste0(colnames(original), "_1")
+colnames(shuffled2) <- paste0(colnames(original), "_2")
+colnames(shuffled3) <- paste0(colnames(original), "_3")
+colnames(shuffled4) <- paste0(colnames(original), "_5")
+colnames(shuffled1) <- paste0(colnames(original), "_6")
+colnames(shuffled2) <- paste0(colnames(original), "_7")
+colnames(shuffled3) <- paste0(colnames(original), "_8")
+colnames(shuffled4) <- paste0(colnames(original), "_9")
+colnames(shuffled1) <- paste0(colnames(original), "_10")
+colnames(shuffled2) <- paste0(colnames(original), "_4")
+
+
+combined_matrix <- cbind(original, shuffled1, shuffled2, shuffled3, shuffled4,shuffled5,shuffled6,shuffled7,shuffled8,shuffled9,shuffled10)
+```
+
+
+```{r}
+NTC_normal <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_50HALLMARK_3000_normal_approximation_2500val/1_10/max_normalized_statistics.csv",row.names = 1)
+NTC_t <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_50HALLMARK_3000_tt_approximation_2500val/1_10/max_normalized_statistics.csv",row.names = 1)
+NTC_no_approx <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_50HALLMARK_10000_no_approximation_2500val/1_10/max_normalized_statistics.csv",row.names = 1)
+```
+
+```{r,echo=F,cache=F,fig.width=10,fig.height=4}
+p1<-gg_qqplot(as.vector(as.matrix(NTC_normal)),title="3000 skew normal, 10*250=2500 p values")
+p2<-gg_qqplot(as.vector(as.matrix(NTC_t)),title="3000 t, 10*250=2500 p values")
+p3<-gg_qqplot(as.vector(as.matrix(NTC_no_approx)),title="10000 no approximation, 10*250=2500 p values")
+
+grid.arrange(p1, p2, p3, ncol = 3)
+```
+
+```{r,echo=F,cache=F,fig.width=12,fig.height=4}
+NTC_no_approx <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_50HALLMARK_10000_no_approximation_10000pval/resample_normal_test_statistics.csv",row.names = 1)
+NTC_normal <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_50HALLMARK_3000_normal_approximation_10000pval/resample_normal_test_statistics.csv",row.names = 1)
+
+NTC_t <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_50HALLMARK_3000_t_approximation_10000pval/resample_normal_test_statistics.csv",row.names = 1)
+
+p1<-gg_qqplot(as.vector(as.matrix(NTC_no_approx)),title="10000 no approximation, 10*1000=10000 p values")
+
+p2<-gg_qqplot(as.vector(as.matrix(NTC_t)),title="3000 t approximation, 10*1000=10000 p values")
+p3<- gg_qqplot(as.vector(as.matrix(NTC_normal)),title="3000 normal approximation, 10*1000=10000 p values")
+
+
+
+```
+
+
+
+```{r,include=F}
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/manually_created_gene_index_matrix.rds")
+grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
+
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_10000_no_approximation/resample_normal_test_statistics.csv",row.names = 1)
+
+
+sceptre <- readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_calibration_check.rds")[,c(1,2,7)]
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
+
+
+library(eulerr)
+
+
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+     acat_pval <- combination.test(
+  module_p_values[!is.na(module_p_values)],
+  weights = NA,
+  method = "Cauchy",
+  tail.idx = 1
+)
+
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+module_results_sceptre <- module_results_sceptre[!is.na(module_results_sceptre$acat_pval), ]
+
+```
+
+```{r,echo=F,cache=F,fig.width=10, fig.height=7}
+ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
+p4<-gg_qqplot(ntc_pvals, title="ACAT, 10*1000=10000 p values")
+
+
+grid.arrange(p1, p2, p3,p4, ncol = 2)
+```
+**Comments: I manually created 1000 gene sets by randomly choosing genes (shuffling the rows of gene module index matrix). The reason to create 1000 set is that the discovery set consists of 200*50 pairs, so I want to construct a negative control set with the same size.**
+
+### NTC-cNMF
+
+```{r, echo=F}
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data_nature_cNMF/manually_created_gene_index_matrix.rds")
+
+
+grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
+
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/HALLMARK_10000_no_approximation/resample_normal_test_statistics.csv",row.names = 1)
+
+
+sceptre <- readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_calibration_check.rds")[,c(1,2,7)]
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
+
+
+library(eulerr)
+
+
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+     acat_pval <- combination.test(
+  module_p_values[!is.na(module_p_values)],
+  weights = NA,
+  method = "Cauchy",
+  tail.idx = 1
+)
+
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+module_results_sceptre <- module_results_sceptre[!is.na(module_results_sceptre$acat_pval), ]
+
+```
+
+```{r,echo=F,cache=F}
+ntc_pvals <- module_results_sceptre$acat_pval[grepl("^NTC", module_results_sceptre$grna_id)]
+p4<-gg_qqplot(ntc_pvals, title="ACAT, 10*1200=12000 p values")
+```
+
+
+```{r}
+NTC_no_approx <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_cNMF_10000_no_approximation/resample_normal_test_statistics.csv",row.names = 1)
+NTC_normal_approx <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_cNMF_3000_normal_approximation/resample_normal_test_statistics.csv",row.names = 1)
+NTC_t_approx <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/FAKE_set_cNMF_3000_t_approximation/resample_normal_test_statistics.csv",row.names = 1)
+```
+
+```{r,cache=F,fig.width=12,fig.height=10}
+
+p1<-gg_qqplot(as.vector(as.matrix(NTC_no_approx)),title="10000 no approximation, 10*1200=12000 p values")
+
+p2<-gg_qqplot(as.vector(as.matrix(NTC_t_approx)),title="3000 t approximation, 10*1200=12000 p values")
+
+p3<-gg_qqplot(as.vector(as.matrix(NTC_normal_approx)),title="3000 normal approximation, 10*1200=12000 p values")
+
+grid.arrange(p1, p2, p3,p4, ncol = 2)
+```
+
+# May 6 - Different setting of Minp
+
+
+
+
+```{r}
+plot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/minp/50HALLMARK_10000_no_approximation_original_rank_t_test_equal_min_normalizer_sd/resample_normal_test_statistics.csv",row.names = 1))),as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/minp/50HALLMARK_10000_no_approximation_pooled_rank_t_test_equal_min_normalizer_mad/resample_normal_test_statistics.csv",row.names = 1))),xlab="original t",ylab="pooled t")
+
+v1 <- as.vector(as.matrix(read.csv(
+  "/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/minp/50HALLMARK_10000_no_approximation_original_rank_t_test_equal_min_normalizer_sd/resample_normal_test_statistics.csv",
+  row.names = 1)))
+
+v2 <- as.vector(as.matrix(read.csv(
+  "/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/minp/50HALLMARK_10000_no_approximation_pooled_rank_t_test_equal_min_normalizer_mad/resample_normal_test_statistics.csv",
+  row.names = 1)))
+
+# -log10 转换
+v1_log <- -log10(v1)
+v2_log <- -log10(v2)
+
+# 绘图
+plot(v1_log, v2_log,
+     xlab = "original t", ylab = "pooled t",
+     main = "-log transformed",
+     pch = 20, col = "black")
+abline(0, 1, col = "red", lty = 2)
+
+```
+
+
+```{r,echo=F}
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_hallmark/gene_module_index_matrix.rds")
+grna_target_data_frame_omit <- readRDS("data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
+
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/minp/50HALLMARK_10000_no_approximation_original_rank_t_test_equal_min_normalizer_sd/resample_normal_test_statistics.csv",row.names = 1)
+
+
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_adjusted/results_run_calibration_check.rds")[,c(1,2,7)])
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
+
+
+library(eulerr)
+
+
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      # Check if module_p_values still has values after removing NAs
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+     acat_pval <- combination.test(
+  module_p_values[!is.na(module_p_values)],
+  weights = NA,
+  method = "Cauchy",
+  tail.idx = 1
+)
+
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+module_results_sceptre <- module_results_sceptre[!is.na(module_results_sceptre$acat_pval), ]
+
+library(tibble)
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+
+
+
+
+
+
+max_stat_long <- max_stat_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+
+
+
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+```
+
+
+```{r}
+max_stat <-  read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/minp/50HALLMARK_10000_no_approximation_pooled_rank_t_test_equal_min_normalizer_mad/resample_normal_test_statistics.csv",row.names = 1)
+max_stat_long_3 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_3 <- max_stat_long_3 %>% filter(!is.na(p_value))
+
+
+max_stat_long_3 <- max_stat_long_3 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_3$bh_pval <-  p.adjust(max_stat_long_3$p_value, method = "BH")
+max_stat_long_3$identifier <- paste(max_stat_long_3$grna_id, max_stat_long_3$module, sep = "_")
+```
+
+
+
+
+```{r,cache=F,fig.width=12,fig.height=8,echo=F}
+library(eulerr)
+
+significant_levels <- c(0.01, 0.05)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+significant_ids_gene_wise_p <- na.omit(
+  module_results_sceptre$identifier[module_results_sceptre$bh_pval < significant_level]
+)
+
+significant_ids_max_stat <- na.omit(
+  max_stat_long$identifier[max_stat_long$bh_pval < significant_level]
+)
+# 
+significant_ids_max_stat_3 <- na.omit(
+  max_stat_long_3$identifier[max_stat_long_3$bh_pval < significant_level]
+)
+# significant_ids_max_stat_4 <- na.omit(
+#   max_stat_long_4$identifier[max_stat_long_4$bh_pval < significant_level]
+# )
+
+
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+     `10000 minp` = significant_ids_max_stat,
+    `10000 minp (pooled)` = significant_ids_max_stat_3
+        # `10000 minp (normalize sd)` = significant_ids_max_stat_4
+    )
+  
+  # Generate the Euler diagram and display it
+euler_plot <- plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "green", "yellow", "orange"), alpha = 0.5),
+  edges = TRUE,
+  quantities = TRUE,
+  labels = list(font = 2, cex = 1.2, pos = 3), # 调整字体和位置
+  main = paste("Significant level", significant_level)
+)
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 2)
+
+par(mfrow = c(1, 1))
+```
+```{r,echo=F}
+plot(max_stat_long$p_value,module_results_sceptre$acat_pval)
+gg_qqplot(as.vector(as.matrix(max_stat[189:198,])), title="NTC-minp(pooled)")
+
+gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/minp/50HALLMARK_10000_no_approximation_original_rank_t_test_equal_min_normalizer_sd/resample_normal_test_statistics.csv",row.names = 1)[189:198,])), title="NTC-minp(original)")
+```
+
 
 
 
