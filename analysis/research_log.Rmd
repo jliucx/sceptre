@@ -5087,8 +5087,8 @@ As there are some cases when Sceptre gives significant p value but wilcoxon does
 
 <table>
 <tr>
-<td><img src="images/W_123621.png" width="300"></td>
-<td><img src="images/NB_123621.png" width="300"></td>
+<td><img src="images/W_113621.png" width="300"></td>
+<td><img src="images/NB_113621.png" width="300"></td>
 </tr>
 <tr>
 <td><img src="images/W_112884.png" width="300"></td>
