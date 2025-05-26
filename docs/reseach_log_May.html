@@ -724,16 +724,16 @@ output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree5170fa6bf98bdc0dce91a3a4972c5657898a7513targetblank5170fa6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/5170fa6bf98bdc0dce91a3a4972c5657898a7513" target="_blank">5170fa6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93targetblank462a5c3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93" target="_blank">462a5c3</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree5170fa6bf98bdc0dce91a3a4972c5657898a7513targetblank5170fa6a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93targetblank462a5c3a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/5170fa6bf98bdc0dce91a3a4972c5657898a7513" target="_blank">5170fa6</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93" target="_blank">462a5c3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -830,6 +830,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93/analysis/reseach_log_May.Rmd" target="_blank">462a5c3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+<td>
+upload May log
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/reseach_log_May.html" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/5170fa6bf98bdc0dce91a3a4972c5657898a7513/analysis/reseach_log_May.Rmd" target="_blank">5170fa6</a>
 </td>
 <td>
@@ -851,132 +885,44 @@ upload May log
 </div>
 <div id="may-20---morris---cnmf---perturbation-gene-pair-qc" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> May 20 - Morris - cNMF - Perturbation gene pair qc</h1>
-<pre class="r"><code>gene_module_index_matrix &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds&quot;)
-grna_target_data_frame_omit &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds&quot;)
-
-
-discovery_pairs_cis &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds&quot;)
-
-
-max_stat &lt;- read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_/resample_normal_test_statistics.csv&quot;,row.names = 1)
-
-
-sceptre &lt;- rbind(readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds&quot;)[,c(1,2,7)],
-                 readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds&quot;)[,c(1,2,7)]
-                 )
-
-
-sceptre &lt;- sceptre[!is.na(sceptre$p_value), ]
-sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-6
-
-sceptre_wide &lt;- sceptre %&gt;%
-  pivot_wider(names_from = response_id, values_from = p_value) %&gt;%
-  as.data.frame()
-
-# Set the row names to be the grna_id and remove the grna_id column
-rownames(sceptre_wide) &lt;- sceptre_wide$grna_id
-sceptre_wide &lt;- sceptre_wide[, -1]
-
-sceptre_wide &lt;- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
-
-sceptre_wide &lt;- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
-
-# sceptre_wide &lt;- sceptre_wide[rowSums(grna_assignment_matrix_author_threshold[rownames(sceptre_wide),])&gt;100,]
-
-
-library(eulerr)
-
-
-
-
-module_results &lt;- list()
-
-# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
-for (i in seq_len(nrow(sceptre_wide))) {
-  grna_id &lt;- rownames(sceptre_wide)[i]
-  p_values_row &lt;- sceptre_wide[i,] 
-  
-  # Initialize an empty list to store ACAT p-values and module names for each module
-  module_acat_pvals &lt;- c()
-  module_names &lt;- c()
-  matched_targets &lt;- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
-  cis_genes &lt;- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
-  # Iterate over each module in gene_modules to combine p-values using ACAT
-  for (j in 1:ncol(gene_module_index_matrix)) {
-    
-    
-    module_name &lt;- colnames(gene_module_index_matrix)[j]  # Get the module name
-
-    module_genes &lt;- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
-module_genes &lt;- intersect(module_genes, colnames(p_values_row))
-    
-      module_genes &lt;- setdiff(module_genes, cis_genes) 
-    
-    # Only apply ACAT if there are genes to combine and they are not NA
-    if (length(module_genes) &gt; 0) {
-      module_p_values &lt;- as.numeric(p_values_row[module_genes])
-      module_p_values &lt;- module_p_values[!is.na(module_p_values)]  # Remove NAs
-      
-      if (length(module_p_values) &gt; 0) {
-        # acat_pval &lt;- ACAT(module_p_values)
-        
-     acat_pval &lt;- combination.test(
-  module_p_values[!is.na(module_p_values)],
-  weights = NA,
-  method = &quot;Cauchy&quot;,
-  tail.idx = 1
-)
-
-        module_acat_pvals &lt;- c(module_acat_pvals, acat_pval)
-        module_names &lt;- c(module_names, module_name)
-      } else {
-        module_acat_pvals &lt;- c(module_acat_pvals, NA)
-        module_names &lt;- c(module_names, module_name)
-      }
-    } else {
-      module_acat_pvals &lt;- c(module_acat_pvals, NA)
-      module_names &lt;- c(module_names, module_name)
-    }
-  }
-  
-  # Store results as a data frame in the list
-  module_results[[i]] &lt;- data.frame(
-    grna_id = grna_id,
-    module = module_names,
-    acat_pval = module_acat_pvals
-  )
-}
-
-
-# Combine all results into a single data frame
-module_results_sceptre &lt;- do.call(rbind, module_results)
-module_results_sceptre &lt;- module_results_sceptre[!is.na(module_results_sceptre$acat_pval), ]
-
-library(tibble)
-
-max_stat_long &lt;- max_stat%&gt;%
-  rownames_to_column(var = &quot;grna_id&quot;) %&gt;% # Add row names as a column
-  pivot_longer(cols = -grna_id, names_to = &quot;module&quot;, values_to = &quot;p_value&quot;)
-
-# Remove rows with NA p-values
-max_stat_long &lt;- max_stat_long %&gt;% filter(!is.na(p_value))
-
-
-
-
-
-
-max_stat_long &lt;- max_stat_long %&gt;%
-  semi_join(module_results_sceptre, by = c(&quot;grna_id&quot;, &quot;module&quot;))
-
-module_results_sceptre$bh_pval &lt;- p.adjust(module_results_sceptre$acat_pval, method = &quot;BH&quot;)
-module_results_sceptre$identifier &lt;- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = &quot;_&quot;)
-
-
-
-max_stat_long$bh_pval &lt;-  p.adjust(max_stat_long$p_value, method = &quot;BH&quot;)
-max_stat_long$identifier &lt;- paste(max_stat_long$grna_id, max_stat_long$module, sep = &quot;_&quot;)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-4-1.png" width="1728" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-4-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="may-21---deflation-problem---focusing-on-high-expressed-genes" class="section level1" number="2">
 <h1 number="2"><span class="header-section-number">2</span> May 21 - deflation problem - focusing on high expressed genes</h1>
@@ -1019,30 +965,87 @@ layout_matrix &lt;- matrix(1:(nrow * ncol), nrow = nrow, ncol = ncol, byrow = FA
 
 # 用 grid.arrange 强制按照 layout_matrix 排布
 grid.arrange(grobs = all_plots, layout_matrix = layout_matrix)</code></pre>
-<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-8-1.png" width="1344" style="display: block; margin: auto;" /> ## Non-overlapping gene sets</p>
-<pre class="r"><code>p1&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_1/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP qced gene, 70 genes per set&quot;)
-
-p2&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_2/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP qced gene, 70 genes per set&quot;)
-
-p3&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_3/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP qced gene, 70 genes per set&quot;)
-
-p4&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_4/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP qced gene, 70 genes per set&quot;)
-
-p5&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_5/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP qced gene, 70 genes per set&quot;)
-
-
-p6&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_1/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP high expressed gene, 70 genes per set&quot;)
-
-p7&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_2/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP high expressed, 70 genes per set&quot;)
-
-p8&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_3/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP high expressed, 70 genes per set&quot;)
-
-p9&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_4/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP high expressed, 70 genes per set&quot;)
-
-p10&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_5/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP high expressed, 70 genes per set&quot;)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-8-1.png" width="1344" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-8-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="non-overlapping-gene-sets" class="section level2" number="2.1">
+<h2 number="2.1"><span class="header-section-number">2.1</span> Non-overlapping gene sets</h2>
 <pre class="r"><code># 用 grid.arrange 强制按照 layout_matrix 排布
 grid.arrange(p1,p6,p2,p7,p3,p8,p4,p9,p5,p10,ncol=2)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-10-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-10-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 <div id="may-23-debug-on-perturbation-gene-pair-qc" class="section level1" number="3">
 <h1 number="3"><span class="header-section-number">3</span> May 23 Debug on Perturbation gene pair qc</h1>
@@ -1051,7 +1054,45 @@ grid.arrange(p1,p6,p2,p7,p3,p8,p4,p9,p5,p10,ncol=2)</code></pre>
 <div id="gene-module-p-value" class="section level3" number="3.1.1">
 <h3 number="3.1.1"><span class="header-section-number">3.1.1</span> Gene module p value</h3>
 <pre class="r"><code>grid.arrange( p1,p2, ncol=2)</code></pre>
-<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-12-1.png" width="1152" style="display: block; margin: auto;" /> <strong>From the scatter plot, there is no systematic bug.</strong></p>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-12-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-12-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>From the scatter plot, there is no systematic bug.</strong></p>
 </div>
 <div id="genewise-p-value-comparison" class="section level3" number="3.1.2">
 <h3 number="3.1.2"><span class="header-section-number">3.1.2</span> Genewise p value comparison</h3>
@@ -1063,6 +1104,43 @@ grid.arrange(p1,p6,p2,p7,p3,p8,p4,p9,p5,p10,ncol=2)</code></pre>
   labs(x = &quot;Our method&quot;, y = &quot;sceptre&quot;) +
   theme_bw()</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-14-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>sceptre &lt;- rbind(readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds&quot;)[,c(1,2,7)],
                  readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds&quot;)[,c(1,2,7)]
                  )
@@ -1092,27 +1170,13 @@ s_subset &lt;- sceptre_wide[common_rows, , drop = FALSE]
 # reshape 并取 -log10(p)
 df_top &lt;- melt(as.matrix(s_subset), varnames = c(&quot;SNP&quot;, &quot;Gene&quot;), value.name = &quot;pval&quot;) %&gt;%
   filter(!is.na(pval)) %&gt;%
-  mutate(logp = -log10(pval + 1e-300), group = &quot;sceptre&quot;)</code></pre>
-<pre><code>Warning in melt(as.matrix(s_subset), varnames = c(&quot;SNP&quot;, &quot;Gene&quot;), value.name =
-&quot;pval&quot;): The melt generic in data.table has been passed a matrix and will
-attempt to redirect to the relevant reshape2 method; please note that reshape2
-is deprecated, and this redirection is now deprecated as well. To continue
-using melt methods from reshape2 while both libraries are attached, e.g.
-melt.list, you can prepend the namespace like
-reshape2::melt(as.matrix(s_subset)). In the next version, this warning will
-become an error.</code></pre>
-<pre class="r"><code>df_bottom &lt;- melt(as.matrix(g_subset), varnames = c(&quot;SNP&quot;, &quot;Gene&quot;), value.name = &quot;pval&quot;) %&gt;%
+  mutate(logp = -log10(pval + 1e-300), group = &quot;sceptre&quot;)
+
+df_bottom &lt;- melt(as.matrix(g_subset), varnames = c(&quot;SNP&quot;, &quot;Gene&quot;), value.name = &quot;pval&quot;) %&gt;%
   filter(!is.na(pval)) %&gt;%
-  mutate(logp = -(-log10(pval + 1e-300)), group = &quot;Our method&quot;)</code></pre>
-<pre><code>Warning in melt(as.matrix(g_subset), varnames = c(&quot;SNP&quot;, &quot;Gene&quot;), value.name =
-&quot;pval&quot;): The melt generic in data.table has been passed a matrix and will
-attempt to redirect to the relevant reshape2 method; please note that reshape2
-is deprecated, and this redirection is now deprecated as well. To continue
-using melt methods from reshape2 while both libraries are attached, e.g.
-melt.list, you can prepend the namespace like
-reshape2::melt(as.matrix(g_subset)). In the next version, this warning will
-become an error.</code></pre>
-<pre class="r"><code># 合并两部分
+  mutate(logp = -(-log10(pval + 1e-300)), group = &quot;Our method&quot;)
+
+# 合并两部分
 df_both &lt;- bind_rows(df_top, df_bottom)
 
 # 绘图：上下对称 Manhattan 图
@@ -1124,13 +1188,126 @@ ggplot(df_both, aes(x = SNP, y = logp, color = group)) +
   theme_bw() +
   theme(axis.text.x = element_blank(),
         legend.position = &quot;top&quot;)</code></pre>
-<pre><code>Warning: Removed 68 rows containing missing values or values outside the scale range
-(`geom_point()`).</code></pre>
-<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-15-1.png" width="1920" style="display: block; margin: auto;" /> ## If the minimum p val that sceptre can calculate is 1e-4</p>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-15-1.png" width="1920" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-15-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="if-the-minimum-p-val-that-sceptre-can-calculate-is-1e-4" class="section level2" number="3.2">
+<h2 number="3.2"><span class="header-section-number">3.2</span> If the minimum p val that sceptre can calculate is 1e-4</h2>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-18-1.png" width="1728" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+Past versions of unnamed-chunk-18-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-18-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-18-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>selected_rows &lt;- which(max_stat_long$p_value &gt; 0.8 &amp; module_results_sceptre$acat_pval &lt; 0.05)</code></pre>
 <pre class="r"><code>plot(-log10(max_stat_long$p_value),-log10(max_stat_long_2$p_value),xlab=&quot;remove low expressed gene&quot;, ylab=&quot;all qced genes&quot;,main=&quot;Remove low expressed gene&quot;)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-21-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>(result_to_compare&lt;-max_stat_long[selected_rows,])</code></pre>
 <pre><code># A tibble: 43 × 5
    grna_id  module p_value bh_pval identifier     
@@ -1192,9 +1369,8 @@ ggplot(df_both, aes(x = SNP, y = logp, color = group)) +
 10870    NTC-7 K60_10 0.048263013 0.26249002    NTC-7_K60_10
 10927    NTC-8  K60_7 0.043254621 0.25586732     NTC-8_K60_7</code></pre>
 </div>
-</div>
-<div id="geneset-distribution" class="section level2" number="3.2">
-<h2 number="3.2"><span class="header-section-number">3.2</span> Geneset distribution</h2>
+<div id="geneset-distribution" class="section level2" number="3.3">
+<h2 number="3.3"><span class="header-section-number">3.3</span> Geneset distribution</h2>
 <pre class="r"><code>plot_list &lt;- list()
 
 setwd(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove&quot;)
@@ -1242,9 +1418,46 @@ p &lt;- ggplot(df, aes(x = values)) +
 }</code></pre>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-24-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
+Past versions of unnamed-chunk-24-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-24-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-24-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="genewise-p-value" class="section level2" number="3.3">
-<h2 number="3.3"><span class="header-section-number">3.3</span> Genewise p value</h2>
+</div>
+</div>
+<div id="genewise-p-value" class="section level2" number="3.4">
+<h2 number="3.4"><span class="header-section-number">3.4</span> Genewise p value</h2>
 <pre class="r"><code>plot_list &lt;- list()
 hit_list &lt;- list()  # 存储符合条件的 gene + metadata
 
@@ -1288,9 +1501,46 @@ hit_list[[i]] &lt;- data.frame(
 }</code></pre>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-26-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-1">
+Past versions of unnamed-chunk-26-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-26-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="genewise-distribution" class="section level2" number="3.4">
-<h2 number="3.4"><span class="header-section-number">3.4</span> Genewise distribution</h2>
+</div>
+</div>
+<div id="genewise-distribution" class="section level2" number="3.5">
+<h2 number="3.5"><span class="header-section-number">3.5</span> Genewise distribution</h2>
 <pre class="r"><code>plot_list &lt;- list()
 
 
@@ -1350,12 +1600,86 @@ p &lt;- ggplot(df, aes(x = values)) +
 }</code></pre>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-28-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-1">
+Past versions of unnamed-chunk-28-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-28-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-28-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="may-26---replace-wilcoxon-with-nb" class="section level1" number="4">
 <h1 number="4"><span class="header-section-number">4</span> May 26 - Replace wilcoxon with NB</h1>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-30-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-30-1">
+Past versions of unnamed-chunk-30-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-30-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-30-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>merged_df &lt;- merge(result_df, result_df_2, by = &quot;row.names&quot;, all = TRUE)
 rownames(merged_df) &lt;- merged_df$Row.names
 merged_df$Row.names &lt;- NULL
@@ -1384,6 +1708,43 @@ ggplot(plot_df, aes(x = sceptre_p, y = p_value, color = method)) +
        color = &quot;Method&quot;) +
   theme_minimal()</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-33-1">
+Past versions of unnamed-chunk-33-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-33-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-33-1.png" target="_blank">e4ef492</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><span style="color:red"> However, the pairs that I selected is the Sceptre(NB) significant pairs but not wilcoxon significant, so if we use NB test, it is naturally more significant than wilcoxon. The next step is to test: For the wilcoxon significant pairs, if we switch to NB test, whether they are still significant. </span></p>
 <br>
 <p>
