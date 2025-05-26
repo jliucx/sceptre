@@ -66,7 +66,7 @@ gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
 ```
 
 # May 20 - Morris - cNMF - Perturbation gene pair qc
-```{r}
+```{r,include=F}
 gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds")
 grna_target_data_frame_omit <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
 
@@ -386,7 +386,7 @@ grid.arrange(grobs = all_plots, layout_matrix = layout_matrix)
 ```
 ## Non-overlapping gene sets
 
-```{r}
+```{r,include=F}
 p1<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_1/resample_normal_test_statistics.csv",row.names = 1))), title="100 fake sets, NON-OVERLAP qced gene, 70 genes per set")
 
 p2<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_2/resample_normal_test_statistics.csv",row.names = 1))), title="100 fake sets, NON-OVERLAP qced gene, 70 genes per set")
@@ -533,7 +533,7 @@ ggplot(df, aes(x = our_method, y = sceptre)) +
 ```
 
 
-```{r,cache=F,fig.width=20,fig.height=12}
+```{r,cache=F,fig.width=20,fig.height=12,warning=F}
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds")[,c(1,2,7)],
                  readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds")[,c(1,2,7)]
                  )
@@ -974,7 +974,7 @@ max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, s
 selected_rows <- which(max_stat_long$p_value > 0.8 & module_results_sceptre$acat_pval < 0.05)
 ```
 
-```{r}
+```{r,cache=F}
 plot(-log10(max_stat_long$p_value),-log10(max_stat_long_2$p_value),xlab="remove low expressed gene", ylab="all qced genes",main="Remove low expressed gene")
 ```
 
@@ -1093,7 +1093,7 @@ gridExtra::grid.arrange(grobs = plot_list, ncol = 3)
 
 ## Genewise distribution
 
-```{r}
+```{r,warning=F}
 plot_list <- list()
 
 
