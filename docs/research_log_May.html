@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="jliucx" />
+
+
+<title>Research log May</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sceptre application and power increasing techniques</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jliucx/sceptre">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Research log May</h1>
+<h4 class="author">jliucx</h4>
+<h4 class="date">2024-12-5</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-05-27
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>Getting_started/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240712code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20240712)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240712code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240712)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds
+</td>
+<td style="text-align:left;">
+data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds
+</td>
+<td style="text-align:left;">
+data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds
+</td>
+<td style="text-align:left;">
+data/Morris_adjusted/program_data/discovery_pairs_cis.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds
+</td>
+<td style="text-align:left;">
+output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds
+</td>
+<td style="text-align:left;">
+output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_10000_no_approximation_replace_previous/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov/cNMF_10000_no_approximation_replace_previous/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_3000_skew_t_approximation/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov/cNMF_3000_skew_t_approximation/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_50000_no_approximation_replace_previous/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov/cNMF_50000_no_approximation_replace_previous/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_t_test/cNMF_10000_no_approx_pooled_rank_t/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_t_test/cNMF_10000_no_approx_pooled_rank_t/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NTC_complete_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NTC_complete_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NTC_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NTC_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_1/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_1/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_2/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_2/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_3/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_3/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_4/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_4/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_5/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_5/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_1/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_1/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_2/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_2/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_3/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_3/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_4/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_4/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_5/resample_normal_test_statistics.csv
+</td>
+<td style="text-align:left;">
+output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox_5/resample_normal_test_statistics.csv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/genewise_p_combined_all.rds
+</td>
+<td style="text-align:left;">
+output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/genewise_p_combined_all.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data_nature_cNMF/perturbation_gene_filtered.rds
+</td>
+<td style="text-align:left;">
+data/Morris_adjusted/program_data_nature_cNMF/perturbation_gene_filtered.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove
+</td>
+<td style="text-align:left;">
+output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_plots
+</td>
+<td style="text-align:left;">
+output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_plots
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_values
+</td>
+<td style="text-align:left;">
+output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_values
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_1000_test_statistics
+</td>
+<td style="text-align:left;">
+output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_1000_test_statistics
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree021a0e1f1635d59f9a5c02f19dc5008cb50c6ecctargetblank021a0e1a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/021a0e1f1635d59f9a5c02f19dc5008cb50c6ecc" target="_blank">021a0e1</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree021a0e1f1635d59f9a5c02f19dc5008cb50c6ecctargetblank021a0e1a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/021a0e1f1635d59f9a5c02f19dc5008cb50c6ecc" target="_blank">021a0e1</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/run.sh
+    Ignored:    analysis/run_R.sh
+
+Untracked files:
+    Untracked:  analysis/sceptre_singleton.R
+    Untracked:  analysis/sceptre_singleton.Rmd
+    Untracked:  analysis/sceptre_threshold.Rmd
+    Untracked:  code/debug.Rmd
+    Untracked:  code/discovery.pdf
+    Untracked:  code/draft.Rmd
+    Untracked:  code/find_gene_set.Rmd
+    Untracked:  code/fit_skew_normal.cpp
+    Untracked:  code/functions_optimized.R
+    Untracked:  code/general_data_optimized.R
+    Untracked:  code/minp.R
+    Untracked:  code/nature_data_edit.Rmd
+    Untracked:  code/negative_control.Rmd
+    Untracked:  code/negative_control.pdf
+    Untracked:  code/newest.R
+    Untracked:  code/parallel/
+    Untracked:  code/plots_generator.Rmd
+    Untracked:  code/rcc_err/
+    Untracked:  code/rcc_jobs/
+    Untracked:  code/rcc_out/
+    Untracked:  code/remove_cis.R
+    Untracked:  code/remove_cis_optimize.R
+    Untracked:  code/render_pdf.Rmd
+    Untracked:  code/render_pdf_ntc.Rmd
+    Untracked:  code/render_pdf_ntc.pdf
+    Untracked:  code/run_R_caslake.sh
+    Untracked:  code/sceptre/
+    Untracked:  code/t_test.cpp
+    Untracked:  code/utilizer/
+    Untracked:  data/
+    Untracked:  docs_destroyed/
+    Untracked:  output/Morris/
+    Untracked:  output/Xie/
+    Untracked:  output/debug/
+    Untracked:  output/nature/
+    Untracked:  output/newest/
+    Untracked:  temp/
+
+Unstaged changes:
+    Deleted:    analysis/reseach_log_May.Rmd
+    Modified:   analysis/research_log.Rmd
+    Modified:   code/run_R.sh
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/research_log_May.Rmd</code>) and HTML (<code>docs/research_log_May.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/021a0e1f1635d59f9a5c02f19dc5008cb50c6ecc/analysis/research_log_May.Rmd" target="_blank">021a0e1</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-27
+</td>
+<td>
+adjust fig size
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="may-20---morris---cnmf---perturbation-gene-pair-qc" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> May 20 - Morris - cNMF - Perturbation gene pair qc</h1>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-4-1.png" width="1728" style="display: block; margin: auto;" /></p>
+</div>
+<div id="may-21---deflation-problem---focusing-on-high-expressed-genes" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> May 21 - deflation problem - focusing on high expressed genes</h1>
+<pre class="r"><code>p1&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP qced gene, 70 genes per set&quot;)
+
+p2&lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;100 fake sets, NON-OVERLAP high-expressed gene, 70 genes per set&quot;)</code></pre>
+<pre class="r"><code>data_matrix &lt;- as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NTC_complete_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv&quot;, row.names = 1))
+
+# Function to make one QQ plot with a specific seed
+make_qq_plot &lt;- function(seed) {
+  set.seed(seed)
+  sampled_data &lt;- data_matrix[, sample(1000, 100)]
+  gg_qqplot(as.vector(sampled_data), title = paste0(&quot;100 fake sets, OVERLAPPING, All qced,  Seed = &quot;, seed))
+}
+
+
+seeds &lt;- 1:10
+plots &lt;- lapply(seeds, make_qq_plot)</code></pre>
+<pre class="r"><code>data_matrix &lt;- as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NTC_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv&quot;, row.names = 1))
+
+# Function to make one QQ plot with a specific seed
+make_qq_plot &lt;- function(seed) {
+  set.seed(seed)
+  sampled_data &lt;- data_matrix[, sample(1000, 100)]
+  gg_qqplot(as.vector(sampled_data), title = paste0(&quot;100 fake sets, OVERLAPPING, High expressed, Seed = &quot;, seed))
+}
+
+
+seeds &lt;- 1:10
+plots_2 &lt;- lapply(seeds, make_qq_plot)</code></pre>
+<pre class="r"><code>library(gridExtra)
+
+all_plots &lt;- c(list(p1), plots,list(p2),plots_2)
+n &lt;- length(all_plots)
+ncol &lt;- 2
+nrow &lt;- ceiling(n / ncol)
+
+# 生成按列填充的 layout_matrix
+layout_matrix &lt;- matrix(1:(nrow * ncol), nrow = nrow, ncol = ncol, byrow = FALSE)
+
+# 用 grid.arrange 强制按照 layout_matrix 排布
+grid.arrange(grobs = all_plots, layout_matrix = layout_matrix)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-8-1.png" width="1344" style="display: block; margin: auto;" /> ## Non-overlapping gene sets</p>
+<pre class="r"><code># 用 grid.arrange 强制按照 layout_matrix 排布
+grid.arrange(p1,p6,p2,p7,p3,p8,p4,p9,p5,p10,ncol=2)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-10-1.png" width="1152" style="display: block; margin: auto;" /></p>
+</div>
+<div id="may-23-debug-on-perturbation-gene-pair-qc" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> May 23 Debug on Perturbation gene pair qc</h1>
+<div id="sanity-check-for-system-bug" class="section level2" number="3.1">
+<h2 number="3.1"><span class="header-section-number">3.1</span> Sanity check for system bug</h2>
+<div id="gene-module-p-value" class="section level3" number="3.1.1">
+<h3 number="3.1.1"><span class="header-section-number">3.1.1</span> Gene module p value</h3>
+<pre class="r"><code>grid.arrange( p1,p2, ncol=2)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-12-1.png" width="1152" style="display: block; margin: auto;" /> <strong>From the scatter plot, there is no systematic bug.</strong></p>
+</div>
+<div id="genewise-p-value-comparison" class="section level3" number="3.1.2">
+<h3 number="3.1.2"><span class="header-section-number">3.1.2</span> Genewise p value comparison</h3>
+<pre class="r"><code>ggplot(df, aes(x = our_method, y = sceptre)) +
+  geom_point(alpha = 0.4, size = 1) +
+  geom_abline(slope = 1, intercept = 0, color = &quot;red&quot;, linetype = &quot;dashed&quot;) +
+  annotate(&quot;text&quot;, x = 0.05, y = 8, label = paste0(&quot;cor = &quot;, round(cor_val, 3)),
+           hjust = 0, size = 5, color = &quot;blue&quot;) +
+  labs(x = &quot;Our method&quot;, y = &quot;sceptre&quot;) +
+  theme_bw()</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sceptre &lt;- rbind(readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds&quot;)[,c(1,2,7)],
+                 readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds&quot;)[,c(1,2,7)]
+                 )
+
+sceptre &lt;- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] &lt;- 1 - 1e-6
+
+sceptre_wide &lt;- sceptre %&gt;%
+  pivot_wider(names_from = response_id, values_from = p_value) %&gt;%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) &lt;- sceptre_wide$grna_id
+sceptre_wide &lt;- sceptre_wide[, -1]
+
+sceptre_wide &lt;- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide &lt;- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
+
+ genewise_p_combined_all &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/genewise_p_combined_all.rds&quot;)
+ 
+ common_rows &lt;- intersect(rownames(genewise_p_combined_all), rownames(sceptre_wide))
+
+g_subset &lt;- genewise_p_combined_all[common_rows, , drop = FALSE]
+s_subset &lt;- sceptre_wide[common_rows, , drop = FALSE]
+
+# reshape 并取 -log10(p)
+df_top &lt;- melt(as.matrix(s_subset), varnames = c(&quot;SNP&quot;, &quot;Gene&quot;), value.name = &quot;pval&quot;) %&gt;%
+  filter(!is.na(pval)) %&gt;%
+  mutate(logp = -log10(pval + 1e-300), group = &quot;sceptre&quot;)
+
+df_bottom &lt;- melt(as.matrix(g_subset), varnames = c(&quot;SNP&quot;, &quot;Gene&quot;), value.name = &quot;pval&quot;) %&gt;%
+  filter(!is.na(pval)) %&gt;%
+  mutate(logp = -(-log10(pval + 1e-300)), group = &quot;Our method&quot;)
+
+# 合并两部分
+df_both &lt;- bind_rows(df_top, df_bottom)
+
+# 绘图：上下对称 Manhattan 图
+ggplot(df_both, aes(x = SNP, y = logp, color = group)) +
+  geom_point(alpha = 0.5, size = 0.6) +
+  geom_hline(yintercept = 0, color = &quot;black&quot;) +
+  scale_y_continuous(limits = c(-20, 20)) +
+  labs(x = &quot;SNP&quot;, y = expression(&quot;± -log&quot;[10]*&quot;(p)&quot;)) +
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        legend.position = &quot;top&quot;)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-15-1.png" width="1920" style="display: block; margin: auto;" /> ## If the minimum p val that sceptre can calculate is 1e-4</p>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-18-1.png" width="1728" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>selected_rows &lt;- which(max_stat_long$p_value &gt; 0.8 &amp; module_results_sceptre$acat_pval &lt; 0.05)</code></pre>
+<pre class="r"><code>plot(-log10(max_stat_long$p_value),-log10(max_stat_long_2$p_value),xlab=&quot;remove low expressed gene&quot;, ylab=&quot;all qced genes&quot;,main=&quot;Remove low expressed gene&quot;)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>(result_to_compare&lt;-max_stat_long[selected_rows,])</code></pre>
+<pre><code># A tibble: 43 × 5
+   grna_id  module p_value bh_pval identifier     
+   &lt;chr&gt;    &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;          
+ 1 SNP-9_1  K60_44   0.866   0.992 SNP-9_1_K60_44 
+ 2 SNP-11_1 K60_53   0.817   0.989 SNP-11_1_K60_53
+ 3 SNP-12_1 K60_13   0.862   0.992 SNP-12_1_K60_13
+ 4 SNP-15_1 K60_4    0.890   0.992 SNP-15_1_K60_4 
+ 5 SNP-16_2 K60_41   0.955   0.995 SNP-16_2_K60_41
+ 6 SNP-20_1 K60_11   0.900   0.992 SNP-20_1_K60_11
+ 7 SNP-23_2 K60_53   0.810   0.989 SNP-23_2_K60_53
+ 8 SNP-24_1 K60_48   0.881   0.992 SNP-24_1_K60_48
+ 9 SNP-32_1 K60_16   0.941   0.994 SNP-32_1_K60_16
+10 SNP-36_2 K60_4    0.830   0.989 SNP-36_2_K60_4 
+# ℹ 33 more rows</code></pre>
+<pre class="r"><code>(result_to_analyze&lt;-module_results_sceptre[selected_rows,])</code></pre>
+<pre><code>       grna_id module   acat_pval    bh_pval      identifier
+1004   SNP-9_1 K60_44 0.040730507 0.25132864  SNP-9_1_K60_44
+1253  SNP-11_1 K60_53 0.037077545 0.24240504 SNP-11_1_K60_53
+1333  SNP-12_1 K60_13 0.049619786 0.26496809 SNP-12_1_K60_13
+1684  SNP-15_1  K60_4 0.034904175 0.23602932  SNP-15_1_K60_4
+1901  SNP-16_2 K60_41 0.049537971 0.26495334 SNP-16_2_K60_41
+2291  SNP-20_1 K60_11 0.041073431 0.25208469 SNP-20_1_K60_11
+2753  SNP-23_2 K60_53 0.048962834 0.26431149 SNP-23_2_K60_53
+2808  SNP-24_1 K60_48 0.033940628 0.23280726 SNP-24_1_K60_48
+3736  SNP-32_1 K60_16 0.042491783 0.25451864 SNP-32_1_K60_16
+4264  SNP-36_2  K60_4 0.018927560 0.17646748  SNP-36_2_K60_4
+4315  SNP-36_2 K60_55 0.018984574 0.17670379 SNP-36_2_K60_55
+4320  SNP-36_2 K60_60 0.019645458 0.17970763 SNP-36_2_K60_60
+4753  SNP-40_2 K60_13 0.040218738 0.25054412 SNP-40_2_K60_13
+4756  SNP-40_2 K60_16 0.026643447 0.21076621 SNP-40_2_K60_16
+4765  SNP-40_2 K60_25 0.031372190 0.22400105 SNP-40_2_K60_25
+4777  SNP-40_2 K60_37 0.046209245 0.25924312 SNP-40_2_K60_37
+4790  SNP-40_2 K60_50 0.032324544 0.22659668 SNP-40_2_K60_50
+4956  SNP-42_1 K60_36 0.002580015 0.04422883 SNP-42_1_K60_36
+5282  SNP-45_1  K60_2 0.030140122 0.22042186  SNP-45_1_K60_2
+5297  SNP-45_1 K60_17 0.025797772 0.20689729 SNP-45_1_K60_17
+5628  SNP-47_2 K60_48 0.023644486 0.19826289 SNP-47_2_K60_48
+6142  SNP-52_1 K60_22 0.039327927 0.24904675 SNP-52_1_K60_22
+6571  SNP-55_2 K60_31 0.048456116 0.26302055 SNP-55_2_K60_31
+7075  SNP-59_2 K60_55 0.034180088 0.23373148 SNP-59_2_K60_55
+7763  SNP-65_2 K60_23 0.044905747 0.25840487 SNP-65_2_K60_23
+7764  SNP-65_2 K60_24 0.014289453 0.15030188 SNP-65_2_K60_24
+7771  SNP-65_2 K60_31 0.018323039 0.17343945 SNP-65_2_K60_31
+7779  SNP-65_2 K60_39 0.019352194 0.17908000 SNP-65_2_K60_39
+8487  SNP-71_2 K60_27 0.001424537 0.02764840 SNP-71_2_K60_27
+8514  SNP-71_2 K60_54 0.044308426 0.25714094 SNP-71_2_K60_54
+9405  SNP-79_1 K60_45 0.037757920 0.24471786 SNP-79_1_K60_45
+9411  SNP-79_1 K60_51 0.045748403 0.25856440 SNP-79_1_K60_51
+9517  SNP-80_1 K60_37 0.013462935 0.14565023 SNP-80_1_K60_37
+9541  SNP-80_2  K60_1 0.023396898 0.19691507  SNP-80_2_K60_1
+10025 SNP-84_2  K60_5 0.034515793 0.23487577  SNP-84_2_K60_5
+10163 SNP-85_2 K60_23 0.017645946 0.16961995 SNP-85_2_K60_23
+10181 SNP-85_2 K60_41 0.038745427 0.24694401 SNP-85_2_K60_41
+10194 SNP-85_2 K60_54 0.039718700 0.25020225 SNP-85_2_K60_54
+10302 SNP-86_2 K60_42 0.027151314 0.21107782 SNP-86_2_K60_42
+10521 SNP-88_2 K60_21 0.027122560 0.21107782 SNP-88_2_K60_21
+10859    NTC-6 K60_59 0.037413968 0.24389012    NTC-6_K60_59
+10870    NTC-7 K60_10 0.048263013 0.26249002    NTC-7_K60_10
+10927    NTC-8  K60_7 0.043254621 0.25586732     NTC-8_K60_7</code></pre>
+</div>
+</div>
+<div id="geneset-distribution" class="section level2" number="3.2">
+<h2 number="3.2"><span class="header-section-number">3.2</span> Geneset distribution</h2>
+<pre class="r"><code>plot_list &lt;- list()
+
+setwd(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove&quot;)
+for (i in 1:length(selected_rows)) {
+  grna_id &lt;- result_to_analyze$grna_id[i]
+  gene_module &lt;- result_to_analyze$module[i]
+  
+  acat_p &lt;- result_to_analyze$acat_pval[i]
+  our_p &lt;- result_to_compare$p_value[i]
+  
+  row_idx &lt;- which(rownames(max_stat) == grna_id)
+
+  group_start &lt;- floor((row_idx - 1) / 20) * 20 + 1
+  group_end &lt;- group_start + 19
+  folder_name &lt;- paste0(group_start, &quot;_&quot;, group_end)
+
+
+  chunk_idx &lt;- row_idx - group_start + 1
+
+
+  file_path &lt;- file.path(folder_name, &quot;max_statistics&quot;, paste0(&quot;max_statistics_chunk_&quot;, chunk_idx, &quot;.rds&quot;))
+
+
+  ms &lt;- readRDS(file_path)
+
+    values &lt;- ms[, gene_module, 1]
+    highlight_value &lt;- ms[1, gene_module, 1]
+    
+    df &lt;- data.frame(values = values)
+    
+p &lt;- ggplot(df, aes(x = values)) +
+  geom_histogram(bins = 1000, fill = &quot;lightgray&quot;, color = &quot;black&quot;) +
+  geom_vline(xintercept = highlight_value, color = &quot;red&quot;, linewidth = 1) +
+  ggtitle(paste0(&quot;Perturbation-geneset MaxStat test: &quot;, grna_id, &quot; - &quot;, gene_module)) +
+  xlab(&quot;Values&quot;) + ylab(&quot;Count&quot;) +
+  annotate(&quot;text&quot;, x = Inf, y = Inf,
+           hjust = 1.1, vjust = 1.5, size = 4, color = &quot;blue&quot;,
+           label = paste0(&quot;ACAT p = &quot;, signif(acat_p, 3), 
+                          &quot;\nOur p = &quot;, signif(our_p, 3))) +
+  theme_minimal()
+
+    
+    plot_list[[i]] &lt;- p
+
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-24-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="genewise-p-value" class="section level2" number="3.3">
+<h2 number="3.3"><span class="header-section-number">3.3</span> Genewise p value</h2>
+<pre class="r"><code>plot_list &lt;- list()
+hit_list &lt;- list()  # 存储符合条件的 gene + metadata
+
+for (i in 1:length(selected_rows)) {
+  grna_id &lt;- result_to_analyze$grna_id[i]
+  gene_module &lt;- result_to_analyze$module[i]
+  gene_to_analyze &lt;- rownames(gene_module_index_matrix)[gene_module_index_matrix[, gene_module] == 1]
+
+  y &lt;- as.numeric(sceptre_wide[grna_id, gene_to_analyze])
+  x &lt;- as.numeric(genewise_p_combined_all[grna_id, gene_to_analyze])
+
+  valid_idx &lt;- which(!is.na(x) &amp; !is.na(y))
+  x &lt;- x[valid_idx]
+  y &lt;- y[valid_idx]
+  genes &lt;- gene_to_analyze[valid_idx]
+
+  df &lt;- data.frame(our_method = x, sceptre = y, gene = genes)
+  cor_val &lt;- cor(x, y)
+
+  # 保存符合条件的 gene 信息
+  hit_genes &lt;- df$gene[df$our_method &gt; 0.3 &amp; df$sceptre &lt; 0.05]
+  if (length(hit_genes) &gt; 0) {
+hit_list[[i]] &lt;- data.frame(
+  grna_id = grna_id,
+  gene_module = gene_module,
+  gene = I(list(hit_genes))
+)
+  }
+
+  # 画图 + 添加相关系数
+  p &lt;- ggplot(df, aes(x = our_method, y = sceptre)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_abline(slope = 1, intercept = 0, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
+    annotate(&quot;text&quot;, x = 0.05, y = 0.95, label = paste0(&quot;cor = &quot;, round(cor_val, 3)),
+             hjust = 0, size = 5, color = &quot;blue&quot;) +
+    labs(x = &quot;Our method&quot;, y = &quot;Sceptre&quot;,
+         title = paste0(&quot;Perturbation-gene p values: &quot;, grna_id, &quot; - genes in &quot;, gene_module)) +
+    theme_bw()
+
+  plot_list[[i]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-26-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="genewise-distribution" class="section level2" number="3.4">
+<h2 number="3.4"><span class="header-section-number">3.4</span> Genewise distribution</h2>
+<pre class="r"><code>plot_list &lt;- list()
+
+
+setwd(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove&quot;)
+for (i in 1:length(hit_list)) {
+  grna_id &lt;- result_to_analyze$grna_id[i]
+  gene_list &lt;- ((hit_list[[i]])[1,3])[[1]]
+  
+  
+   if (length(gene_list)&gt;0){
+     
+  row_idx &lt;- which(rownames(max_stat) == grna_id)
+
+  group_start &lt;- floor((row_idx - 1) / 20) * 20 + 1
+  group_end &lt;- group_start + 19
+  folder_name &lt;- paste0(group_start, &quot;_&quot;, group_end)
+
+
+  chunk_idx &lt;- row_idx - group_start + 1
+
+
+  file_path &lt;- file.path(folder_name, &quot;normalized_test_tensor&quot;, paste0(&quot;normalized_test_tensor_chunk_&quot;, chunk_idx, &quot;.rds&quot;))
+
+
+  ms &lt;- readRDS(file_path)
+  
+ 
+  
+  for (gene in gene_list){
+    
+    our_p &lt;- genewise_p_combined_all[grna_id,gene]
+    sceptre_p &lt;- sceptre_wide[grna_id, gene]
+
+    values &lt;- ms[, which(rownames(gene_module_index_matrix)==gene), 1]
+    values &lt;- values[is.finite(values)]  
+
+    highlight_value &lt;- ms[1, which(rownames(gene_module_index_matrix)==gene), 1]
+    
+    df &lt;- data.frame(values = values)
+    
+p &lt;- ggplot(df, aes(x = values)) +
+  geom_histogram(bins = 1000, fill = &quot;lightgray&quot;, color = &quot;black&quot;) +
+  geom_vline(xintercept = highlight_value, color = &quot;red&quot;, linewidth = 1) +
+  ggtitle(paste0(&quot;Perturbation-gene Wilcoxon test: &quot;, grna_id, &quot; - &quot;, gene)) +
+  xlab(&quot;Values&quot;) + ylab(&quot;Count&quot;) +
+  annotate(&quot;text&quot;, x = Inf, y = Inf,
+           hjust = 1.1, vjust = 1.5, size = 4, color = &quot;blue&quot;,
+           label = paste0(&quot;Sceptre p = &quot;, signif(sceptre_p, 3), 
+                          &quot;\nOur wilcoxon p = &quot;, signif(our_p, 3))) +
+  theme_minimal()
+
+    
+    plot_list[[(length(plot_list)+1)]] &lt;- p
+  }
+  }
+
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-28-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="may-26---replace-wilcoxon-with-nb" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> May 26 - Replace wilcoxon with NB</h1>
+<div id="gene-level" class="section level2" number="4.1">
+<h2 number="4.1"><span class="header-section-number">4.1</span> Gene-level</h2>
+<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-30-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>merged_df &lt;- merge(result_df, result_df_2, by = &quot;row.names&quot;, all = TRUE)
+rownames(merged_df) &lt;- merged_df$Row.names
+merged_df$Row.names &lt;- NULL
+merged_df &lt;- merged_df[complete.cases(merged_df), ]
+colnames(merged_df)[2]&lt;-&quot;wilcoxon_p&quot;</code></pre>
+<pre class="r"><code>merged_df</code></pre>
+<pre><code>                                 NB_p wilcoxon_p    sceptre_p
+NTC-6 - ENSG00000100316    0.07939206  0.3243676 0.0240000000
+NTC-6 - ENSG00000166441    0.05499450  0.3375662 0.0240000000
+NTC-6 - ENSG00000198755    0.17018298  0.7217278 0.0480000000
+NTC-6 - ENSG00000213741    0.07419258  0.3067693 0.0360000000
+NTC-8 - ENSG00000136888    0.25737426  0.3127687 0.0440000000
+SNP-15_1 - ENSG00000147684 0.00219978  0.4345565 0.0002280228
+SNP-16_2 - ENSG00000088832 0.05679432  0.4563544 0.0440000000
+SNP-16_2 - ENSG00000111348 0.02659734  0.4147585 0.0440000000
+SNP-16_2 - ENSG00000160310 0.04859514  0.3877612 0.0400000000
+SNP-23_2 - ENSG00000159140 0.05179482  0.3171683 0.0480000000
+SNP-32_1 - ENSG00000247092 0.02599740  0.3541646 0.0289284628
+SNP-36_2 - ENSG00000156482 0.05499450  0.3205679 0.0400000000
+SNP-36_2 - ENSG00000189180 0.03339666  0.4677532 0.0280000000
+SNP-40_2 - ENSG00000139722 0.05019498  0.3495650 0.0400000000
+SNP-40_2 - ENSG00000222041 0.02859714  0.3033697 0.0280000000
+SNP-52_1 - ENSG00000110700 0.02679732  0.4391561 0.0360000000
+SNP-52_1 - ENSG00000125740 0.02419758  0.6239376 0.0392043569
+SNP-55_2 - ENSG00000137267 0.02619738  0.6933307 0.0320000000
+SNP-55_2 - ENSG00000167657 0.04759524  0.3045695 0.0400000000
+SNP-79_1 - ENSG00000132688 0.04019598  0.3085691 0.0285689652
+SNP-80_2 - ENSG00000134294 0.02679732  0.4743526 0.0400000000
+SNP-80_2 - ENSG00000176046 0.02179782  0.7223278 0.0240000000
+SNP-85_2 - ENSG00000075624 0.03939606  0.7681232 0.0240000000
+SNP-86_2 - ENSG00000130816 0.13418658  0.3989601 0.0280000000
+SNP-86_2 - ENSG00000153044 0.06419358  0.7013299 0.0132949738
+SNP-9_1 - ENSG00000166598  0.04939506  0.4019598 0.0440000000
+SNP-9_1 - ENSG00000198727  0.63073693  0.5795420 0.0360000000
+SNP-9_1 - ENSG00000198804  0.66673333  0.7165283 0.0320000000
+SNP-9_1 - ENSG00000198886  0.58254175  0.6553345 0.0088000000
+SNP-9_1 - ENSG00000198938  0.42515748  0.7647235 0.0020000000</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(tidyr)
+
+# 将 merged_df 转换为 long format，便于画多组 y 值
+plot_df &lt;- merged_df |&gt;
+  pivot_longer(cols = c(NB_p, wilcoxon_p), names_to = &quot;method&quot;, values_to = &quot;p_value&quot;)
+
+# 计算相关系数
+cor_nb &lt;- cor(merged_df$NB_p, merged_df$sceptre_p, method = &quot;pearson&quot;)
+cor_wilcox &lt;- cor(merged_df$wilcoxon_p, merged_df$sceptre_p, method = &quot;pearson&quot;)
+
+# 拼接标题
+title_text &lt;- paste0(&quot;Sceptre significant perturb-gene pairs&quot;)
+
+# 作图
+ggplot(plot_df, aes(x = sceptre_p, y = p_value, color = method)) +
+  geom_point() +
+  labs(title = title_text,
+       x = &quot;SCEPTRE p-value&quot;,
+       y = &quot;Our/Wilcoxon p-value&quot;,
+       color = &quot;Method&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><span style="color:red"> However, the pairs that I selected is the Sceptre(NB) significant pairs but not wilcoxon significant, so if we use NB test, it is naturally more significant than wilcoxon. The next step is to test: For the wilcoxon significant pairs, if we switch to NB test, whether they are still significant. </span></p>
+</div>
+<div id="geneset-level" class="section level2" number="4.2">
+<h2 number="4.2"><span class="header-section-number">4.2</span> Geneset-level</h2>
+<div id="sanity-check" class="section level3" number="4.2.1">
+<h3 number="4.2.1"><span class="header-section-number">4.2.1</span> sanity check</h3>
+<pre class="r"><code>base_dir &lt;- &quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_1000_test_statistics&quot;
+rds_files &lt;- list.files(base_dir, pattern = &quot;^NB_test_.*\\.rds$&quot;, full.names = TRUE)
+
+
+result_vec &lt;- numeric(length(rds_files))
+names(result_vec) &lt;- rep(NA, length(rds_files))
+
+for (i in seq_along(rds_files)) {
+  file_path &lt;- rds_files[i]
+  x &lt;- readRDS(file_path)
+
+
+  r1 &lt;- rank(x)[1]
+  r2 &lt;- rank(-x)[1]
+  result_vec[i] &lt;- 2 * min(r1, r2)/1000
+
+
+  raw_name &lt;- basename(file_path)
+  extracted_name &lt;- sub(&quot;^NB_test_(.*)\\.rds$&quot;, &quot;\\1&quot;, raw_name)
+  names(result_vec)[i] &lt;- extracted_name
+}
+
+result_df &lt;- data.frame(NB_p = result_vec)</code></pre>
+<pre class="r"><code>head(result_df)</code></pre>
+<pre><code>                            NB_p sceptre_p
+SNP-11_1 - ENSG00000003436 0.684     0.500
+SNP-11_1 - ENSG00000004779 0.382     0.424
+SNP-11_1 - ENSG00000005483 0.114     0.108
+SNP-11_1 - ENSG00000008988 0.708     0.716
+SNP-11_1 - ENSG00000017797 0.732     0.688
+SNP-11_1 - ENSG00000023287 0.842     0.664</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# 计算相关系数
+cor_val &lt;- cor(result_df$NB_p, result_df$sceptre_p, use = &quot;complete.obs&quot;)
+
+# 绘图
+ggplot(result_df, aes(x = sceptre_p, y = NB_p)) +
+  geom_point(alpha = 0.6) +
+  labs(
+    title = &quot;Scatter plot of NB_p vs. sceptre_p&quot;,
+    subtitle = paste(&quot;Correlation =&quot;, round(cor_val, 3)),
+    x = &quot;sceptre_p&quot;,
+    y = &quot;NB_p&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-9_1-k60_44" class="section level3" number="4.2.2">
+<h3 number="4.2.2"><span class="header-section-number">4.2.2</span> SNP-9_1-K60_44</h3>
+<pre class="r"><code>    normalized_test_tensor &lt;- test_normalizer_rcpp(tensor)
+
+combined_test_tensor &lt;- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics &lt;- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))</code></pre>
+<pre><code>
+Attaching package: &#39;matrixStats&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    count</code></pre>
+<pre class="r"><code>    precompute_p[[length(precompute_p)+1]] &lt;- compute_final_p_val(max_statistics, 1000,1)
+
+    
+p_vec&lt;-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]&lt;-combination.test(p_vec,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-41-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-43-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-11_1-k60_53" class="section level3" number="4.2.3">
+<h3 number="4.2.3"><span class="header-section-number">4.2.3</span> SNP-11_1-K60_53</h3>
+<pre class="r"><code>    normalized_test_tensor &lt;- test_normalizer_rcpp(tensor)
+
+combined_test_tensor &lt;- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics &lt;- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] &lt;- compute_final_p_val(max_statistics, 1000,1)
+
+    
+p_vec&lt;-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]&lt;-combination.test(p_vec,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-47-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-49-1.png" width="2400" style="display: block; margin: auto;" /> ### SNP-40_2-K60_13</p>
+<pre class="r"><code>    normalized_test_tensor &lt;- test_normalizer_rcpp(tensor)
+
+combined_test_tensor &lt;- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics &lt;- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] &lt;- compute_final_p_val(max_statistics, 1000,1)
+
+    
+p_vec&lt;-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]&lt;-combination.test(p_vec,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)
+
+
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-52-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-54-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-40_2-k60_25" class="section level3" number="4.2.4">
+<h3 number="4.2.4"><span class="header-section-number">4.2.4</span> SNP-40_2-K60_25</h3>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-56-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-58-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-40_2-k60_50" class="section level3" number="4.2.5">
+<h3 number="4.2.5"><span class="header-section-number">4.2.5</span> SNP-40_2-K60_50</h3>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-60-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-62-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-65_2-k60_23" class="section level3" number="4.2.6">
+<h3 number="4.2.6"><span class="header-section-number">4.2.6</span> SNP-65_2-K60_23</h3>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-64-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-66-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-65_2-k60_24" class="section level3" number="4.2.7">
+<h3 number="4.2.7"><span class="header-section-number">4.2.7</span> SNP-65_2-K60_24</h3>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-68-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-70-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-65_2-k60_31" class="section level3" number="4.2.8">
+<h3 number="4.2.8"><span class="header-section-number">4.2.8</span> SNP-65_2-K60_31</h3>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-73-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-75-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-65_2-k60_39" class="section level3" number="4.2.9">
+<h3 number="4.2.9"><span class="header-section-number">4.2.9</span> SNP-65_2-K60_39</h3>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Genewise NB test&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-78-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/research_log_May.Rmd/unnamed-chunk-80-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-nbacat-nbpower-comb" class="section level3" number="4.2.10">
+<h3 number="4.2.10"><span class="header-section-number">4.2.10</span> Comparison: NB+ACAT; NB+power comb</h3>
+<pre class="r"><code># 提取 module 名
+module_names &lt;- sapply(precompute_p, function(x) colnames(x))
+
+# 提取 p 值
+pre_p &lt;- sapply(precompute_p, function(x) as.numeric(x))
+acat_p_vec &lt;- unlist(acat_p)
+
+# 合并成 dataframe
+df &lt;- data.frame(
+  pair = module_names,
+  `NB_powercomb` = pre_p,
+  NB_acat = acat_p_vec
+)
+prefix_vec &lt;- c(&quot;SNP-9_1&quot;, &quot;SNP-11_1&quot;, &quot;SNP-40_2&quot;, &quot;SNP-40_2&quot;, &quot;SNP-40_2&quot;,&quot;SNP-65_2&quot;,&quot;SNP-65_2&quot;,&quot;SNP-65_2&quot;,&quot;SNP-65_2&quot;)
+
+# 添加前缀
+df$pair &lt;- paste(prefix_vec, df$pair, sep = &quot;-&quot;)
+
+df</code></pre>
+<pre><code>             pair NB_powercomb    NB_acat
+1  SNP-9_1-K60_44        0.711 0.09210733
+2 SNP-11_1-K60_53        0.056 0.13574407
+3 SNP-40_2-K60_13        0.943 0.14614093
+4 SNP-40_2-K60_25        0.891 0.11717071
+5 SNP-40_2-K60_50        0.752 0.18690687
+6 SNP-65_2-K60_23        0.961 0.09270302
+7 SNP-65_2-K60_24        0.792 0.17376174
+8 SNP-65_2-K60_31        0.633 0.18034373
+9 SNP-65_2-K60_39        0.480 0.09501150</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.0 (2021-05-18)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 8
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.3.13-el8-x86_64/lib/libopenblas_skylakexp-r0.3.13.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8 LC_NUMERIC=C         LC_TIME=C           
+ [4] LC_COLLATE=C         LC_MONETARY=C        LC_MESSAGES=C       
+ [7] LC_PAPER=C           LC_NAME=C            LC_ADDRESS=C        
+[10] LC_TELEPHONE=C       LC_MEASUREMENT=C     LC_IDENTIFICATION=C 
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] matrixStats_1.1.0       speedglm_0.3-5          biglm_0.9-3            
+ [4] DBI_1.2.3               MASS_7.3-60             ACAT_0.91              
+ [7] eulerr_7.0.2            gridExtra_2.3           heavytailcombtest_1.0.0
+[10] sgt_2.0                 numDeriv_2016.8-1.1     optimx_2024-12.2       
+[13] peakRAM_1.0.2           BH_1.84.0-0             Matrix_1.6-3           
+[16] sceptredata_0.99.0      sceptre_0.10.0          presto_1.0.0           
+[19] data.table_1.14.8       Rcpp_1.0.12             tidyr_1.3.0            
+[22] tibble_3.2.1            readr_1.4.0             dplyr_1.1.4            
+[25] ggplot2_3.5.1           workflowr_1.7.1        
+
+loaded via a namespace (and not attached):
+ [1] httr_1.4.2               sass_0.4.9               jsonlite_1.8.7          
+ [4] bslib_0.7.0              getPass_0.2-2            highr_0.11              
+ [7] yaml_2.2.1               pillar_1.9.0             lattice_0.22-5          
+[10] glue_1.6.2               rmutil_1.1.10            digest_0.6.33           
+[13] promises_1.2.0.1         polyclip_1.10-6          colorspace_2.1-0        
+[16] plyr_1.8.6               htmltools_0.5.8.1        httpuv_1.6.1            
+[19] pkgconfig_2.0.3          invgamma_1.1             purrr_1.0.2             
+[22] mvtnorm_1.3-3            scales_1.3.0             processx_3.8.4          
+[25] whisker_0.4.1            later_1.2.0              pracma_2.4.4            
+[28] git2r_0.32.0             farver_2.1.1             generics_0.1.3          
+[31] ellipsis_0.3.2           cachem_1.0.8             withr_2.5.2             
+[34] cli_3.6.1                crayon_1.5.2             magrittr_2.0.3          
+[37] evaluate_0.23            ps_1.7.5                 fs_1.6.3                
+[40] fansi_1.0.5              RcppArmadillo_0.10.5.0.0 tools_4.1.0             
+[43] hms_1.1.0                lifecycle_1.0.4          stringr_1.5.1           
+[46] munsell_0.5.0            callr_3.7.6              compiler_4.1.0          
+[49] jquerylib_0.1.4          rlang_1.1.2              grid_4.1.0              
+[52] nloptr_1.2.2.2           rstudioapi_0.15.0        labeling_0.4.3          
+[55] rmarkdown_2.27           gtable_0.3.0             reshape2_1.4.4          
+[58] R6_2.5.1                 knitr_1.48               fastmap_1.1.1           
+[61] utf8_1.2.1               rprojroot_2.0.4          polylabelr_0.3.0        
+[64] stringi_1.6.2            vctrs_0.6.4              tidyselect_1.2.0        
+[67] xfun_0.51               </code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
