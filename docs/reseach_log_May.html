@@ -385,7 +385,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-05-26
+<strong>Last updated:</strong> 2025-05-27
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -484,6 +484,14 @@ relative
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 /project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds
@@ -716,6 +724,14 @@ output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove
 output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_values
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_1000_test_statistics
+</td>
+<td style="text-align:left;">
+output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_1000_test_statistics
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -724,16 +740,16 @@ output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93targetblank462a5c3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93" target="_blank">462a5c3</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree78662a2a16ac5d5160b3bf77f05590cdd86ae3d8targetblank78662a2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/78662a2a16ac5d5160b3bf77f05590cdd86ae3d8" target="_blank">78662a2</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93targetblank462a5c3a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree78662a2a16ac5d5160b3bf77f05590cdd86ae3d8targetblank78662a2a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/462a5c34bad1dd8c7a57b6d82eb72b0c1456fc93" target="_blank">462a5c3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/78662a2a16ac5d5160b3bf77f05590cdd86ae3d8" target="_blank">78662a2</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -825,6 +841,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/78662a2a16ac5d5160b3bf77f05590cdd86ae3d8/analysis/reseach_log_May.Rmd" target="_blank">78662a2</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-27
+</td>
+<td>
+add genewise comparison
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/b50d6d44206cb550a67e8be333e7ff32627cbf59/docs/reseach_log_May.html" target="_blank">b50d6d4</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1641,6 +1691,8 @@ jliucx
 </div>
 <div id="may-26---replace-wilcoxon-with-nb" class="section level1" number="4">
 <h1 number="4"><span class="header-section-number">4</span> May 26 - Replace wilcoxon with NB</h1>
+<div id="gene-level" class="section level2" number="4.1">
+<h2 number="4.1"><span class="header-section-number">4.1</span> Gene-level</h2>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-30-1.png" width="2400" style="display: block; margin: auto;" /></p>
 <p>
@@ -1685,6 +1737,38 @@ rownames(merged_df) &lt;- merged_df$Row.names
 merged_df$Row.names &lt;- NULL
 merged_df &lt;- merged_df[complete.cases(merged_df), ]
 colnames(merged_df)[2]&lt;-&quot;wilcoxon_p&quot;</code></pre>
+<pre class="r"><code>merged_df</code></pre>
+<pre><code>                                 NB_p wilcoxon_p    sceptre_p
+NTC-6 - ENSG00000100316    0.07939206  0.3243676 0.0240000000
+NTC-6 - ENSG00000166441    0.05499450  0.3375662 0.0240000000
+NTC-6 - ENSG00000198755    0.17018298  0.7217278 0.0480000000
+NTC-6 - ENSG00000213741    0.07419258  0.3067693 0.0360000000
+NTC-8 - ENSG00000136888    0.25737426  0.3127687 0.0440000000
+SNP-15_1 - ENSG00000147684 0.00219978  0.4345565 0.0002280228
+SNP-16_2 - ENSG00000088832 0.05679432  0.4563544 0.0440000000
+SNP-16_2 - ENSG00000111348 0.02659734  0.4147585 0.0440000000
+SNP-16_2 - ENSG00000160310 0.04859514  0.3877612 0.0400000000
+SNP-23_2 - ENSG00000159140 0.05179482  0.3171683 0.0480000000
+SNP-32_1 - ENSG00000247092 0.02599740  0.3541646 0.0289284628
+SNP-36_2 - ENSG00000156482 0.05499450  0.3205679 0.0400000000
+SNP-36_2 - ENSG00000189180 0.03339666  0.4677532 0.0280000000
+SNP-40_2 - ENSG00000139722 0.05019498  0.3495650 0.0400000000
+SNP-40_2 - ENSG00000222041 0.02859714  0.3033697 0.0280000000
+SNP-52_1 - ENSG00000110700 0.02679732  0.4391561 0.0360000000
+SNP-52_1 - ENSG00000125740 0.02419758  0.6239376 0.0392043569
+SNP-55_2 - ENSG00000137267 0.02619738  0.6933307 0.0320000000
+SNP-55_2 - ENSG00000167657 0.04759524  0.3045695 0.0400000000
+SNP-79_1 - ENSG00000132688 0.04019598  0.3085691 0.0285689652
+SNP-80_2 - ENSG00000134294 0.02679732  0.4743526 0.0400000000
+SNP-80_2 - ENSG00000176046 0.02179782  0.7223278 0.0240000000
+SNP-85_2 - ENSG00000075624 0.03939606  0.7681232 0.0240000000
+SNP-86_2 - ENSG00000130816 0.13418658  0.3989601 0.0280000000
+SNP-86_2 - ENSG00000153044 0.06419358  0.7013299 0.0132949738
+SNP-9_1 - ENSG00000166598  0.04939506  0.4019598 0.0440000000
+SNP-9_1 - ENSG00000198727  0.63073693  0.5795420 0.0360000000
+SNP-9_1 - ENSG00000198804  0.66673333  0.7165283 0.0320000000
+SNP-9_1 - ENSG00000198886  0.58254175  0.6553345 0.0088000000
+SNP-9_1 - ENSG00000198938  0.42515748  0.7647235 0.0020000000</code></pre>
 <pre class="r"><code>library(ggplot2)
 library(tidyr)
 
@@ -1707,45 +1791,868 @@ ggplot(plot_df, aes(x = sceptre_p, y = p_value, color = method)) +
        y = &quot;Our/Wilcoxon p-value&quot;,
        color = &quot;Method&quot;) +
   theme_minimal()</code></pre>
-<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-33-1">
-Past versions of unnamed-chunk-33-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-33-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/e4ef492ea83480e3c45917fd23b8bcf6f53c465d/docs/figure/reseach_log_May.Rmd/unnamed-chunk-33-1.png" target="_blank">e4ef492</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-05-26
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p><span style="color:red"> However, the pairs that I selected is the Sceptre(NB) significant pairs but not wilcoxon significant, so if we use NB test, it is naturally more significant than wilcoxon. The next step is to test: For the wilcoxon significant pairs, if we switch to NB test, whether they are still significant. </span></p>
+</div>
+<div id="geneset-level" class="section level2" number="4.2">
+<h2 number="4.2"><span class="header-section-number">4.2</span> Geneset-level</h2>
+<div id="sanity-check" class="section level3" number="4.2.1">
+<h3 number="4.2.1"><span class="header-section-number">4.2.1</span> sanity check</h3>
+<pre class="r"><code>base_dir &lt;- &quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_1000_test_statistics&quot;
+rds_files &lt;- list.files(base_dir, pattern = &quot;^NB_test_.*\\.rds$&quot;, full.names = TRUE)
+
+
+result_vec &lt;- numeric(length(rds_files))
+names(result_vec) &lt;- rep(NA, length(rds_files))
+
+for (i in seq_along(rds_files)) {
+  file_path &lt;- rds_files[i]
+  x &lt;- readRDS(file_path)
+
+
+  r1 &lt;- rank(x)[1]
+  r2 &lt;- rank(-x)[1]
+  result_vec[i] &lt;- 2 * min(r1, r2)/1000
+
+
+  raw_name &lt;- basename(file_path)
+  extracted_name &lt;- sub(&quot;^NB_test_(.*)\\.rds$&quot;, &quot;\\1&quot;, raw_name)
+  names(result_vec)[i] &lt;- extracted_name
+}
+
+result_df &lt;- data.frame(NB_p = result_vec)</code></pre>
+<pre class="r"><code>head(result_df)</code></pre>
+<pre><code>                            NB_p sceptre_p
+SNP-11_1 - ENSG00000003436 0.684     0.500
+SNP-11_1 - ENSG00000004779 0.382     0.424
+SNP-11_1 - ENSG00000005483 0.114     0.108
+SNP-11_1 - ENSG00000008988 0.708     0.716
+SNP-11_1 - ENSG00000017797 0.732     0.688
+SNP-11_1 - ENSG00000023287 0.842     0.664</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# 计算相关系数
+cor_val &lt;- cor(result_df$NB_p, result_df$sceptre_p, use = &quot;complete.obs&quot;)
+
+# 绘图
+ggplot(result_df, aes(x = sceptre_p, y = NB_p)) +
+  geom_point(alpha = 0.6) +
+  labs(
+    title = &quot;Scatter plot of NB_p vs. sceptre_p&quot;,
+    subtitle = paste(&quot;Correlation =&quot;, round(cor_val, 3)),
+    x = &quot;sceptre_p&quot;,
+    y = &quot;NB_p&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-9_1-k60_44" class="section level3" number="4.2.2">
+<h3 number="4.2.2"><span class="header-section-number">4.2.2</span> SNP-9_1-K60_44</h3>
+<pre class="r"><code>    normalized_test_tensor &lt;- test_normalizer_rcpp(tensor)
+
+combined_test_tensor &lt;- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics &lt;- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))</code></pre>
+<pre><code>
+Attaching package: &#39;matrixStats&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    count</code></pre>
+<pre class="r"><code>    precompute_p[[length(precompute_p)+1]] &lt;- compute_final_p_val(max_statistics, 1000,1)
+
+    
+p_vec&lt;-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]&lt;-combination.test(p_vec,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+generated.</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-41-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-43-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-11_1-k60_53" class="section level3" number="4.2.3">
+<h3 number="4.2.3"><span class="header-section-number">4.2.3</span> SNP-11_1-K60_53</h3>
+<pre class="r"><code>    normalized_test_tensor &lt;- test_normalizer_rcpp(tensor)
+
+combined_test_tensor &lt;- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics &lt;- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] &lt;- compute_final_p_val(max_statistics, 1000,1)
+
+    
+p_vec&lt;-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]&lt;-combination.test(p_vec,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-47-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-49-1.png" width="2400" style="display: block; margin: auto;" /> ### SNP-40_2-K60_13</p>
+<pre class="r"><code># 设置目标基因列表，假设你已提取为 gene 向量
+gene &lt;- rownames(gene_module_index_matrix)[gene_module_index_matrix[, &quot;K60_13&quot;] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files &lt;- list.files(folder_path,pattern = &quot;SNP-40_2.*\\.rds$&quot;, full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files &lt;- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = &quot;|&quot;), f)
+})]
+
+# 读取文件
+rds_list &lt;- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) &lt;- sub(&quot;\\.rds$&quot;, &quot;&quot;, basename(filtered_files))
+
+lengths_list &lt;- sapply(rds_list, length)
+rds_list_fixed &lt;- rds_list[lengths_list == 1000]
+mat &lt;- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row &lt;- nrow(mat)
+n_col &lt;- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor &lt;- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] &lt;- mat
+
+module_index_mat &lt;- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)&lt;-&quot;K60_13&quot;</code></pre>
+<pre class="r"><code>    normalized_test_tensor &lt;- test_normalizer_rcpp(tensor)
+
+combined_test_tensor &lt;- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics &lt;- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] &lt;- compute_final_p_val(max_statistics, 1000,1)
+
+    
+p_vec&lt;-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]&lt;-combination.test(p_vec,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-53-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-55-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-40_2-k60_25" class="section level3" number="4.2.4">
+<h3 number="4.2.4"><span class="header-section-number">4.2.4</span> SNP-40_2-K60_25</h3>
+<pre class="r"><code># 设置目标基因列表，假设你已提取为 gene 向量
+gene &lt;- rownames(gene_module_index_matrix)[gene_module_index_matrix[, &quot;K60_25&quot;] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files &lt;- list.files(folder_path,pattern = &quot;SNP-40_2.*\\.rds$&quot;, full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files &lt;- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = &quot;|&quot;), f)
+})]
+
+# 读取文件
+rds_list &lt;- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) &lt;- sub(&quot;\\.rds$&quot;, &quot;&quot;, basename(filtered_files))
+lengths_list &lt;- sapply(rds_list, length)
+rds_list_fixed &lt;- rds_list[lengths_list == 1000]
+mat &lt;- do.call(cbind, rds_list_fixed)
+
+# 获取矩阵维度
+n_row &lt;- nrow(mat)
+n_col &lt;- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor &lt;- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] &lt;- mat
+
+module_index_mat &lt;- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)&lt;-&quot;K60_25&quot;</code></pre>
+<pre class="r"><code>    normalized_test_tensor &lt;- test_normalizer_rcpp(tensor)
+
+combined_test_tensor &lt;- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics &lt;- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] &lt;- compute_final_p_val(max_statistics, 1000,1)
+
+    
+p_vec&lt;-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]&lt;-combination.test(p_vec,weights = NA,method = &quot;Cauchy&quot;,tail.idx = 1)</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-59-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-61-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="snp-40_2-k60_50" class="section level3" number="4.2.5">
+<h3 number="4.2.5"><span class="header-section-number">4.2.5</span> SNP-40_2-K60_50</h3>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-65-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-67-1.png" width="2400" style="display: block; margin: auto;" /> ### SNP-65_2-K60_23</p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-71-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-73-1.png" width="2400" style="display: block; margin: auto;" /> ### SNP-65_2-K60_24</p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-77-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-79-1.png" width="2400" style="display: block; margin: auto;" /> ### SNP-65_2-K60_31</p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-83-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-85-1.png" width="2400" style="display: block; margin: auto;" /> ### SNP-65_2-K60_39</p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(normalized_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- normalized_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Gene&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-89-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+# 初始化列表保存图
+plot_list &lt;- list()
+
+# 获取列数
+n_col &lt;- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec &lt;- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val &lt;- vec[1]
+  
+  # 构造数据框
+  df &lt;- data.frame(value = vec)
+  
+  # 绘图
+  p &lt;- ggplot(df, aes(x = value)) +
+    geom_histogram(color = &quot;black&quot;, fill = &quot;lightblue&quot;, bins = 200) +
+    geom_vline(xintercept = mark_val, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +
+    labs(
+      title = paste(&quot;Column&quot;, j),
+      x = &quot;Value&quot;, y = &quot;Count&quot;
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] &lt;- p
+}</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob(&quot;Power Combination&quot;, gp = grid::gpar(fontsize = 45, fontface = &quot;bold&quot;))
+)</code></pre>
+<p><img src="figure/reseach_log_May.Rmd/unnamed-chunk-91-1.png" width="2400" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-nbacat-nbpower-comb" class="section level3" number="4.2.6">
+<h3 number="4.2.6"><span class="header-section-number">4.2.6</span> Comparison: NB+ACAT; NB+power comb</h3>
+<pre class="r"><code># 提取 module 名
+module_names &lt;- sapply(precompute_p, function(x) colnames(x))
+
+# 提取 p 值
+pre_p &lt;- sapply(precompute_p, function(x) as.numeric(x))
+acat_p_vec &lt;- unlist(acat_p)
+
+# 合并成 dataframe
+df &lt;- data.frame(
+  pair = module_names,
+  `NB_powercomb` = pre_p,
+  NB_acat = acat_p_vec
+)
+prefix_vec &lt;- c(&quot;SNP-9_1&quot;, &quot;SNP-11_1&quot;, &quot;SNP-40_2&quot;, &quot;SNP-40_2&quot;, &quot;SNP-40_2&quot;,&quot;SNP-65_2&quot;,&quot;SNP-65_2&quot;,&quot;SNP-65_2&quot;,&quot;SNP-65_2&quot;)
+
+# 添加前缀
+df$pair &lt;- paste(prefix_vec, df$pair, sep = &quot;-&quot;)
+
+df</code></pre>
+<pre><code>             pair NB_powercomb    NB_acat
+1  SNP-9_1-K60_44        0.711 0.09210733
+2 SNP-11_1-K60_53        0.056 0.13574407
+3 SNP-40_2-K60_13        0.943 0.14614093
+4 SNP-40_2-K60_25        0.891 0.11717071
+5 SNP-40_2-K60_50        0.752 0.18690687
+6 SNP-65_2-K60_23        0.961 0.09270302
+7 SNP-65_2-K60_24        0.792 0.17376174
+8 SNP-65_2-K60_31        0.633 0.18034373
+9 SNP-65_2-K60_39        0.480 0.09501150</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1772,33 +2679,42 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] MASS_7.3-60             ACAT_0.91               eulerr_7.0.2           
- [4] gridExtra_2.3           heavytailcombtest_1.0.0 sgt_2.0                
- [7] numDeriv_2016.8-1.1     optimx_2024-12.2        peakRAM_1.0.2          
-[10] BH_1.84.0-0             Matrix_1.6-3            sceptredata_0.99.0     
-[13] sceptre_0.10.0          presto_1.0.0            data.table_1.14.8      
-[16] Rcpp_1.0.12             tidyr_1.3.0             tibble_3.2.1           
-[19] readr_1.4.0             dplyr_1.1.4             ggplot2_3.5.1          
-[22] workflowr_1.7.1        
+ [1] matrixStats_1.1.0       speedglm_0.3-5          biglm_0.9-3            
+ [4] DBI_1.2.3               MASS_7.3-60             ACAT_0.91              
+ [7] eulerr_7.0.2            gridExtra_2.3           heavytailcombtest_1.0.0
+[10] sgt_2.0                 numDeriv_2016.8-1.1     optimx_2024-12.2       
+[13] peakRAM_1.0.2           BH_1.84.0-0             Matrix_1.6-3           
+[16] sceptredata_0.99.0      sceptre_0.10.0          presto_1.0.0           
+[19] data.table_1.14.8       Rcpp_1.0.12             tidyr_1.3.0            
+[22] tibble_3.2.1            readr_1.4.0             dplyr_1.1.4            
+[25] ggplot2_3.5.1           workflowr_1.7.1        
 
 loaded via a namespace (and not attached):
- [1] httr_1.4.2        sass_0.4.9        jsonlite_1.8.7    bslib_0.7.0      
- [5] getPass_0.2-2     highr_0.11        yaml_2.2.1        pillar_1.9.0     
- [9] lattice_0.22-5    glue_1.6.2        rmutil_1.1.10     digest_0.6.33    
-[13] promises_1.2.0.1  polyclip_1.10-6   colorspace_2.1-0  htmltools_0.5.8.1
-[17] httpuv_1.6.1      plyr_1.8.6        pkgconfig_2.0.3   invgamma_1.1     
-[21] purrr_1.0.2       mvtnorm_1.3-3     scales_1.3.0      processx_3.8.4   
-[25] whisker_0.4.1     later_1.2.0       pracma_2.4.4      git2r_0.32.0     
-[29] generics_0.1.3    farver_2.1.1      ellipsis_0.3.2    cachem_1.0.8     
-[33] withr_2.5.2       cli_3.6.1         magrittr_2.0.3    evaluate_0.23    
-[37] ps_1.7.5          fs_1.6.3          fansi_1.0.5       tools_4.1.0      
-[41] hms_1.1.0         lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0    
-[45] callr_3.7.6       compiler_4.1.0    jquerylib_0.1.4   rlang_1.1.2      
-[49] grid_4.1.0        nloptr_1.2.2.2    rstudioapi_0.15.0 labeling_0.4.3   
-[53] rmarkdown_2.27    gtable_0.3.0      reshape2_1.4.4    R6_2.5.1         
-[57] knitr_1.48        fastmap_1.1.1     utf8_1.2.1        rprojroot_2.0.4  
-[61] polylabelr_0.3.0  stringi_1.6.2     vctrs_0.6.4       tidyselect_1.2.0 
-[65] xfun_0.51        </code></pre>
+ [1] httr_1.4.2               sass_0.4.9               jsonlite_1.8.7          
+ [4] bslib_0.7.0              getPass_0.2-2            highr_0.11              
+ [7] yaml_2.2.1               pillar_1.9.0             lattice_0.22-5          
+[10] glue_1.6.2               rmutil_1.1.10            digest_0.6.33           
+[13] promises_1.2.0.1         polyclip_1.10-6          colorspace_2.1-0        
+[16] plyr_1.8.6               htmltools_0.5.8.1        httpuv_1.6.1            
+[19] pkgconfig_2.0.3          invgamma_1.1             purrr_1.0.2             
+[22] mvtnorm_1.3-3            scales_1.3.0             processx_3.8.4          
+[25] whisker_0.4.1            later_1.2.0              pracma_2.4.4            
+[28] git2r_0.32.0             farver_2.1.1             generics_0.1.3          
+[31] ellipsis_0.3.2           cachem_1.0.8             withr_2.5.2             
+[34] cli_3.6.1                crayon_1.5.2             magrittr_2.0.3          
+[37] evaluate_0.23            ps_1.7.5                 fs_1.6.3                
+[40] fansi_1.0.5              RcppArmadillo_0.10.5.0.0 tools_4.1.0             
+[43] hms_1.1.0                lifecycle_1.0.4          stringr_1.5.1           
+[46] munsell_0.5.0            callr_3.7.6              compiler_4.1.0          
+[49] jquerylib_0.1.4          rlang_1.1.2              grid_4.1.0              
+[52] nloptr_1.2.2.2           rstudioapi_0.15.0        labeling_0.4.3          
+[55] rmarkdown_2.27           gtable_0.3.0             reshape2_1.4.4          
+[58] R6_2.5.1                 knitr_1.48               fastmap_1.1.1           
+[61] utf8_1.2.1               rprojroot_2.0.4          polylabelr_0.3.0        
+[64] stringi_1.6.2            vctrs_0.6.4              tidyselect_1.2.0        
+[67] xfun_0.51               </code></pre>
+</div>
+</div>
 </div>
 </div>
 
