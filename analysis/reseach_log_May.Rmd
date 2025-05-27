@@ -1418,7 +1418,7 @@ acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy
 
 ```
 
-```{r}
+```{r,include=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1456,7 +1456,7 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
 
 ```
@@ -1464,7 +1464,7 @@ gridExtra::grid.arrange(
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1558,7 +1558,7 @@ acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy
 
 ```
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1596,7 +1596,7 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
 
 ```
@@ -1604,7 +1604,7 @@ gridExtra::grid.arrange(
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1648,7 +1648,7 @@ gridExtra::grid.arrange(
 ```
 ### SNP-40_2-K60_13
 
-```{r}
+```{r,echo=F}
 # 设置目标基因列表，假设你已提取为 gene 向量
 gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_13"] == 1]
 
@@ -1697,8 +1697,7 @@ max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tenso
 p_vec<-compute_final_p_val(tensor, 1000,3)
 acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
 
-```
-```{r}
+
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1736,15 +1735,16 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
+
 
 ```
 
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1788,7 +1788,7 @@ gridExtra::grid.arrange(
 ```
 
 ### SNP-40_2-K60_25
-```{r}
+```{r,echo=F}
 # 设置目标基因列表，假设你已提取为 gene 向量
 gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_25"] == 1]
 
@@ -1821,8 +1821,7 @@ tensor[,,1] <- mat
 
 module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
 colnames(module_index_mat)<-"K60_25"
-```
-```{r}
+
     normalized_test_tensor <- test_normalizer_rcpp(tensor)
 
 combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
@@ -1835,8 +1834,7 @@ max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tenso
 p_vec<-compute_final_p_val(tensor, 1000,3)
 acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
 
-```
-```{r}
+
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1874,15 +1872,16 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
+
 
 ```
 
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -1942,11 +1941,7 @@ rds_list <- lapply(filtered_files, readRDS)
 
 # 命名
 names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
-```
 
-
-
-```{r,echo=F}
 lengths_list <- sapply(rds_list, length)
 
 rds_list_fixed <- rds_list[lengths_list == 1000]
@@ -1976,8 +1971,7 @@ max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tenso
     
 p_vec<-compute_final_p_val(tensor, 1000,3)
 acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
-```
-```{r}
+
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2015,15 +2009,16 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
+
 
 ```
 
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2082,11 +2077,7 @@ rds_list <- lapply(filtered_files, readRDS)
 
 # 命名
 names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
-```
 
-
-
-```{r,echo=F}
 lengths_list <- sapply(rds_list, length)
 
 rds_list_fixed <- rds_list[lengths_list == 1000]
@@ -2116,9 +2107,7 @@ max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tenso
     
 p_vec<-compute_final_p_val(tensor, 1000,3)
 acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
-```
 
-```{r}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2156,7 +2145,7 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
 
 ```
@@ -2164,7 +2153,7 @@ gridExtra::grid.arrange(
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2224,11 +2213,7 @@ rds_list <- lapply(filtered_files, readRDS)
 
 # 命名
 names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
-```
 
-
-
-```{r,echo=F}
 lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 
@@ -2258,8 +2243,7 @@ max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tenso
     
 p_vec<-compute_final_p_val(tensor, 1000,3)
 acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
-```
-```{r}
+
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2297,15 +2281,16 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
+
 
 ```
 
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2399,9 +2384,7 @@ max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tenso
     
 p_vec<-compute_final_p_val(tensor, 1000,3)
 acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
-```
 
-```{r}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2439,15 +2422,16 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
+
 
 ```
 
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2541,10 +2525,7 @@ max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tenso
     
 p_vec<-compute_final_p_val(tensor, 1000,3)
 acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
-```
 
-
-```{r}
 library(ggplot2)
 
 # 初始化列表保存图
@@ -2582,15 +2563,16 @@ for (j in 1:n_col) {
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
-  top = grid::textGrob("Power Combination", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+  top = grid::textGrob("Genewise NB test", gp = grid::gpar(fontsize = 45, fontface = "bold"))
 )
+
 
 ```
 
 
 
 
-```{r}
+```{r,echo=F}
 library(ggplot2)
 
 # 初始化列表保存图
