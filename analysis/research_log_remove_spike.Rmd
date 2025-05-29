@@ -308,7 +308,7 @@ gridExtra::grid.arrange(
 )
 
 ```
-```{r}
+```{r,echo=F}
 pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
 acat_vals <- sapply(acat_p, function(x) as.numeric(x))
 
@@ -513,7 +513,7 @@ gridExtra::grid.arrange(
 )
 
 ```
-```{r}
+```{r,echo=F}
 pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
 acat_vals <- sapply(acat_p, function(x) as.numeric(x))
 
@@ -714,7 +714,7 @@ gridExtra::grid.arrange(
 )
 
 ```
-```{r}
+```{r,echo=F}
 pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
 acat_vals <- sapply(acat_p, function(x) as.numeric(x))
 
@@ -920,7 +920,7 @@ gridExtra::grid.arrange(
 )
 
 ```
-```{r}
+```{r,echo=F}
 pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
 acat_vals <- sapply(acat_p, function(x) as.numeric(x))
 
@@ -1122,7 +1122,7 @@ gridExtra::grid.arrange(
 )
 
 ```
-```{r}
+```{r,echo=F}
 pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
 acat_vals <- sapply(acat_p, function(x) as.numeric(x))
 
@@ -1325,7 +1325,7 @@ gridExtra::grid.arrange(
 )
 
 ```
-```{r}
+```{r,echo=F}
 pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
 acat_vals <- sapply(acat_p, function(x) as.numeric(x))
 
@@ -1632,7 +1632,7 @@ for (j in 1:n_col) {
 
 ```
 
-```{r,cache=F,fig.width=25, fig.height=25}
+```{r,cache=F,fig.width=25, fig.height=25,echo=F}
 gridExtra::grid.arrange(
   grobs = plot_list,
   ncol = 3,
@@ -1728,7 +1728,7 @@ gridExtra::grid.arrange(
 )
 
 ```
-```{r}
+```{r,echo=F}
 pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
 acat_vals <- sapply(acat_p, function(x) as.numeric(x))
 
@@ -1748,7 +1748,7 @@ Due to the time constraint, I haven't studied the cutoff of perturbation-gene fi
 </span>
 
 
-```{r}
+```{r,echo=F}
 gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds")
 grna_target_data_frame_omit <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
 
@@ -2007,7 +2007,7 @@ grid.arrange(grobs = plot_list, ncol = 1)
 par(mfrow = c(1, 1))
 ```
 ```{r}
-plot(-log10(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_/resample_normal_test_statistics.csv",row.names = 1)))),-log10(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_with_bug/resample_normal_test_statistics.csv",row.names = 1)))),xlab="remove spike",ylab="keep spike",main="Scatter plot of p value")
+plot(-log10(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_/resample_normal_test_statistics.csv",row.names = 1)))),-log10(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_with_bug/resample_normal_test_statistics.csv",row.names = 1)))),xlab="remove spike",ylab="keep spike",main="Scatter plot of p value(-log transform)")
 ```
 **Many pair that are not significant if keep spikes, are marked as significant if removing spikes.**
 
