@@ -1,0 +1,2013 @@
+---
+title: "Research log May"
+author: "jliucx"
+date: "2024-12-5"
+output: 
+  workflowr::wflow_html:
+    number_sections: true
+editor_options:
+  chunk_output_type: inline
+  markdown: 
+    wrap: 72
+
+---
+
+```{r,include=F}
+
+setwd("/project/xuanyao/jiaming/Getting_started")
+
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)
+library(presto)
+library(sceptre)
+library(sceptredata)
+library(readr)
+library(dplyr)
+library(Matrix)
+library(parallel)
+library(BH)
+library(Rcpp)
+library(peakRAM)
+library(sgt)
+library(heavytailcombtest)
+library(gridExtra)
+library(eulerr)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tibble)
+library(tidyr)
+library(ACAT)
+library(MASS)
+source("code/functions_optimized.R")
+
+
+gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
+  n <- length(ps)
+  df <- data.frame(
+    observed = pmin(-log10(sort(ps)), 4), # Cap observed values at 4
+    expected = -log10(ppoints(n)),
+    clower = pmin(-log10(qbeta(p = (1 - ci) / 2, shape1 = 1:n, shape2 = n:1)), 4), # Cap clower values at 4
+    cupper = pmin(-log10(qbeta(p = (1 + ci) / 2, shape1 = 1:n, shape2 = n:1)), 4)  # Cap cupper values at 4
+  )
+
+  log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+  log10Po <- expression(paste("Observed -log"[10], plain(P)))
+
+  ggplot(df) +
+    geom_ribbon(mapping = aes(x = expected, ymin = clower, ymax = cupper), alpha = 0.1) +
+    geom_point(aes(expected, observed), size = 1.5, color = "red") +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+    xlab(log10Pe) + 
+    ylab(log10Po) +
+    ylim(0, 4) + # Limit y-axis to 0-5
+    ggtitle(title) # Add title
+}
+```
+
+# Important: About this summary
+
+We are explore the difference in power between ACAT and our combination. We currently identified two cases where ACAT outperforms us:
+
+1.  Signal is sparse and there is a super significant one (nothing we can do)
+2.  There are some bad-behaved genewise null distributions, (that might be filtered by qc), if we include them in the combination, they will blur the combined distributions, which greatly affect the power.
+
+<span style="color:red">
+This summary is about solving the 2. thing.
+</span>
+
+
+
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/research_log_remove_spike/1.png", error = FALSE)
+```
+
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/research_log_remove_spike/2.png", error = FALSE)
+```
+
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/research_log_remove_spike/3.png", error = FALSE)
+```
+
+```{r,echo=F,cache=F}
+knitr::include_graphics("images/research_log_remove_spike/4.png", error = FALSE)
+```
+
+# Local evidence
+
+```{r}
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds")
+grna_target_data_frame_omit <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
+
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_with_bug/resample_normal_test_statistics.csv",row.names = 1)
+
+
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds")[,c(1,2,7)]
+                 )
+```
+
+
+
+## SNP-9_1-K60_44
+
+```{r,include=F}
+acat_p <-list()
+precompute_p<-list()
+
+folder_path <- "/project/xuanyao/jiaming/Getting_started/output/Morris/debug/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove/NB_1000_test_statistics"
+
+# 找到所有包含 "SNP-9_1" 的 .rds 文件
+file_list <- list.files(folder_path, pattern = "SNP-9_1.*\\.rds$", full.names = TRUE)
+
+# 读取所有文件，存入列表
+rds_list <- lapply(file_list, readRDS)
+
+# 给每个元素命名，使用文件名（去掉路径和扩展名）
+names(rds_list) <- sub("\\.rds$", "", basename(file_list))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+```
+
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_44"
+```
+
+```{r}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+mat<-mat[,-c(11,15,18,20,22,24,36,56,59,67,68,75,77,78,85,86,98,110,130,133,140,155,157,159,163,173,178,192,195,206,215,259,260)]
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_44"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+
+print(df)
+```
+
+
+
+## SNP-40_2-K60_13
+
+
+
+```{r,echo=F}
+acat_p <-list()
+precompute_p<-list()
+
+# 设置目标基因列表，假设你已提取为 gene 向量
+gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_13"] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files <- list.files(folder_path,pattern = "SNP-40_2.*\\.rds$", full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files <- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = "|"), f)
+})]
+
+# 读取文件
+rds_list <- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)<-"K60_13"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+
+mat<-mat[,-c(8,9,11,16,20,44,58,60,62,70,72,74,87,89,105,115,132,133,136,151,161,166,199,202,203,213,215,222,225,234,242,243)]
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_13"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+print(df)
+```
+
+## SNP-40_2-K60_25
+
+
+
+```{r,echo=F}
+acat_p <-list()
+precompute_p<-list()
+
+# 设置目标基因列表，假设你已提取为 gene 向量
+gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_25"] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files <- list.files(folder_path,pattern = "SNP-40_2.*\\.rds$", full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files <- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = "|"), f)
+})]
+
+# 读取文件
+rds_list <- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)<-"K60_25"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+mat<-mat[,-c(3,10,11,15,16,18,24,35,36,43,44,46,52,55,56,61,63,65,74,83,85,87,89,91,98,99,101,103,108,109,117,119,122,132,133,146,148,152,165,173,174,176,181,183,195,196,201)]
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_13"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+print(df)
+```
+
+
+
+
+
+
+## SNP-40_2-K60_50
+
+
+
+```{r,echo=F}
+acat_p <-list()
+precompute_p<-list()
+
+# 设置目标基因列表，假设你已提取为 gene 向量
+gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_50"] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files <- list.files(folder_path,pattern = "SNP-40_2.*\\.rds$", full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files <- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = "|"), f)
+})]
+
+# 读取文件
+rds_list <- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)<-"K60_50"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+mat<-mat[,-c(3,16,22,27,36,39,41,50,53,54,74,76,90,93,102,105,106,113,119,126,129,137,141,142,162,166,183,200,203,205,213,214)]
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_50"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+print(df)
+```
+
+## SNP-65_2-K60_23
+
+
+
+```{r,echo=F}
+acat_p <-list()
+precompute_p<-list()
+
+# 设置目标基因列表，假设你已提取为 gene 向量
+gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_23"] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files <- list.files(folder_path,pattern = "SNP-65_2.*\\.rds$", full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files <- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = "|"), f)
+})]
+
+# 读取文件
+rds_list <- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)<-"K60_23"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+
+mat<-mat[,-c(4,5,11,17,43,44,54,58,63,66,74,85,86,132,167,173,178,210,221,234,256,258,260,267)]
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_23"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+print(df)
+```
+
+
+## SNP-65_2-K60_24
+
+
+```{r,echo=F}
+acat_p <-list()
+precompute_p<-list()
+
+# 设置目标基因列表，假设你已提取为 gene 向量
+gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_24"] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files <- list.files(folder_path,pattern = "SNP-65_2.*\\.rds$", full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files <- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = "|"), f)
+})]
+
+# 读取文件
+rds_list <- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)<-"K60_24"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+
+
+mat <- mat[,-c(4,8,10,15,34,50,52,63,81,104,105,122,124,125,130,136,140,141,162,170,174,175,176,181,183,195,196,199,202,205,208,211,212,213,222,224,227,234,235,236,237,242,243,244)]
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_24"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+print(df)
+```
+
+## SNP-65_2-K60_31
+
+
+
+```{r,echo=F}
+acat_p <-list()
+precompute_p<-list()
+
+# 设置目标基因列表，假设你已提取为 gene 向量
+gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_31"] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files <- list.files(folder_path,pattern = "SNP-65_2.*\\.rds$", full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files <- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = "|"), f)
+})]
+
+# 读取文件
+rds_list <- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)<-"K60_31"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+mat<-mat[,-c(3,21,28,30,42,43,48,49,50,56,64,73,79,87,94,100,108,109,110,116,126,124,128,129,130,135,139,145,146,158,164,171,182,189,190,203,204,211,220,225,233,235,236)]
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_31"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+print(df)
+```
+
+
+## SNP-65_2-K60_39
+
+
+```{r,echo=F}
+acat_p <-list()
+precompute_p<-list()
+
+# 设置目标基因列表，假设你已提取为 gene 向量
+gene <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, "K60_39"] == 1]
+
+# 列出当前目录下所有SNP-40_2的文件
+all_files <- list.files(folder_path,pattern = "SNP-65_2.*\\.rds$", full.names = TRUE)
+
+# 只保留基因名在 gene 中的文件
+filtered_files <- all_files[sapply(all_files, function(f) {
+  grepl(paste(gene, collapse = "|"), f)
+})]
+
+# 读取文件
+rds_list <- lapply(filtered_files, readRDS)
+
+# 命名
+names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
+
+lengths_list <- sapply(rds_list, length)
+rds_list_fixed <- rds_list[lengths_list == 1000]
+mat <- do.call(cbind, rds_list_fixed)
+
+
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+module_index_mat <- matrix(1, nrow = ncol(mat), ncol = 1)
+colnames(module_index_mat)<-"K60_39"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+    labs(
+      title = paste("Column", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: Before filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+
+```{r}
+mat<-mat[,-c(2,3,6,7,9,12,13,14,16,22,24,28,33,34,38,45,48,61,63,64,67,68,69,73,75,77,78,84,86,88,90,92,94,95,100,105,106,110,114,115,120,122,125,130,131,135,145,149,151,155,159,160,167,171,173,176,180,181,183)]
+
+```
+
+```{r,include=F}
+dim(mat)  # 行列数
+# 获取矩阵维度
+n_row <- nrow(mat)
+n_col <- ncol(mat)
+
+# 创建一个空的三维数组，第三维可以先设为 1（你之后可以扩展）
+tensor <- array(NA, dim = c(n_row, n_col, 1))
+
+# 把矩阵存入 tensor 的第一层
+tensor[,,1] <- mat
+
+
+
+
+
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
+colnames(module_index_mat)<-"K60_39"
+```
+
+```{r,include=F}
+
+    normalized_test_tensor <- test_normalizer_rcpp(tensor)
+
+combined_test_tensor <- combine_test_statistics_tensor_low_RAM(normalized_test_tensor, module_index_mat)
+
+max_statistics <- (-(min_p_val_fast_low_ram(-test_normalizer(combined_test_tensor), module_index_mat)))
+    precompute_p[[length(precompute_p)+1]] <- compute_final_p_val(max_statistics, 1000,1)
+
+
+    
+p_vec<-compute_final_p_val(tensor, 1000,3)
+acat_p[[length(acat_p)+1]]<-combination.test(p_vec,weights = NA,method = "Cauchy",tail.idx = 1)
+
+```
+
+
+
+```{r,echo=F}
+library(ggplot2)
+
+# 初始化列表保存图
+plot_list <- list()
+
+# 获取列数
+n_col <- dim(combined_test_tensor)[2]
+
+for (j in 1:n_col) {
+  # 取出第 j 列的向量
+  vec <- combined_test_tensor[, j, 1]
+  
+  # 第一个值作为参考线位置
+  mark_val <- vec[1]
+  
+  # 构造数据框
+  df <- data.frame(value = vec)
+  
+  # 绘图
+  p <- ggplot(df, aes(x = value)) +
+    geom_histogram(color = "black", fill = "lightblue", bins = 200) +
+    geom_vline(xintercept = mark_val, color = "red", linetype = "dashed", size = 1) +
+      annotate("text", x = mark_val + 0.05, y = Inf, label = "observed", 
+           hjust = 0, vjust = 2, color = "red", size = 4) +
+    labs(
+      title = paste("Combination", j),
+      x = "Value", y = "Count"
+    ) +
+    theme_minimal()
+  
+  plot_list[[j]] <- p
+}
+
+```
+
+```{r,cache=F,fig.width=25, fig.height=25}
+gridExtra::grid.arrange(
+  grobs = plot_list,
+  ncol = 3,
+  top = grid::textGrob("Power Combination: After filtering", gp = grid::gpar(fontsize = 45, fontface = "bold"))
+)
+
+```
+```{r}
+pre_vals <- sapply(precompute_p, function(x) as.numeric(x))
+acat_vals <- sapply(acat_p, function(x) as.numeric(x))
+
+df <- data.frame(
+  Power_combination = pre_vals,
+  ACAT_combination = acat_vals
+)
+
+rownames(df)<-c("before_filter","after_filter")
+print(df)
+```
+
+# Global evidence
+
+<span style="color:red">
+Due to the time constraint, I haven't studied the cutoff of perturbation-gene filter, now the current filter to obtain this result still include many spikes in genewise null distribution. But there is a clear improvement on the performance.
+</span>
+
+
+```{r}
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_nature_cNMF/gene_module_index_matrix.rds")
+grna_target_data_frame_omit <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/grna_target_data_frame_omit.rds")
+
+
+discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_/resample_normal_test_statistics.csv",row.names = 1)
+
+
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds")[,c(1,2,7)],
+                 readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_calibration_check.rds")[,c(1,2,7)]
+                 )
+
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value == 1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, rownames(gene_module_index_matrix), drop = FALSE]
+
+# sceptre_wide <- sceptre_wide[rowSums(grna_assignment_matrix_author_threshold[rownames(sceptre_wide),])>100,]
+
+
+library(eulerr)
+
+
+
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id %in% grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id      
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      if (length(module_p_values) > 0) {
+        # acat_pval <- ACAT(module_p_values)
+        
+     acat_pval <- combination.test(
+  module_p_values[!is.na(module_p_values)],
+  weights = NA,
+  method = "Cauchy",
+  tail.idx = 1
+)
+
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre <- do.call(rbind, module_results)
+module_results_sceptre <- module_results_sceptre[!is.na(module_results_sceptre$acat_pval), ]
+
+library(tibble)
+
+max_stat_long <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long <- max_stat_long %>% filter(!is.na(p_value))
+
+
+
+
+
+
+max_stat_long <- max_stat_long %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
+module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
+
+
+
+max_stat_long$bh_pval <-  p.adjust(max_stat_long$p_value, method = "BH")
+max_stat_long$identifier <- paste(max_stat_long$grna_id, max_stat_long$module, sep = "_")
+```
+
+```{r,echo=F}
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_with_bug/resample_normal_test_statistics.csv",row.names = 1)
+max_stat[max_stat==0]<- 1e-4
+max_stat_long_2 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_2 <- max_stat_long_2 %>% filter(!is.na(p_value))
+
+
+max_stat_long_2 <- max_stat_long_2 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_2$bh_pval <-  p.adjust(max_stat_long_2$p_value, method = "BH")
+max_stat_long_2$identifier <- paste(max_stat_long_2$grna_id, max_stat_long_2$module, sep = "_")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_3000_skew_t_approximation/resample_normal_test_statistics.csv",row.names = 1)
+max_stat[max_stat==0]<- 1e-5
+max_stat_long_3 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_3 <- max_stat_long_3 %>% filter(!is.na(p_value))
+
+
+max_stat_long_3 <- max_stat_long_3 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_3$bh_pval <-  p.adjust(max_stat_long_3$p_value, method = "BH")
+max_stat_long_3$identifier <- paste(max_stat_long_3$grna_id, max_stat_long_3$module, sep = "_")
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov/cNMF_50000_no_approximation_replace_previous/resample_normal_test_statistics.csv",row.names = 1)
+max_stat[max_stat==0]<- 1e-5
+max_stat_long_4 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_4 <- max_stat_long_4 %>% filter(!is.na(p_value))
+
+
+max_stat_long_4 <- max_stat_long_4 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_4$bh_pval <-  p.adjust(max_stat_long_4$p_value, method = "BH")
+max_stat_long_4$identifier <- paste(max_stat_long_4$grna_id, max_stat_long_4$module, sep = "_")
+max_stat_long_4 <- max_stat_long_4[match(max_stat_long_2$identifier, max_stat_long_4$identifier), ]
+
+
+max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_t_test/cNMF_10000_no_approx_pooled_rank_t/resample_normal_test_statistics.csv",row.names = 1)
+max_stat[max_stat==0]<- 1e-5
+max_stat_long_5 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_5 <- max_stat_long_5 %>% filter(!is.na(p_value))
+
+
+max_stat_long_5 <- max_stat_long_5 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_5$bh_pval <-  p.adjust(max_stat_long_5$p_value, method = "BH")
+max_stat_long_5$identifier <- paste(max_stat_long_5$grna_id, max_stat_long_5$module, sep = "_")
+```
+
+
+```{r,cache=F,fig.width=16,fig.height=16,echo=F}
+library(eulerr)
+
+significant_levels <- c(0.05)
+# significant_levels <- 0.01
+plot_list <- list()
+
+# Loop through significant levels and display plots
+for (significant_level in significant_levels) {
+  # Filter significant IDs for each method
+significant_ids_gene_wise_p <- na.omit(
+  module_results_sceptre$identifier[module_results_sceptre$bh_pval < significant_level]
+)
+
+significant_ids_max_stat <- na.omit(
+  max_stat_long$identifier[max_stat_long$bh_pval < significant_level]
+)
+
+significant_ids_max_stat_2 <- na.omit(
+  max_stat_long_2$identifier[max_stat_long_2$bh_pval < significant_level]
+)
+
+significant_ids_max_stat_3 <- na.omit(
+  max_stat_long_3$identifier[max_stat_long_3$bh_pval < significant_level]
+)
+
+significant_ids_max_stat_4 <- na.omit(
+  max_stat_long_4$identifier[max_stat_long_4$bh_pval < significant_level]
+)
+significant_ids_max_stat_5 <- na.omit(
+  max_stat_long_5$identifier[max_stat_long_5$bh_pval < significant_level]
+)
+
+  
+  # Prepare the sets
+  venn_data <- list(
+    `Sceptre+Cauchy` = significant_ids_gene_wise_p,
+    `10000 original` = significant_ids_max_stat_2,
+    `10000 attempt to remove spike`=significant_ids_max_stat
+ 
+  )
+  
+  # Generate the Euler diagram and display it
+euler_plot <- plot(
+  euler(venn_data),
+  fills = list(fill = c("red", "yellow", "orange","blue"), alpha = 0.5),
+  edges = TRUE,
+  quantities = TRUE,
+  labels = list(font = 2, cex = 1.2, pos = 3), # 调整字体和位置
+  main = paste("Significant level", significant_level)
+)
+plot_list[[length(plot_list) + 1]] <- euler_plot
+}
+grid.arrange(grobs = plot_list, ncol = 1)
+
+par(mfrow = c(1, 1))
+```
+```{r}
+plot(-log10(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_/resample_normal_test_statistics.csv",row.names = 1)))),-log10(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/cNMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_with_bug/resample_normal_test_statistics.csv",row.names = 1)))),xlab="remove spike",ylab="keep spike",main="Scatter plot of p value")
+```
+**Many pair that are not significant if keep spikes, are marked as significant if removing spikes.**
+
