@@ -306,7 +306,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-05-27
+<strong>Last updated:</strong> 2025-05-28
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -337,16 +337,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreec910c7472e40c0abb66292b0b554cbed8f1077d7targetblankc910c74a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/c910c7472e40c0abb66292b0b554cbed8f1077d7" target="_blank">c910c74</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreeffdc615c97bd4d403397e3ca51f42c1806bbcae5targetblankffdc615a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/ffdc615c97bd4d403397e3ca51f42c1806bbcae5" target="_blank">ffdc615</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreec910c7472e40c0abb66292b0b554cbed8f1077d7targetblankc910c74a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreeffdc615c97bd4d403397e3ca51f42c1806bbcae5targetblankffdc615a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/c910c7472e40c0abb66292b0b554cbed8f1077d7" target="_blank">c910c74</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/ffdc615c97bd4d403397e3ca51f42c1806bbcae5" target="_blank">ffdc615</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -355,12 +355,10 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
     Ignored:    analysis/run.sh
     Ignored:    analysis/run_R.sh
 
 Untracked files:
-    Untracked:  analysis/research_log_May.Rmd
     Untracked:  analysis/sceptre_singleton.R
     Untracked:  analysis/sceptre_singleton.Rmd
     Untracked:  analysis/sceptre_threshold.Rmd
@@ -402,6 +400,8 @@ Untracked files:
 Unstaged changes:
     Deleted:    analysis/reseach_log_May.Rmd
     Modified:   analysis/research_log.Rmd
+    Modified:   analysis/research_log_May.Rmd
+    Modified:   analysis/research_log_remove_spike.Rmd
     Modified:   code/run_R.sh
 
 </code></pre>
@@ -441,6 +441,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/ffdc615c97bd4d403397e3ca51f42c1806bbcae5/analysis/index.Rmd" target="_blank">ffdc615</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-29
+</td>
+<td>
+add global evidence
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/2b68046bbe9b0f79bd2bfbe98ca47d18e642711c/docs/index.html" target="_blank">2b68046</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-05-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1633,6 +1667,7 @@ Start workflowr project.
 <p><a href="new_model.html">Newest results</a></p>
 <p><a href="research_log.html">Research log April</a></p>
 <p><a href="research_log_May.html">Research log May</a></p>
+<p><a href="research_log_remove_spike.html">Research log Remove spike</a></p>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
