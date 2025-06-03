@@ -71,6 +71,53 @@ gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
 
 # Morris our NMF
 
+## Gene set visualization
+
+```{r,include=F}
+gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_NMF_set_300_50/gene_module_index_matrix.rds")
+
+library(ggplot2)
+library(reshape2)
+
+# （可选）模块排序：按模块相似性进行列聚类
+mod_sim <- t(gene_module_index_matrix) %*% gene_module_index_matrix
+hc <- hclust(as.dist(max(mod_sim) - mod_sim))
+gene_module_index_matrix_sorted <- gene_module_index_matrix[, hc$order]
+
+# 转换为长格式
+m_long <- melt(gene_module_index_matrix_sorted)
+colnames(m_long) <- c("Gene", "Module", "Value")
+
+# 画图
+p <- ggplot(m_long, aes(x = Module, y = Gene, fill = factor(Value))) +
+  geom_tile(width = 0.8, height = 0.8, color = NA) +
+  scale_fill_manual(values = c("0" = "white", "1" = "#FF0000")) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 6),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "none",
+    plot.title = element_text(size = 14, face = "bold")
+  ) +
+  labs(
+    title = "Gene-Module Index Matrix",
+    x = "Gene Set",
+    y = "Gene"
+  )
+```
+
+Description: Each column stands for a gene set, each row is a gene. The red bar indicates that the gene is contained in the gene set.
+
+
+```{r,fig.height=100,fig.width=100,cache=F}
+print(p)
+
+
+```
+
+
 ```{r,include=F}
 gene_module_index_matrix <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris/program_data_NMF_set_300_50/gene_module_index_matrix.rds")
 
