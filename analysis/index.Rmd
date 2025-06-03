@@ -32,4 +32,8 @@ Results:
 
 [Research log May](research_log_May.html)
 
-[Research log Remove spike](research_log_remove_spike.html)
+[Research log June](research_log_June.html)
+
+[Research log Remove spike p1](research_log_remove_spike.html)
+
+[Research log Remove spike p2](research_log_remove_spike_p2.html)
