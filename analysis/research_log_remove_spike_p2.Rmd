@@ -193,14 +193,14 @@ module_genes <- intersect(module_genes, colnames(p_values_row))
       module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
       
       if (length(module_p_values) > 0) {
-        # acat_pval <- ACAT(module_p_values)
+        acat_pval <- ACAT(module_p_values)
         
-     acat_pval <- combination.test(
-  module_p_values[!is.na(module_p_values)],
-  weights = NA,
-  method = "Cauchy",
-  tail.idx = 1
-)
+#      acat_pval <- combination.test(
+#   module_p_values[!is.na(module_p_values)],
+#   weights = NA,
+#   method = "Cauchy",
+#   tail.idx = 1
+# )
 
 
         module_acat_pvals <- c(module_acat_pvals, acat_pval)
