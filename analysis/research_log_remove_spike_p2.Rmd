@@ -585,7 +585,7 @@ hit_list[[i]] <- data.frame(
 
 ```
 
-```{r,cache=F,fig.width=25, fig.height=150}
+```{r,cache=F,fig.width=25, fig.height=70}
 gridExtra::grid.arrange(grobs = plot_list, ncol = 3)
 ```
 
@@ -653,7 +653,7 @@ hit_list[[i]] <- data.frame(
 ```
 
 ```{r,cache=F,fig.width=25, fig.height=120}
-gridExtra::grid.arrange(grobs = plot_list, ncol = 3)
+gridExtra::grid.arrange(grobs = plot_list[1:min(100,length(plot_list))], ncol = 3)
 ```
 
 ## Genewise distribution
@@ -720,6 +720,6 @@ p <- ggplot(df, aes(x = values)) +
 ```
 
 
-```{r,cache=F,fig.width=25, fig.height=150}
+```{r,cache=F,fig.width=25, fig.height=170}
 gridExtra::grid.arrange(grobs = plot_list, ncol = 3)
 ```
