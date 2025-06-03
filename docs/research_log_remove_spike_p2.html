@@ -580,16 +580,16 @@ output/Morris/debug/our_NMF_10000_wilcox_no_approx_sceptre_perturbation_gene_rem
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree350311590ceecfbcb6798d6180bbd1a4a7fe3f44targetblank3503115a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/350311590ceecfbcb6798d6180bbd1a4a7fe3f44" target="_blank">3503115</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreef22f678e960d1ef14cbf4d997821200e700a51f1targetblankf22f678a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/f22f678e960d1ef14cbf4d997821200e700a51f1" target="_blank">f22f678</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree350311590ceecfbcb6798d6180bbd1a4a7fe3f44targetblank3503115a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreef22f678e960d1ef14cbf4d997821200e700a51f1targetblankf22f678a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/350311590ceecfbcb6798d6180bbd1a4a7fe3f44" target="_blank">3503115</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/f22f678e960d1ef14cbf4d997821200e700a51f1" target="_blank">f22f678</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -688,6 +688,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/f22f678e960d1ef14cbf4d997821200e700a51f1/analysis/research_log_remove_spike_p2.Rmd" target="_blank">f22f678</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-03
+</td>
+<td>
+add gene set visualization
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/37376e3b331a32666accf4a0264526decd870215/docs/research_log_remove_spike_p2.html" target="_blank">37376e3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/350311590ceecfbcb6798d6180bbd1a4a7fe3f44/analysis/research_log_remove_spike_p2.Rmd" target="_blank">3503115</a>
 </td>
 <td>
@@ -709,12 +743,18 @@ update June
 </div>
 <div id="morris-our-nmf" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Morris our NMF</h1>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<div id="gene-set-visualization" class="section level2" number="1.1">
+<h2 number="1.1"><span class="header-section-number">1.1</span> Gene set visualization</h2>
+<p>Description: Each column stands for a gene set, each row is a gene. The red bar indicates that the gene is contained in the gene set.</p>
+<pre class="r"><code>print(p)</code></pre>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-3-1.png" width="9600" style="display: block; margin: auto;" /></p>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-8-1.png" width="960" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>weak_rows &lt;- which(max_stat_long$p_value &gt; 0.6 &amp; module_results_sceptre$acat_pval &lt; 0.05)
 
 strong_rows &lt;- which(max_stat_long$p_value &lt; module_results_sceptre$acat_pval &amp; max_stat_long$p_value&lt;0.1)</code></pre>
-<div id="gene-set-distribution" class="section level2" number="1.1">
-<h2 number="1.1"><span class="header-section-number">1.1</span> Gene set distribution</h2>
+</div>
+<div id="gene-set-distribution" class="section level2" number="1.2">
+<h2 number="1.2"><span class="header-section-number">1.2</span> Gene set distribution</h2>
 <pre class="r"><code>result_to_compare&lt;-max_stat_long[weak_rows,]
 result_to_analyze&lt;-module_results_sceptre[weak_rows,]
 
@@ -722,29 +762,103 @@ result_to_analyze&lt;-module_results_sceptre[weak_rows,]
 result_to_compare_strong&lt;-max_stat_long[strong_rows,]
 result_to_analyze_strong&lt;-module_results_sceptre[strong_rows,]</code></pre>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-10-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-12-1.png" width="2400" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>genewise_p_combined_all &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/our_NMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_strong_qc/genewise_p_combined_all.rds&quot;)
 
 
  perturbation_gene_strong_qc_complete_gene &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data_nature_cNMF/perturbation_gene_strong_qc_complete_gene.rds&quot;)</code></pre>
 </div>
-<div id="genewise-p-value" class="section level2" number="1.2">
-<h2 number="1.2"><span class="header-section-number">1.2</span> Genewise p value</h2>
-<div id="where-we-are-weak" class="section level3" number="1.2.1">
-<h3 number="1.2.1"><span class="header-section-number">1.2.1</span> Where we are weak</h3>
-<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-13-1.png" width="2400" style="display: block; margin: auto;" /></p>
-</div>
-<div id="where-we-are-strong" class="section level3" number="1.2.2">
-<h3 number="1.2.2"><span class="header-section-number">1.2.2</span> Where we are strong</h3>
+<div id="genewise-p-value" class="section level2" number="1.3">
+<h2 number="1.3"><span class="header-section-number">1.3</span> Genewise p value</h2>
+<div id="where-we-are-weak" class="section level3" number="1.3.1">
+<h3 number="1.3.1"><span class="header-section-number">1.3.1</span> Where we are weak</h3>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-15-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/37376e3b331a32666accf4a0264526decd870215/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-15-1.png" target="_blank">37376e3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-03
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<div id="genewise-distribution" class="section level2" number="1.3">
-<h2 number="1.3"><span class="header-section-number">1.3</span> Genewise distribution</h2>
+</div>
+<div id="where-we-are-strong" class="section level3" number="1.3.2">
+<h3 number="1.3.2"><span class="header-section-number">1.3.2</span> Where we are strong</h3>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-17-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
+Past versions of unnamed-chunk-17-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/37376e3b331a32666accf4a0264526decd870215/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-17-1.png" target="_blank">37376e3</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="genewise-distribution" class="section level2" number="1.4">
+<h2 number="1.4"><span class="header-section-number">1.4</span> Genewise distribution</h2>
+<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-19-1.png" width="2400" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -773,33 +887,33 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] speedglm_0.3-5          biglm_0.9-3             DBI_1.2.3              
- [4] MASS_7.3-60             ACAT_0.91               eulerr_7.0.2           
- [7] gridExtra_2.3           heavytailcombtest_1.0.0 sgt_2.0                
-[10] numDeriv_2016.8-1.1     optimx_2024-12.2        peakRAM_1.0.2          
-[13] BH_1.84.0-0             Matrix_1.6-3            sceptredata_0.99.0     
-[16] sceptre_0.10.0          presto_1.0.0            data.table_1.14.8      
-[19] Rcpp_1.0.12             tidyr_1.3.0             tibble_3.2.1           
-[22] readr_1.4.0             dplyr_1.1.4             ggplot2_3.5.1          
-[25] workflowr_1.7.1        
+ [1] reshape2_1.4.4          speedglm_0.3-5          biglm_0.9-3            
+ [4] DBI_1.2.3               MASS_7.3-60             ACAT_0.91              
+ [7] eulerr_7.0.2            gridExtra_2.3           heavytailcombtest_1.0.0
+[10] sgt_2.0                 numDeriv_2016.8-1.1     optimx_2024-12.2       
+[13] peakRAM_1.0.2           BH_1.84.0-0             Matrix_1.6-3           
+[16] sceptredata_0.99.0      sceptre_0.10.0          presto_1.0.0           
+[19] data.table_1.14.8       Rcpp_1.0.12             tidyr_1.3.0            
+[22] tibble_3.2.1            readr_1.4.0             dplyr_1.1.4            
+[25] ggplot2_3.5.1           workflowr_1.7.1        
 
 loaded via a namespace (and not attached):
  [1] httr_1.4.2        sass_0.4.9        jsonlite_1.8.7    bslib_0.7.0      
  [5] getPass_0.2-2     highr_0.11        yaml_2.2.1        pillar_1.9.0     
  [9] lattice_0.22-5    glue_1.6.2        rmutil_1.1.10     digest_0.6.33    
-[13] promises_1.2.0.1  polyclip_1.10-6   colorspace_2.1-0  htmltools_0.5.8.1
-[17] httpuv_1.6.1      pkgconfig_2.0.3   invgamma_1.1      purrr_1.0.2      
-[21] mvtnorm_1.3-3     scales_1.3.0      processx_3.8.4    whisker_0.4.1    
-[25] later_1.2.0       pracma_2.4.4      git2r_0.32.0      farver_2.1.1     
-[29] generics_0.1.3    ellipsis_0.3.2    cachem_1.0.8      withr_2.5.2      
-[33] cli_3.6.1         magrittr_2.0.3    evaluate_0.23     ps_1.7.5         
-[37] fs_1.6.3          fansi_1.0.5       tools_4.1.0       hms_1.1.0        
-[41] lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0     callr_3.7.6      
-[45] compiler_4.1.0    jquerylib_0.1.4   rlang_1.1.2       grid_4.1.0       
-[49] nloptr_1.2.2.2    rstudioapi_0.15.0 labeling_0.4.3    rmarkdown_2.27   
-[53] gtable_0.3.0      R6_2.5.1          knitr_1.48        fastmap_1.1.1    
-[57] utf8_1.2.1        rprojroot_2.0.4   polylabelr_0.3.0  stringi_1.6.2    
-[61] vctrs_0.6.4       tidyselect_1.2.0  xfun_0.51        </code></pre>
+[13] polyclip_1.10-6   promises_1.2.0.1  colorspace_2.1-0  htmltools_0.5.8.1
+[17] httpuv_1.6.1      plyr_1.8.6        pkgconfig_2.0.3   invgamma_1.1     
+[21] purrr_1.0.2       mvtnorm_1.3-3     scales_1.3.0      processx_3.8.4   
+[25] whisker_0.4.1     later_1.2.0       pracma_2.4.4      git2r_0.32.0     
+[29] generics_0.1.3    farver_2.1.1      ellipsis_0.3.2    cachem_1.0.8     
+[33] withr_2.5.2       cli_3.6.1         magrittr_2.0.3    evaluate_0.23    
+[37] ps_1.7.5          fs_1.6.3          fansi_1.0.5       tools_4.1.0      
+[41] hms_1.1.0         lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0    
+[45] callr_3.7.6       compiler_4.1.0    jquerylib_0.1.4   rlang_1.1.2      
+[49] grid_4.1.0        nloptr_1.2.2.2    rstudioapi_0.15.0 labeling_0.4.3   
+[53] rmarkdown_2.27    gtable_0.3.0      R6_2.5.1          knitr_1.48       
+[57] fastmap_1.1.1     utf8_1.2.1        rprojroot_2.0.4   polylabelr_0.3.0 
+[61] stringi_1.6.2     vctrs_0.6.4       tidyselect_1.2.0  xfun_0.51        </code></pre>
 </div>
 </div>
 </div>
