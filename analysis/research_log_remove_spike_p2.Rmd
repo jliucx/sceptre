@@ -120,7 +120,7 @@ print(p)
 ```
 
 
-```{r,fig.height=20,fig.width=20,cache=F}
+```{r,fig.height=20,fig.width=20,cache=F,echo=F}
 # gene_module_index_matrix_sorted is a binary matrix: genes × modules
 # We compute the overlap between each pair of modules (columns)
 
@@ -152,7 +152,7 @@ ggplot(m_long, aes(x = Module1, y = Module2, fill = Overlap)) +
 
 
 
-```{r,cache=F}
+```{r,cache=F,echo=F}
 library(ggplot2)
 
 gene_counts <- rowSums(gene_module_index_matrix)/50
