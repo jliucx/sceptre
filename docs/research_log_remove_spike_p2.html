@@ -580,16 +580,16 @@ output/Morris/debug/our_NMF_10000_wilcox_no_approx_sceptre_perturbation_gene_rem
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree447fa1a1033d6cb35558966fb97c830f89ac7c2btargetblank447fa1aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/447fa1a1033d6cb35558966fb97c830f89ac7c2b" target="_blank">447fa1a</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0a723067d6ea3782a61a4b9ec0c974b94c05dc92targetblank0a72306a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/0a723067d6ea3782a61a4b9ec0c974b94c05dc92" target="_blank">0a72306</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree447fa1a1033d6cb35558966fb97c830f89ac7c2btargetblank447fa1aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree0a723067d6ea3782a61a4b9ec0c974b94c05dc92targetblank0a72306a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/447fa1a1033d6cb35558966fb97c830f89ac7c2b" target="_blank">447fa1a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/0a723067d6ea3782a61a4b9ec0c974b94c05dc92" target="_blank">0a72306</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -683,6 +683,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/0a723067d6ea3782a61a4b9ec0c974b94c05dc92/analysis/research_log_remove_spike_p2.Rmd" target="_blank">0a72306</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+<td>
+add heat plot
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/7f56d1c698a235f88f28c3bb87bbcffa0b064d62/docs/research_log_remove_spike_p2.html" target="_blank">7f56d1c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -874,6 +908,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/7f56d1c698a235f88f28c3bb87bbcffa0b064d62/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-3-1.png" target="_blank">7f56d1c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-3-1.png" target="_blank">cfd6958</a>
 </td>
 <td>
@@ -887,58 +932,87 @@ jliucx
 </table>
 </div>
 </div>
-<pre class="r"><code># gene_module_index_matrix_sorted is a binary matrix: genes × modules
-# We compute the overlap between each pair of modules (columns)
-
-overlap_matrix &lt;- t(gene_module_index_matrix_sorted) %*% gene_module_index_matrix_sorted
-library(pheatmap)
-
-library(reshape2)
-library(ggplot2)
-
-# Melt into long format
-m_long &lt;- melt(as.matrix(overlap_matrix))
-colnames(m_long) &lt;- c(&quot;Module1&quot;, &quot;Module2&quot;, &quot;Overlap&quot;)
-
-ggplot(m_long, aes(x = Module1, y = Module2, fill = Overlap)) +
-  geom_tile() +
-  scale_fill_gradient(low = &quot;white&quot;, high = &quot;red&quot;) +
-  theme_minimal() +
-  labs(title = &quot;Gene Set Overlap (Shared Genes)&quot;, x = &quot;Module&quot;, y = &quot;Module&quot;) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text.y = element_text(size = 6),
-        axis.text.x.top = element_text(size = 6))</code></pre>
 <p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-4-1.png" width="1920" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>library(ggplot2)
-
-gene_counts &lt;- rowSums(gene_module_index_matrix)/50
-
-df_bar &lt;- data.frame(Gene = names(gene_counts), Count = gene_counts)
-df_bar &lt;- df_bar[order(-df_bar$Count), ]  # 降序排列
-df_bar$Gene &lt;- factor(df_bar$Gene, levels = df_bar$Gene)  # 固定顺序
-
-k &lt;- sum(df_bar$Count &gt; 0.1)
-
-ggplot(df_bar, aes(x = Gene, y = Count)) +
-  geom_col(fill = &quot;steelblue&quot;, width = 1) +
-
-  theme_minimal() +
-  geom_vline(xintercept = k, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 0.8)+
-  geom_hline(yintercept = 0.1, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 0.8) +
-
-  labs(title = &quot;Gene Sharing Across Modules&quot;,
-       x = &quot;Gene&quot;,
-       y = &quot;Proportion of Modules&quot;) +
-  theme(
-    axis.text.x = element_blank(),
-    axis.ticks.x = element_blank()
-  )</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/7f56d1c698a235f88f28c3bb87bbcffa0b064d62/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-4-1.png" target="_blank">7f56d1c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ℹ Please use `linewidth` instead.
 This warning is displayed once every 8 hours.
 Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 generated.</code></pre>
 <p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/7f56d1c698a235f88f28c3bb87bbcffa0b064d62/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-5-1.png" target="_blank">7f56d1c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-10-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
@@ -962,6 +1036,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/7f56d1c698a235f88f28c3bb87bbcffa0b064d62/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-10-1.png" target="_blank">7f56d1c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-10-1.png" target="_blank">cfd6958</a>
@@ -1013,12 +1098,86 @@ result_to_analyze_strong&lt;-module_results_sceptre[strong_rows,]</code></pre>
 <pre class="r"><code># gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list_2, ncol = 3)</code></pre>
 <p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-18-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+Past versions of unnamed-chunk-18-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-18-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/7f56d1c698a235f88f28c3bb87bbcffa0b064d62/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-18-1.png" target="_blank">7f56d1c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="where-we-are-strong" class="section level3" number="1.3.2">
 <h3 number="1.3.2"><span class="header-section-number">1.3.2</span> Where we are strong</h3>
 <pre class="r"><code># gridExtra::grid.arrange(grobs = plot_list[1:min(100,length(plot_list))], ncol = 3)</code></pre>
 <pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list_2[1:min(100,length(plot_list_2))], ncol = 3)</code></pre>
 <p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-21-1.png" width="2400" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/7f56d1c698a235f88f28c3bb87bbcffa0b064d62/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-21-1.png" target="_blank">7f56d1c</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="genewise-distribution" class="section level2" number="1.4">
