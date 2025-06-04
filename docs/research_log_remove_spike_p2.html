@@ -580,16 +580,16 @@ output/Morris/debug/our_NMF_10000_wilcox_no_approx_sceptre_perturbation_gene_rem
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree9ddd68ec08e4f9b5287ce326dafb21230a4d128ctargetblank9ddd68ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/9ddd68ec08e4f9b5287ce326dafb21230a4d128c" target="_blank">9ddd68e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree447fa1a1033d6cb35558966fb97c830f89ac7c2btargetblank447fa1aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/447fa1a1033d6cb35558966fb97c830f89ac7c2b" target="_blank">447fa1a</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree9ddd68ec08e4f9b5287ce326dafb21230a4d128ctargetblank9ddd68ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree447fa1a1033d6cb35558966fb97c830f89ac7c2btargetblank447fa1aa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/9ddd68ec08e4f9b5287ce326dafb21230a4d128c" target="_blank">9ddd68e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/447fa1a1033d6cb35558966fb97c830f89ac7c2b" target="_blank">447fa1a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -683,6 +683,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/447fa1a1033d6cb35558966fb97c830f89ac7c2b/analysis/research_log_remove_spike_p2.Rmd" target="_blank">447fa1a</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-04
+</td>
+<td>
+add heat plot
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/cac382901b5e7baf4858bab7232c0eb7ca07d7aa/docs/research_log_remove_spike_p2.html" target="_blank">cac3829</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -815,7 +849,7 @@ update June
 <h2 number="1.1"><span class="header-section-number">1.1</span> Gene set visualization</h2>
 <p>Description: Each column stands for a gene set, each row is a gene. The red bar indicates that the gene is contained in the gene set.</p>
 <pre class="r"><code>print(p)</code></pre>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-3-1.png" width="9600" style="display: block; margin: auto;" /></p>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-3-1.png" width="4800" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
 Past versions of unnamed-chunk-3-1.png
@@ -853,13 +887,65 @@ jliucx
 </table>
 </div>
 </div>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-8-1.png" width="960" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># gene_module_index_matrix_sorted is a binary matrix: genes × modules
+# We compute the overlap between each pair of modules (columns)
+
+overlap_matrix &lt;- t(gene_module_index_matrix_sorted) %*% gene_module_index_matrix_sorted
+library(pheatmap)
+
+library(reshape2)
+library(ggplot2)
+
+# Melt into long format
+m_long &lt;- melt(as.matrix(overlap_matrix))
+colnames(m_long) &lt;- c(&quot;Module1&quot;, &quot;Module2&quot;, &quot;Overlap&quot;)
+
+ggplot(m_long, aes(x = Module1, y = Module2, fill = Overlap)) +
+  geom_tile() +
+  scale_fill_gradient(low = &quot;white&quot;, high = &quot;red&quot;) +
+  theme_minimal() +
+  labs(title = &quot;Gene Set Overlap (Shared Genes)&quot;, x = &quot;Module&quot;, y = &quot;Module&quot;) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text.y = element_text(size = 6),
+        axis.text.x.top = element_text(size = 6))</code></pre>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-4-1.png" width="1920" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(ggplot2)
+
+gene_counts &lt;- rowSums(gene_module_index_matrix)/50
+
+df_bar &lt;- data.frame(Gene = names(gene_counts), Count = gene_counts)
+df_bar &lt;- df_bar[order(-df_bar$Count), ]  # 降序排列
+df_bar$Gene &lt;- factor(df_bar$Gene, levels = df_bar$Gene)  # 固定顺序
+
+k &lt;- sum(df_bar$Count &gt; 0.1)
+
+ggplot(df_bar, aes(x = Gene, y = Count)) +
+  geom_col(fill = &quot;steelblue&quot;, width = 1) +
+
+  theme_minimal() +
+  geom_vline(xintercept = k, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 0.8)+
+  geom_hline(yintercept = 0.1, color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 0.8) +
+
+  labs(title = &quot;Gene Sharing Across Modules&quot;,
+       x = &quot;Gene&quot;,
+       y = &quot;Proportion of Modules&quot;) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )</code></pre>
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+generated.</code></pre>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-10-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div id="fig-unnamed-chunk-10-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -878,7 +964,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/bc2819bd005059e2e10694b970b493f3bf6008ac/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-8-1.png" target="_blank">bc2819b</a>
+<a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-10-1.png" target="_blank">cfd6958</a>
 </td>
 <td>
 jliucx
@@ -889,7 +975,7 @@ jliucx
 </tr>
 <tr>
 <td>
-<a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-8-1.png" target="_blank">cfd6958</a>
+<a href="https://github.com/jliucx/sceptre/blob/37376e3b331a32666accf4a0264526decd870215/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-10-1.png" target="_blank">37376e3</a>
 </td>
 <td>
 jliucx
@@ -904,7 +990,7 @@ jliucx
 </div>
 <pre class="r"><code>weak_rows &lt;- which(max_stat_long$p_value &gt; 0.6 &amp; module_results_sceptre$acat_pval &lt; 0.05)
 
-strong_rows &lt;- which(max_stat_long$p_value &lt; module_results_sceptre$acat_pval &amp; max_stat_long$p_value&lt;0.1)</code></pre>
+strong_rows &lt;- which(max_stat_long$p_value &lt; module_results_sceptre$acat_pval &amp; max_stat_long$p_value&lt;0.1 &amp; module_results_sceptre$acat_pval&lt;0.5)</code></pre>
 </div>
 <div id="gene-set-distribution" class="section level2" number="1.2">
 <h2 number="1.2"><span class="header-section-number">1.2</span> Gene set distribution</h2>
@@ -914,56 +1000,7 @@ result_to_analyze&lt;-module_results_sceptre[weak_rows,]
 
 result_to_compare_strong&lt;-max_stat_long[strong_rows,]
 result_to_analyze_strong&lt;-module_results_sceptre[strong_rows,]</code></pre>
-<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-12-1.png" width="2400" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
-Past versions of unnamed-chunk-12-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-12-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/bc2819bd005059e2e10694b970b493f3bf6008ac/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-12-1.png" target="_blank">bc2819b</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-12-1.png" target="_blank">cfd6958</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<pre class="r"><code>#gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <pre class="r"><code>genewise_p_combined_all &lt;- readRDS(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/our_NMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_strong_qc/genewise_p_combined_all.rds&quot;)
 
 
@@ -973,185 +1010,78 @@ jliucx
 <h2 number="1.3"><span class="header-section-number">1.3</span> Genewise p value</h2>
 <div id="where-we-are-weak" class="section level3" number="1.3.1">
 <h3 number="1.3.1"><span class="header-section-number">1.3.1</span> Where we are weak</h3>
-<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-15-1.png" width="2400" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
-Past versions of unnamed-chunk-15-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-15-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/bc2819bd005059e2e10694b970b493f3bf6008ac/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-15-1.png" target="_blank">bc2819b</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-15-1.png" target="_blank">cfd6958</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/37376e3b331a32666accf4a0264526decd870215/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-15-1.png" target="_blank">37376e3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<pre class="r"><code># gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list_2, ncol = 3)</code></pre>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-18-1.png" width="2400" style="display: block; margin: auto;" /></p>
 </div>
 <div id="where-we-are-strong" class="section level3" number="1.3.2">
 <h3 number="1.3.2"><span class="header-section-number">1.3.2</span> Where we are strong</h3>
-<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list[1:min(100,length(plot_list))], ncol = 3)</code></pre>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-17-1.png" width="2400" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
-Past versions of unnamed-chunk-17-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-17-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/bc2819bd005059e2e10694b970b493f3bf6008ac/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-17-1.png" target="_blank">bc2819b</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-17-1.png" target="_blank">cfd6958</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/37376e3b331a32666accf4a0264526decd870215/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-17-1.png" target="_blank">37376e3</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<pre class="r"><code># gridExtra::grid.arrange(grobs = plot_list[1:min(100,length(plot_list))], ncol = 3)</code></pre>
+<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list_2[1:min(100,length(plot_list_2))], ncol = 3)</code></pre>
+<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-21-1.png" width="2400" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="genewise-distribution" class="section level2" number="1.4">
 <h2 number="1.4"><span class="header-section-number">1.4</span> Genewise distribution</h2>
-<pre class="r"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
-<p><img src="figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-19-1.png" width="2400" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-19-1">
-Past versions of unnamed-chunk-19-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-19-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/bc2819bd005059e2e10694b970b493f3bf6008ac/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-19-1.png" target="_blank">bc2819b</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jliucx/sceptre/blob/cfd69585dcf2774ddb2b2f765155bbb8262a6c6f/docs/figure/research_log_remove_spike_p2.Rmd/unnamed-chunk-19-1.png" target="_blank">cfd6958</a>
-</td>
-<td>
-jliucx
-</td>
-<td>
-2025-06-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<pre class="r,warning=f,include=f"><code>plot_list &lt;- list()
+
+
+setwd(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/debug/our_NMF_10000_wilcox_no_approx_sceptre_perturbation_gene_remove_strong_qc&quot;)
+for (i in 1:1) {
+  grna_id &lt;- result_to_analyze$grna_id[i]
+  gene_list &lt;- ((hit_list[[i]])[1,3])[[1]]
+  
+  
+   if (length(gene_list)&gt;0){
+     
+  row_idx &lt;- which(rownames(max_stat) == grna_id)
+
+  group_start &lt;- floor((row_idx - 1) / 8) * 8 + 1
+  group_end &lt;- group_start + 7
+  folder_name &lt;- paste0(group_start, &quot;_&quot;, group_end)
+
+
+  chunk_idx &lt;- row_idx - group_start + 1
+
+
+  file_path &lt;- file.path(folder_name, &quot;normalized_test_tensor&quot;, paste0(&quot;normalized_test_tensor_chunk_&quot;, chunk_idx, &quot;.rds&quot;))
+
+
+  ms &lt;- readRDS(file_path)
+  
+ 
+  
+  for (gene in gene_list){
+    
+    our_p &lt;- genewise_p_combined_all[grna_id,gene]
+    sceptre_p &lt;- sceptre_wide[grna_id, gene]
+
+    values &lt;- ms[, which(rownames(gene_module_index_matrix)==gene), 1]
+    values &lt;- values[is.finite(values)]  
+
+    highlight_value &lt;- ms[1, which(rownames(gene_module_index_matrix)==gene), 1]
+    
+    df &lt;- data.frame(values = values)
+    
+p &lt;- ggplot(df, aes(x = values)) +
+  geom_histogram(bins = 1000, fill = &quot;lightgray&quot;, color = &quot;black&quot;) +
+  geom_vline(xintercept = highlight_value, color = &quot;red&quot;, linewidth = 1) +
+  ggtitle(paste0(&quot;Perturbation-gene Wilcoxon test: &quot;, grna_id, &quot; - &quot;, gene)) +
+  xlab(&quot;Values&quot;) + ylab(&quot;Count&quot;) +
+  annotate(&quot;text&quot;, x = Inf, y = Inf,
+           hjust = 1.1, vjust = 1.5, size = 4, color = &quot;blue&quot;,
+           label = paste0(&quot;Sceptre p = &quot;, signif(sceptre_p, 3), 
+                          &quot;\nOur wilcoxon p = &quot;, signif(our_p, 3))) +
+  theme_minimal()
+
+    
+    plot_list[[(length(plot_list)+1)]] &lt;- p
+  }
+  }
+
+}
+</code></pre>
+<pre class="r,cache=f"><code>gridExtra::grid.arrange(grobs = plot_list, ncol = 3)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1180,33 +1110,34 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] reshape2_1.4.4          speedglm_0.3-5          biglm_0.9-3            
- [4] DBI_1.2.3               MASS_7.3-60             ACAT_0.91              
- [7] eulerr_7.0.2            gridExtra_2.3           heavytailcombtest_1.0.0
-[10] sgt_2.0                 numDeriv_2016.8-1.1     optimx_2024-12.2       
-[13] peakRAM_1.0.2           BH_1.84.0-0             Matrix_1.6-3           
-[16] sceptredata_0.99.0      sceptre_0.10.0          presto_1.0.0           
-[19] data.table_1.14.8       Rcpp_1.0.12             tidyr_1.3.0            
-[22] tibble_3.2.1            readr_1.4.0             dplyr_1.1.4            
-[25] ggplot2_3.5.1           workflowr_1.7.1        
+ [1] pheatmap_1.0.12         reshape2_1.4.4          speedglm_0.3-5         
+ [4] biglm_0.9-3             DBI_1.2.3               MASS_7.3-60            
+ [7] ACAT_0.91               eulerr_7.0.2            gridExtra_2.3          
+[10] heavytailcombtest_1.0.0 sgt_2.0                 numDeriv_2016.8-1.1    
+[13] optimx_2024-12.2        peakRAM_1.0.2           BH_1.84.0-0            
+[16] Matrix_1.6-3            sceptredata_0.99.0      sceptre_0.10.0         
+[19] presto_1.0.0            data.table_1.14.8       Rcpp_1.0.12            
+[22] tidyr_1.3.0             tibble_3.2.1            readr_1.4.0            
+[25] dplyr_1.1.4             ggplot2_3.5.1           workflowr_1.7.1        
 
 loaded via a namespace (and not attached):
- [1] httr_1.4.2        sass_0.4.9        jsonlite_1.8.7    bslib_0.7.0      
- [5] getPass_0.2-2     highr_0.11        yaml_2.2.1        pillar_1.9.0     
- [9] lattice_0.22-5    glue_1.6.2        rmutil_1.1.10     digest_0.6.33    
-[13] polyclip_1.10-6   promises_1.2.0.1  colorspace_2.1-0  htmltools_0.5.8.1
-[17] httpuv_1.6.1      plyr_1.8.6        pkgconfig_2.0.3   invgamma_1.1     
-[21] purrr_1.0.2       mvtnorm_1.3-3     scales_1.3.0      processx_3.8.4   
-[25] whisker_0.4.1     later_1.2.0       pracma_2.4.4      git2r_0.32.0     
-[29] generics_0.1.3    farver_2.1.1      ellipsis_0.3.2    cachem_1.0.8     
-[33] withr_2.5.2       cli_3.6.1         magrittr_2.0.3    evaluate_0.23    
-[37] ps_1.7.5          fs_1.6.3          fansi_1.0.5       tools_4.1.0      
-[41] hms_1.1.0         lifecycle_1.0.4   stringr_1.5.1     munsell_0.5.0    
-[45] callr_3.7.6       compiler_4.1.0    jquerylib_0.1.4   rlang_1.1.2      
-[49] grid_4.1.0        nloptr_1.2.2.2    rstudioapi_0.15.0 labeling_0.4.3   
-[53] rmarkdown_2.27    gtable_0.3.0      R6_2.5.1          knitr_1.48       
-[57] fastmap_1.1.1     utf8_1.2.1        rprojroot_2.0.4   polylabelr_0.3.0 
-[61] stringi_1.6.2     vctrs_0.6.4       tidyselect_1.2.0  xfun_0.51        </code></pre>
+ [1] httr_1.4.2         sass_0.4.9         jsonlite_1.8.7     bslib_0.7.0       
+ [5] getPass_0.2-2      highr_0.11         yaml_2.2.1         pillar_1.9.0      
+ [9] lattice_0.22-5     glue_1.6.2         rmutil_1.1.10      digest_0.6.33     
+[13] polyclip_1.10-6    RColorBrewer_1.1-3 promises_1.2.0.1   colorspace_2.1-0  
+[17] htmltools_0.5.8.1  httpuv_1.6.1       plyr_1.8.6         pkgconfig_2.0.3   
+[21] invgamma_1.1       purrr_1.0.2        mvtnorm_1.3-3      scales_1.3.0      
+[25] processx_3.8.4     whisker_0.4.1      later_1.2.0        pracma_2.4.4      
+[29] git2r_0.32.0       generics_0.1.3     farver_2.1.1       ellipsis_0.3.2    
+[33] cachem_1.0.8       withr_2.5.2        cli_3.6.1          crayon_1.5.2      
+[37] magrittr_2.0.3     evaluate_0.23      ps_1.7.5           fs_1.6.3          
+[41] fansi_1.0.5        tools_4.1.0        hms_1.1.0          lifecycle_1.0.4   
+[45] stringr_1.5.1      munsell_0.5.0      callr_3.7.6        compiler_4.1.0    
+[49] jquerylib_0.1.4    rlang_1.1.2        grid_4.1.0         nloptr_1.2.2.2    
+[53] rstudioapi_0.15.0  labeling_0.4.3     rmarkdown_2.27     gtable_0.3.0      
+[57] R6_2.5.1           knitr_1.48         fastmap_1.1.1      utf8_1.2.1        
+[61] rprojroot_2.0.4    polylabelr_0.3.0   stringi_1.6.2      vctrs_0.6.4       
+[65] tidyselect_1.2.0   xfun_0.51         </code></pre>
 </div>
 </div>
 </div>
