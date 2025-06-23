@@ -788,16 +788,16 @@ output/simulation/our_acat_comparison
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreedb8aa617a1b88751d0ec65e9d3624a6ae549234ctargetblankdb8aa61a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/db8aa617a1b88751d0ec65e9d3624a6ae549234c" target="_blank">db8aa61</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea510e0925b85f042326d102b98b313611ce74b36targetblanka510e09a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/a510e0925b85f042326d102b98b313611ce74b36" target="_blank">a510e09</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreedb8aa617a1b88751d0ec65e9d3624a6ae549234ctargetblankdb8aa61a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea510e0925b85f042326d102b98b313611ce74b36targetblanka510e09a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/db8aa617a1b88751d0ec65e9d3624a6ae549234c" target="_blank">db8aa61</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/a510e0925b85f042326d102b98b313611ce74b36" target="_blank">a510e09</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -905,6 +905,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/a510e0925b85f042326d102b98b313611ce74b36/analysis/research_log_June.Rmd" target="_blank">a510e09</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+<td>
+add simulation result
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/ec21d2f1cbfdb18f3a138bdb507ec13bd4a69ae5/docs/research_log_June.html" target="_blank">ec21d2f</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1834,7 +1868,6 @@ jliucx
  9 30%              0.045             894
 10 30%              0.05              888
 # ℹ 18 more rows</code></pre>
-<pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>Warning: &#39;timedatectl&#39; indicates the non-existent timezone name &#39;n/a&#39;</code></pre>
 <pre><code>unable to deduce timezone name from &#39;America/Chicago&#39;</code></pre>
 <pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
@@ -1851,43 +1884,7 @@ jliucx
 ✖ MASS::select()        masks dplyr::select()
 ✖ purrr::transpose()    masks data.table::transpose()
 ✖ Matrix::unpack()      masks tidyr::unpack()</code></pre>
-<pre class="r"><code>summary_df &lt;- map_dfr(names(grouped_vectors), function(group_name) {
-  vec &lt;- grouped_vectors[[group_name]]
-  tibble(
-    Group = group_name,
-    Effect_Label = match(str_extract(group_name, &quot;\\d\\.\\d{2,3}&quot;), 
-                         c(&quot;0.04&quot;, &quot;0.045&quot;, &quot;0.05&quot;, &quot;0.055&quot;, &quot;0.06&quot;, &quot;0.065&quot;, &quot;0.07&quot;)),
-    Percentage = str_extract(group_name, &quot;^\\d+%&quot;),
-    ACAT = sum(vec$ACAT &lt; 0.05, na.rm = TRUE)/length(vec$ACAT),
-    ours = sum(vec$ours &lt; 0.05, na.rm = TRUE)/length(vec$ours)
-  )
-}) %&gt;%
-  pivot_longer(cols = c(&quot;ACAT&quot;, &quot;ours&quot;), names_to = &quot;Method&quot;, values_to = &quot;Count&quot;)
-summary_df &lt;- summary_df %&gt;%
-  mutate(Percentage = factor(Percentage, levels = c(&quot;30%&quot;,&quot;50%&quot;, &quot;80%&quot;, &quot;100%&quot;))) %&gt;%
-    mutate(
-    Method = recode(Method, &quot;ACAT&quot; = &quot;sceptre+ACAT&quot;)
-  )
-
-summary_df &lt;- summary_df %&gt;%
-  mutate(
-    Effect_Label = factor(Effect_Label, levels = 1:7)
-  )
-summary_df &lt;- summary_df %&gt;%
-  mutate(
-    Method = factor(Method, levels = c(&quot;sceptre+ACAT&quot;, &quot;ours&quot;))
-  )
-
-ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
-  geom_bar(stat = &quot;identity&quot;, position = position_dodge(width = 0.7)) +
-  facet_wrap(~ Percentage, nrow = 1) +
-  scale_x_discrete(labels = 1:7) +  
-  labs(x = &quot;Effect Strength&quot;, y = &quot;power (significance 0.05)&quot;, fill = &quot;P-value Type&quot;) +
-  theme_minimal() +
-  theme(
-    panel.spacing.x = unit(1.5, &quot;lines&quot;) 
-  )</code></pre>
-<p><img src="figure/research_log_June.Rmd/unnamed-chunk-38-1.png" width="1920" style="display: block; margin: auto;" /></p>
+<p><img src="figure/research_log_June.Rmd/unnamed-chunk-38-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-1">
 Past versions of unnamed-chunk-38-1.png
