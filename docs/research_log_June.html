@@ -788,16 +788,16 @@ output/simulation/our_acat_comparison
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree7d39212411fcf0b9bbbefde612de9a03acf61a75targetblank7d39212a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/7d39212411fcf0b9bbbefde612de9a03acf61a75" target="_blank">7d39212</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreedb8aa617a1b88751d0ec65e9d3624a6ae549234ctargetblankdb8aa61a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/db8aa617a1b88751d0ec65e9d3624a6ae549234c" target="_blank">db8aa61</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree7d39212411fcf0b9bbbefde612de9a03acf61a75targetblank7d39212a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreedb8aa617a1b88751d0ec65e9d3624a6ae549234ctargetblankdb8aa61a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/7d39212411fcf0b9bbbefde612de9a03acf61a75" target="_blank">7d39212</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/db8aa617a1b88751d0ec65e9d3624a6ae549234c" target="_blank">db8aa61</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -806,7 +806,6 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
     Ignored:    analysis/run.sh
     Ignored:    analysis/run_R.sh
 
@@ -906,6 +905,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/db8aa617a1b88751d0ec65e9d3624a6ae549234c/analysis/research_log_June.Rmd" target="_blank">db8aa61</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+<td>
+add simulation result
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/caf8062753973c4c5852bd11e9dd80d088a98bb2/docs/research_log_June.html" target="_blank">caf8062</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1222,17 +1255,6 @@ jliucx
 </div>
 <div id="ntc---random-gene-set" class="section level1" number="3">
 <h1 number="3"><span class="header-section-number">3</span> NTC - Random gene set</h1>
-<pre class="r"><code>p5 &lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/Strong_qc_FAKE_NON_OVERLAP_set_70genes_per_set_3000_normal_wilcox/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;filter, normal apprximation, 100 Non-overlapping fake sets, 70 genes per set&quot;)
-
-p6 &lt;- gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/Strong_qc_FAKE_NON_OVERLAP_set_70genes_per_set_10000_no_wilcox/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;filter, no apprximation, 100 Non-overlapping fake sets, 70 genes per set&quot;)
-
-
-p3&lt;-  gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_3000_normal_wilcox/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;No filter, normal apprximation, 100 Non-overlapping fake sets, 70 genes per set&quot;)
-
-p4&lt;-  gg_qqplot(as.vector(as.matrix(read.csv(&quot;/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_10000_wilcox/resample_normal_test_statistics.csv&quot;,row.names = 1))), title=&quot;No filter, noapprximation, 100 Non-overlapping fake sets, 70 genes per set&quot;)
-
-
-grid.arrange(p5,p6,p3,p4,ncol=2)</code></pre>
 <p><img src="figure/research_log_June.Rmd/unnamed-chunk-9-1.png" width="1440" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
@@ -1586,27 +1608,6 @@ Attaching package: &#39;purrr&#39;</code></pre>
 <pre><code>The following object is masked from &#39;package:data.table&#39;:
 
     transpose</code></pre>
-<pre class="r"><code>module_results_sceptre$bh_pval &lt;- p.adjust(module_results_sceptre$acat_pval, method = &quot;BH&quot;)
-module_results_sceptre$identifier &lt;- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = &quot;_&quot;)
-
-
-module_results_t_3000$bh_pval &lt;- p.adjust(module_results_t_3000$acat_pval, method = &quot;BH&quot;)
-module_results_t_3000$identifier &lt;- paste(module_results_t_3000$grna_id, module_results_t_3000$module, sep = &quot;_&quot;)
-
-
-module_results_t_100000$bh_pval &lt;- p.adjust(module_results_t_100000$acat_pval, method = &quot;BH&quot;)
-module_results_t_100000$identifier &lt;- paste(module_results_t_100000$grna_id, module_results_t_100000$module, sep = &quot;_&quot;)
-
-
-max_stat_long_100000$bh_pval &lt;- p.adjust(max_stat_long_100000$p_value, method = &quot;BH&quot;)
-max_stat_long_100000$identifier &lt;- paste(max_stat_long_100000$grna_id, max_stat_long_100000$module, sep = &quot;_&quot;)
-
-
-max_stat_long_10000$bh_pval &lt;- p.adjust(max_stat_long_10000$p_value, method = &quot;BH&quot;)
-max_stat_long_10000$identifier &lt;- paste(max_stat_long_10000$grna_id, max_stat_long_10000$module, sep = &quot;_&quot;)
-
-max_stat_long_3000_t$bh_pval &lt;- p.adjust(max_stat_long_3000_t$p_value, method = &quot;BH&quot;)
-max_stat_long_3000_t$identifier &lt;- paste(max_stat_long_3000_t$grna_id, max_stat_long_3000_t$module, sep = &quot;_&quot;)</code></pre>
 <p><img src="figure/research_log_June.Rmd/unnamed-chunk-27-1.png" width="1440" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-27-1">
@@ -1741,7 +1742,81 @@ module_results_t_100000$identifier &lt;- paste(module_results_t_100000$grna_id, 
 max_stat_long_100000$bh_pval &lt;- p.adjust(max_stat_long_100000$p_value, method = &quot;BH&quot;)
 max_stat_long_100000$identifier &lt;- paste(max_stat_long_100000$grna_id, max_stat_long_100000$module, sep = &quot;_&quot;)</code></pre>
 <p><img src="figure/research_log_June.Rmd/unnamed-chunk-34-1.png" width="1920" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-1">
+Past versions of unnamed-chunk-34-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/caf8062753973c4c5852bd11e9dd80d088a98bb2/docs/figure/research_log_June.Rmd/unnamed-chunk-34-1.png" target="_blank">caf8062</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><img src="figure/research_log_June.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-35-1">
+Past versions of unnamed-chunk-35-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-35-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/caf8062753973c4c5852bd11e9dd80d088a98bb2/docs/figure/research_log_June.Rmd/unnamed-chunk-35-1.png" target="_blank">caf8062</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="june-23-simulation" class="section level1" number="7">
 <h1 number="7"><span class="header-section-number">7</span> June 23 : Simulation</h1>
@@ -1776,8 +1851,7 @@ max_stat_long_100000$identifier &lt;- paste(max_stat_long_100000$grna_id, max_st
 ✖ MASS::select()        masks dplyr::select()
 ✖ purrr::transpose()    masks data.table::transpose()
 ✖ Matrix::unpack()      masks tidyr::unpack()</code></pre>
-<pre class="r"><code># Step 1: 统计每组ACAT和ours小于0.05的个数
-summary_df &lt;- map_dfr(names(grouped_vectors), function(group_name) {
+<pre class="r"><code>summary_df &lt;- map_dfr(names(grouped_vectors), function(group_name) {
   vec &lt;- grouped_vectors[[group_name]]
   tibble(
     Group = group_name,
@@ -1807,13 +1881,50 @@ summary_df &lt;- summary_df %&gt;%
 ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
   geom_bar(stat = &quot;identity&quot;, position = position_dodge(width = 0.7)) +
   facet_wrap(~ Percentage, nrow = 1) +
-  scale_x_discrete(labels = 1:7) +  # 注意用了 factor，所以是 scale_x_discrete
+  scale_x_discrete(labels = 1:7) +  
   labs(x = &quot;Effect Strength&quot;, y = &quot;power (significance 0.05)&quot;, fill = &quot;P-value Type&quot;) +
   theme_minimal() +
   theme(
-    panel.spacing.x = unit(1.5, &quot;lines&quot;)  # 控制facet之间的间隔
+    panel.spacing.x = unit(1.5, &quot;lines&quot;) 
   )</code></pre>
 <p><img src="figure/research_log_June.Rmd/unnamed-chunk-38-1.png" width="1920" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-1">
+Past versions of unnamed-chunk-38-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-38-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/caf8062753973c4c5852bd11e9dd80d088a98bb2/docs/figure/research_log_June.Rmd/unnamed-chunk-38-1.png" target="_blank">caf8062</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
