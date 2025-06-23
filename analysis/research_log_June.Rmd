@@ -817,7 +817,7 @@ grid.arrange(p1,p2,p4,ncol=3)
 
 # NTC - Random gene set
 
-```{r,fig.width=15,fig.height=7}
+```{r,fig.width=15,fig.height=7,echo=F}
 
 
 p5 <- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/Strong_qc_FAKE_NON_OVERLAP_set_70genes_per_set_3000_normal_wilcox/resample_normal_test_statistics.csv",row.names = 1))), title="filter, normal apprximation, 100 Non-overlapping fake sets, 70 genes per set")
@@ -2039,7 +2039,7 @@ max_stat_long_3000_t <- max_stat_long_3000_t %>%
 
 ```
 
-```{r}
+```{r,echo=F}
 module_results_sceptre$bh_pval <- p.adjust(module_results_sceptre$acat_pval, method = "BH")
 module_results_sceptre$identifier <- paste(module_results_sceptre$grna_id, module_results_sceptre$module, sep = "_")
 
@@ -2813,7 +2813,7 @@ lengths_summary <- map_df(grouped_vectors, function(lst) {
 ```{r,cache=F,fig.width=20,fig.height=20}
 library(tidyverse)
 
-# Step 1: 统计每组ACAT和ours小于0.05的个数
+
 summary_df <- map_dfr(names(grouped_vectors), function(group_name) {
   vec <- grouped_vectors[[group_name]]
   tibble(
@@ -2844,11 +2844,11 @@ summary_df <- summary_df %>%
 ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.7)) +
   facet_wrap(~ Percentage, nrow = 1) +
-  scale_x_discrete(labels = 1:7) +  # 注意用了 factor，所以是 scale_x_discrete
+  scale_x_discrete(labels = 1:7) +  
   labs(x = "Effect Strength", y = "power (significance 0.05)", fill = "P-value Type") +
   theme_minimal() +
   theme(
-    panel.spacing.x = unit(1.5, "lines")  # 控制facet之间的间隔
+    panel.spacing.x = unit(1.5, "lines") 
   )
 
 
