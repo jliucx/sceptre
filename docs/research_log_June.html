@@ -385,7 +385,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-06-23
+<strong>Last updated:</strong> 2025-06-25
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -780,6 +780,14 @@ output/Morris/debug/HALLMARK_100000_wilcox_no_approx_perturbation_gene_no_pertur
 output/simulation/our_acat_comparison
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+/project/xuanyao/jiaming/Getting_started/output/simulation/our_acat_comparison_p2
+</td>
+<td style="text-align:left;">
+output/simulation/our_acat_comparison_p2
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -788,16 +796,16 @@ output/simulation/our_acat_comparison
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea510e0925b85f042326d102b98b313611ce74b36targetblanka510e09a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/a510e0925b85f042326d102b98b313611ce74b36" target="_blank">a510e09</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree23545407b5e855f218e95d006562328bc858a164targetblank2354540a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jliucx/sceptre/tree/23545407b5e855f218e95d006562328bc858a164" target="_blank">2354540</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretreea510e0925b85f042326d102b98b313611ce74b36targetblanka510e09a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjliucxsceptretree23545407b5e855f218e95d006562328bc858a164targetblank2354540a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/a510e0925b85f042326d102b98b313611ce74b36" target="_blank">a510e09</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jliucx/sceptre/tree/23545407b5e855f218e95d006562328bc858a164" target="_blank">2354540</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -806,6 +814,7 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    analysis/run.sh
     Ignored:    analysis/run_R.sh
 
@@ -905,6 +914,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jliucx/sceptre/blob/23545407b5e855f218e95d006562328bc858a164/analysis/research_log_June.Rmd" target="_blank">2354540</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-25
+</td>
+<td>
+upload second simulation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jliucx/sceptre/279dd0ac88c32f07efcbc3b1e01165ca75400f7e/docs/research_log_June.html" target="_blank">279dd0a</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1854,20 +1897,22 @@ jliucx
 </div>
 <div id="june-23-simulation" class="section level1" number="7">
 <h1 number="7"><span class="header-section-number">7</span> June 23 : Simulation</h1>
-<pre><code># A tibble: 28 × 3
+<div id="geneset-1" class="section level2" number="7.1">
+<h2 number="7.1"><span class="header-section-number">7.1</span> Geneset 1</h2>
+<pre><code># A tibble: 29 × 3
    Percentage_Short Effect_Strength     n
    &lt;chr&gt;            &lt;chr&gt;           &lt;int&gt;
- 1 100%             0.04              816
- 2 100%             0.045             492
- 3 100%             0.05              912
- 4 100%             0.055             912
- 5 100%             0.06              912
- 6 100%             0.065             904
- 7 100%             0.07              906
- 8 30%              0.04              890
- 9 30%              0.045             894
-10 30%              0.05              888
-# ℹ 18 more rows</code></pre>
+ 1 0%               0.055             402
+ 2 100%             0.04              816
+ 3 100%             0.045             492
+ 4 100%             0.05              912
+ 5 100%             0.055             912
+ 6 100%             0.06              912
+ 7 100%             0.065             904
+ 8 100%             0.07              906
+ 9 30%              0.04              890
+10 30%              0.045             894
+# ℹ 19 more rows</code></pre>
 <pre><code>Warning: &#39;timedatectl&#39; indicates the non-existent timezone name &#39;n/a&#39;</code></pre>
 <pre><code>unable to deduce timezone name from &#39;America/Chicago&#39;</code></pre>
 <pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
@@ -1909,6 +1954,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jliucx/sceptre/blob/279dd0ac88c32f07efcbc3b1e01165ca75400f7e/docs/figure/research_log_June.Rmd/unnamed-chunk-38-1.png" target="_blank">279dd0a</a>
+</td>
+<td>
+jliucx
+</td>
+<td>
+2025-06-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jliucx/sceptre/blob/caf8062753973c4c5852bd11e9dd80d088a98bb2/docs/figure/research_log_June.Rmd/unnamed-chunk-38-1.png" target="_blank">caf8062</a>
 </td>
 <td>
@@ -1922,6 +1978,24 @@ jliucx
 </table>
 </div>
 </div>
+</div>
+<div id="geneset-2" class="section level2" number="7.2">
+<h2 number="7.2"><span class="header-section-number">7.2</span> Geneset 2</h2>
+<pre><code># A tibble: 29 × 3
+   Group      ACAT_length ours_length
+   &lt;chr&gt;            &lt;int&gt;       &lt;int&gt;
+ 1 0%_0.04           4995        4995
+ 2 100%_0.04           98          98
+ 3 100%_0.045          73          73
+ 4 100%_0.05           51          51
+ 5 100%_0.055          80          80
+ 6 100%_0.06          108         108
+ 7 100%_0.065         151         151
+ 8 100%_0.07           77          77
+ 9 30%_0.04           124         124
+10 30%_0.045          194         194
+# ℹ 19 more rows</code></pre>
+<p><img src="figure/research_log_June.Rmd/unnamed-chunk-41-1.png" width="1152" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1981,6 +2055,7 @@ loaded via a namespace (and not attached):
 [65] cellranger_1.1.0  gtable_0.3.0      polyclip_1.10-6   assertthat_0.2.1 
 [69] cachem_1.0.8      xfun_0.51         broom_0.7.8       pracma_2.4.4     
 [73] later_1.2.0       ellipsis_0.3.2   </code></pre>
+</div>
 </div>
 </div>
 
