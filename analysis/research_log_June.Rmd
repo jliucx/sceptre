@@ -2679,7 +2679,6 @@ common <- intersect(rownames(max_stat_100000_no_qc), rownames(max_stat_100000_st
 no_qc2  <- max_stat_100000_no_qc[common, , drop = FALSE]
 strong2 <- max_stat_100000_strong_qc[common, , drop = FALSE]
 
-plot(as.vector(as.matrix(no_qc2)),as.vector(as.matrix(strong2)),main="100000 resample, with/without perturbation-gene qc",xlab="no genewise qc",ylab="with genewise qc")
 ```
 
  
@@ -2770,8 +2769,7 @@ summary_df <- all_data %>%
   group_by(Percentage_Short, Effect_Strength) %>%
   summarise(n = n(), .groups = "drop")
 
-summary_df
-
+print(summary_df, n = Inf)
 
 
 all_data <- all_data %>%
@@ -2970,7 +2968,7 @@ summary_df <- all_data %>%
   summarise(n = n(), .groups = "drop")
 
 
-summary_df
+print(summary_df, n = Inf)
 
 
 all_data <- all_data %>%
