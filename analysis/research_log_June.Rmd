@@ -2685,6 +2685,7 @@ plot(as.vector(as.matrix(no_qc2)),as.vector(as.matrix(strong2)),main="100000 res
  
 # June 23 : Simulation
 
+## Geneset 1
 
 ```{r,echo=F,include=F}
 library(dplyr)
@@ -2697,7 +2698,7 @@ percent_folders <- list.dirs(base_dir, recursive = FALSE)
 
 # 筛选：100%、80%、50%开头的所有文件夹，或精确等于30%_with_effect
 percent_folders <- percent_folders[
-  grepl("/(100%|80%|50%)", percent_folders) |
+  grepl("/(100%|80%|50%|0%)", percent_folders) |
   grepl("/30%_with_effect", percent_folders)
 ]
 
@@ -2809,7 +2810,7 @@ lengths_summary <- map_df(grouped_vectors, function(lst) {
 
 
 
-```{r,cache=F,fig.width=12,fig.height=12,echo=F}
+```{r,cache=F,fig.width=12,fig.height=10,echo=F}
 library(tidyverse)
 
 
@@ -2826,7 +2827,213 @@ summary_df <- map_dfr(names(grouped_vectors), function(group_name) {
 }) %>%
   pivot_longer(cols = c("ACAT", "ours"), names_to = "Method", values_to = "Count")
 summary_df <- summary_df %>%
-  mutate(Percentage = factor(Percentage, levels = c("30%","50%", "80%", "100%"))) %>%
+  mutate(Percentage = factor(Percentage, levels = c("0%","30%","50%", "80%", "100%"))) %>%
+    mutate(
+    Method = recode(Method, "ACAT" = "sceptre+ACAT")
+  )
+
+summary_df <- summary_df %>%
+  mutate(
+    Effect_Label = factor(Effect_Label, levels = 1:7)
+  )
+summary_df <- summary_df %>%
+  mutate(
+    Method = factor(Method, levels = c("sceptre+ACAT", "ours"))
+  )
+summary_df_0 <- summary_df %>%
+  filter(Percentage == "0%") %>%
+  group_by(Method) %>%
+  summarise(
+    Count = sum(Count, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    Group        = "0%_combined",
+    # 把这两列换成和原表完全相同的 factor
+    Effect_Label = factor(1,      levels = levels(summary_df$Effect_Label)),
+    Percentage   = factor("0%",  levels = levels(summary_df$Percentage))
+  )
+
+# 2. 用 base R 重排 summary_df_0 的列顺序，确保跟原表一模一样
+summary_df_0 <- summary_df_0[, c("Group", "Effect_Label", "Percentage", "Method", "Count")]
+
+# 3. 把原表里非 0% 的行挑出来
+summary_df_non0 <- summary_df[summary_df$Percentage != "0%", ]
+
+# 4. 合并
+summary_df_new <- rbind(summary_df_non0, summary_df_0)
+ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.7)) +
+  facet_wrap(~ Percentage, nrow = 1, scales = "free_x") +
+  scale_x_discrete(labels = 1:7) +  
+  labs(x = "Effect Strength", y = "power (significance 0.05)", fill = "P-value Type") +
+  theme_minimal() +
+  theme(
+    panel.spacing.x = unit(1.5, "lines") 
+  )
+
+
+
+```
+
+## Geneset 2
+
+```{r,echo=F,include=F}
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(stringr)
+
+base_dir <- "/project/xuanyao/jiaming/Getting_started/output/simulation/our_acat_comparison_p2" 
+percent_folders <- list.dirs(base_dir, recursive = FALSE)
+
+# 筛选：100%、80%、50%开头的所有文件夹，或精确等于30%_with_effect
+percent_folders <- percent_folders[
+  grepl("/(100%|80%|50%|0%)", percent_folders) |
+  grepl("/30%_with_effect", percent_folders)
+]
+
+# 初始化空数据框
+all_data <- data.frame()
+
+for (percent_folder in percent_folders) {
+  percent_label <- basename(percent_folder)
+  
+  # 遍历子文件夹（例如 0.04, 0.045, ..., 0.07）
+  subfolders <- list.dirs(percent_folder, recursive = FALSE)
+  
+  for (subfolder in subfolders) {
+    effect_strength <- basename(subfolder)
+    
+    # 构造文件路径
+    acat_path <- file.path(subfolder, "ACAT_p.csv")
+    max_stat_path <- file.path(subfolder, "max_normalized_statistics.csv")
+    
+    if (file.exists(acat_path) && file.exists(max_stat_path)) {
+      # 打印成功路径
+      message("Reading: ", acat_path)
+      message("         ", max_stat_path)
+
+      # 读取CSV，取出p值
+      acat_p <- read.csv(acat_path, row.names = 1)
+      max_stat_p <- read.csv(max_stat_path, row.names = 1)
+      
+      # 统一行名
+      common_rows <- intersect(rownames(acat_p), rownames(max_stat_p))
+      acat_p <- acat_p[common_rows, , drop = FALSE]
+      max_stat_p <- max_stat_p[common_rows, , drop = FALSE]
+      
+      # 整合成长格式
+      df_long <- data.frame(
+        id = common_rows,
+        ACAT = acat_p[[1]],
+        ours = max_stat_p[[1]]
+      ) %>%
+        pivot_longer(cols = c("ACAT", "ours"), names_to = "P_value_type", values_to = "p_value") %>%
+        mutate(
+          `-log10(p)` = -log10(p_value),
+          Effect_Strength = effect_strength,
+          Percentage = percent_label
+        )
+      
+      all_data <- bind_rows(all_data, df_long)
+    }
+  }
+}
+
+```
+
+
+
+
+```{r,echo=F}
+# 生成新的 id，保证每两个 row 共用一个 id
+new_ids <- paste0("guide_", rep(1:(nrow(all_data)/2), each = 2))
+
+# 替换原有 id
+all_data$id <- new_ids
+
+
+summary_df <- all_data %>%
+  mutate(
+    Percentage_Short = str_extract(Percentage, "^\\d+%")
+  ) %>%
+  group_by(Percentage_Short, Effect_Strength) %>%
+  summarise(n = n(), .groups = "drop")
+
+
+
+
+
+all_data <- all_data %>%
+  mutate(Percentage_Short = str_extract(Percentage, "^\\d+%"))
+
+
+library(dplyr)
+
+all_data <- all_data %>%
+  mutate(
+    Effect_Strength = if_else(Percentage_Short == "0%", 
+                              "0.04", 
+                              Effect_Strength)
+  )
+
+
+
+
+
+# 拆分为 wide 格式以便配对
+wide_data <- all_data %>%
+  pivot_wider(
+    id_cols = c(Percentage_Short, Effect_Strength, id),
+    names_from = P_value_type,
+    values_from = p_value
+  )
+
+# 确保 wide_data 中包含 both ACAT and ours 列
+grouped_vectors <- wide_data %>%
+  filter(!is.na(ACAT), !is.na(ours)) %>%
+  group_by(Percentage_Short, Effect_Strength) %>%
+  group_split() %>%
+  setNames(map_chr(., ~ paste0(.x$Percentage_Short[1], "_", .x$Effect_Strength[1]))) %>%
+  map(function(df) {
+    sampled_df <- df
+    list(
+      ACAT = sampled_df$ACAT,
+      ours = sampled_df$ours
+    )
+  })
+lengths_summary <- map_df(grouped_vectors, function(lst) {
+  tibble(
+    ACAT_length = length(lst$ACAT),
+    ours_length = length(lst$ours)
+  )
+}, .id = "Group")
+
+lengths_summary
+
+```
+
+
+
+```{r,cache=F,fig.width=12,fig.height=10,echo=F}
+library(tidyverse)
+
+
+summary_df <- map_dfr(names(grouped_vectors), function(group_name) {
+  vec <- grouped_vectors[[group_name]]
+  tibble(
+    Group = group_name,
+    Effect_Label = match(str_extract(group_name, "\\d\\.\\d{2,3}"), 
+                         c("0.04", "0.045", "0.05", "0.055", "0.06", "0.065", "0.07")),
+    Percentage = str_extract(group_name, "^\\d+%"),
+    ACAT = sum(vec$ACAT < 0.05, na.rm = TRUE)/length(vec$ACAT),
+    ours = sum(vec$ours < 0.05, na.rm = TRUE)/length(vec$ours)
+  )
+}) %>%
+  pivot_longer(cols = c("ACAT", "ours"), names_to = "Method", values_to = "Count")
+summary_df <- summary_df %>%
+  mutate(Percentage = factor(Percentage, levels = c("0%","30%","50%", "80%", "100%"))) %>%
     mutate(
     Method = recode(Method, "ACAT" = "sceptre+ACAT")
   )
@@ -2842,7 +3049,7 @@ summary_df <- summary_df %>%
 
 ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.7)) +
-  facet_wrap(~ Percentage, nrow = 1) +
+  facet_wrap(~ Percentage, nrow = 1, scales = "free_x") +
   scale_x_discrete(labels = 1:7) +  
   labs(x = "Effect Strength", y = "power (significance 0.05)", fill = "P-value Type") +
   theme_minimal() +
@@ -2853,6 +3060,7 @@ ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
 
 
 ```
+
 
 
 
