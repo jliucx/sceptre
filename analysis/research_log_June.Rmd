@@ -2962,7 +2962,7 @@ summary_df <- all_data %>%
   summarise(n = n(), .groups = "drop")
 
 
-
+summary_df
 
 
 all_data <- all_data %>%
@@ -3010,7 +3010,6 @@ lengths_summary <- map_df(grouped_vectors, function(lst) {
   )
 }, .id = "Group")
 
-lengths_summary
 
 ```
 
