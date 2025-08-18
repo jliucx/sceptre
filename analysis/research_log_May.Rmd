@@ -42,8 +42,7 @@ library(tibble)
 library(tidyr)
 library(ACAT)
 library(MASS)
-sourceCpp("code/fit_skew_normal.cpp")
-source("code/functions_optimized.R")
+
 
 gg_qqplot <- function(ps, ci = 0.95, title = "QQ Plot") {
   n <- length(ps)
@@ -1067,6 +1066,7 @@ for (i in 1:length(selected_rows)) {
 
   # 保存符合条件的 gene 信息
   hit_genes <- df$gene[df$our_method > 0.3 & df$sceptre < 0.05]
+
   if (length(hit_genes) > 0) {
 hit_list[[i]] <- data.frame(
   grna_id = grna_id,
@@ -1363,7 +1363,6 @@ ggplot(result_df, aes(x = sceptre_p, y = NB_p)) +
 ### SNP-9_1-K60_44
 
 ```{r,include=F}
-
 acat_p <-list()
 precompute_p<-list()
 
@@ -1382,7 +1381,11 @@ lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 mat <- do.call(cbind, rds_list_fixed)
 
-# 检查结果
+mat<-mat[,-c(11,15,18,20,22,24,36,56,59,67,68,75,77,78,85,86,98,110,130,133,140,155,157,159,163,173,178,192,195,206,215,259,260)]
+```
+
+
+```{r,include=F}
 dim(mat)  # 行列数
 # 获取矩阵维度
 n_row <- nrow(mat)
@@ -1398,7 +1401,7 @@ tensor[,,1] <- mat
 
 
 
-module_index_mat <- matrix(1, nrow = 264, ncol = 1)
+module_index_mat <- matrix(1, nrow = n_col, ncol = 1)
 colnames(module_index_mat)<-"K60_44"
 ```
 
@@ -1669,7 +1672,7 @@ names(rds_list) <- sub("\\.rds$", "", basename(filtered_files))
 lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 mat <- do.call(cbind, rds_list_fixed)
-
+mat<-mat[,-c(8,9,11,16,20,44,58,60,62,70,72,74,87,89,105,115,132,133,136,151,161,166,199,202,203,213,215,222,225,234,242,243)]
 
 # 获取矩阵维度
 n_row <- nrow(mat)
@@ -1809,6 +1812,8 @@ lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 mat <- do.call(cbind, rds_list_fixed)
 
+mat<-mat[,-c(3,10,11,15,16,18,24,35,36,43,44,46,52,55,56,61,63,65,74,83,85,87,89,91,98,99,101,103,108,109,117,119,122,132,133,146,148,152,165,173,174,176,181,183,195,196,201)]
+
 # 获取矩阵维度
 n_row <- nrow(mat)
 n_col <- ncol(mat)
@@ -1946,7 +1951,7 @@ lengths_list <- sapply(rds_list, length)
 
 rds_list_fixed <- rds_list[lengths_list == 1000]
 mat <- do.call(cbind, rds_list_fixed)
-
+mat<-mat[,-c(3,16,22,27,36,39,41,50,53,54,74,76,90,93,102,105,106,113,119,126,129,137,141,142,162,166,183,200,203,205,213,214)]
 
 # 获取矩阵维度
 n_row <- nrow(mat)
@@ -2084,6 +2089,7 @@ lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 mat <- do.call(cbind, rds_list_fixed)
 
+mat<-mat[,-c(4,5,11,17,43,44,54,58,63,66,74,85,86,132,167,173,178,210,221,234,256,258,260,267)]
 
 # 获取矩阵维度
 n_row <- nrow(mat)
@@ -2220,6 +2226,7 @@ lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 
 mat <- do.call(cbind, rds_list_fixed)
+mat <- mat[,-c(4,8,10,15,34,50,52,63,81,104,105,122,124,125,130,136,140,141,162,170,174,175,176,181,183,195,196,199,202,205,208,211,212,213,222,224,227,234,235,236,237,242,243,244)]
 
 
 # 获取矩阵维度
@@ -2278,6 +2285,8 @@ for (j in 1:n_col) {
 }
 
 ```
+
+
 
 ```{r,cache=F,fig.width=25, fig.height=120}
 gridExtra::grid.arrange(
@@ -2362,7 +2371,7 @@ lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 
 mat <- do.call(cbind, rds_list_fixed)
-
+mat<-mat[,-c(3,21,28,30,42,43,48,49,50,56,64,73,79,87,94,100,108,109,110,116,126,124,128,129,130,135,139,145,146,158,164,171,182,189,190,203,204,211,220,225,233,235,236)]
 
 # 获取矩阵维度
 n_row <- nrow(mat)
@@ -2504,7 +2513,7 @@ lengths_list <- sapply(rds_list, length)
 rds_list_fixed <- rds_list[lengths_list == 1000]
 
 mat <- do.call(cbind, rds_list_fixed)
-
+mat<-mat[,-c(2,3,6,7,9,12,13,14,16,22,24,28,33,34,38,45,48,61,63,64,67,68,69,73,75,77,78,84,86,88,90,92,94,95,100,105,106,110,114,115,120,122,125,130,131,135,145,149,151,155,159,160,167,171,173,176,180,181,183)]
 
 # 获取矩阵维度
 n_row <- nrow(mat)
@@ -2643,4 +2652,20 @@ df$pair <- paste(prefix_vec, df$pair, sep = "-")
 df
 ```
 
+May 27 - Inflation problem of Normal approximation
+```{r}
+p1<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_3000_normal_wilcox/resample_normal_test_statistics.csv",row.names = 1))), title="NON-OVERLAP qced gene, 70 genes per set, 3000 normal")
+
+p2<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_3000_normal_wilcox_2/resample_normal_test_statistics.csv",row.names = 1))), title="NON-OVERLAP qced gene, 70 genes per set, 3000 normal")
+
+p3<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_complete_set/NONOVERLAP_FAKE_set_70genes_per_set_3000_normal_wilcox_3/resample_normal_test_statistics.csv",row.names = 1))), title=" NON-OVERLAP qced gene, 70 genes per set, 3000 normal")
+p4<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_3000_normal_wilcox_3/resample_normal_test_statistics.csv",row.names = 1))), title="NON-OVERLAP high-expressed gene, 70 genes per set, 3000 normal")
+p5<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_3000_normal_wilcox_2/resample_normal_test_statistics.csv",row.names = 1))), title="NON-OVERLAP high-expressed gene, 70 genes per set, 3000 normal")
+
+p6<- gg_qqplot(as.vector(as.matrix(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/NTC_high_expressed_set/NONOVERLAP_FAKE_set_70genes_per_set_3000_normal_wilcox/resample_normal_test_statistics.csv",row.names = 1))), title="NON-OVERLAP high-expressed gene, 70 genes per set, 3000 normal")
+```
+
+```{r,cache=F,fig.width=25}
+grid.arrange(p1,p2,p3,p4,p5,p6,ncol=3)
+```
 

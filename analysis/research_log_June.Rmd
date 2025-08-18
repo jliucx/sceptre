@@ -848,7 +848,7 @@ grna_target_data_frame_omit <- readRDS("/project/xuanyao/jiaming/Getting_started
 discovery_pairs_cis <- readRDS("/project/xuanyao/jiaming/Getting_started/data/Morris_adjusted/program_data/discovery_pairs_cis.rds")
 
 
-max_stat <- read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/4_cov_high_expressed_gene/HALLMARK_10000_wilcox_no_approx_perturbation_gene_remove_strong_official/resample_normal_test_statistics.csv",row.names = 1)
+max_stat <- as.data.frame(readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/3000_t_morris_HALLMARK_strong_gene_qc/p_values/geneset_p_value.rds"))
 
 
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/sceptre_all_pairs/author_threshold_updated/results_run_discovery_analysis.rds")[,c(1,2,7)]
@@ -1271,7 +1271,7 @@ significant_ids_max_stat_3 <- na.omit(
   venn_data <- list(
     `Sceptre+Cauchy` = significant_ids_gene_wise_p,
     `remove spike strong qc`=significant_ids_max_stat,
-        `remove spike strong qc normal`=significant_ids_max_stat_3,
+    `remove spike strong qc normal`=significant_ids_max_stat_3,
     `not remove`=significant_ids_max_stat_2
  
   )
@@ -2441,15 +2441,16 @@ module_results_t_3000 <- module_results_t_3000 %>%
 
 
 
-
-
 ```{r,echo=F,include=F,eval=TRUE}
 
- 
+
+
+
  genewise_p_combined_all <- as.data.frame(rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/debug/HALLMARK_100000_wilcox_no_approx_perturbation_gene_no_perturbation_qc/genewise_p_combined_all.rds"),readRDS("/project/xuanyao/jiaming/Getting_started/output/Morris/debug/HALLMARK_100000_wilcox_no_approx_perturbation_gene_no_perturbation_qc_p2/genewise_p_combined_all.rds")))
 
   genewise_p_combined_all[genewise_p_combined_all>=1]<- 1-1e-5
- 
+
+
 module_results <- list()
 
 for (i in seq_len(nrow(genewise_p_combined_all ))) {
@@ -2548,6 +2549,10 @@ module_results_t_100000 <- module_results_t_100000 %>%
 
 
 
+
+
+
+
 ```{r,echo=F}
 max_stat_100000 <- rbind(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/no_qc/HALLMARK_100000_wilcox_no_approx_perturbation_gene_no_perturbation_qc/resample_normal_test_statistics.csv",row.names = 1),read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/no_qc/HALLMARK_100000_wilcox_no_approx_perturbation_gene_no_perturbation_qc_p2/resample_normal_test_statistics.csv",row.names = 1))
 
@@ -2602,7 +2607,6 @@ module_results_t_100000$identifier <- paste(module_results_t_100000$grna_id, mod
 
 max_stat_long_100000$bh_pval <- p.adjust(max_stat_long_100000$p_value, method = "BH")
 max_stat_long_100000$identifier <- paste(max_stat_long_100000$grna_id, max_stat_long_100000$module, sep = "_")
-
 
 
 ```
@@ -2670,6 +2674,7 @@ grid.arrange(grobs = plot_list, ncol = 2)
 
 ```
 
+
 ```{r,echo=F,cache=F}
 max_stat_100000_no_qc <- rbind(read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/no_qc/HALLMARK_100000_wilcox_no_approx_perturbation_gene_no_perturbation_qc/resample_normal_test_statistics.csv",row.names = 1),read.csv("/project/xuanyao/jiaming/Getting_started/output/Morris/remove_cis_match_grna/no_qc/HALLMARK_100000_wilcox_no_approx_perturbation_gene_no_perturbation_qc_p2/resample_normal_test_statistics.csv",row.names = 1))
 
@@ -2697,8 +2702,7 @@ percent_folders <- list.dirs(base_dir, recursive = FALSE)
 
 # 筛选：100%、80%、50%开头的所有文件夹，或精确等于30%_with_effect
 percent_folders <- percent_folders[
-  grepl("/(100%|80%|50%|0%)", percent_folders) |
-  grepl("/30%_with_effect", percent_folders)
+  grepl("/(80%|50%|30%|0%|100%)", percent_folders) 
 ]
 
 # 初始化空数据框
@@ -2826,8 +2830,8 @@ summary_df <- map_dfr(names(grouped_vectors), function(group_name) {
     Effect_Label = match(str_extract(group_name, "\\d\\.\\d{2,3}"), 
                          c("0.04", "0.045", "0.05", "0.055", "0.06", "0.065", "0.07")),
     Percentage = str_extract(group_name, "^\\d+%"),
-    ACAT = sum(acat_fdr < 0.05, na.rm = TRUE) / sum(!is.na(acat_fdr)),
-    ours = sum(ours_fdr < 0.05, na.rm = TRUE) / sum(!is.na(ours_fdr))
+    ACAT = sum(vec$ACAT < 0.05, na.rm = TRUE) / sum(!is.na(vec$ACAT)),
+    ours = sum(vec$ours < 0.05, na.rm = TRUE) / sum(!is.na(vec$ours))
   )
 }) %>%
   pivot_longer(cols = c("ACAT", "ours"), names_to = "Method", values_to = "Count")
@@ -3072,6 +3076,273 @@ ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
 
 ```
 
+# June 28 : Updated Simulation
+
+```{r,include=F}
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(stringr)
+
+base_dir <- "/project/xuanyao/jiaming/Getting_started/output/simulation/our_acat_comparison_upgraded_debuged" 
+percent_folders <- list.dirs(base_dir, recursive = FALSE)
+
+# 筛选：25%、15%、10%、0%、5% 开头的所有文件夹
+percent_folders <- percent_folders[
+grepl("/(50%|25%|15%|10%|0%|5%)", percent_folders) & 
+  !grepl("5%_with_effect_seed_random_p4", percent_folders)
+]
+
+
+# 初始化空数据框
+all_data <- data.frame()
+
+for (percent_folder in percent_folders) {
+  percent_label <- basename(percent_folder)
+  subfolders <- list.dirs(percent_folder, recursive = FALSE)
+  
+  for (subfolder in subfolders) {
+    effect_strength <- basename(subfolder)
+    
+    # 构造五个文件的路径
+    acat_path         <- file.path(subfolder, "ACAT_p.csv")
+    max_norm_path     <- file.path(subfolder, "max_normalized_statistics_normal.csv")
+    max_t_path        <- file.path(subfolder, "max_normalized_statistics_t.csv")
+    wilcox_norm_path  <- file.path(subfolder, "wilcoxon_normal_ACAT.csv")
+    wilcox_t_path     <- file.path(subfolder, "wilcoxon_t_ACAT.csv")
+    sceptre_bonfer_path <-file.path(subfolder,"sceptre_bonferroni.csv")
+    
+    # 只有当所有文件都存在时才读取
+    if (all(file.exists(c(acat_path, max_norm_path, max_t_path, wilcox_norm_path, wilcox_t_path)))) {
+      message("Reading: ", acat_path)
+      message("         ", max_norm_path)
+      message("         ", max_t_path)
+      message("         ", wilcox_norm_path)
+      message("         ", wilcox_t_path)
+      message("         ", sceptre_bonfer_path)
+      # 读取 CSV 并取出 p 值向量
+      acat_p        <- read.csv(acat_path,        row.names = 1)
+      max_norm_p    <- read.csv(max_norm_path,    row.names = 1)
+      max_t_p       <- read.csv(max_t_path,       row.names = 1)
+      wilcox_norm_p <- read.csv(wilcox_norm_path, row.names = 1)
+      wilcox_t_p    <- read.csv(wilcox_t_path,    row.names = 1)
+      sceptre_bonfer_p    <- read.csv(sceptre_bonfer_path,    row.names = 1)      
+      # 找到所有文件的交集行名
+      common_rows <- Reduce(intersect, 
+                           list(rownames(acat_p), rownames(max_norm_p), rownames(max_t_p),
+                                rownames(wilcox_norm_p), rownames(wilcox_t_p)))
+      
+      # 截取共有行
+      acat_p        <- acat_p[common_rows, , drop = FALSE]
+      max_norm_p    <- max_norm_p[common_rows, , drop = FALSE]
+      max_t_p       <- max_t_p[common_rows, , drop = FALSE]
+      wilcox_norm_p <- wilcox_norm_p[common_rows, , drop = FALSE]
+      wilcox_t_p    <- wilcox_t_p[common_rows, , drop = FALSE]
+      sceptre_bonfer_p    <- sceptre_bonfer_p[common_rows, , drop = FALSE]
+      
+      # 合并并转成长格式
+      df_long <- data.frame(
+        id              = common_rows,
+        ACAT            = acat_p[[1]],
+        max_normal      = max_norm_p[[1]],
+        max_t           = max_t_p[[1]],
+        wilcox_normal   = wilcox_norm_p[[1]],
+        wilcox_t        = wilcox_t_p[[1]],
+        sceptre_bonfer        = sceptre_bonfer_p[[1]],
+        stringsAsFactors = FALSE
+      ) %>%
+        pivot_longer(
+          cols = c("ACAT", "max_normal", "max_t", "wilcox_normal", "wilcox_t","sceptre_bonfer"),
+          names_to  = "P_value_type",
+          values_to = "p_value"
+        ) %>%
+        mutate(
+          `-log10(p)`     = -log10(p_value),
+          Effect_Strength = effect_strength,
+          Percentage      = percent_label
+        )
+      
+      all_data <- bind_rows(all_data, df_long)
+    }
+  }
+}
+
+# 最终 all_data 包含 5 类 p 值的 –log10(p) 结果
+
+
+```
+
+
+```{r,echo=F}
+new_ids <- paste0("guide_", rep(1:(nrow(all_data)/6), each = 6))
+
+# 替换原有 id
+all_data$id <- new_ids
+
+
+summary_df <- all_data %>%
+  mutate(
+    Percentage_Short = str_extract(Percentage, "^\\d+%")
+  ) %>%
+  group_by(Percentage_Short, Effect_Strength) %>%
+  summarise(n = n(), .groups = "drop")
+
+
+
+all_data <- all_data %>%
+  mutate(Percentage_Short = str_extract(Percentage, "^\\d+%"))
+
+
+library(dplyr)
+
+all_data <- all_data %>%
+  mutate(
+    Effect_Strength = if_else(Percentage_Short == "0%", 
+                              "0.04", 
+                              Effect_Strength)
+  )
+
+
+
+
+# 拆分为 wide 格式以便配对
+wide_data <- all_data %>%
+  pivot_wider(
+    id_cols = c(Percentage_Short, Effect_Strength, id),
+    names_from = P_value_type,
+    values_from = p_value
+  )
+
+grouped_vectors <- wide_data %>%
+  # 只保留所有类型都不缺失的行
+  filter(
+    !is.na(ACAT),
+    !is.na(max_normal),
+    !is.na(max_t),
+    !is.na(wilcox_normal),
+    !is.na(wilcox_t)
+  ) %>%
+  group_by(Percentage_Short, Effect_Strength) %>%
+  group_split() %>%
+  # 用 “百分比_效应强度” 作为列表名
+  setNames(map_chr(., ~ paste0(.x$Percentage_Short[1], "_", .x$Effect_Strength[1]))) %>%
+  # 每个分组都打包成一个包含 5 个向量的 list
+  map(function(df) {
+    list(
+      ACAT           = df$ACAT,
+      max_normal     = df$max_normal,
+      max_t          = df$max_t,
+      wilcox_normal  = df$wilcox_normal,
+      wilcox_t       = df$wilcox_t,
+      sceptre_bonfer       = df$sceptre_bonfer
+    )
+  })
+
+# 统计每个 list 中 5 类向量的长度
+lengths_summary <- map_df(grouped_vectors, function(lst) {
+  tibble(
+    ACAT_length          = length(lst$ACAT),
+    max_normal_length    = length(lst$max_normal),
+    max_t_length         = length(lst$max_t),
+    wilcox_normal_length = length(lst$wilcox_normal),
+    wilcox_t_length      = length(lst$wilcox_t),
+    sceptre_bonfer_length      = length(lst$sceptre_bonfer)
+  )
+}, .id = "Group")
+
+print(lengths_summary)
+
+
+```
+
+```{r,cache=F,fig.width=20,fig.height=10,echo=F}
+
+multiple_testing=F
+
+summary_df <- map_dfr(names(grouped_vectors), function(group_name) {
+  vec <- grouped_vectors[[group_name]]
+  
+  # 对 5 种 p 值分别做 BH 校正
+  acat_fdr          <- p.adjust(vec$ACAT,           method = "BH")
+  max_norm_fdr      <- p.adjust(vec$max_normal,     method = "BH")
+  max_t_fdr         <- p.adjust(vec$max_t,          method = "BH")
+  wilcox_norm_fdr   <- p.adjust(vec$wilcox_normal,  method = "BH")
+  wilcox_t_fdr      <- p.adjust(vec$wilcox_t,       method = "BH")
+sceptre_bonfer_fdr      <- p.adjust(vec$sceptre_bonfer,       method = "BH")  
+if (!multiple_testing){
+    tibble(
+    Group           = group_name,
+    Effect_Label    = match(
+                        str_extract(group_name, "\\d\\.\\d{1,3}"),
+                         c("0.04","0.06","0.08","0.1","0.12","0.15")
+                       ),
+    Percentage      = str_extract(group_name, "^\\d+%"),
+    ACAT            = sum(vec$ACAT         < 0.05, na.rm = TRUE) / sum(!is.na(vec$ACAT )),
+    max_normal      = sum(vec$max_normal     < 0.05, na.rm = TRUE) / sum(!is.na(vec$max_normal)),
+    max_t           = sum(vec$max_t        < 0.05, na.rm = TRUE) / sum(!is.na(vec$max_t)),
+    wilcox_normal   = sum(vec$wilcox_normal  < 0.05, na.rm = TRUE) / sum(!is.na(vec$wilcox_normal)),
+    wilcox_t        = sum(vec$wilcox_t     < 0.05, na.rm = TRUE) / sum(!is.na(vec$wilcox_t)),
+        sceptre_bonfer        = sum(vec$sceptre_bonfer     < 0.05, na.rm = TRUE) / sum(!is.na(vec$sceptre_bonfer))
+  )
+} else {
+     tibble(
+    Group           = group_name,
+    Effect_Label    = match(
+                        str_extract(group_name, "\\d\\.\\d{1,3}"),
+                         c("0.04","0.06","0.08","0.1","0.12","0.15")
+                       ),
+    Percentage      = str_extract(group_name, "^\\d+%"),
+    ACAT            = sum(acat_fdr        < 0.05, na.rm = TRUE) / sum(!is.na(acat_fdr)),
+    max_normal      = sum(max_norm_fdr    < 0.05, na.rm = TRUE) / sum(!is.na(max_norm_fdr)),
+    max_t           = sum(max_t_fdr   < 0.05, na.rm = TRUE) / sum(!is.na(max_t_fdr)),
+    wilcox_normal   = sum(wilcox_norm_fdr < 0.05, na.rm = TRUE) / sum(!is.na(wilcox_norm_fdr)),
+    wilcox_t        = sum(wilcox_t_fdr    < 0.05, na.rm = TRUE) / sum(!is.na(wilcox_t_fdr)),
+        sceptre_bonfer        = sum(sceptre_bonfer_fdr    < 0.05, na.rm = TRUE) / sum(!is.na(sceptre_bonfer_fdr)),
+  ) 
+  
+  
+}
+}) %>%
+  pivot_longer(
+    cols      = c("ACAT","max_normal","max_t","wilcox_normal","wilcox_t","sceptre_bonfer"),
+    names_to  = "Method",
+    values_to = "Count"
+  )
+
+# 设定因子水平并给 Method 贴更友好的标签
+summary_df <- summary_df %>%
+  mutate(
+    Percentage   = factor(Percentage,  levels = c("0%","5%","10%","15%","25%","50%")),
+    Effect_Label = factor(Effect_Label, levels = 1:7),
+    Method       = factor(Method,      levels = c("ACAT","max_normal","max_t","wilcox_normal","wilcox_t"))
+  ) %>%
+  mutate(Method = recode(Method,
+    ACAT           = "Sceptre+ACAT",
+    max_normal     = "Our Normal",
+    max_t          = "Our T",
+    wilcox_normal  = "Wilcoxon Normal+ACAT",
+    wilcox_t       = "Wilcoxon T+ACAT",
+    sceptre_bonfer       = "Sceptre+Bonferonni"
+  ))
+
+# 绘图
+ggplot(summary_df, aes(x = Effect_Label, y = Count, fill = Method)) +
+  
+  geom_col(position = position_dodge(width = 0.7)) +
+  geom_hline(yintercept = 0.05, color = "red", linetype = "dashed", linewidth = 0.5) +
+
+  facet_wrap(~ Percentage, nrow = 1, scales = "free_x") +
+  scale_x_discrete(labels = 1:7) +
+  labs(
+    x    = "Effect Strength",
+    y    = "Power (pval < 0.05)",
+    fill = "Method"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.spacing.x = unit(1.5, "lines")
+  )
+```
 
 
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #SBATCH --job-name=nature_data
-#SBATCH --cpus-per-task=5
+#SBATCH --cpus-per-task=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --mem=100GB
-#SBATCH --time=0:30:00
+#SBATCH --mem=30GB
+#SBATCH --time=1:00:00
 #SBATCH --partition=xuanyao-hm
 #SBATCH --qos=xuanyao
 #SBATCH --account=pi-xuanyao
@@ -12,7 +12,7 @@
 #SBATCH --error=rcc_err/seruat_%j.err
 
 module load R/4.1.0
-Rscript rcc_jobs/t_test.R
+Rscript rcc_jobs/two_level_test.R
 
 echo "Job completed successfully"
 
