@@ -1179,12 +1179,17 @@ geneset_p_value <- readRDS("/project/xuanyao/jiaming/Getting_started/output/snak
 combined_mat<-geneset_p_value 
 ind <- which(matrixStats::rowMins(as.matrix(combined_mat)) < 0.0007)
 rownames(combined_mat)<-paste0(1:nrow(combined_mat))
+gg_qqplot_df(combined_mat,title="Power + Maxstat (global permutation)")
+```
+```{r,fig.width=60,fig.height=25}
+geneset_p_value <- readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/repologle/NTC_within_batch_permute_maxstat_10000_no/p_values/geneset_p_value.rds")
+combined_mat<-geneset_p_value 
+rownames(combined_mat)<-paste0(1:nrow(combined_mat))
 gg_qqplot_df(combined_mat)
 ```
 
-```{r}
-gg_qqplot(sample(as.vector(combined_mat)))
-```
+
+
 
 ### powersum + acat
 
@@ -1197,7 +1202,7 @@ gg_qqplot_df(combined_mat)
 ```
 
 
-### sceptre
+### sceptre genewise
 
 
 
@@ -1210,8 +1215,9 @@ grna_groups <- split(results_run_calibration_check$p_value, results_run_calibrat
 
 ```{r,fig.width=60,fig.height=25}
 names(grna_groups)<-1:length(grna_groups)
-gg_qqplot_list(grna_groups)
+gg_qqplot_list(grna_groups,title="Sceptre: genewise NTC")
 ```
+
 
 # Papalexi
 
@@ -1837,6 +1843,7 @@ grid.arrange(euler_plot,p1,p3,p2,ncol=2)
 
 # Frangieh
 
+
 <span style="color: red;"> It is worth noticing that different from other datasets, this dataset contains cell-cycle related information: s_score, g2m_score, and phase (according to the author, phase is calculated using s_score and g2m_score). In sceptre paper, the author take those additional covariate in their glm model, and use permutation to get p value.</span>
 
 <span style="color: red;"> To imitate this, I also take this three additional covariate, and (use conditional resampling to obtain p values.) </span>
@@ -1860,7 +1867,7 @@ max_stat <- as.data.frame(readRDS("/project/xuanyao/jiaming/Getting_started/outp
 
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/frangieh/hallmark_set_genes/results_run_discovery_analysis.rds")[,c(1,2,7)]
                  )
-perturbation_gene_qc <- character(0) 
+perturbation_gene_qc <- readRDS("/project/xuanyao/jiaming/Getting_started/data/frangieh/ifn_gamma/hallmark_set/perturbation_gene_qc.rds")
  
 
 
@@ -1907,8 +1914,10 @@ for (i in seq_len(nrow(sceptre_wide))) {
   
 if (grna_id %in% rownames(perturbation_gene_qc)) {
   remove_genes <- perturbation_gene_qc[grna_id, 2][[1]]
+  print(length(remove_genes))
 } else {
   remove_genes <- character(0)  # 空字符向量，不会影响 setdiff
+  print("no genes removed")
 }
   
   
@@ -2012,6 +2021,24 @@ max_stat_long_2 <- max_stat_long_2 %>%
 
 max_stat_long_2$bh_pval <-  p.adjust(max_stat_long_2$p_value, method = "BH")
 max_stat_long_2$identifier <- paste(max_stat_long_2$grna_id, max_stat_long_2$module, sep = "_")
+
+
+max_stat <- as.data.frame(readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/frangieh/resample_ACAT_50_qc/p_values/geneset_p_value.rds"))
+
+max_stat[max_stat==0]<- 1e-4
+max_stat_long_3 <- max_stat%>%
+  rownames_to_column(var = "grna_id") %>% # Add row names as a column
+  pivot_longer(cols = -grna_id, names_to = "module", values_to = "p_value")
+
+# Remove rows with NA p-values
+max_stat_long_3 <- max_stat_long_3 %>% filter(!is.na(p_value))
+
+
+max_stat_long_3 <- max_stat_long_3 %>%
+  semi_join(module_results_sceptre, by = c("grna_id", "module"))
+
+max_stat_long_3$bh_pval <-  p.adjust(max_stat_long_3$p_value, method = "BH")
+max_stat_long_3$identifier <- paste(max_stat_long_3$grna_id, max_stat_long_3$module, sep = "_")
 ```
 
 
@@ -2025,7 +2052,7 @@ max_stat_long_2$identifier <- paste(max_stat_long_2$grna_id, max_stat_long_2$mod
 ```{r,include=F}
 library(eulerr)
 
-significant_levels <- c(0.1)
+significant_levels <- c(0.05)
 # significant_levels <- 0.01
 plot_list <- list()
 
@@ -2042,11 +2069,15 @@ significant_ids_max_stat <- na.omit(
 significant_ids_max_stat_2 <- na.omit(
   max_stat_long_2$identifier[max_stat_long_2$bh_pval < significant_levels]
 )
+
+significant_ids_max_stat_3 <- na.omit(
+  max_stat_long_3$identifier[max_stat_long_3$bh_pval < significant_levels]
+)
   # Prepare the sets
   venn_data <- list(
-    `Sceptre+ACAT` = significant_ids_gene_wise_p,
-    `Power + ACAT`=significant_ids_max_stat
- # `Power + maxstat`=significant_ids_max_stat_2
+    `Sceptre+ACAT (strong qc)` = significant_ids_gene_wise_p,
+    `Power + ACAT (default qc)`=significant_ids_max_stat,
+ `Power + ACAT (strong qc)`=significant_ids_max_stat_3
   )
   
   # Generate the Euler diagram and display it
@@ -2065,10 +2096,11 @@ p1 <- euler_plot
 
 
 
+
 ```{r,include=F}
 sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/frangieh/hallmark_set_genes/results_run_calibration_check.rds")[,c(1,2,7)]
                  )
-perturbation_gene_qc <- character(0) 
+perturbation_gene_qc <- readRDS("/project/xuanyao/jiaming/Getting_started/data/frangieh/ifn_gamma/hallmark_set/perturbation_gene_qc.rds")
  
 
 
@@ -2170,6 +2202,111 @@ module_results_sceptre_NTC <- module_results_sceptre_NTC[!is.na(module_results_s
 
 
 ```{r,include=F}
+sceptre <- rbind(readRDS("/project/xuanyao/jiaming/Getting_started/output/frangieh/hallmark_set_genes/results_run_calibration_check.rds")[,c(1,2,7)]
+                 )
+perturbation_gene_qc <- character(0)
+ 
+
+
+sceptre <- sceptre[!is.na(sceptre$p_value), ]
+sceptre$p_value[sceptre$p_value >=1] <- 1 - 1e-6
+
+sceptre_wide <- sceptre %>%
+  pivot_wider(names_from = response_id, values_from = p_value) %>%
+  as.data.frame()
+
+# Set the row names to be the grna_id and remove the grna_id column
+rownames(sceptre_wide) <- sceptre_wide$grna_id
+sceptre_wide <- sceptre_wide[, -1]
+
+sceptre_wide <- sceptre_wide[rownames(max_stat)[rownames(max_stat) %in% rownames(sceptre_wide)], ]
+
+sceptre_wide <- sceptre_wide[, colnames(sceptre_wide)%in%rownames(gene_module_index_matrix), drop = FALSE]
+sceptre_wide<-sceptre_wide  [grepl("NO_SITE",rownames(sceptre_wide )),]
+
+module_results <- list()
+
+# Iterate over each row of t_gene_p_no_approximation to compute ACAT p-values for each module
+for (i in seq_len(nrow(sceptre_wide))) {
+  grna_id <- rownames(sceptre_wide)[i]
+  p_values_row <- sceptre_wide[i,] 
+  
+  # Initialize an empty list to store ACAT p-values and module names for each module
+  module_acat_pvals <- c()
+  module_names <- c()
+  matched_targets <- grna_target_data_frame_omit[grna_target_data_frame_omit$grna_id == grna_id, ]$grna_target
+  cis_genes <- discovery_pairs_cis[discovery_pairs_cis$grna_target == matched_targets, ]$response_id  
+  
+if (grna_id %in% rownames(perturbation_gene_qc)) {
+  remove_genes <- perturbation_gene_qc[grna_id, 2][[1]]
+} else {
+  remove_genes <- character(0)  # 空字符向量，不会影响 setdiff
+}
+  
+  
+  # Iterate over each module in gene_modules to combine p-values using ACAT
+  for (j in 1:ncol(gene_module_index_matrix)) {
+    
+    
+    module_name <- colnames(gene_module_index_matrix)[j]  # Get the module name
+
+    module_genes <- rownames(gene_module_index_matrix)[gene_module_index_matrix[, j] == 1]
+module_genes <- intersect(module_genes, colnames(p_values_row))
+    
+      module_genes <- setdiff(module_genes, cis_genes) 
+      haha<-length(module_genes)
+            module_genes <- setdiff(module_genes, remove_genes)
+
+      
+    
+    # Only apply ACAT if there are genes to combine and they are not NA
+    if (length(module_genes) > 0) {
+      module_p_values <- as.numeric(p_values_row[module_genes])
+      module_p_values <- module_p_values[!is.na(module_p_values)]  # Remove NAs
+      
+      if (length(module_p_values) > 0) {
+        acat_pval <- ACAT(module_p_values)
+        
+#      acat_pval <- combination.test(
+#   module_p_values[!is.na(module_p_values)],
+#   weights = NA,
+#   method = "Cauchy",
+#   tail.idx = 1
+# )
+
+
+        module_acat_pvals <- c(module_acat_pvals, acat_pval)
+        module_names <- c(module_names, module_name)
+      } else {
+        # print("dont have valid p values for that module")
+        module_acat_pvals <- c(module_acat_pvals, NA)
+        module_names <- c(module_names, module_name)
+      }
+    } else {
+      
+      # print("dont have valid gene in that module")
+      module_acat_pvals <- c(module_acat_pvals, NA)
+      module_names <- c(module_names, module_name)
+    }
+  }
+  
+  # Store results as a data frame in the list
+  module_results[[i]] <- data.frame(
+    grna_id = grna_id,
+    module = module_names,
+    acat_pval = module_acat_pvals
+  )
+}
+
+
+# Combine all results into a single data frame
+module_results_sceptre_NTC_default <- do.call(rbind, module_results)
+module_results_sceptre_NTC_default <- module_results_sceptre_NTC_default[!is.na(module_results_sceptre_NTC_default$acat_pval), ]
+```
+
+
+
+```{r,include=F}
 genewise_p_value <- readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/frangieh/resample_ACAT/p_values/genewise_p_value.rds")
 
 build_overlap_lists <- function(A, B) {
@@ -2212,15 +2349,19 @@ p3 <- gg_qqplot_list(build_overlap_lists(genewise_p_value,sceptre_wide)[["sceptr
 ```{r,include=F}
 geneset_p_value <- readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/frangieh/resample_ACAT/p_values/geneset_p_value.rds")
 
+geneset_p_value_strong_qc <- readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/frangieh/resample_ACAT_50_qc/p_values/geneset_p_value.rds")
+
 geneset_p_value_maxstat <- readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/frangieh/resample_maxstat/p_values/geneset_p_value.rds")
-p4<-gg_qqplot(rbind(geneset_p_value [grepl("NO_SITE",rownames(geneset_p_value)),]),title="GENESET: Power+ACAT")
+p4<-gg_qqplot(rbind(geneset_p_value [grepl("NO_SITE",rownames(geneset_p_value)),]),title="GENESET: Power+ACAT (default qc)")
 library(eulerr)
 
 
-p5<-gg_qqplot(module_results_sceptre_NTC$acat_pval,title= "GENESET: Sceptre+ACAT")
-
+p5<-gg_qqplot(module_results_sceptre_NTC$acat_pval,title= "GENESET: Sceptre+ACAT (strong qc)")
+p8<-gg_qqplot(module_results_sceptre_NTC_default$acat_pval,title= "GENESET: Sceptre+ACAT (default qc)")
 p6<-gg_qqplot(rbind(geneset_p_value_maxstat [grepl("NO_SITE",rownames(geneset_p_value_maxstat)),]),title="GENESET: Power+Maxstat")
 
+
+p7<-gg_qqplot(rbind(geneset_p_value_strong_qc [grepl("NO_SITE",rownames(geneset_p_value_strong_qc)),]),title="GENESET: Power+ACAT (strong qc)")
 ```
 
 
@@ -2232,13 +2373,26 @@ grid.arrange(p1,p2,p3,ncol=1)
 ```
 
 ```{r,fig.width=10,fig.height=10}
-grid.arrange(p4,p6,p5,ncol=2)
+grid.arrange(p4,p7,p8,p5,ncol=2)
 ```
 
 
+
 ```{r}
-geneset_p_value <- readRDS("/project/xuanyao/jiaming/Getting_started/output/snakemake/frangieh/resample_ACAT/p_values/geneset_p_value.rds")
-gg_qqplot(rbind(geneset_p_value [grepl("NO_SITE",rownames(geneset_p_value)),]),title="GENESET: Wilcoxon+ACAT")
+p4<-gg_qqplot_df(rbind(geneset_p_value [grepl("NO_SITE",rownames(geneset_p_value)),]),title="GENESET: Power+ACAT (default qc)")
+library(eulerr)
+
+
+p5<-gg_qqplot_df(module_results_sceptre_NTC$acat_pval,title= "GENESET: Sceptre+ACAT")
+
+p6<-gg_qqplot_df(rbind(geneset_p_value_maxstat [grepl("NO_SITE",rownames(geneset_p_value_maxstat)),]),title="GENESET: Power+Maxstat")
+
+
+p7<-gg_qqplot_df(rbind(geneset_p_value_strong_qc [grepl("NO_SITE",rownames(geneset_p_value_strong_qc)),]),title="GENESET: Power+ACAT (strong qc)")
+```
+
+```{r,fig.width=10,fig.height=10}
+grid.arrange(p4,p7,ncol=1)
 ```
 
 
